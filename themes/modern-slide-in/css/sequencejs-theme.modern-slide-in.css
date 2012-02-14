@@ -1,11 +1,11 @@
 /*
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
-Theme:  Sliding Horizontal Parallax
-Version:  0.1 Beta
-Theme Author:  Ian Lunn @IanLunn
-Author URL:  http://www.ianlunn.co.uk/
-Theme URL:  http://www.sequencejs.com/themes/sliding-horizontal-parallax/
+Theme:   Sliding Horizontal Parallax
+Version:   0.1 Beta
+Theme Author:   Ian Lunn @IanLunn
+Author URL:   http://www.ianlunn.co.uk/
+Theme URL:   http://www.sequencejs.com/themes/sliding-horizontal-parallax/
 
 This is a FREE theme and is dual licensed under the following: 
 http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
@@ -13,7 +13,7 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
 Aside from these comments, you may modify and distribute this file as you please. Have fun!
  */
-/* http://meyerweb.com/eric/tools/css/reset/ v2.0 | 20110126 License:  none (public domain) */
+/* http://meyerweb.com/eric/tools/css/reset/ v2.0 | 20110126 License:   none (public domain) */
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video {
 	margin: 0;
 	padding: 0;
@@ -122,22 +122,24 @@ body {
 	opacity: 1;
 }
 
-.frame3{
+.frame3 .subtitle {
 	width: 380px;
 }
 
-@media only screen and (min-width : 1224px) { /*only display the hover effect on desktops/laptops*/
-	#nav li img:hover {
-		-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-		filter: alpha(opacity=100);
-		opacity: 1;
-	
-		-webkit-transition-duration: 1s;
-		-moz-transition-duration: 1s;
-		-o-transition-duration: 1s;
-		-ms-transition-duration: 1s;
-		transition-duration: 1s;
-	}
+@media only screen and (min-width : 1224px) {
+	/*only display the hover effect on desktops/laptops*/
+#nav li img:hover {
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: alpha(opacity=100);
+	opacity: 1;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
 }
 
 #sequence li * {

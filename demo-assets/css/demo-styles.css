@@ -70,6 +70,19 @@ body{
 	padding: 5px 0 0 0;
 }
 
+.hire p{
+	width: 170px;
+}
+
+.hire span{
+	float: left;
+	margin-top: -2px;
+}
+
+.hire img{
+	float: right;
+}
+
 .hire a{
 	padding: 0 0 0 5px;
 }
