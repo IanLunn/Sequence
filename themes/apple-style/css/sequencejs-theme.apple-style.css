@@ -1,0 +1,744 @@
+/*
+Theme created for use with Sequence.js (http://www.sequencejs.com/)
+
+Theme:  Apple Style
+Version:  0.1 Beta
+Theme Author:  Ian Lunn @IanLunn
+Author URL:  http://www.ianlunn.co.uk/
+Theme URL:  http://www.sequencejs.com/themes/apple-style/
+
+This is a FREE theme and is dual licensed under the following: 
+http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
+
+Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
+Aside from these comments, you may modify and distribute this file as you please. Have fun!
+ */
+/* http://meyerweb.com/eric/tools/css/reset/
+v2.0 | 20110126
+License:   none (public domain)
+ */
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section {
+	display: block;
+}
+
+body {
+	line-height: 1;
+}
+
+ol,ul {
+	list-style: none;
+}
+
+blockquote,q {
+	quotes: none;
+}
+
+blockquote:before,blockquote:after,q:before,q:after {
+	content: '';
+	content: none;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+#header {
+	background: white;
+	border-bottom: solid 3px #ccc;
+	overflow: hidden;
+	width: 100%;
+}
+
+body {
+	background: #ededed;
+	font-family: Verdana, sans-serif;
+}
+
+#sequence {
+	height: 600px;
+	margin: 0 auto;
+	position: relative;
+	width: 960px;
+}
+
+#slideshow * {
+	-webkit-backface-visibility: hidden;
+}
+
+#main {
+	border: none;
+}
+
+h2 {
+	font-family: 'Magra', sans-serif;
+	font-size: 30px;
+	font-weight: bold;
+	margin: 0 0 10px 0;
+}
+
+h3 {
+	font-family: 'Magra', sans-serif;
+	font-size: 20px;
+}
+
+.pause-icon {
+	right: 20px;
+	position: absolute;
+	bottom: 20px;
+}
+
+.iphone{
+	left: -450px;
+	opacity: 1;
+	position: absolute;
+	top: -550px;
+	
+	-webkit-transform: rotate(-40deg);
+	-moz-transform: rotate(-40deg);
+	-o-transform: rotate(-40deg);
+	-ms-transform: rotate(-40deg);
+	transform: rotate(-40deg);
+	
+	-webkit-transition-duration: 1.5s;
+	-moz-transition-duration: 1.5s;
+	-o-transition-duration: 1.5s;
+	-ms-transition-duration: 1.5s;
+	transition-duration: 1.5s;
+		
+}
+
+.iphone.animate-in{
+	left: 600px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: alpha(opacity=100);
+	opacity: 1;
+	top: 50px;
+	-webkit-transform: rotate(0deg);
+	-moz-transform: rotate(0deg);
+	-o-transform: rotate(0deg);
+	-ms-transform: rotate(0deg);
+	transform: rotate(0deg);
+
+	-webkit-transition-duration: 1.5s;
+	-moz-transition-duration: 1.5s;
+	-o-transition-duration: 1.5s;
+	-ms-transition-duration: 1.5s;
+	transition-duration: 1.5s;
+}
+
+.iphone.animate-out{
+	left: 1100px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: -400px;
+
+	-webkit-transform: rotate(20deg);
+	-moz-transform: rotate(20deg);
+	-o-transform: rotate(20deg);
+	-ms-transform: rotate(20deg);
+	transform: rotate(20deg);
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+.iphone-shadow {
+	left: 598px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 520px;
+	position: absolute;
+
+	-webkit-transition-duration: 1.5s;
+	-moz-transition-duration: 1.5s;
+	-o-transition-duration: 1.5s;
+	-ms-transition-duration: 1.5s;
+	transition-duration: 1.5s;
+}
+
+.iphone-shadow.animate-in {
+	left: 598px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: alpha(opacity=100);
+	opacity: 1;
+	top: 520px;
+
+	-webkit-transition-duration: 1.5s;
+	-moz-transition-duration: 1.5s;
+	-o-transition-duration: 1.5s;
+	-ms-transition-duration: 1.5s;
+	transition-duration: 1.5s;
+}
+
+.iphone-shadow.animate-out {
+	left: 598px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 520px;
+
+	-webkit-transition-duration: 2s;
+	-moz-transition-duration: 2s;
+	-o-transition-duration: 2s;
+	-ms-transition-duration: 2s;
+	transition-duration: 2s;
+}
+
+.intro {
+	position: absolute;
+	left: -450px;
+	top: -400px;
+	width: 400px;
+
+	-webkit-transform: rotate(-40deg);
+	-moz-transform: rotate(-40deg);
+	-o-transform: rotate(-40deg);
+	-ms-transform: rotate(-40deg);
+	transform: rotate(-40deg);
+	
+	-webkit-transition-duration: 1.5s;
+	-moz-transition-duration: 1.5s;
+	-o-transition-duration: 1.5s;
+	-ms-transition-duration: 1.5s;
+	transition-duration: 1.5s;
+}
+
+.intro.animate-in {
+	left: 100px;
+	top: 250px;
+
+	-webkit-transform: rotate(0deg);
+	-moz-transform: rotate(0deg);
+	-o-transform: rotate(0deg);
+	-ms-transform: rotate(0deg);
+	transform: rotate(0deg);
+
+	-webkit-transition-duration: 1.5s;
+	-moz-transition-duration: 1.5s;
+	-o-transition-duration: 1.5s;
+	-ms-transition-duration: 1.5s;
+	transition-duration: 1.5s;
+}
+
+.intro.animate-out {
+	left: 100px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 250px;
+
+	-webkit-transform: rotate(0deg);
+	-moz-transform: rotate(0deg);
+	-o-transform: rotate(0deg);
+	-ms-transform: rotate(0deg);
+	transform: rotate(0deg);
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+.ipad {
+	left: -450px;
+	position: absolute;
+	top: 700px;
+
+	-webkit-transform: rotate(-20deg);
+	-moz-transform: rotate(-20deg);
+	-o-transform: rotate(-20deg);
+	-ms-transform: rotate(-20deg);
+	transform: rotate(-20deg);
+	z-index: 5;
+}
+
+.ipad.animate-in {
+	left: 50px;
+	top: 50px;
+
+	-webkit-transform: rotate(0deg);
+	-moz-transform: rotate(0deg);
+	-o-transform: rotate(0deg);
+	-ms-transform: rotate(0deg);
+	transform: rotate(0deg);
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+.ipad.animate-out {
+	left: -800px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 50px;
+
+	-webkit-transform: rotate(0deg);
+	-moz-transform: rotate(0deg);
+	-o-transform: rotate(0deg);
+	-ms-transform: rotate(0deg);
+	transform: rotate(0deg);
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+.ipad-shadow {
+	left: 30px;
+	top: 508px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	position: absolute;
+
+	-webkit-transition-duration: .5s;
+	-moz-transition-duration: .5s;
+	-o-transition-duration: .5s;
+	-ms-transition-duration: .5s;
+	transition-duration: .5s;
+}
+
+.ipad-shadow.animate-in {
+	left: 30px;
+	top: 508px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: alpha(opacity=100);
+	opacity: 1;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+.ipad-shadow.animate-out {
+	left: -800px;
+	top: 508px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+.slide2 {
+	left: 950px;
+	position: absolute;
+	top: 700px;
+	width: 400px;
+
+	-webkit-transform: rotate(20deg);
+	-moz-transform: rotate(20deg);
+	-o-transform: rotate(20deg);
+	-ms-transform: rotate(20deg);
+	transform: rotate(20deg);
+}
+
+.slide2.animate-in {
+	left: 450px;
+	top: 250px;
+
+	-webkit-transform: rotate(0deg);
+	-moz-transform: rotate(0deg);
+	-o-transform: rotate(0deg);
+	-ms-transform: rotate(0deg);
+	transform: rotate(0deg);
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+.slide2.animate-out {
+	left: 800px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 250px;
+
+	-webkit-transform: rotate(0deg);
+	-moz-transform: rotate(0deg);
+	-o-transform: rotate(0deg);
+	-ms-transform: rotate(0deg);
+	transform: rotate(0deg);
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+.iphone2 {
+	left: 400px;
+	position: absolute;
+	top: -600px;
+	z-index: 3;
+}
+
+.iphone2.animate-in {
+	left: 400px;
+	top: 60px;
+
+	-webkit-transition-duration: 2.5s;
+	-moz-transition-duration: 2.5s;
+	-o-transition-duration: 2.5s;
+	-ms-transition-duration: 2.5s;
+	transition-duration: 2.5s;
+
+	-webkit-transition-timing-function: ease-in;
+	-moz-transition-timing-function: ease-in;
+	-o-transition-timing-function: ease-in;
+	-ms-transition-timing-function: ease-in;
+	transition-timing-function: ease-in;
+}
+
+.iphone2.animate-out {
+	left: 600px;
+	top: 800px;
+
+	-webkit-transition-duration: 2.5s;
+	-moz-transition-duration: 2.5s;
+	-o-transition-duration: 2.5s;
+	-ms-transition-duration: 2.5s;
+	transition-duration: 2.5s;
+
+	-webkit-transform: rotate(100deg);
+	-moz-transform: rotate(100deg);
+	-o-transform: rotate(100deg);
+	-ms-transform: rotate(100deg);
+	transform: rotate(100deg);
+}
+
+.iphone2-shadow {
+	position: absolute;
+	left: 398px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 530px;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+.iphone2-shadow.animate-in {
+	left: 398px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: alpha(opacity=100);
+	opacity: 1;
+	top: 530px;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+
+	-webkit-transition-delay: 1s;
+	-moz-transition-delay: 1s;
+	-o-transition-delay: 1s;
+	-ms-transition-delay: 1s;
+	transition-delay: 1s;
+}
+
+.iphone2-shadow.animate-out {
+	left: 398px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 530px;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+.iphone3-shadow {
+	position: absolute;
+	left: 500px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 507px;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+
+	-webkit-transform: scale(0.9);
+	-moz-transform: scale(0.9);
+	-o-transform: scale(0.9);
+	-ms-transform: scale(0.9);
+	transform: scale(0.9);
+}
+
+.iphone3-shadow.animate-in {
+	left: 500px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: alpha(opacity=100);
+	opacity: 1;
+	top: 507px;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+
+	-webkit-transition-delay: .5s;
+	-moz-transition-delay: .5s;
+	-o-transition-delay: .5s;
+	-ms-transition-delay: .5s;
+	transition-delay: .5s;
+}
+
+.iphone3-shadow.animate-out {
+	left: 500px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 507px;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+
+	-webkit-transform: scale(0.9);
+	-moz-transform: scale(0.9);
+	-o-transform: scale(0.9);
+	-ms-transform: scale(0.9);
+	transform: scale(0.9);
+}
+
+.iphone4-shadow {
+	position: absolute;
+	left: 575px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 485px;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+
+	-webkit-transform: scale(0.8);
+	-moz-transform: scale(0.8);
+	-o-transform: scale(0.8);
+	-ms-transform: scale(0.8);
+	transform: scale(0.8);
+}
+
+.iphone4-shadow.animate-in {
+	left: 575px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: alpha(opacity=100);
+	opacity: 1;
+	top: 485px;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+.iphone4-shadow.animate-out {
+	left: 575px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 485px;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+
+	-webkit-transform: scale(0.8);
+	-moz-transform: scale(0.8);
+	-o-transform: scale(0.8);
+	-ms-transform: scale(0.8);
+	transform: scale(0.8);
+}
+
+.iphone3 {
+	left: 500px;
+	top: -600px;
+	position: absolute;
+
+	-webkit-transform: scale(.9);
+	-moz-transform: scale(.9);
+	-o-transform: scale(.9);
+	-ms-transform: scale(.9);
+	transform: scale(.9);
+	z-index: 2;
+}
+
+.iphone3.animate-in {
+	left: 500px;
+	top: 60px;
+
+	-webkit-transition-duration: 2s;
+	-moz-transition-duration: 2s;
+	-o-transition-duration: 2s;
+	-ms-transition-duration: 2s;
+	transition-duration: 2s;
+
+	-webkit-transition-timing-function: ease-in;
+	-moz-transition-timing-function: ease-in;
+	-o-transition-timing-function: ease-in;
+	-ms-transition-timing-function: ease-in;
+	transition-timing-function: ease-in;
+}
+
+.iphone3.animate-out {
+	left: 700px;
+	top: 800px;
+
+	-webkit-transition-duration: 2s;
+	-moz-transition-duration: 2s;
+	-o-transition-duration: 2s;
+	-ms-transition-duration: 2s;
+	transition-duration: 2s;
+
+	-webkit-transform: rotate(100deg);
+	-moz-transform: rotate(100deg);
+	-o-transform: rotate(100deg);
+	-ms-transform: rotate(100deg);
+	transform: rotate(100deg);
+}
+
+.iphone4 {
+	left: 575px;
+	top: -600px;
+	position: absolute;
+	z-index: 1;
+
+	-webkit-transform: scale(.8);
+	-moz-transform: scale(.8);
+	-o-transform: scale(.8);
+	-ms-transform: scale(.8);
+	transform: scale(.8);
+}
+
+.iphone4.animate-in {
+	left: 575px;
+	top: 60px;
+
+	-webkit-transition-duration: 1.5s;
+	-moz-transition-duration: 1.5s;
+	-o-transition-duration: 1.5s;
+	-ms-transition-duration: 1.5s;
+	transition-duration: 1.5s;
+
+	-webkit-transition-timing-function: ease-in;
+	-moz-transition-timing-function: ease-in;
+	-o-transition-timing-function: ease-in;
+	-ms-transition-timing-function: ease-in;
+	transition-timing-function: ease-in;
+}
+
+.iphone4.animate-out {
+	left: 800px;
+	top: 800px;
+
+	-webkit-transition-duration: 1.5s;
+	-moz-transition-duration: 1.5s;
+	-o-transition-duration: 1.5s;
+	-ms-transition-duration: 1.5s;
+	transition-duration: 1.5s;
+
+	-webkit-transform: rotate(100deg);
+	-moz-transform: rotate(100deg);
+	-o-transform: rotate(100deg);
+	-ms-transform: rotate(100deg);
+	transform: rotate(100deg);
+}
+
+.slide3 {
+	position: absolute;
+	left: -800px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 250px;
+	width: 250px;
+}
+
+.slide3.animate-in {
+	left: 100px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: alpha(opacity=100);
+	opacity: 1;
+	top: 250px;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+
+	-webkit-transition-delay: 1s;
+	-moz-transition-delay: 1s;
+	-o-transition-delay: 1s;
+	-ms-transition-delay: 1s;
+	transition-delay: 1s;
+}
+
+.slide3.animate-out {
+	left: 900px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 250px;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}

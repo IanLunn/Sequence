@@ -1,0 +1,441 @@
+/*
+Theme created for use with Sequence.js (http://www.sequencejs.com/)
+
+Theme:  Sliding Horizontal Parallax
+Version:  0.1 Beta
+Theme Author:  Ian Lunn @IanLunn
+Author URL:  http://www.ianlunn.co.uk/
+Theme URL:  http://www.sequencejs.com/themes/sliding-horizontal-parallax/
+
+This is a FREE theme and is dual licensed under the following: 
+http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
+
+Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
+Aside from these comments, you may modify and distribute this file as you please. Have fun!
+ */
+/* http://meyerweb.com/eric/tools/css/reset/ v2.0 | 20110126 License:  none (public domain) */
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section {
+	display: block;
+}
+
+body {
+	line-height: 1;
+}
+
+ol,ul {
+	list-style: none;
+}
+
+blockquote,q {
+	quotes: none;
+}
+
+blockquote:before,blockquote:after,q:before,q:after {
+	content: '';
+	content: none;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+body {
+	background: url(../images/bg-sky.png) repeat-x #4da5e4;
+	color: white;
+	font-family: 'Play', sans-serif;
+	max-width: 2560px;
+	margin: 0 auto;
+
+	-ms-overflow-x: hidden;
+	overflow-x: hidden;
+}
+
+a {
+	color: white;
+}
+
+#header {
+	height: 750px;
+	position: relative;
+	margin: 0 auto;
+	min-width: 960px;
+	overflow: hidden;
+}
+
+#main {
+	border: none;
+	margin: -100px auto 0 auto;
+	position: relative;
+	z-index: 200;
+}
+
+.next,.prev {
+	color: white;
+	cursor: pointer;
+	display: none;
+	font-size: 80px;
+	font-weight: bold;
+	position: absolute;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+	filter: alpha(opacity=40);
+	opacity: 0.4;
+	top: 280px;
+	height: 41px;
+	width: 39px;
+	z-index: 20;
+
+	-webkit-transition-duration: .4s;
+	-moz-transition-duration: .4s;
+	-o-transition-duration: .4s;
+	-ms-transition-duration: .4s;
+	transition-duration: .4s;
+}
+
+.prev {
+	left: 40px;
+	position: absolute;
+}
+
+.next {
+	position: absolute;
+	right: 40px;
+}
+
+.next:hover,.prev:hover {
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: alpha(opacity=100);
+	opacity: 1;
+
+	-webkit-transform: scale(1.2);
+	-moz-transform: scale(1.2);
+	-o-transform: scale(1.2);
+	-ms-transform: scale(1.2);
+	transform: scale(1.2);
+
+	-webkit-transition-duration: .4s;
+	-moz-transition-duration: .4s;
+	-o-transition-duration: .4s;
+	-ms-transition-duration: .4s;
+	transition-duration: .4s;
+}
+
+#slideshow * {
+	-webkit-backface-visibility: hidden;
+}
+
+#slideshow li > * {
+	position: absolute;
+}
+
+#slideshow {
+	height: 600px;
+	margin: 0 auto;
+	position: relative;
+	max-width: 1400px;
+}
+
+h2 {
+	font-size: 1.5em;
+	line-height: 1.2em;
+}
+
+.info {
+	color: black;
+	font-size: 1em;
+	right: 150%;
+	line-height: 1.2em;
+	top: 270px;
+	width: 25%;
+	z-index: 10;
+	vertical-align: middle;
+	-webkit-transition-duration: 4s;
+	-moz-transition-duration: 4s;
+	-o-transition-duration: 4s;
+	-ms-transition-duration: 4s;
+	transition-duration: 4s;
+}
+
+.info.animate-in {
+	right: 15%;
+	-webkit-transition-duration: 4s;
+	-moz-transition-duration: 4s;
+	-o-transition-duration: 4s;
+	-ms-transition-duration: 4s;
+	transition-duration: 4s;
+}
+
+.info.animate-out {
+	right: -150%;
+	-webkit-transition-duration: 4s;
+	-moz-transition-duration: 4s;
+	-o-transition-duration: 4s;
+	-ms-transition-duration: 4s;
+	transition-duration: 4s;
+}
+
+.balloon {
+	left: -140%;
+	top: 200px;
+	max-width: 40%;
+
+	-webkit-transition-property: left top;
+	-moz-transition-property: left top;
+	-o-transition-property: left top;
+	-ms-transition-property: left top;
+	transition-property: left top;
+	z-index: 6;
+}
+
+.balloon.animate-in {
+	left: 15%;
+	top: 70px;
+
+	-webkit-transition-duration: 4s;
+	-moz-transition-duration: 4s;
+	-o-transition-duration: 4s;
+	-ms-transition-duration: 4s;
+	transition-duration: 4s;
+
+	-webkit-transition-property: left top;
+	-moz-transition-property: left top;
+	-o-transition-property: left top;
+	-ms-transition-property: left top;
+	transition-property: left top;
+	z-index: 4;
+}
+
+.balloon.animate-out {
+	left: 140%;
+	top: -30px;
+
+	-webkit-transition-duration: 4s;
+	-moz-transition-duration: 4s;
+	-o-transition-duration: 4s;
+	-ms-transition-duration: 4s;
+	transition-duration: 4s;
+
+	-webkit-transition-property: left top;
+	-moz-transition-property: left top;
+	-o-transition-property: left top;
+	-ms-transition-property: left top;
+	transition-property: left top;
+	z-index: 2;
+}
+
+.aeroplane {
+	left: -50%;
+	max-width: 40%;
+	top: 800px;
+
+	-webkit-transition-property: left top;
+	-moz-transition-property: left top;
+	-o-transition-property: left top;
+	-ms-transition-property: left top;
+	transition-property: left top;
+	z-index: 6;
+}
+
+.aeroplane.animate-in {
+	left: 10%;
+	top: 100px;
+
+	-webkit-transform: rotate(20deg);
+	-moz-transform: rotate(20deg);
+	-o-transform: rotate(20deg);
+	-ms-transform: rotate(20deg);
+	transform: rotate(20deg);
+
+	-webkit-transition-duration: 4s;
+	-moz-transition-duration: 4s;
+	-o-transition-duration: 4s;
+	-ms-transition-duration: 4s;
+	transition-duration: 4s;
+
+	-webkit-transition-property: left top -webkit-transform;
+	-moz-transition-property: left top -moz-transform;
+	-o-transition-property: left top -o-transform;
+	-ms-transition-property: left top -ms-transform;
+	transition-property: left top transform;
+	z-index: 4;
+}
+
+.aeroplane.animate-out {
+	left: 70%;
+	top: -900px;
+
+	-webkit-transform: rotate(40deg);
+	-moz-transform: rotate(40deg);
+	-o-transform: rotate(40deg);
+	-ms-transform: rotate(40deg);
+	transform: rotate(40deg);
+
+	-webkit-transition-duration: 4s;
+	-moz-transition-duration: 4s;
+	-o-transition-duration: 4s;
+	-ms-transition-duration: 4s;
+	transition-duration: 4s;
+
+	-webkit-transition-property: left top -webkit-transform;
+	-moz-transition-property: left top -moz-transform;
+	-o-transition-property: left top -o-transform;
+	-ms-transition-property: left top -ms-transform;
+	transition-property: left top transform;
+	z-index: 2;
+}
+
+.sky {
+	left: -6%;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 0;
+	vertical-align: middle;
+
+	-webkit-transition-property: left top;
+	-moz-transition-property: left top;
+	-o-transition-property: left top;
+	-ms-transition-property: left top;
+	transition-property: left top;
+	z-index: 1;
+}
+
+.sky.animate-in {
+	left: 0%;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: alpha(opacity=100);
+	opacity: 1;
+	top: 0px;
+
+	-webkit-transition-duration: 4s;
+	-moz-transition-duration: 4s;
+	-o-transition-duration: 4s;
+	-ms-transition-duration: 4s;
+	transition-duration: 4s;
+
+	-webkit-transition-property: left top;
+	-moz-transition-property: left top;
+	-o-transition-property: left top;
+	-ms-transition-property: left top;
+	transition-property: left top;
+	z-index: 1;
+}
+
+.sky.animate-out {
+	left: 6%;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 0;
+
+	-webkit-transition-duration: 4s;
+	-moz-transition-duration: 4s;
+	-o-transition-duration: 4s;
+	-ms-transition-duration: 4s;
+	transition-duration: 4s;
+
+	-webkit-transition-property: left top;
+	-moz-transition-property: left top;
+	-o-transition-property: left top;
+	-ms-transition-property: left top;
+	transition-property: left top;
+	z-index: 1;
+}
+
+.kite {
+	left: -30%;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	max-width: 40%;
+	top: 300px;
+
+	-webkit-transition-property: left top;
+	-moz-transition-property: left top;
+	-o-transition-property: left top;
+	-ms-transition-property: left top;
+	transition-property: left top;
+
+	-webkit-transform-origin: 100% 100%;
+	-moz-transform-origin: 100% 100%;
+	-o-transform-origin: 100% 100%;
+	-ms-transform-origin: 100% 100%;
+	transform-origin: 100% 100%;
+	z-index: 6;
+}
+
+.kite.animate-in {
+	left: -15%;
+	top: 300px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: alpha(opacity=100);
+	opacity: 1;
+
+	-webkit-transform: rotate(80deg);
+	-moz-transform: rotate(80deg);
+	-o-transform: rotate(80deg);
+	-ms-transform: rotate(80deg);
+	transform: rotate(80deg);
+
+	-webkit-transform-origin: 100% 100%;
+	-moz-transform-origin: 100% 100%;
+	-o-transform-origin: 100% 100%;
+	-ms-transform-origin: 100% 100%;
+	transform-origin: 100% 100%;
+
+	-webkit-transition-duration: 4s;
+	-moz-transition-duration: 4s;
+	-o-transition-duration: 4s;
+	-ms-transition-duration: 4s;
+	transition-duration: 4s;
+
+	-webkit-transition-property: left top -webkit-transform;
+	-moz-transition-property: left top -moz-transform;
+	-o-transition-property: left top -o-transform;
+	-ms-transition-property: left top -ms-transform;
+	transition-property: left top transform;
+	z-index: 4;
+}
+
+.kite.animate-out {
+	left: -15%;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+	top: 300px;
+
+	-webkit-transform: rotate(200deg);
+	-moz-transform: rotate(200deg);
+	-o-transform: rotate(200deg);
+	-ms-transform: rotate(200deg);
+	transform: rotate(200deg);
+
+	-webkit-transform-origin: 100% 100%;
+	-moz-transform-origin: 100% 100%;
+	-o-transform-origin: 100% 100%;
+	-ms-transform-origin: 100% 100%;
+	transform-origin: 100% 100%;
+
+	-webkit-transition-duration: 3s;
+	-moz-transition-duration: 3s;
+	-o-transition-duration: 3s;
+	-ms-transition-duration: 3s;
+	transition-duration: 3s;
+
+	-webkit-transition-property: left top -webkit-transform;
+	-moz-transition-property: left top -moz-transform;
+	-o-transition-property: left top -o-transform;
+	-ms-transition-property: left top -ms-transform;
+	transition-property: left top transform;
+	z-index: 2;
+}

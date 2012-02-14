@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8 />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Sequence Theme Demo - Sliding Horizontal Parallax</title>
+	<link rel="stylesheet" type="text/css" media="screen" href="../../demo-assets/css/demo-styles.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="css/sequencejs-theme.sliding-horizontal-parallax.css" />
+	<link href="http://fonts.googleapis.com/css?family=Play:400,700" rel="stylesheet" type="text/css">
+	
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/javascript">
+	if (typeof jQuery == 'undefined'){
+	    document.write(unescape("%3Cscript src=../../scripts/jquery.js type='text/javascript'%3E%3C/script%3E"));
+	}
+	</script>
+	<script type="text/javascript" src="../../scripts/sequence.jquery-min.js"></script>
+	<script type="text/javascript">	
+		$(document).ready(function(){
+			var options = {
+				autoPlay: false,
+				autoPlayDirection: 1,
+				nextButton: ".next",
+				prevButton: ".prev",
+				prependNextButton: false,
+				prependPrevButton: false,
+				pauseIcon: false,
+				animateStartingFrameIn: false, 
+				delayDuringOutInTransitions: false
+			};
+
+			var slideShow = $("#slideshow").sequence(options).data("sequence");
+			
+			$(".prev, .next").show();
+		})
+	</script>
+	
+	<script type="text/javascript">
+	
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-11991680-3']);
+	  _gaq.push(['_trackPageview']);
+	
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	
+	</script>
+</head>
+<body>
+	
+	<!--code for the demo overlay and details, not needed for the demo to work-->
+		<iframe id="twttrHubFrame" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" name="twttrHubFrame" style="position: absolute; top: -9999em; width: 10px; height: 10px; " src="http://platform.twitter.com/widgets/hub.1326407570.html"></iframe>
+	    <div id="demo-details" class="bottom">
+	        <div id="demo-links" class="float-left">
+	        	<ul>
+	            	<li><h1><a class="no-underline" href="http://www.sequencejs.com/" title="Sequence Homepage">A <img class="logo-small" src="../../demo-assets/images/sequence-logo-small.png" alt="Sequence" /> Theme</a>: <a href="#" title="Sliding Horizontal Parallax">Sliding Horizontal Parallax</a></h1></li>
+	            </ul>
+	        </div>  
+	        <ul id="share">
+	            <li class="twitter"><a href="https://twitter.com/share" class="twitter-share-button" data-via="IanLunn" data-related="IanLunn" data-count="none">Tweet</a>
+	            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></li> 
+	            <li class="facebook"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.sequencejs.com%2Fthemes%2Fsliding-horizontal-parallax%2F&amp;layout=button_count&amp;show_faces=false&amp;width=100&amp;action=like&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:50px; height:21px;" allowTransparency="true"></iframe></li>
+	            <li class="twitter"><g:plusone size="medium" annotation="none"></g:plusone></li>
+	            <li class="hire">A product of <a href="http://www.ianlunn.co.uk/" title="Hire Ian Lunn Design"><img src="http://www.ianlunn.co.uk//demo-assets/hire-ian.png" alt="Hire Ian Lunn Design"></a></li>
+	        </ul>
+	    </div>
+	<!--//code for the demo overlay and details, not needed for the demo to work--> 
+	
+	<div id="header">
+		<div id="slideshow">
+			<img class="prev" src="images/bt-prev.png" alt="Previous" />
+			<img class="next" src="images/bt-next.png" alt="Next" />
+			<ul>
+				<li>
+					<div class="info animate-in">
+						<h2>Built using Sequence.js</h2>
+						<p>The jQuery Slider Plugin with Infinite Style</p>
+					</div>
+					<img class="sky animate-in" src="images/bg-clouds.png" alt="Blue Sky" />
+					<img class="balloon animate-in" src="images/balloon.png" alt="Balloon" />
+				</li>
+				<li>
+					<div class="info">
+						<h2>Creative Control</h2>
+						<p>Create unique sliders using CSS3 transitions -- no jQuery knowledge required!</p>
+					</div>
+					<img class="sky" src="images/bg-clouds.png" alt="Blue Sky" />
+					<img class="aeroplane" src="images/aeroplane.png" alt="Aeroplane" />
+				</li>
+				<li>
+					<div class="info">
+						<h2>Cutting Edge</h2>
+						<p>Supports modern browsers, old browsers (IE7+), touch devices and responsive designs</p>
+					</div>
+					<img class="sky" src="images/bg-clouds.png" alt="Blue Sky" />
+					<img class="kite" src="images/kite.png" alt="Kite" />
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div id="main">
+		<div id="content">
+			<img src="images/sequence-logo.png" alt="Sequence" />
+			<p>Sequence is the jQuery slider plugin with infinite style. It provides the complete functionality for a website slider without forcing you to use a set theme. In fact, Sequence has no in-built theme, leaving you complete creative control to build a unique slider using only CSS3 -- no jQuery knowledge required!</p>
+			<ul id="product-links">
+				<li><a href="#" title="Sequence">Download Sequence ></a></li>
+				<li><a href="#" title="Download Sliding Horizontal Parallax Sequence Theme">Download Theme ></a></li>
+				<li><a href="http://www.sequencejs.com/" title="More themes">More unique themes ></a></li>
+			</ul>
+		</div>
+		<div id="aside">
+			<h3>Sequence Features</h3>
+			<ul id="features">
+				<li>Unique transition styles created using CSS3</li>
+				<li>Supports all modern browsers</li>
+				<li>Gracefully degrades in older browsers</li>
+				<li>Supports touch devices and swiping</li>
+				<li>Supports responsive layouts</li>
+				<li>20+ options (and more to come!)</li>
+			</ul>
+			<small>Images courtesy of <a href="http://www.sxc.hu/" title="Free Stock Images">sxc.hu</a></small>
+		</div>
+		<div class="clear"></div>
+		<div id="footer">
+			<small><a href="http://www.sequencejs.com/" title="SequenceJS.com">SequenceJS.com</a>, the sequence.js script and its dependencies are &copy; 2012 <a href="http://www.ianlunn.co.uk/" title="Ian Lunn Design">Ian Lunn Design</a> unless otherwise specified.</small>
+			<ul>
+				<li>
+					<div class="twitter-follow-button">For updates: <a href="https://twitter.com/IanLunn" class="twitter-follow-button" data-show-count="false">Follow @IanLunn</a>
+					<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<script type="text/javascript">
+	  window.___gcfg = {lang: 'en-GB'};
+	
+	  (function() {
+	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+	    po.src = 'https://apis.google.com/js/plusone.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+	  })();
+	</script>
+	</body>
+</html>
+
