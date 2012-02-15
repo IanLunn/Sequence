@@ -44,9 +44,8 @@ Aside from these comments, you may modify and distribute this file as you please
 		this.transitionsSupported = (this.prefix != undefined) ? true : false, //determine if transitions are supported
 		this.hasTouch = ("ontouchstart" in window) ? true : false, //determine if this is a touch enabled device
 		this.sequenceTimer,
-		this.hoverEvent,
-		this.sequence.children("li").children().removeClass("animate-in");
-		
+		this.hoverEvent;
+
 		this.init = {
 			navButtons: function(optionButton, direction){
 				prependNextButtonTo = (self.settings.prependNextButton == true) ? self.container : self.settings.prependNextButton;
@@ -135,11 +134,12 @@ Aside from these comments, you may modify and distribute this file as you please
 			this.settings.calculatedSwipeThreshold = self.container.width() * (this.settings.swipeThreshold / 100);
 		}
 		this.settings.pauseIcon = this.init.pauseIcon(this.settings.pauseIcon, this.settings.pauseIconSrc);
-	
+		
 		this.currentFrame = this.sequence.children("li:nth-child("+this.settings.startingFrameID+")").addClass("current");	
 		this.currentFrameChildren = this.currentFrame.children();
 		this.currentFrameID = this.settings.startingFrameID;
 		this.nextFrameID;
+		this.sequence.children("li").children().removeClass("animate-in");
 		
 		this.sequence.css({"width": "100%", "height": "100%"}); //set the sequence list to 100% width/height just incase it hasn't been specified in the CSS
 		
@@ -186,13 +186,15 @@ Aside from these comments, you may modify and distribute this file as you please
 				
 				whenFirstAnimateInEnds();
 			}else{
-				this.active = true;				
-				self.modifyElements(self.currentFrameChildren, "");
-				self.currentFrameChildren.addClass("animate-in");
+				this.active = true;	
+				setTimeout(function(){			
+					self.modifyElements(self.currentFrameChildren, "");
+					self.currentFrameChildren.addClass("animate-in");
+				}, 100);
 				
 				whenFirstAnimateInEnds();
 			}
-		}else{ //initiate a basic framer for browsers that don't support CSS3 transitions
+		}else{ //initiate a basic slider for browsers that don't support CSS3 transitions
 			this.sequence.children("li").children().addClass("animate-in");
 			this.currentFrame.css("z-index", this.numberOfFrames);
 			this.sequence.children(":not(li:nth-child("+this.settings.startingFrameID+"))").css({"display": "none", "opacity": 0});
