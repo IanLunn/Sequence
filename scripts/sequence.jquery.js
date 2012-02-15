@@ -140,6 +140,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		this.currentFrameID = this.settings.startingFrameID;
 		this.nextFrameID;
 		this.sequence.children("li").children().removeClass("animate-in");
+		this.direction;
 		
 		this.sequence.css({"width": "100%", "height": "100%"}); //set the sequence list to 100% width/height just incase it hasn't been specified in the CSS
 		
@@ -389,7 +390,9 @@ Aside from these comments, you may modify and distribute this file as you please
 				nextFrame = self.sequence.children("li:nth-child("+id+")"); //grab the next frame
 				
 				if(direction == undefined){ //if no direction is specified...
-					direction = (id > self.currentFrameID) ? 1 : -1; //work out which way to go based on what frame is currently active
+					self.direction = (id > self.currentFrameID) ? 1 : -1; //work out which way to go based on what frame is currently active
+				}else{
+					self.direction = direction;
 				}
 				
 				frameChildren = self.currentFrame.children(); //save the child elements
@@ -397,9 +400,9 @@ Aside from these comments, you may modify and distribute this file as you please
 				
 				if(self.transitionsSupported){ //if the browser supports CSS3 transitions...
 					self.settings.beforeCurrentFrameAnimatesOut();		
-					self.animateOut(direction);
+					self.animateOut(self.direction);
 					animateIn = function(){
-						self.animateIn(direction);
+						self.animateIn(self.direction);
 						self.currentFrameID = id;
 					}
 						
