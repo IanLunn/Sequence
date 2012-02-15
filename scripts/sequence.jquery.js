@@ -569,7 +569,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		animatestartingFrameIn: false,
 		autoPlayDelay: 5000,
 		pauseOnHover: true,
-		pauseIcon: ".pause-icon",
+		pauseIcon: false,
 		prependPauseIcon: true,
 		pauseIconSrc: "images/pause-icon.png",
 		keysNavigate: true,
