@@ -16,11 +16,12 @@
 	    document.write(unescape("%3Cscript src='http://www.sequencejs.com/scripts/jquery.js' type='text/javascript'%3E%3C/script%3E"));
 	}
 	</script>
-	<script type="text/javascript" src="../../scripts/sequence.jquery-min.js"></script>
+	<script type="text/javascript" src="../../scripts/sequence.jquery.js"></script>
 	<script type="text/javascript">	
 		$(document).ready(function(){
 			var options = {
-				autoPlay: false,
+				autoPlay: true,
+				autoPlayDirection: -1,
 				nextButton: ".next",
 				prevButton: ".prev",
 				keysNavigate: true,
@@ -29,7 +30,9 @@
 				pauseIcon: false,
 				animateStartingFrameIn: true,
 				delayDuringOutInTransitions: 500,
-				touchEnabled: false
+				touchEnabled: false,
+				startingFrameID: 2,
+				cycle: false
 			};
 
 			var sequence = $("#sequence").sequence(options).data("sequence");

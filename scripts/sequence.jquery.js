@@ -44,6 +44,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		this.transitionsSupported = (this.prefix != undefined) ? true : false, //determine if transitions are supported
 		this.hasTouch = ("ontouchstart" in window) ? true : false, //determine if this is a touch enabled device
 		this.sequenceTimer,
+		this.paused = false,
 		this.hoverEvent;
 
 		this.init = {
@@ -334,6 +335,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		startAutoPlay: function(wait, newAutoPlayDelay){
 			var self = this;
+			console.log("started");
 			wait = (wait == undefined) ? 0 : wait;
 			self.settings.autoPlayDelay = (newAutoPlayDelay == undefined) ? self.settings.autoPlayDelay : newAutoPlayDelay;
 			self.settings.autoPlay = true;
@@ -367,16 +369,34 @@ Aside from these comments, you may modify and distribute this file as you please
 		next: function(){
 			var self = this;
 			if(!self.active){
-				self.nextFrameID = (self.currentFrame.index() + 1 != self.numberOfFrames) ? self.currentFrameID + 1 : 1;
-				self.goTo(self.nextFrameID, 1); //go to the next frame
+				if(self.settings.cycle || (!self.settings.cycle && self.currentFrame.index() + 1 != self.numberOfFrames)){
+					if(self.paused){
+						self.paused = false;
+						self.startAutoPlay();
+					}
+					self.nextFrameID = (self.currentFrame.index() + 1 != self.numberOfFrames) ? self.currentFrameID + 1 : 1;
+					self.goTo(self.nextFrameID, 1); //go to the next frame
+				}else if(self.settings.autoPlayDirection == 1){
+					self.paused = true;
+					self.stopAutoPlay();
+				}
 			}
 		},
 		
 		prev: function(){
 			var self = this;
 			if(!self.active){
-				self.nextFrameID = (self.currentFrame.index() + 1 == 1) ? self.numberOfFrames : self.currentFrameID - 1;
-				self.goTo(self.nextFrameID, -1); //go to the prev frame
+				if(self.settings.cycle || (!self.settings.cycle && self.currentFrame.index() + 1 != 1)){
+					if(self.paused){
+						self.paused = false;
+						self.startAutoPlay();
+					}
+					self.nextFrameID = (self.currentFrame.index() + 1 == 1) ? self.numberOfFrames : self.currentFrameID - 1;
+					self.goTo(self.nextFrameID, -1); //go to the prev frame
+				}else if(self.settings.autoPlayDirection == -1){
+					self.paused = true;
+					self.stopAutoPlay();
+				}
 			}
 		},
 		
@@ -579,6 +599,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		delayDuringOutInTransitions: 1000,
 		touchEnabled: true,
 		swipeThreshold: 15,
+		cycle: true,
 		
 		fallbackTheme: {
 			speed: 500
