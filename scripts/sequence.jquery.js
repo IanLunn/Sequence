@@ -139,7 +139,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		this.currentFrame = this.sequence.children("li:nth-child("+this.settings.startingFrameID+")").addClass("current");	
 		this.currentFrameChildren = this.currentFrame.children();
 		this.currentFrameID = this.settings.startingFrameID;
-		this.nextFrameID;
+		this.nextFrameID = this.currentFrameID;
 		this.sequence.children("li").children().removeClass("animate-in");
 		this.direction;
 		
@@ -189,6 +189,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				whenFirstAnimateInEnds();
 			}else{
 				this.active = true;	
+				self.settings.beforeCurrentFrameAnimatesIn();
 				setTimeout(function(){			
 					self.modifyElements(self.currentFrameChildren, "");
 					self.currentFrameChildren.addClass("animate-in");
@@ -335,7 +336,6 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		startAutoPlay: function(wait, newAutoPlayDelay){
 			var self = this;
-			console.log("started");
 			wait = (wait == undefined) ? 0 : wait;
 			self.settings.autoPlayDelay = (newAutoPlayDelay == undefined) ? self.settings.autoPlayDelay : newAutoPlayDelay;
 			self.settings.autoPlay = true;
@@ -402,6 +402,11 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		goTo: function(id, direction){ //where the magic happens
 			var self = this;
+			if(id == self.numberOfFrames){
+				self.settings.beforeLastFrameAnimatesIn();
+			}else if(id == 1){
+				self.settings.beforeFirstFrameAnimatesIn();
+			}
 			if(id == self.currentFrame.index() + 1){
 				return false;
 			}else if(!self.active){ //if there are no animations running...
@@ -467,15 +472,20 @@ Aside from these comments, you may modify and distribute this file as you please
 				
 				//make the current frames elements animate out
 				self.modifyElements(frameChildren, "");
-				frameChildren.addClass("animate-out").removeClass("animate-in");
+				if(!self.settings.disableAnimateOut){
+					frameChildren.addClass("animate-out").removeClass("animate-in");
+				}
 			}
 			
 			if(direction == -1){ //if the user hit prev button
-				self.modifyElements(nextFrameChildren, "0s");
-				nextFrameChildren.addClass("animate-out");
-				
+				self.modifyElements(nextFrameChildren, "0s");	
+				if(!self.settings.disableAnimateOut){				
+					nextFrameChildren.addClass("animate-out");		
+				}else{
+					self.active = false;
+				}
 				self.modifyElements(frameChildren, "");
-				
+					
 				frameChildren.each(function(){
 					if(self.prefix == "-o-"){
 						selector = "." + $(this).attr("class").replace(" ", ".");
@@ -488,6 +498,7 @@ Aside from these comments, you may modify and distribute this file as you please
 						self.transitionProperties["transition-delay"] = $(this).css(self.prefix + "transition-delay");
 					}
 					
+
 					$(this).css(
 						self.prefixCSS(self.prefix, self.transitionProperties)
 					).removeClass("animate-in");
@@ -537,7 +548,6 @@ Aside from these comments, you may modify and distribute this file as you please
 			if(direction == 1){ //if user hit next button...
 				//reset the position of the next frames elements ready for animating in again
 				self.modifyElements(nextFrameChildren, "0s");
-				
 				nextFrameChildren.removeClass("animate-out");
 				
 				setTimeout(function(){
@@ -559,6 +569,12 @@ Aside from these comments, you may modify and distribute this file as you please
 			whenAnimationEnds = function(){
 				unbind = function(){
 					self.settings.afterNextFrameAnimatesIn();
+					
+					if(self.currentFrameID == self.numberOfFrames){
+						self.settings.afterLastFrameAnimatesIn();
+					}else if(self.currentFrameID == 1){
+						self.settings.afterFirstFrameAnimatesIn();
+					}
 					self.currentFrame.unbind(self.transitionEnd); //unbind waiting for the frame to finish as it's no longer needed
 					self.active = false; //set the sequence as inactive to allow the next frames to be activated
 					if(self.settings.autoPlay){
@@ -600,6 +616,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		touchEnabled: true,
 		swipeThreshold: 15,
 		cycle: true,
+		disableAnimateOut: false,
 		
 		fallbackTheme: {
 			speed: 500
@@ -608,9 +625,11 @@ Aside from these comments, you may modify and distribute this file as you please
 		beforeCurrentFrameAnimatesOut: function(){},	//triggers before current frame begins to animate out
 		beforeNextFrameAnimatesIn: function(){},		//triggers before next frame begins to animate in
 		afterNextFrameAnimatesIn: function(){},			//triggers after next frame animates in (and becomes the current frame)
-		beforeCurrentFrameAnimatesIn: function(){}
-	}; /* default options end */
-	
+		beforeCurrentFrameAnimatesIn: function(){},
+		beforeFirstFrameAnimatesIn: function(){},		//triggers before the first frame animates in
+		afterFirstFrameAnimatesIn: function(){},		//triggers after the first frame animates in
+		beforeLastFrameAnimatesIn: function(){},		//triggers before the last frame animates in
+		afterLastFrameAnimatesIn: function(){}			//triggers after the last frame animates in
+	};
 	$.fn.sequence.settings = {};
-	
 })(jQuery);

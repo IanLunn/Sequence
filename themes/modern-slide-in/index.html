@@ -10,7 +10,7 @@
 	<!--[if lt IE 8]><link rel="stylesheet" type="text/css" media="screen" href="css/sequencejs-theme.modern-slide-in.ie.css" /><![endif]-->
 	<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Ruluko|Sirin+Stencil'>
 	
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery-min.js"></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script type="text/javascript">
 	if (typeof jQuery == 'undefined'){
 	    document.write(unescape("%3Cscript src='http://www.sequencejs.com/scripts/jquery.js' type='text/javascript'%3E%3C/script%3E"));
@@ -31,8 +31,8 @@
 				animateStartingFrameIn: true,
 				delayDuringOutInTransitions: 500,
 				touchEnabled: false,
-				startingFrameID: 2,
-				cycle: false
+				startingFrameID: 1,
+				cycle: true
 			};
 
 			var sequence = $("#sequence").sequence(options).data("sequence");
