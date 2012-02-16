@@ -4,12 +4,14 @@ Sequence is the jQuery slider plugin with infinite style. It provides the comple
 ##Features
 - Unique transition styles created using CSS3
 - Supports all modern browsers
-- Gracefully degrades in older browsers
+- Gracefully degrades in older browsers*
 - Supports responsive layouts
 - Supports touch devices and swiping
 - Many developer features with even more to come
 - Semantic and easy to use markup
 - Open source
+
+*Tested down to Firefox 3.6 and IE7. Extensive support details to come
 
 ##Theme Demos
 - [Modern Slide In](http://www.sequencejs.com/themes/modern-slide-in/)
