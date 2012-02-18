@@ -1,0 +1,735 @@
+
+		<div id="content">
+			<div class="aside left">
+				<ol>
+					<li><a href="#basic-setup" title="Basic Setup">Basic Setup</a>
+						<ol>
+							<li><a href="#add-files" title="Add Files">Add Files</a></li>
+							<li><a href="#initiate" title="Initiate Sequence">Initiate Sequence</a></li>
+							<li><a href="#add-html" title="Add HTML">Add an HTML Slider</a></li>
+							<li><a href="#add-content" title="Add Content">Add some Content</a></li>
+							<li><a href="#no-js" title="Setup a No-JS Fallback">Setup a No-JS Fallback</a></li>
+						</ol>
+					<li><a href="#animated-theme" title="Creating an Animated Theme">Creating an Animated Theme</a>
+						<ol>
+							<li><a href="#sequence-container" title="Setting up the Sequence Container and Frames">Setting up a Container and Frames</a></li>
+							<li><a href="#sequence-animations" title="How Sequence's Animations Work">How Sequence's Animations Work</a></li>
+							<li><a href="#animating-backwards" title="Animating Backwards">Animating Backwards</a></li>
+							<li><a href="#animating-transitions" title="Animating Using CSS3 Transitions">Animating Using CSS3 Transitions</a></li>
+							<li><a href="#animating-examples" title="Animation Examples">Animation Examples</a></li>
+						</ol>
+					</li>
+					<li><a href="#developers" title="Developer's Options">Developer's Options</a>
+						<ol>
+							<li><a href="#options" title="Options">Options</a>
+								<ol>
+									<li><a href="#options-list" title="List of Options">List of Options</a></li>
+									<li><a href="#options-fallback" title="Fallback Theme Options">Fallback Theme Options</a></li>
+								</ol>
+							</li>
+							<li><a href="#callbacks" title="Callbacks">Callbacks</a>
+								<ol>
+									<li><a href="#callbacks-list" title="List of Callbacks">List of Callbacks</a></li>
+									<li><a href="#callbacks-using" title="Using Callbacks">Using Callbacks</a></li>
+								</ol>
+							</li>
+							<li><a href="#methods" title="Public Methods">Public Methods</a>
+								<ol>
+									<li><a href="#methods-functions" title="Public Functions">Public Functions</a></li>
+									<li><a href="#methods-variables" title="Public Variables">Public Variables</a></li>
+								</ol>
+							</li>
+						</ol>
+					</li>
+					<li><a href="#tips-tricks" title="Tips and Tricks">Tips and Tricks</a>
+						<ol>
+							<li><a href="#tips-prefixing" title="Vendor Prefixing">Vendor Prefixing</a></li>
+						</ol>
+					</li>
+				</ol>
+			</div>
+			<div class="main">
+				<h1 id="documentation">Documentation</h1>
+				<h2 id="basic-setup">Basic Set Up</h2>
+				<h3 id="add-files">Add Files</h3>
+				
+				<p>Place a link to jQuery and the sequence.js file in the <code>&lt;head&gt;</code> of your document:</p>
+				
+<pre><code>&lt;script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="scripts/sequence.js"&gt;&lt;/script&gt;</code></pre>
+				
+				<h3 id="initiate">Initiate Sequence</h3>
+				
+				<p>Once you&#8217;ve added the necessary files for Sequence, within the <code>&lt;head&gt;</code> of your document, inititate an instance of Sequence like so:</p>
+				
+<pre><code>&lt;script type="text/javascript"&gt; 
+    $(document).ready(function(){
+        var sequence = $("#sequence").sequence(options);
+    }
+&lt;/script&gt;</code></pre>
+				
+				<p>Let&#8217;s break this down:</p>
+				
+				<p>Firstly, we are saving an instance of Sequence into a variable (&#8220;var&#8221;) called <code>sequence</code>. The variable name is entirely up to you and, if necessary, will allow us to interact with Sequence via custom JavaScript which is explained in the <a href="#developers" title="Developer's Options">Developer Option&#8217;s</a>.</p>
+				
+				<p>After the variable name, we specify a jQuery selector <code>$("#sequence")</code>, which is the element we want to act as the Sequence container. We will create a <code>div</code> in the HTML shortly with an ID of &#8220;sequence&#8221;.</p>
+				
+				<p>The Sequence function (<code>.sequence(options)</code>), will accept many options that allow for modifying how Sequence works. These options are explained in the <a href="#developers" title="Developer's Options">Developer Option&#8217;s</a> section. If options are not specified, Sequence will rely on its default settings.</p>
+				
+				<p>It is possible to place multiple instances of Sequence on the same page, like so:</p>
+				
+<pre><code>&lt;script type="text/javascript"&gt; 
+    $(document).ready(function(){
+        var sequence = $("#sequence").sequence(options);
+        var sequence2 = $("#sequence2").sequence(options2);
+    }
+&lt;/script&gt;</code></pre>
+				
+				<h3 id="add-html">Add an HTML Slider</h3>
+				
+				<p>Add Sequence&#8217;s simple HTML structure like so:</p>
+				
+<pre><code>&lt;div id="sequence"&gt;
+    &lt;ul&gt;
+        &lt;li&gt;
+            &lt;!--Frame 1 content here--&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+            &lt;!--Frame 2 content here--&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+            &lt;!--Frame 3 content here--&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+				
+				<p>Sequence consists of a container (a div with a unique ID) and an unordered list. Sequence refers to each list item within that unordered list as a &#8220;frame&#8221;. Frames hold the content of your Sequence slider.</p>
+				
+				<h3 id="add-content">Add Content</h3>
+				
+				<p>To add content to a frame, simply put HTML within each list item:</p>
+				
+<pre><code>&lt;div id="sequence"&gt;
+    &lt;ul&gt;
+        &lt;li&gt;
+            &lt;div class="info1"&gt;
+                &lt;p&gt;Frame 1&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+            &lt;div class="info2"&gt;
+                &lt;p&gt;Frame 2&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+            &lt;div class="info3"&gt;
+                &lt;p&gt;Frame 3&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;  </code></pre>
+				
+				<p>Here we&#8217;ve added a <code>div</code> to each frame with unique classes. We will shortly write some CSS that will allow each <code>div</code> to animate in and out of the Sequence container.</p>
+				
+				<p>Note that each frame can contain as many elements as necessary but only first level elements will be animated by Sequence.</p>
+				
+				<h3 id="no-js">Setup a No-JavaScript Fallback</h3>
+				
+				<p>In a small percentage of browsers, JavaScript may be disabled which is the technology Sequence is built upon. To prevent an empty container from showing, nominate a frame to be displayed by giving each of its content elements a class of &#8220;animate-in&#8221;:</p>
+				
+<pre><code>&lt;div id="sequence"&gt;
+    &lt;ul&gt;
+        &lt;li&gt;
+            &lt;div class="info1 animate-in"&gt;
+                &lt;p&gt;Frame 1 information&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;img class="my-image animate-in" src="my-image.jpg" alt="An image of me" /&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+            &lt;div class="info2"&gt;
+                &lt;p&gt;Frame 2 information&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/li&gt;
+        &lt;li&gt;
+            &lt;div class="info3"&gt;
+                &lt;p&gt;Frame 3 information&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+				
+				<p>Here we&#8217;ve nominated the first frame to be displayed if JavaScript is disabled. I&#8217;ve added an image to the first frame to demonstrate that each content element within the nominated frame should be given the &#8220;animate-in&#8221; class.</p>
+				
+				<h2 id="animated-theme">Creating an Animated Theme using CSS3</h2>
+				
+				<h3 id="sequence-container">Setting up the Sequence Container and Frames</h3>
+				
+				<p>Let&#8217;s start by styling our Sequence container:</p>
+				
+<pre><code>#sequence{
+    border: black solid 3px;
+    height: 370px;
+    margin: 40px auto;
+    position: relative;
+    width: 450px;
+}</code></pre>
+				
+				<p>Here we&#8217;ve given the container some basic dimensional properties and a border. We&#8217;ve also given the container a relative position. This is an important property as all of the content elements with a Sequence slider will be given an absolute position, like so:</p>
+				
+<pre><code>#sequence li &gt; *{
+    position: absolute;
+}</code></pre>
+				
+				<p>This way, when we come to position elements with the Sequence container, a position top of 0 pixels will be the top of the Sequence container, and a position left of 0 pixels will be the left hand side of the Sequence container.</p>
+				
+				<h3 id="sequence-animations">How Sequence&#8217;s Animations Work</h3>
+				
+				<p>Each first level element within a frame will be animated by Sequence, but how that animation happens is entirely your choice and created using <a href="http://css3.bradshawenterprises.com/transitions/" title="An explanation of CSS3 transitions">CSS3 transitions</a>. By default, Sequence initially displays the first frame&#8217;s content, so let&#8217;s start by animating the first element from our example above.</p>
+				
+				<p>In the HTML, we&#8217;ve given the <code>div</code> a class of &#8220;info1&#8221; and made sure it will be displayed in the absence of JavaScript by also giving it a class of &#8220;animate-in&#8221;.</p>
+				
+				<p>Should JavaScript be enabled (in almost all cases it will be), Sequence will begin by removing the &#8220;animate-in&#8221; class. So the HTML will look like this:</p>
+				
+<pre><code>&lt;div class="info1"&gt;
+    &lt;p&gt;Frame 1&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+				
+				<p>This element is in its &#8220;start&#8221; position. Sequence will automatically add a class of &#8220;animate-in&#8221; to it, which will trigger the CSS3 transitions we will shortly write. The HTML will look like this:</p>
+				
+<pre><code>&lt;div class="info1 animate-in"&gt;
+    &lt;p&gt;Frame 1&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+				
+				<p>When the &#8220;animate-in&#8221; position is reached, Sequence will then remove the &#8220;animate-in&#8221; class, and add a class of &#8220;animate-out&#8221;, which again, we can control via CSS3 transitions. The HTML will look like this:</p>
+				
+<pre><code>&lt;div class="info1 animate-out"&gt;
+    &lt;p&gt;Frame 1&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+				
+				<p>When the &#8220;animate-out&#8221; position is reached, Sequence will then start automatically applying these transitional phases to the next frames elements. Once the last frame&#8217;s elements have reached the &#8220;animate-out&#8221; position, Sequence will go back to the first frame, remove the &#8220;animate-out&#8221; class (reseting the element to it&#8217;s starting position), and the whole process will continue indefinetly.</p>
+								
+				<h3 id="animating-backwards">Animating Backwards</h3>
+				
+				<p>Sequence contains options that allow for a user to control the animation of frames using next/previous buttons, the keyboard left/right arrow keys or swiping on touch devices (version 1.0 onwards). You can also make Sequence play in reverse via the <a href="#developers">developer options</a>. Sequence will apply the above mentioned transitional phase classes in reverse.</p>
+				
+				<p>Let&#8217;s assume frame 2 has one element that is currently in the &#8220;animate-in&#8221; position. If a user were to click a &#8220;previous&#8221; button, Sequence would remove the &#8220;animate-in&#8221; class, resetting the element to its starting position and the previous frame&#8217;s element (frame 1), would be given the class of &#8220;animate-out&#8221; (reseting it to the &#8220;animate-out&#8221; position), followed by a class of &#8220;animate-in&#8221; to then make it transition into its &#8220;animate-in&#8221; position.</p>
+				
+				<h3 id="animating-transitions">Animating Frame Elements using CSS3 Transitions</h3>
+				
+				<p>Now we know how Sequence works, we can manipulate the transition of frame elements using CSS3 transitions. Just before we begin adding transitional properties, let&#8217;s style the <code>div</code> within each frame:</p>
+				
+<pre><code>.info1, .info2, .info3{
+    background: #3f7ad6;
+    color: white;
+    height: 95px;
+    padding: 5px;
+    width: 95px;
+}</code></pre>
+				
+				<p>We&#8217;ve made each <code>div</code> 95px wide and tall and given them a background colour. Now, let&#8217;s begin applying transitional properties:</p>
+				
+<pre><code>.info1{
+    left: -150px;
+    top: 10px;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    -ms-transition-duration: 1s;
+    transition-duration: 1s;
+}</code></pre>
+				
+				<p>Remember that an element with no transitional phase class is in its &#8220;start&#8221; position. We&#8217;ve started this element 150px outside of the Sequence container (to the left), and 10px from the top.</p>
+				
+				<p><em>Note #1</em>: we&#8217;ve given the element a transition duration but, this is NOT the duration it will take to go from the &#8220;start&#8221; position to the &#8220;animate-in&#8221; position. Instead, it is the duration it will take to go from the &#8220;animate-in&#8221; position to the &#8220;start&#8221; position when Sequence is <a href="#animating-backwards">animating backwards</a>.</p>
+				
+				<p><em>Note #2</em>: Sequence has been built to work across all modern browsers which means it is necessary to use <a href="http://www.w3.org/TR/CSS21/syndata.html#vendor-keywords" title="Vendor Prefixes Explained">vendor prefixes</a> for CSS3 attributes such as <code>transition-duration</code>. Please see the <a href="#tips-prefixing" title="Vendor Prefixing">Vendor Prefixing Tips</a> section for advice on how to make using vendor prefixes as easy as possible.</p>
+				
+				<p>As we saw in <a href="#sequence-animations" title="How Sequence's Animations Work">How Sequence&#8217;s Animations Work</a>, Sequence will add a class of &#8220;animate-in&#8221; to any active frame elements to make it transition to its &#8220;animate-in&#8221; position. So, let&#8217;s style the transition between the &#8220;start&#8221; and &#8220;animate-in&#8221; positions:</p>
+				
+<pre><code>.info1.animate-in{
+    left: 165px;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    -ms-transition-duration: 1s;
+    transition-duration: 1s;
+}</code></pre>
+				
+				<p>We&#8217;ve made it so that the <code>div</code> with class &#8220;info1&#8221;, will move from its &#8220;start&#8221; position of  <code>left: -150px</code>, to <code>left: 165px</code>. We haven&#8217;t specified a top position so that will remain the same as the &#8220;start&#8221; position (<code>top: 10px</code>). By adding a transition-duration, the time it will take to go between the &#8220;start&#8221; and &#8220;animate-in&#8221; positions will be 1 second (1s). Again, we&#8217;ve used vendor prefixes to make the theme work across all modern browsers.</p>
+				
+<pre><code>.info1.animate-out{
+    left: 500px;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    -ms-transition-duration: 1s;
+    transition-duration: 1s;
+}</code></pre>
+				
+				<p>Once all of the frame&#8217;s elements have finished animating in, Sequence will then change the &#8220;animate-in&#8221; class to &#8220;animate-out&#8221;. As we did with the &#8220;animate-in&#8221; transition, we&#8217;ve changed the left value to make the element move outside of the Sequence container and specified a 1 second transition duration.</p>
+				
+				<p>From here on, we can apply transition durations to the remaining elements within the second and third frame. For the purpose of this demo and the sake of simplicity, we can modify the CSS we&#8217;ve just written to apply the same transition durations to the other frame elements, like so:</p>
+				
+<pre><code>.info1, .info2, .info3{
+    left: -150px;
+    top: 10px;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    -ms-transition-duration: 1s;
+    transition-duration: 1s;
+}</code></pre>
+				
+				<p>Here we&#8217;ve given start positions to the <code>div</code> elements within the second and third frames.</p>
+				
+<pre><code>.info2{
+    top: 130px;
+}
+
+.info3{
+    top: 250px;
+}</code></pre>
+				
+				<p>This CSS overwrites the top positions for each element so one is positioned below the next.</p>
+				
+<pre><code>.info1.animate-in, .info2.animate-in, .info3.animate-in{
+    left: 165px;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    -ms-transition-duration: 1s;
+    transition-duration: 1s;
+}
+
+.info1.animate-out, .info2.animate-out, .info3.animate-out{
+    left: 500px;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    -ms-transition-duration: 1s;
+    transition-duration: 1s;
+}   </code></pre>
+				
+				<p>And finally we&#8217;ve included the second and third <code>div</code> elements in our &#8220;animate-in&#8221; and &#8220;animate-out&#8221; transitional positions.</p>
+				
+				<p>What we&#8217;ve learnt in this demonstration are the basics to creating an animated theme for Sequence. You should now be able to create your own theme. Keep reading though, Sequence boasts even more useful features to help you make a truly amazing and unique theme.</p>
+				
+				<h3 id="animating-examples">Transitional CSS Examples</h3>
+				
+				<p>When specifying properties for transitional classes, in most cases you will use a transition-duration (unless you just want frame elements to immediately snap to the next/previous phase) but the remaining properties to transition between are entirely up to you. In this demo, we&#8217;ve only transitioned between numerous <code>left</code> properties, making an element move in and out of a Sequence container. Here&#8217;s just a few more examples you may like to experiment with:</p>
+				
+				<p>Coming soon</p>
+				
+				<h2 id="developers">Developer&#8217;s Options</h2>
+				
+				<h3 id="options">Options</h3>
+				
+				<p>Sequence comes with many options that allow you to easily control its features.</p>
+				
+				<h4 id="options-specifying">Specifying Options</h4>
+				
+				<p>As explained in <a href="#initiate" title="Initiate a Sequence Slider">Initiate a Sequence Slider</a>, each instance of a Sequence slider can be passed developer defined options that override Sequence&#8217;s default settings. Options are stored in an object passed to the <code>.sequence()</code> function, like so:</p>
+				
+<pre><code>&lt;script type="text/javascript"&gt; 
+    $(document).ready(function(){
+        var options = {
+            autoPlay: true,
+            autoPlayDelay: 3000
+        }
+        var sequence = $("#sequence").sequence(options);
+    }
+&lt;/script&gt;</code></pre>
+				
+				<p>Multiple instances of Sequence can be passed the same options:</p>
+				
+<pre><code>&lt;script type="text/javascript"&gt; 
+    $(document).ready(function(){
+        var options = {
+            autoPlay: true,
+            autoPlayDelay: 3000
+        }
+        var sequence = $("#sequence").sequence(options);
+        var sequence2 = $("#sequence2").sequence(options);
+    }
+&lt;/script&gt;</code></pre>
+				
+				<p>Or differing options:</p>
+				
+<pre><code>&lt;script type="text/javascript"&gt; 
+    $(document).ready(function(){
+        var options = {
+            autoPlay: true,
+            autoPlayDelay: 3000
+        }
+
+        var options2 = {
+            autoPlay: true,
+            autoPlayDelay: 5000
+        }
+        var sequence = $("#sequence").sequence(options);
+        var sequence2 = $("#sequence2").sequence(options2);
+    }
+&lt;/script&gt;</code></pre>
+				
+				<h3 id="options-list">List of Options</h3>
+				
+				<p>The following is the complete set of options implemented within Sequence:</p>
+				<table>
+					<thead>
+						<tr>
+							<td>Option Name</td>
+							<td>Value</td>
+							<td>Default</td>
+							<td>Description</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>nextButton</td>
+							<td>true/false or a CSS selector</td>
+							<td>".next"</td>
+							<td>A CSS selector that, when clicked, causes the current frame to animate out and the next to animate in.<br /><br /><strong>true</strong>: use the default CSS selector (".next") <br /><strong>false</strong>: don't use a button</td>
+						</tr>
+						<tr>
+							<td>prependNextButton</td>
+							<td>true/false or a CSS selector</td>
+							<td>true</td>
+							<td>If nextButton is true, specify which element to prepend the nextButton to.<br /><br />
+							<strong>true</strong>: automatically prepend to the Sequence container<br />
+							<strong>false</strong>: don't automatically prepend (when you want to manually add the button via HTML)<br />
+							<strong>CSS Selector</strong>: Specify a CSS Selector to automatically prepend the nextButton to</td>
+						</tr>
+						<tr>
+							<td>prevButton</td>
+							<td>true/false or a CSS selector</td>
+							<td>".prev"</td>
+							<td>A CSS selector that, when clicked, causes the current frame to animate out and the previous to animate in.<br /><br /><strong>true</strong>: use the default CSS selector<br />
+							<strong>false</strong>: don't use a button</td>
+						</tr>
+						<tr>
+							<td>prependPrevButton</td>
+							<td>true/false or a CSS selector</td>
+							<td>true</td>
+							<td>If prevButton is true, specify which element to prepend the prevButton to.<br /><br />
+							<strong>true</strong>: automatically prepend to the Sequence container<br />
+							<strong>false</strong>: don't automatically prepend (when you want to manually add the button via HTML)<br />
+							<strong>CSS Selector</strong>: Specify a CSS Selector to automatically prepend the prevButton to</td>
+						</tr>
+						<tr>
+							<td>startingFrameID</td>
+							<td>A number</td>
+							<td>1</td>
+							<td>The frame that should first be displayed when Sequence loads.</td>
+						</tr>
+						<tr>
+							<td>autoPlay</td>
+							<td>true/false</td>
+							<td>true</td>
+							<td><strong>true</strong>: Sequence will automatically animate from frame to frame with a delay between each frame (specified using the autoPlayDelay setting)<br />
+							<strong>false</strong>: Sequence will display the starting frame until a user chooses to navigate Sequence using next/previous buttons/swiping etc.
+							</td>
+						</tr>
+						<tr>
+							<td>autoPlayDelay</td>
+							<td>A number in milliseconds</td>
+							<td>5000</td>
+							<td>If using autoPlay, the speed at which frames should remain on screen before animating to the next.</td>
+						</tr>
+						<tr>
+							<td>autoPlayDirection</td>
+							<td>1/-1</td>
+							<td>1</td>
+							<td>If using autoPlay, the direction in which Sequence should play.<br /><br />
+							<strong>1</strong>: Forward<br />
+							<strong>-1</strong>: Reverse
+							</td>
+						</tr>
+						<tr>
+							<td>pauseOnHover</td>
+							<td>true/false</td>
+							<td>true</td>
+							<td>If using autoPlay, whether frames should stop auto playing when the user hovers over Sequence. autoPlay will continue again when the user moves their cursor outside of Sequence.</td>
+						</tr>
+						<tr>
+							<td>pauseIcon</td>
+							<td>true/false or a CSS selector</td>
+							<td>false</td>
+							<td>If using autoPlay, display a pause icon when the user hovers over Sequence.<br /><br />
+							<strong>true</strong>: use the default pause icon CSS selector (".pause-icon")<br />
+							<strong>false</strong>: don't display a pause icon<br />
+							<strong>A CSS Selector</strong>: Specify a CSS selector to an HTML element you have manually added to the document
+							</td>
+						</tr>
+						<tr>
+							<td>prependPauseIcon</td>
+							<td>true/false or a CSS selector</td>
+							<td>true</td>
+							<td>If pauseIcon is true, specify which element to prepend the pauseIcon to.<br /><br />
+							<strong>true</strong>: automatically prepend to the Sequence container<br />
+							<strong>false</strong>: don't automatically prepend (when you want to manually add the pause icon via HTML)<br />
+							<strong>CSS Selector</strong>: Specify a CSS Selector to automatically prepend the pauseIcon to</td>
+						</tr>
+						<tr>
+							<td>pauseIconSrc</td>
+							<td>A path to an image</td>
+							<td>"images/pause-icon.png"</td>
+							<td>If prependPauseIcon is true or a CSS selector, specify a path to the pause icon image</td>
+						</tr>
+						<tr>
+							<td>animateStartingFrameIn</td>
+							<td>true/false</td>
+							<td>false</td>
+							<td><strong>true</strong>: The starting frame will begin in its "start" position and move to its "animate-in" position when Sequence loads<br />
+								<strong>false</strong>: The starting frame will begin in its "animate-in" position when Sequence loads
+							</td>
+						</tr>
+						<tr>
+							<td>delayDuringOutInTransitions</td>
+							<td>true/false or a number in milliseconds</td>
+							<td>1000</td>
+							<td>Whether or not there should be a delay between a frame animating out and the next animating in.<br /><br />
+							<strong>true</strong>: the next frame will not animate in until the current frame has completely animated out<br />
+							<strong>false</strong>: the next frame will animate in at the same time as the current frame animating out<br />
+							<strong>A number</strong>: The amount of milliseconds to wait after animating the current frame out, before the next frame is animated in
+							</td>
+						</tr>
+						<tr>
+							<td>keysNavigate</td>
+							<td>true/false</td>
+							<td>true</td>
+							<td>Whether to allow the user to navigate between frames using the left and right arrow keys</td>
+						</tr>
+						<tr>
+							<td>touchEnabled</td>
+							<td>true/false</td>
+							<td>true</td>
+							<td><strike>Whether to allow the user to navigate between frames by swiping left and right on touch enabled devices</strike> Coming in version 1.0</td>
+						</tr>
+						<tr>
+							<td>swipeThreshold</td>
+							<td>A number</td>
+							<td>15</td>
+							<td><strike>The percentage size of the Sequence container the user's finger must move before a swipe event is triggered</strike> Coming in version 1.0</td>
+						</tr>
+						<tr>
+							<td>fallbackTheme</td>
+							<td>A JavaScript object containing more options</td>
+							<td><a href="#options-fallback" title="Fallback Theme Options">See Fallback Theme Options</a></td>
+							<td>Settings for the fallback theme when a browser does not support CSS3 transitions. Please see <a href="#options-fallback" title="Fallback Theme Options">Fallback Theme Options</a> for more information</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<h3>Fallback Theme Options</h3>
+				<p>The fallback theme options control Sequence when it is being viewed in browsers that do not support CSS3 transitions. When in these browsers, Sequence will fallback to a theme that animates each frames opacity -- fading in and out of frames.</p>
+				<p>More fallback themes and options will be made available with future releases of Sequence.</p>
+				
+				<h4 id="options-fallback">Complete List of Fallback Theme Options</h4>
+				<table>
+					<thead>
+						<tr>
+							<td>Option Name</td>
+							<td>Value</td>
+							<td>Default</td>
+							<td>Description</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>speed</td>
+							<td>A number in milliseconds</td>
+							<td>500</td>
+							<td>The speed at which frames should transition when in a browser that does not support CSS3 transitions</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<h4>Specifying Fallback Theme Options</h4>
+				
+				<p>Fallback theme options are included in the options of each instance of Sequence, like so:</p>
+				
+<pre><code>&lt;script type="text/javascript"&gt; 
+    $(document).ready(function(){
+        var options = {
+            fallbackTheme: {
+            	speed: 500
+            }
+        }
+        var sequence = $("#sequence").sequence(options);
+    }
+&lt;/script&gt;</code></pre>
+				
+				
+				<h3 id="callbacks">Callbacks</h3>
+				
+				<p>Callbacks allow you to execute custom JavaScript functions during specific periods of Sequence's transitions.</p>
+				
+				<h4 id="callbacks-list">Compete List of Callbacks</h4>
+				
+				<p>The following is the complete set of callbacks implemented within Sequence:</p>
+				
+				<table>
+					<thead>
+						<tr>
+							<td>Callback</td>
+							<td>Description</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>beforeCurrentFrameAnimatesIn</td>
+							<td>Executes before the current frame begins to animate in</td>
+						</tr>
+						<tr>
+							<td>beforeCurrentFrameAnimatesOut</td>
+							<td>Executes before the current frame begins to animate out</td>
+						</tr>
+						<tr>
+							<td>beforeNextFrameAnimatesIn</td>
+							<td>Executes before the next frame begins to animate in</td>
+						</tr>
+						<tr>
+							<td>afterNextFrameAnimatesIn</td>
+							<td>Executes after the next frame has animated in (and becomes the current frame)</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<h4 id="callbacks-using">Using Callbacks to Execute Custom Functions</h4>
+				
+				<p>Callbacks are included in the options of each instance of Sequence, like so:</p>
+				
+<pre><code>&lt;script type="text/javascript"&gt; 
+    $(document).ready(function(){
+        var options = {
+            autoPlay: true,
+            autoPlayDelay: 3000,
+            beforeCurrentFrameAnimatesIn: function(){
+            	alert("Do something before the CURRENT frame animates in"); //you can add the code to execute here...
+            },
+            beforeNextFrameAnimatesIn: function(){
+            	myCustomFunction(); //...or specify a function
+            }
+        }
+        var sequence = $("#sequence").sequence(options);
+    }
+    
+    function myCustomFunction(){
+    	alert("Do something before the NEXT frame animates in");
+    }
+&lt;/script&gt;</code></pre>
+				
+				<h3 id="methods">Public Methods</h3>
+				<p>Public methods are the functions and options that Sequence utilises, made available for developers to extend and enhance their particular implementation of it.</p>
+				
+				<h4 id="methods-functions">Public Functions</h4>
+				<table>
+					<thead>
+						<tr>
+							<td>Function Name</td>
+							<td>Description</td>
+							<td>Arguments</td>
+							<td>Example</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>goTo(id, direction)</td>
+							<td>Causes Sequence to animate to a specific frame</td>
+							<td><strong>id</strong> (required): a number corresponding to a frame (the first frame has an id of 1). <br /><br />
+							<strong>direction</strong> (optional): Whether the frame being animated to should be considered as being ahead or behind the current frame. <br /><br />Specifying a direction value of 1 will change the current frame from the "animate-in" position, to "animate-out", and the next frame will be changed from "start" to "animate-in".<br /><br />
+							Specifying a value of -1 will change the current frame from "animate-in" to the "start" position and the next frame will be changed from "animate-out" to "animate-in".<br /><br />
+							If a "direction" is not specified, Sequence will consider a frame with a higher id than the current frame as being ahead of it (1), and frames with a lower id will be considered as being behind (-1).
+							</td>
+							<td><code>sequence.goTo(3, 1)</code></td>
+						</tr>
+						<tr>
+							<td>next()</td>
+							<td>Causes Sequence to animate to the next frame</td>
+							<td>None</td>
+							<td><code>sequence.next()</code></td>
+						</tr>
+						<tr>
+							<td>prev()</td>
+							<td>Causes Sequence to animate to the previous frame</td>
+							<td>None</td>
+							<td><code>sequence.prev()</code></td>
+						</tr>
+						<tr>
+							<td>startAutoPlay(wait, newAutoPlayDelay)</td>
+							<td>Start Sequences auto play feature if not already active</td>
+							<td><strong>wait(optional)</strong>: A number in milliseconds to wait before autoPlay feature is started. If undefined, the value will be 0<br /><br />
+								<strong>newAutoPlayDelay (optional)</strong>: The delay between frames automatically animating in/out. If undefined, the existing autoPlayDelay value will be used	
+							</td>
+							<td><code>sequence.startAutoPlay(1000, 3000)</code></td>
+						</tr>
+						<tr>
+							<td>stopAutoPlay()</td>
+							<td>Stop Sequence from auto playing</td>
+							<td>None</td>
+							<td><code>sequence.stopAutoPlay()</code></td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<h4 id="methods-variables">Public Variables</h4>
+				<table>
+					<thead>
+						<tr>
+							<td>Variable</td>
+							<td>Description</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>sequence.container</td>
+							<td>Returns the selector for Sequence's container element</td>
+						</tr>
+						<tr>
+							<td>sequence.currentFrame</td>
+							<td>Returns the selector for the current frame</td>
+						</tr>
+						<tr>
+							<td>sequence.direction</td>
+							<td>Returns the direction Sequence is currently animating in (1 = forward/-1 = reverse)</td>
+						</tr>
+						<tr>
+							<td>sequence.currentFrameChildren</td>
+							<td>Returns an array containing the selectors for the current frame's child elements</td>
+						</tr>
+						<tr>
+							<td>sequence.currentFrameID</td>
+							<td>Returns a number representing the current frames position in relation to all frames. 1 is the first frame</td>
+						</tr>
+						<tr>
+							<td>sequence.nextFrameID</td>
+							<td>Returns a number representing the nextframes position in relation to all frames. 1 is the first frame</td>
+						</tr>
+						<tr>
+							<td>sequence.hasTouch</td>
+							<td>Returns true or false depending on whether the device has touch capabilities</td>
+						</tr>
+						<tr>
+							<td>sequence.numberOfFrames</td>
+							<td>Returns how many frames are in the Sequence container</td>
+						</tr>
+						<tr>
+							<td>sequence.prefix</td>
+							<td>Returns the vendor prefix for the browser the user is viewing Sequence in</td>
+						</tr>
+						<tr>
+							<td>sequence.settings</td>
+							<td>Returns an object containing Sequence's settings</td>
+						</tr>
+						<tr>
+							<td>sequence.transitionsSupported</td>
+							<td>Returns true or false depending on whether the browser supports CSS3 transitions</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<h2 id="tips-tricks">Tips and Tricks</h2>
+				<h3 id="tips-prefixing">Vendor Prefixing</h3>
+				<p>Coming soon</p>
+			</div>
+		</div>
