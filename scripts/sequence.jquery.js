@@ -68,11 +68,11 @@ Aside from these comments, you may modify and distribute this file as you please
 					default: //set up the dev defined button	
 						if(direction == ".next"){
 							this.CSSSelectorToHTML($(prependNextButtonTo),  optionButton);
-							$(optionButton).show();
+							$(optionButton).show(); //this will most likely be removed in future versions
 							return $(optionButton);
 						}else{
 							this.CSSSelectorToHTML($(prependPrevButtonTo),  optionButton);
-							$(optionButton).show();
+							$(optionButton).show(); //this will most likely be removed in future versions
 							return $(optionButton);
 						}
 					break;
@@ -273,7 +273,6 @@ Aside from these comments, you may modify and distribute this file as you please
 				}
 			});
 		}
-		
 		$(window).resize(function(){ //if the window is resized...
 			self.settings.calculatedSwipeThreshold = self.container.width() * (self.settings.swipeThreshold / 100); //recalculate the swipe threshold
 		});
@@ -445,6 +444,7 @@ Aside from these comments, you may modify and distribute this file as you please
 							break;
 					}
 				}else{ //if the browser doesn't support CSS3 transitions...
+					self.sequence.children("li").css({"position": "relative"}); //this allows for fadein/out in IE
 					self.currentFrame.animate({"opacity": 0}, self.settings.fallbackTheme.speed, function(){ //hide the current frame
 						self.currentFrame.css({"display": "none", "z-index": "1"});
 						self.currentFrame.removeClass("current");
@@ -622,6 +622,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			speed: 500
 		},
 		
+		//Callbacks are a work in progress and not it's possible not all of them will make it into v1.0
 		beforeCurrentFrameAnimatesOut: function(){},	//triggers before current frame begins to animate out
 		beforeNextFrameAnimatesIn: function(){},		//triggers before next frame begins to animate in
 		afterNextFrameAnimatesIn: function(){},			//triggers after next frame animates in (and becomes the current frame)
