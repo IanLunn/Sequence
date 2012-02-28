@@ -9,7 +9,7 @@
 	<link rel="stylesheet" type="text/css" media="screen" href="css/sequencejs-theme.apple-style.css" />
 	<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Magra:400,700'>
 	
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script type="text/javascript">
 	if (typeof jQuery == 'undefined'){
 	    document.write(unescape("%3Cscript src='../../scripts/jquery.js' type='text/javascript'%3E%3C/script%3E"));
@@ -21,13 +21,20 @@
 			var options = {
 				nextButton: false,
 				prevButton: false,				
-				autoPlayDelay: 3000, 						
-				pauseOnHover: false, 				
-				animateStartingFrameIn: true, 				
+				autoPlayDelay: 3000,
+				hidePreloaderDelay: 500,
+				hidePreloaderusingCSS: false,						
+				pauseOnHover: true,
+				//pauseIcon: true,				
+				animateStartingFrameIn: true, 
+				autoPlayDirection: 1,				
 				delayDuringOutInTransitions: 750,
 				keysNavigate: true,								
 				touchEnabled: false,
-				startingFrameID: 1,					
+				startingFrameID: 1,
+				preloader: true,
+				prependPreloader: true,
+				hidePreloaderDelay: 500,
 				fallbackTheme: { 							
 					speed: 500
 				}
@@ -49,6 +56,7 @@
 	  })();
 	
 	</script>
+	<style></style>
 </head>
 <body>
 	<!--code for the demo overlay and details, not needed for the demo to work-->
@@ -64,7 +72,7 @@
 	            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></li> 
 	            <li class="facebook"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.sequencejs.com%2Fthemes%2Fapple-style%2F&amp;layout=button_count&amp;show_faces=false&amp;width=100&amp;action=like&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:50px; height:21px;" allowTransparency="true"></iframe></li>
 	            <li class="twitter"><g:plusone size="medium" annotation="none"></g:plusone></li>
-	            <li class="hire"><p><span>A product of </span><a href="http://www.ianlunn.co.uk/" title="Hire Ian Lunn Design"><img src="http://www.ianlunn.co.uk//demo-assets/hire-ian.png" alt="Hire Ian Lunn Design"></a></p></li>
+	            <li class="hire"><p><span>A product of </span><a href="http://www.ianlunn.co.uk/" title="Hire Ian Lunn Design"><img src="http://www.ianlunn.co.uk/demo-assets/hire-ian.png" alt="Hire Ian Lunn Design"></a></p></li>
 	        </ul>
 	    </div>
 	<!--//code for the demo overlay and details, not needed for the demo to work-->

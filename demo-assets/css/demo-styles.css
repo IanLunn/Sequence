@@ -28,7 +28,7 @@ body{
 	min-width: 960px;
 	position: fixed;
 	width: 100%;	
-	z-index: 1000;
+	z-index: 99999999;
 	color: white;
 	font-size: 1.2em;
 	padding: 10px 0 5px 0;

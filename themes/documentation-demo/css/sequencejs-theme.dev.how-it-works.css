@@ -84,6 +84,10 @@ small{
 	width: 450px;
 }
 
+#sequence-preloader{
+	background: white;
+}
+
 .class,.sequence-class {
 	font-size: 0.8em;
 }

@@ -84,6 +84,10 @@ body {
 	width: 960px;
 }
 
+#sequence-preloader{
+	background: #d9d9d9;
+}
+
 #nav {
 	bottom: 0;
 	display: none;

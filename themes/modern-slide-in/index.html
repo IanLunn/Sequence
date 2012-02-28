@@ -24,6 +24,9 @@
 				autoPlayDirection: -1,
 				nextButton: ".next",
 				prevButton: ".prev",
+				preloader: true,
+				keysNavigate: true,
+				prependPreloader: true,
 				keysNavigate: true,
 				prependNextButton: false,
 				prependPrevButton: false,
@@ -32,35 +35,28 @@
 				delayDuringOutInTransitions: 500,
 				touchEnabled: false,
 				startingFrameID: 1,
-				cycle: true
-			};
-
-			var sequence = $("#sequence").sequence(options).data("sequence");
-			
-			$("#nav").show();
-						
-			$("#nav li:nth-child("+(sequence.settings.startingFrameID)+") img").addClass("active");
-						
-			$(".next, .prev").click(function(){
-				$("#nav li:not(:nth-child("+(sequence.nextFrameID)+")) img").removeClass("active");
-				$("#nav li:nth-child("+(sequence.nextFrameID)+") img").addClass("active");
-			});
-			
-			$(window).bind("keydown", function(e){
-				if(e.keyCode == 37 || e.keyCode == 39){
+				cycle: true,
+				afterPreload: function(){
+					$("#nav").fadeIn(100);
+					$("#nav li:nth-child("+(sequence.settings.startingFrameID)+") img").addClass("active");
+				},
+				beforeNextFrameAnimatesIn: function(){
 					$("#nav li:not(:nth-child("+(sequence.nextFrameID)+")) img").removeClass("active");
 					$("#nav li:nth-child("+(sequence.nextFrameID)+") img").addClass("active");
 				}
-			});
+			};
+
+			var sequence = $("#sequence").sequence(options).data("sequence");
 			
 			$("#nav li").click(function(){
 				if(!sequence.active){
 					$("#nav li").children("img").removeClass("active");
 					$(this).children("img").addClass("active");
-					sequence.goTo($(this).index()+1);
+					sequence.nextFrameID = $(this).index()+1;
+					sequence.goTo(sequence.nextFrameID);
 				}
 			});
-		})
+		});
 	</script>
 	<script type="text/javascript">
 	  var _gaq = _gaq || [];

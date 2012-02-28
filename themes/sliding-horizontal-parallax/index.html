@@ -23,16 +23,26 @@
 				autoPlayDirection: 1,
 				nextButton: ".next",
 				prevButton: ".prev",
+				preloader: "#sequence-preloader",
+				prependPreloader: false,
+				prependPreloadingComplete: "#sequence-preloader, #slideshow",
 				prependNextButton: false,
 				prependPrevButton: false,
 				pauseIcon: false,
 				animateStartingFrameIn: false, 
-				delayDuringOutInTransitions: false
+				delayDuringOutInTransitions: false,
+				afterPreload: function(){
+					$(".prev, .next").fadeIn(500);
+					if(!slideShow.transitionsSupported){
+						$("#slideshow").animate({"opacity": "1"}, 1000);
+					}
+				}
 			};
-
 			var slideShow = $("#slideshow").sequence(options).data("sequence");
-			
-			$(".prev, .next").show();
+			if(!slideShow.transitionsSupported || slideShow.prefix == "-o-"){
+				$("#slideshow").animate({"opacity": "1"}, 1000);
+				slideShow.preloaderFallback();
+			}
 		})
 	</script>
 	
@@ -71,6 +81,13 @@
 	<!--//code for the demo overlay and details, not needed for the demo to work--> 
 	
 	<div id="header">
+		<div id="sequence-preloader">
+			<div class="preloading">
+				<img src="../../images/sequence-preloader.png" alt="Sequence is loading, please wait..." />
+				<img src="../../images/sequence-preloader.png" alt="Sequence is loading, please wait..." />
+				<img src="../../images/sequence-preloader.png" alt="Sequence is loading, please wait..." />
+			</div>
+		</div>
 		<div id="slideshow">
 			<img class="prev" src="images/bt-prev.png" alt="Previous" />
 			<img class="next" src="images/bt-next.png" alt="Next" />

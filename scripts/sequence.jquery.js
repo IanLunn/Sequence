@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.1 Beta
+Version: 0.2 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -37,17 +37,44 @@ Aside from these comments, you may modify and distribute this file as you please
 		    'msTransition'     : 'MSTransitionEnd MSAnimationEnd',
 		    'transition'       : 'transitionend animationend'
 		};
-		this.prefix = prefixes[Modernizr.prefixed('transition')],
-		this.transitionEnd = transitions[Modernizr.prefixed('transition')],
-		this.transitionProperties = {},
-		this.numberOfFrames = this.sequence.children("li").length,
-		this.transitionsSupported = (this.prefix != undefined) ? true : false, //determine if transitions are supported
-		this.hasTouch = ("ontouchstart" in window) ? true : false, //determine if this is a touch enabled device
-		this.sequenceTimer,
-		this.paused = false,
-		this.hoverEvent;
+		self.prefix = prefixes[Modernizr.prefixed('transition')],
+		self.transitionEnd = transitions[Modernizr.prefixed('transition')],
+		self.transitionProperties = {},
+		self.numberOfFrames = self.sequence.children("li").length,
+		self.transitionsSupported = (self.prefix != undefined) ? true : false, //determine if transitions are supported
+		self.hasTouch = ("ontouchstart" in window) ? true : false, //determine if this is a touch enabled device
+		self.sequenceTimer,
+		self.paused = false,
+		self.hoverEvent,
+		self.defaultPreloader;
 
-		this.init = {
+		self.init = {
+			preloader: function(optionPreloader){
+				prependPreloaderTo = (self.settings.prependPreloader == true) ? self.container : self.settings.prependPreloader;
+
+				opacity = (self.transitionsSupported) ? 0 : 1;
+				switch(optionPreloader){
+					case true:
+					case undefined:
+						//append the default preloader styles
+						$("head").append("<style>#sequence-preloader{height: 100%;position: absolute;width: 100%;z-index: 999999;}@"+self.prefix+"keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}@keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}#sequence-preloader img{background: #ff9933;border-radius: 6px;display: inline-block;height: 12px;opacity: "+opacity+";position: relative;top: -50%;width: 12px;"+self.prefix+"animation: preload 1s infinite; animation: preload 1s infinite;}.preloading{height: 12px;margin: 0 auto;top: 50%;position: relative;width: 48px;}#sequence-preloader img:nth-child(2){"+self.prefix+"animation-delay: .15s; animation-delay: .15s;}#sequence-preloader img:nth-child(3){"+self.prefix+"animation-delay: .3s; animation-delay: .3s;}.preloading-complete{opacity: 0;visibility: hidden;"+self.prefix+"transition-duration: 1s; transition-duration: 1s;}</style>");
+						$(prependPreloaderTo).prepend('<div id="sequence-preloader"><div class="preloading"><img src="../../images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="../../images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="../../images/sequence-preloader.png" alt="Sequence is loading, please wait..." /></div></div>');
+						if(!self.transitionsSupported || self.prefix == "-o-"){
+							self.preloaderFallback();
+						}
+						return $("#sequence-preloader");
+					break;
+					
+					case false:
+					break;
+					
+					default:
+						this.CSSSelectorToHTML($(prependPreloaderTo),  optionPreloader);
+						return $(optionPreloader);
+					break;
+				}
+			},
+			
 			navButtons: function(optionButton, direction){
 				prependNextButtonTo = (self.settings.prependNextButton == true) ? self.container : self.settings.prependNextButton;
 				prependPrevButtonTo = (self.settings.prependPrevButton == true) ? self.container : self.settings.prependPrevButton;
@@ -93,9 +120,9 @@ Aside from these comments, you may modify and distribute this file as you please
 					break;
 					
 					default:
-						this.CSSSelectorToHTML($(prependPauseIconTo), self.settings.pauseIcon, pauseIconSrc);
-						$(self.settings.pauseIcon).hide();
-						return $(self.settings.pauseIcon);
+						this.CSSSelectorToHTML($(prependPauseIconTo), this.settings.pauseIcon, pauseIconSrc);
+						$(this.settings.pauseIcon).hide();
+						return $(this.settings.pauseIcon);
 					break;
 				}
 			},
@@ -120,166 +147,217 @@ Aside from these comments, you may modify and distribute this file as you please
 				}else{
 					$(prependTo).prepend('<div '+buttonSelector+'></div>');
 				}
-			},
+			}
 		},		
 		
 		//INIT
-		this.settings = $.extend({}, $.fn.sequence.defaults, options);
-		this.sequence.children("li").children().removeClass("animate-in");
-		this.settings.nextButton = this.init.navButtons(options.nextButton, $.fn.sequence.defaults.nextButton);
-		this.settings.prevButton = this.init.navButtons(options.prevButton, $.fn.sequence.defaults.prevButton);
-		this.settings.prependPauseIcon = (this.settings.prependPauseIcon != undefined) 
-			? this.settings.prependPauseIcon 
-			: this.container;
-		if(this.hasTouch){
-			this.settings.calculatedSwipeThreshold = self.container.width() * (this.settings.swipeThreshold / 100);
+		self.settings = $.extend({}, $.fn.sequence.defaults, options);
+		self.settings.preloader = self.init.preloader(self.settings.preloader);
+
+		if(self.settings.animateStartingFrameIn){
+			self.modifyElements(self.sequence.children("li").children(), "0s");
+			self.sequence.children("li").children().removeClass("animate-in");
 		}
-		this.settings.pauseIcon = this.init.pauseIcon(this.settings.pauseIcon, this.settings.pauseIconSrc);
+				
+		if(options.preloader != false){
+			$(window).bind("load", function(){
+				self.settings.afterPreload();
+				if(self.settings.hidePreloaderUsingCSS && self.transitionsSupported && self.prefix != "-o-"){
+					prependPreloadingCompleteTo = (self.settings.prependPreloadingComplete == true) ? self.settings.preloader : $(self.settings.prependPreloadingComplete);
+					prependPreloadingCompleteTo.addClass("preloading-complete");
+					setTimeout(init, self.settings.hidePreloaderDelay);
+				}else{
+					self.settings.preloader.fadeOut(self.settings.hidePreloaderDelay, function(){
+						clearInterval(self.defaultPreloader);
+						init();
+					});
+				}
+				$(window).unbind("load");
+			});
+		}else{
+			init();
+		}
 		
-		this.currentFrame = this.sequence.children("li:nth-child("+this.settings.startingFrameID+")").addClass("current");	
-		this.currentFrameChildren = this.currentFrame.children();
-		this.currentFrameID = this.settings.startingFrameID;
-		this.nextFrameID = this.currentFrameID;
-		this.sequence.children("li").children().removeClass("animate-in");
-		this.direction;
-		
-		this.sequence.css({"width": "100%", "height": "100%"}); //set the sequence list to 100% width/height just incase it hasn't been specified in the CSS
-		
-		if(this.transitionsSupported){ //initiate the full featured Sequence if transitions are supported...
-			whenFirstAnimateInEnds = function(){
-				animationComplete = function(){
-					self.settings.afterNextFrameAnimatesIn();
-					self.active = false;
+		function init(){
+			self.settings.nextButton = self.init.navButtons(options.nextButton, $.fn.sequence.defaults.nextButton);
+			self.settings.prevButton = self.init.navButtons(options.prevButton, $.fn.sequence.defaults.prevButton);
+			self.settings.prependPauseIcon = (self.settings.prependPauseIcon != undefined) 
+				? self.settings.prependPauseIcon 
+				: self.container;
+			if(self.hasTouch){
+				self.settings.calculatedSwipeThreshold = self.container.width() * (self.settings.swipeThreshold / 100);
+			}
+			self.settings.pauseIcon = self.init.pauseIcon(self.settings.pauseIcon, self.settings.pauseIconSrc);
+			
+			self.currentFrame = self.sequence.children("li:nth-child("+self.settings.startingFrameID+")").addClass("current");	
+			self.currentFrameChildren = self.currentFrame.children();
+			self.currentFrameID = self.settings.startingFrameID;
+			self.nextFrameID = self.currentFrameID;
+			self.sequence.children("li").children().removeClass("animate-in");
+			self.direction;
+			
+			self.sequence.css({"width": "100%", "height": "100%"}); //set the sequence list to 100% width/height just incase it hasn't been specified in the CSS
+			
+			if(self.transitionsSupported){ //initiate the full featured Sequence if transitions are supported...
+				whenFirstAnimateInEnds = function(){
+					animationComplete = function(){
+						self.settings.afterNextFrameAnimatesIn();
+						self.active = false;
+						if(self.settings.autoPlay){
+							autoPlaySequence = function(){self.autoPlaySequence()};
+							clearTimeout(self.sequenceTimer);
+							self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
+						}
+					}
+					self.waitForAnimationsToComplete(self.currentFrameChildren, animationComplete);
+				}
+							
+				if(!self.settings.animateStartingFrameIn){ //start first frame in animated in position
+					self.modifyElements(self.currentFrameChildren, "0s");
+					self.currentFrameChildren.addClass("animate-in");
+					
+					setTimeout(function(){	
+					self.modifyElements(self.currentFrameChildren, "");
+					}, 100);
+					
 					if(self.settings.autoPlay){
 						autoPlaySequence = function(){self.autoPlaySequence()};
 						clearTimeout(self.sequenceTimer);
 						self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 					}
+				}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.settings.autoPlayDirection -1 && self.settings.animateStartingFrameIn){
+					self.active = true;		
+					
+					self.modifyElements(self.currentFrameChildren, "0s");
+					self.currentFrameChildren.addClass("animate-out");				
+					
+					self.settings.beforeNextFrameAnimatesIn();
+					
+					setTimeout(function(){	
+						self.modifyElements(self.currentFrameChildren, "");
+						self.currentFrameChildren.removeClass("animate-out");
+						self.currentFrameChildren.addClass("animate-in");
+					}, 100);
+					
+					whenFirstAnimateInEnds();
+				}else{
+					self.active = true;	
+					self.settings.beforeCurrentFrameAnimatesIn();
+					setTimeout(function(){			
+						self.modifyElements(self.currentFrameChildren, "");
+						self.currentFrameChildren.addClass("animate-in");
+					}, 100);
+					
+					whenFirstAnimateInEnds();
 				}
-				self.waitForAnimationsToComplete(self.currentFrameChildren, animationComplete);
-			}
-						
-			if(!this.settings.animateStartingFrameIn){ //start first frame in animated in position
-				self.modifyElements(self.currentFrameChildren, "0s");
-				self.currentFrameChildren.addClass("animate-in");
-				
-				setTimeout(function(){	
-				self.modifyElements(self.currentFrameChildren, "");
-				}, 100);
-				
+			}else{ //initiate a basic slider for browsers that don't support CSS3 transitions
+				self.sequence.children("li").children().css("opacity", "0").addClass("animate-in").animate({"opacity": "1"}, 500);
+				self.currentFrame.css("z-index", self.numberOfFrames);
+				self.sequence.children(":not(li:nth-child("+self.settings.startingFrameID+"))").css({"display": "none", "opacity": 0});
 				if(self.settings.autoPlay){
 					autoPlaySequence = function(){self.autoPlaySequence()};
 					clearTimeout(self.sequenceTimer);
 					self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 				}
-			}else if(this.settings.autoPlayDirection -1 && this.settings.animateStartingFrameIn){
-				this.active = true;		
-				
-				self.modifyElements(self.currentFrameChildren, "0s");
-				self.currentFrameChildren.addClass("animate-out");				
-				
-				this.settings.beforeNextFrameAnimatesIn();
-				
-				setTimeout(function(){	
-					self.modifyElements(self.currentFrameChildren, "");
-					self.currentFrameChildren.removeClass("animate-out");
-					self.currentFrameChildren.addClass("animate-in");
-				}, 100);
-				
-				whenFirstAnimateInEnds();
-			}else{
-				this.active = true;	
-				self.settings.beforeCurrentFrameAnimatesIn();
-				setTimeout(function(){			
-					self.modifyElements(self.currentFrameChildren, "");
-					self.currentFrameChildren.addClass("animate-in");
-				}, 100);
-				
-				whenFirstAnimateInEnds();
 			}
-		}else{ //initiate a basic slider for browsers that don't support CSS3 transitions
-			this.sequence.children("li").children().addClass("animate-in");
-			this.currentFrame.css("z-index", this.numberOfFrames);
-			this.sequence.children(":not(li:nth-child("+this.settings.startingFrameID+"))").css({"display": "none", "opacity": 0});
-			if(self.settings.autoPlay){
-				autoPlaySequence = function(){self.autoPlaySequence()};
-				clearTimeout(self.sequenceTimer);
-				self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
-			}
-		}
-		//END INIT
-				
-		//EVENTS
-		if(this.settings.nextButton != undefined){
-			this.settings.nextButton.click(function(){
-				self.next();
-			});
-		}
-		
-		if(this.settings.prevButton != undefined){
-			this.settings.prevButton.click(function(){
-				self.prev();
-			});
-		}
-		
-		if(this.settings.keysNavigate){
-			$(window).keydown(function(e){
-				if(e.keyCode == 39){
+			//END INIT
+					
+			//EVENTS
+			
+			if(self.settings.nextButton != undefined){
+				self.settings.nextButton.click(function(){
 					self.next();
-				}
-				if(e.keyCode == 37){
+				});
+			}
+			
+			if(self.settings.prevButton != undefined){
+				self.settings.prevButton.click(function(){
 					self.prev();
-				}
-			});
-		}
-		if(this.settings.pauseOnHover && this.settings.autoPlay){
-			this.hoverEvent = this.sequence.hover(function(){
-				self.settings.autoPlay = false;
-				clearTimeout(self.sequenceTimer);
-				$(self.settings.pauseIcon).show();
-			}, function(){
-				self.settings.autoPlay = true;
-				autoPlaySequence = function(){self.autoPlaySequence()};
-				clearTimeout(self.sequenceTimer);
-				self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
-				$(self.settings.pauseIcon).hide();
-			});
-		}
-		
-		if(this.settings.touchEnabled && this.hasTouch){
-			var touch,
-				touches = {
-					"touchstart": -1,
-					"touchmove" : -1, 
-					"swipeDirection" : ""
-				};
-			this.sequence.bind("touchstart touchmove touchend", function(e){
-				e.preventDefault(); 
-				switch(e.originalEvent.type){
-					case "touchstart":
-					case "touchmove":
-						touches[e.originalEvent.type] = e.originalEvent.touches[0].pageX;
-						break;
-					case 'touchend':
-						if(touches["touchstart"] > -1 && touches["touchmove"] > self.settings.calculatedSwipeThreshold){
-							if(touches["touchstart"] < touches["touchmove"]){
-								self.next();
-							}else{
-								self.prev();
+				});
+			}
+			
+			if(self.settings.keysNavigate == true){
+				$(document).keydown(function(e){
+					if(e.keyCode == 39){
+						self.next();
+					}
+					if(e.keyCode == 37){
+						self.prev();
+					}
+				});
+			}
+			if(self.settings.pauseOnHover && self.settings.autoPlay){
+				self.hoverEvent = self.sequence.hover(function(e){
+					/*offsetWidth = e.target.offsetWidth; //width of the element
+					offsetX = e.offsetX; //cursor position on the element (or left pos (?))
+					//offsetLeft = e.target.offsetLeft; //left position from the container
+					console.log(e);
+					//cursorPos = offsetLeft + offsetX;
+					//console.log(cursorPos);
+					if(e.target.offsetLeft >= 0 && offsetX <= self.sequence.width()){
+						console.log("same");
+					}*/
+					self.settings.autoPlay = false;
+					clearTimeout(self.sequenceTimer);
+					$(self.settings.pauseIcon).show();
+				}, function(){
+					self.settings.autoPlay = true;
+					autoPlaySequence = function(){self.autoPlaySequence()};
+					clearTimeout(self.sequenceTimer);
+					self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
+					$(self.settings.pauseIcon).hide();
+				});
+			}
+			
+			if(self.settings.touchEnabled && self.hasTouch){
+				var touch,
+					touches = {
+						"touchstart": -1,
+						"touchmove" : -1, 
+						"swipeDirection" : ""
+					};
+				self.sequence.bind("touchstart touchmove touchend", function(e){
+					e.preventDefault(); 
+					switch(e.originalEvent.type){
+						case "touchstart":
+						case "touchmove":
+							touches[e.originalEvent.type] = e.originalEvent.touches[0].pageX;
+							break;
+						case 'touchend':
+							if(touches["touchstart"] > -1 && touches["touchmove"] > self.settings.calculatedSwipeThreshold){
+								if(touches["touchstart"] < touches["touchmove"]){
+									self.next();
+								}else{
+									self.prev();
+								}
 							}
-						}
-					default:
-						break;
-				}
+						default:
+							break;
+					}
+				});
+			}
+			$(window).resize(function(){ //if the window is resized...
+				self.settings.calculatedSwipeThreshold = self.container.width() * (self.settings.swipeThreshold / 100); //recalculate the swipe threshold
 			});
-		}
-		$(window).resize(function(){ //if the window is resized...
-			self.settings.calculatedSwipeThreshold = self.container.width() * (self.settings.swipeThreshold / 100); //recalculate the swipe threshold
-		});
-		//END EVENTS
+			//END EVENTS
+		}	
 	} //END CONSTRUCTOR
 	
 	Sequence.prototype = {
+		preloaderFallback: function(){ //if transitions aren't supported, call this fallback to show the default preloading animations
+			i = 0;
+			function preload(){
+				i = (i == 1) ? 0 : 1;
+				$("#sequence-preloader img:nth-child(1)").animate({"opacity": i}, 100);
+				$("#sequence-preloader img:nth-child(2)").animate({"opacity": i}, 350);
+				$("#sequence-preloader img:nth-child(3)").animate({"opacity": i}, 600);
+			}
+			preload();
+			self.defaultPreloader = setInterval(function(){
+				preload();
+			}, 600);
+		},
+		
 		autoPlaySequence: function(direction){
 			var self = this;
 			if(self.settings.autoPlayDirection == 1){
@@ -294,7 +372,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			$elementToReset.css(
 				self.prefixCSS(self.prefix, {
 					"transition-duration": cssValue,
-					"transition-delay": cssValue,
+					"transition-delay": cssValue
 				})
 			)
 		},
@@ -373,6 +451,7 @@ Aside from these comments, you may modify and distribute this file as you please
 						self.paused = false;
 						self.startAutoPlay();
 					}
+					
 					self.nextFrameID = (self.currentFrame.index() + 1 != self.numberOfFrames) ? self.currentFrameID + 1 : 1;
 					self.goTo(self.nextFrameID, 1); //go to the next frame
 				}else if(self.settings.autoPlayDirection == 1){
@@ -448,6 +527,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.currentFrame.animate({"opacity": 0}, self.settings.fallbackTheme.speed, function(){ //hide the current frame
 						self.currentFrame.css({"display": "none", "z-index": "1"});
 						self.currentFrame.removeClass("current");
+						self.settings.beforeNextFrameAnimatesIn();
 						nextFrame.addClass("current").css({"display": "block", "z-index": self.numberOfFrames}).animate({"opacity": 1}, 500); //make the next frame the current one and show it
 						self.currentFrame = nextFrame;
 						self.currentFrameID = self.currentFrame.index() + 1;
@@ -465,7 +545,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		animateOut: function(direction){
 			var self = this;
 			self.settings.beforeCurrentFrameAnimatesIn();
-			if(direction == 1){ //if user hit next button...
+			if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction == 1){ //if user hit next button...
 				//reset the position of the next frames elements ready for animating in again
 				self.modifyElements(nextFrameChildren, "0s");
 				nextFrameChildren.removeClass("animate-out");
@@ -477,7 +557,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				}
 			}
 			
-			if(direction == -1){ //if the user hit prev button
+			if(self.settings.reverseAnimationsWhenNavigatingBackwards && direction == -1){ //if the user hit prev button
 				self.modifyElements(nextFrameChildren, "0s");	
 				if(!self.settings.disableAnimateOut){				
 					nextFrameChildren.addClass("animate-out");		
@@ -545,7 +625,7 @@ Aside from these comments, you may modify and distribute this file as you please
 									
 			self.settings.beforeNextFrameAnimatesIn();
 							
-			if(direction == 1){ //if user hit next button...
+			if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction == 1){ //if user hit next button...
 				//reset the position of the next frames elements ready for animating in again
 				self.modifyElements(nextFrameChildren, "0s");
 				nextFrameChildren.removeClass("animate-out");
@@ -558,7 +638,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				}, 50);
 			}
 			
-			if(direction == -1){ //if the user hit prev button
+			if(self.settings.reverseAnimationsWhenNavigatingBackwards && direction == -1){ //if the user hit prev button
 				setTimeout(function(){
 					self.modifyElements(frameChildren, "");
 					frameChildren.addClass("animate-in").removeClass("animate-out");
@@ -602,6 +682,11 @@ Aside from these comments, you may modify and distribute this file as you please
 		prependNextButton: true,
 		prevButton: ".prev",
 		prependPrevButton: true,
+		preloader: true,
+		prependPreloader: true,
+		prependPreloadingComplete: true,
+		hidePreloaderUsingCSS: true,
+		hidePreloaderDelay: 0,	
 		startingFrameID: 1,
 		autoPlay: true,
 		autoPlayDirection: 1,
@@ -617,12 +702,13 @@ Aside from these comments, you may modify and distribute this file as you please
 		swipeThreshold: 15,
 		cycle: true,
 		disableAnimateOut: false,
+		reverseAnimationsWhenNavigatingBackwards: true,
 		
 		fallbackTheme: {
 			speed: 500
 		},
 		
-		//Callbacks are a work in progress and not it's possible not all of them will make it into v1.0
+		//Callbacks are a work in progress and note it's possible not all of them will make it into v1.0
 		beforeCurrentFrameAnimatesOut: function(){},	//triggers before current frame begins to animate out
 		beforeNextFrameAnimatesIn: function(){},		//triggers before next frame begins to animate in
 		afterNextFrameAnimatesIn: function(){},			//triggers after next frame animates in (and becomes the current frame)
@@ -630,7 +716,8 @@ Aside from these comments, you may modify and distribute this file as you please
 		beforeFirstFrameAnimatesIn: function(){},		//triggers before the first frame animates in
 		afterFirstFrameAnimatesIn: function(){},		//triggers after the first frame animates in
 		beforeLastFrameAnimatesIn: function(){},		//triggers before the last frame animates in
-		afterLastFrameAnimatesIn: function(){}			//triggers after the last frame animates in
+		afterLastFrameAnimatesIn: function(){},			//triggers after the last frame animates in
+		afterPreload: function(){}
 	};
 	$.fn.sequence.settings = {};
 })(jQuery);
