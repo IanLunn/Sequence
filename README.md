@@ -18,6 +18,17 @@ Sequence is the jQuery slider plugin with infinite style. It provides the comple
 - [Sliding Horizontal Parallax](http://www.sequencejs.com/themes/sliding-horizontal-parallax/)
 - [Apple Style](http://www.sequencejs.com/themes/apple-style/)
 
+##What's New? (v0.2 28/02/2012)
+
+###Preloader
+Sequence now has a default preloader or support for a custom preloader. When preloading is complete, a class of "preloading-complete" can be added to one or multiple elements to allow you to write your own reveal using CSS3 transitions. Also comes with a callback for when the preloading is complete.
+
+###Cycle Option
+Choose whether Sequence should go back to the start when it reaches the last frame (or the first frame if navigating backwards)
+
+###reverseAnimationsWhenNavigatingBackwards Option
+When navigating backwards, you can now specify whether frames should animate forwards or in reverse
+
 ##Documentation
 The unashamedly technical documentation can be found here: [SequenceJS Demo](http://www.sequencejs.com/documentation.php). Quick guides are on their way!
 
