@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.2 Beta
+Version: 0.3 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -12,9 +12,7 @@ Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise s
 Aside from these comments, you may modify and distribute this file as you please. Have fun!
 */
 (function($){	
-	function Sequence(element, options){	
-	
-	
+	function Sequence(element, options){		
 		//GLOBAL PARAMETERS
 		this.container = $(element);
 		this.sequence = this.container.children("ul");
@@ -44,7 +42,6 @@ Aside from these comments, you may modify and distribute this file as you please
 		    'msTransition'     : 'MSTransitionEnd MSAnimationEnd',
 		    'transition'       : 'transitionend animationend'
 		};
-		
 				
 		self.prefix = prefixes[Modernizr.prefixed('transition')];
 		self.transitionEnd = transitions[Modernizr.prefixed('transition')],
@@ -66,7 +63,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					case undefined:
 						//append the default preloader styles
 						$("head").append("<style>#sequence-preloader{height: 100%;position: absolute;width: 100%;z-index: 999999;}@"+self.prefix+"keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}@keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}#sequence-preloader img{background: #ff9933;border-radius: 6px;display: inline-block;height: 12px;opacity: "+opacity+";position: relative;top: -50%;width: 12px;"+self.prefix+"animation: preload 1s infinite; animation: preload 1s infinite;}.preloading{height: 12px;margin: 0 auto;top: 50%;position: relative;width: 48px;}#sequence-preloader img:nth-child(2){"+self.prefix+"animation-delay: .15s; animation-delay: .15s;}#sequence-preloader img:nth-child(3){"+self.prefix+"animation-delay: .3s; animation-delay: .3s;}.preloading-complete{opacity: 0;visibility: hidden;"+self.prefix+"transition-duration: 1s; transition-duration: 1s;}</style>");
-						$(prependPreloaderTo).prepend('<div id="sequence-preloader"><div class="preloading"><img src="../../images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="../../images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="../../images/sequence-preloader.png" alt="Sequence is loading, please wait..." /></div></div>');
+						$(prependPreloaderTo).prepend('<div id="sequence-preloader"><div class="preloading"><img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." /></div></div>');
 						if(!self.transitionsSupported || self.prefix == "-o-"){
 							self.preloaderFallback();
 						}
@@ -119,18 +116,19 @@ Aside from these comments, you may modify and distribute this file as you please
 				switch(pauseIcon){
 					case true:
 					case undefined:
-						this.CSSSelectorToHTML($(prependPauseIconTo), $.fn.sequence.defaults.pauseIcon, pauseIconSrc);
-						$($.fn.sequence.defaults.pauseIcon).hide();
-						return $($.fn.sequence.defaults.pauseIcon);
+						
+						this.CSSSelectorToHTML($(prependPauseIconTo), ".pause-icon", pauseIconSrc);
+						$(".pause-icon").hide();
+						return ".pause-icon";
 					break;
 					
 					case false:
 					break;
 					
 					default:
-						this.CSSSelectorToHTML($(prependPauseIconTo), this.settings.pauseIcon, pauseIconSrc);
-						$(this.settings.pauseIcon).hide();
-						return $(this.settings.pauseIcon);
+						this.CSSSelectorToHTML($(prependPauseIconTo), self.settings.pauseIcon, pauseIconSrc);
+						$(self.settings.pauseIcon).hide();
+						return $(self.settings.pauseIcon);
 					break;
 				}
 			},
@@ -295,7 +293,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				});
 			}
 			
-			if(!self.settings.pauseOnElementsOutsideContainer && self.settings.autoPlay){
+			if(self.settings.pauseOnHover && !self.settings.pauseOnElementsOutsideContainer && self.settings.autoPlay){
 				function hoverDetect(e){
 					containerLeft = self.container.position().left;
 					containerRight = (self.container.position().left + self.container.width());

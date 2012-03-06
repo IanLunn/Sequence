@@ -21,7 +21,7 @@
 		$(document).ready(function(){
 			var options = {
 				autoPlay: true,
-				autoPlayDirection: -1,
+				autoPlayDirection: 1,
 				nextButton: ".next",
 				prevButton: ".prev",
 				preloader: true,
@@ -47,6 +47,7 @@
 			};
 
 			var sequence = $("#sequence").sequence(options).data("sequence");
+			console.log(sequence);
 			
 			$("#nav li").click(function(){
 				if(!sequence.active){

@@ -21,12 +21,11 @@
 			var options = {
 				nextButton: false,
 				prevButton: false,				
-				autoPlayDelay: 3000,
+				autoPlayDelay: 2000,
 				hidePreloaderDelay: 500,
 				hidePreloaderusingCSS: false,						
-				pauseOnHover: true,
-				//pauseIcon: true,				
 				animateStartingFrameIn: true, 
+				autoPlay: true,
 				autoPlayDirection: 1,				
 				delayDuringOutInTransitions: 750,
 				keysNavigate: true,								
@@ -34,14 +33,21 @@
 				startingFrameID: 1,
 				preloader: true,
 				prependPreloader: true,
-				hidePreloaderDelay: 500,
 				fallbackTheme: { 							
 					speed: 500
 				}
 			};
 
 			var sequence = $("#sequence").sequence(options).data("sequence");
-		})
+			
+			$("#start").click(function(){
+				sequence.startAutoPlay();
+			});
+			
+			$("#stop").click(function(){
+				sequence.stopAutoPlay();
+			});
+		})	
 	</script>
 	<script type="text/javascript">
 	
