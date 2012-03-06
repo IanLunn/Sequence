@@ -451,6 +451,12 @@
 							<td>If using autoPlay, whether frames should stop auto playing when the user hovers over Sequence. autoPlay will continue again when the user moves their cursor outside of Sequence.</td>
 						</tr>
 						<tr>
+							<td>pauseOnElementsOutsideContainer</td>
+							<td>true/false</td>
+							<td>false</td>
+							<td>Whether or not Sequence should pause when the user hovers over one of its child elements outside of the Sequence container</td>
+						</tr>
+						<tr>
 							<td>pauseIcon</td>
 							<td>true/false or a CSS selector</td>
 							<td>false</td>

@@ -18,7 +18,20 @@ Sequence is the jQuery slider plugin with infinite style. It provides the comple
 - [Sliding Horizontal Parallax](http://www.sequencejs.com/themes/sliding-horizontal-parallax/)
 - [Apple Style](http://www.sequencejs.com/themes/apple-style/)
 
-##What's New? (v0.2 28/02/2012)
+##What's New? 
+
+(v0.3 06/03/2012)
+
+###Modernizr Detect
+Sequence will now detect whether Modernizr.prefixed is installed on the site, if it's not, it'll use its own instance.
+
+###pauseOnElementsOutsideContainer
+Sequence will now only trigger the pause function when hovering over its child elements inside the container. If you'd like Sequence to pause when hovering on child elements outside of the container, set this to true.
+
+###pauseIcon Fix
+In update v0.2, the pauseIcon option got broken. This is now fixed.
+
+(v0.2 28/02/2012)
 
 ###Preloader
 Sequence now has a default preloader or support for a custom preloader. When preloading is complete, a class of "preloading-complete" can be added to one or multiple elements to allow you to write your own reveal using CSS3 transitions. Also comes with a callback for when the preloading is complete.
