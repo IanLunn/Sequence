@@ -295,40 +295,40 @@ Aside from these comments, you may modify and distribute this file as you please
 				});
 			}
 			
-			var a;
-										var pageX, pageY, containerLeft, containerRight, containerTop, containerBottom, prevx;
-			
-			
-			if(self.settings.pauseOnHover && self.settings.autoPlay && !self.settings.pauseOnElementsOutsideContainer){
-			
-			self.sequence.mousemove(function(e){
-				containerLeft = self.container.position().left;
-				containerRight = (self.container.position().left + self.container.width());
-				containerTop = self.container.position().top;
-				containerBottom = (self.container.position().top + self.container.height());
-				pageX = e.pageX;
-				pageY = e.pageY;
-			});
-
-				
-				setInterval(function(){
-					
-					
-					
+			if(!self.settings.pauseOnElementsOutsideContainer && self.settings.autoPlay){
+				function hoverDetect(e){
+					containerLeft = self.container.position().left;
+					containerRight = (self.container.position().left + self.container.width());
+					containerTop = self.container.position().top;
+					containerBottom = (self.container.position().top + self.container.height());
+					pageX = e.pageX;
+					pageY = e.pageY;
 					if(pageX >= containerLeft && pageX <= containerRight && pageY >= containerTop && pageY <= containerBottom){
-						//console.log("in");
-						//self.settings.autoPlay = false;
-						//clearTimeout(self.sequenceTimer);
-						//$(self.settings.pauseIcon).show();
-					}else{
-						//console.log("out");
-					}	
-							
-		}, 500);
+						self.settings.autoPlay = false;
+						clearTimeout(self.sequenceTimer);
+						$(self.settings.pauseIcon).show();
+						self.sequence.unbind("mousemove");
+					};
+				}
 				
-
+				self.hoverEvent = self.sequence.mousemove(function(e){
+					hoverDetect(e);						
+				});
 				
-			}/*else if(self.settings.pauseOnHover && self.settings.autoPlay){
+				self.sequence.mouseleave(function(e){
+						self.settings.autoPlay = true;
+						autoPlaySequence = function(){self.autoPlaySequence()};
+						clearTimeout(self.sequenceTimer);
+						self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
+						$(self.settings.pauseIcon).hide();
+						
+						if(self.sequence.data("events").mousemove == undefined){
+							self.sequence.mousemove(function(e){
+								hoverDetect(e);						
+							});
+						}
+				});
+			}else if(self.settings.pauseOnHover && self.settings.autoPlay){
 				self.hoverEvent = self.sequence.hover(function(e){
 					self.settings.autoPlay = false;
 					clearTimeout(self.sequenceTimer);
@@ -340,7 +340,8 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 					$(self.settings.pauseIcon).hide();
 				});
-			}*/
+			}
+			
 			
 			if(self.settings.touchEnabled && self.hasTouch){
 				var touch,
