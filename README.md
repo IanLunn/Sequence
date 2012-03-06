@@ -18,6 +18,21 @@ Sequence is the jQuery slider plugin with infinite style. It provides the comple
 - [Sliding Horizontal Parallax](http://www.sequencejs.com/themes/sliding-horizontal-parallax/)
 - [Apple Style](http://www.sequencejs.com/themes/apple-style/)
 
+##Documentation
+The unashamedly technical documentation can be found here: [SequenceJS Demo](http://www.sequencejs.com/documentation.php). Quick guides are on their way!
+
+##Author
+[Ian Lunn](http://twitter.com/#!/IanLunn) (say hi on Twitter!)
+
+##License
+sequence.js is a FREE script and is dual licensed under the following:
+http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
+
+Theme files, their HTML, CSS, JavaScript/jQuery and images are licensed under the following unless otherwise stated:
+http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
+
+[http://www.sequencejs.com/](SequenceJS.com), the sequence.js script and its dependencies are &copy; 2012 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
+
 ##What's New? 
 
 (v0.3 06/03/2012)
@@ -41,18 +56,3 @@ Choose whether Sequence should go back to the start when it reaches the last fra
 
 ###reverseAnimationsWhenNavigatingBackwards Option
 When navigating backwards, you can now specify whether frames should animate forwards or in reverse
-
-##Documentation
-The unashamedly technical documentation can be found here: [SequenceJS Demo](http://www.sequencejs.com/documentation.php). Quick guides are on their way!
-
-##Author
-[Ian Lunn](http://twitter.com/#!/IanLunn) (say hi on Twitter!)
-
-##License
-sequence.js is a FREE script and is dual licensed under the following:
-http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
-
-Theme files, their HTML, CSS, JavaScript/jQuery and images are licensed under the following unless otherwise stated:
-http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
-
-[http://www.sequencejs.com/](SequenceJS.com), the sequence.js script and its dependencies are &copy; 2012 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
