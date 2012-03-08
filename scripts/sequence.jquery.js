@@ -12,10 +12,10 @@ Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise s
 Aside from these comments, you may modify and distribute this file as you please. Have fun!
 */
 (function($){	
-	function Sequence(element, options){		
-		//GLOBAL PARAMETERS
-		this.container = $(element);
-		this.sequence = this.container.children("ul");
+	function Sequence(element, options, defaults, get){	
+		var self = this;	
+		self.container = $(element),
+		self.sequence = self.container.children("ul");
 		
 		try{ //is Modernizr.prefixed installed?
 			Modernizr.prefixed;
@@ -24,11 +24,10 @@ Aside from these comments, you may modify and distribute this file as you please
 			}
 		}
 		catch(err){ //if not...get the custom build necessary for Sequence
-			getModernizr();
+			get.modernizr();
 		}
 		
-		var self = this,
-		prefixes = {
+		var prefixes = {
 		    'WebkitTransition' : '-webkit-',
 		    'MozTransition'    : '-moz-',
 		    'OTransition'      : '-o-',
@@ -43,7 +42,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		    'transition'       : 'transitionend animationend'
 		};
 				
-		self.prefix = prefixes[Modernizr.prefixed('transition')];
+		self.prefix = prefixes[Modernizr.prefixed('transition')],
 		self.transitionEnd = transitions[Modernizr.prefixed('transition')],
 		self.transitionProperties = {},
 		self.numberOfFrames = self.sequence.children("li").length,
@@ -52,7 +51,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		self.sequenceTimer,
 		self.paused = false,
 		self.hoverEvent,
-		self.defaultPreloader;
+		self.defaultPreloader,
 		self.init = {
 			preloader: function(optionPreloader){
 				prependPreloaderTo = (self.settings.prependPreloader == true) ? self.container : self.settings.prependPreloader;
@@ -61,9 +60,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				switch(optionPreloader){
 					case true:
 					case undefined:
-						//append the default preloader styles
-						$("head").append("<style>#sequence-preloader{height: 100%;position: absolute;width: 100%;z-index: 999999;}@"+self.prefix+"keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}@keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}#sequence-preloader img{background: #ff9933;border-radius: 6px;display: inline-block;height: 12px;opacity: "+opacity+";position: relative;top: -50%;width: 12px;"+self.prefix+"animation: preload 1s infinite; animation: preload 1s infinite;}.preloading{height: 12px;margin: 0 auto;top: 50%;position: relative;width: 48px;}#sequence-preloader img:nth-child(2){"+self.prefix+"animation-delay: .15s; animation-delay: .15s;}#sequence-preloader img:nth-child(3){"+self.prefix+"animation-delay: .3s; animation-delay: .3s;}.preloading-complete{opacity: 0;visibility: hidden;"+self.prefix+"transition-duration: 1s; transition-duration: 1s;}</style>");
-						$(prependPreloaderTo).prepend('<div id="sequence-preloader"><div class="preloading"><img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." /></div></div>');
+						get.defaultPreloader();
 						if(!self.transitionsSupported || self.prefix == "-o-"){
 							self.preloaderFallback();
 						}
@@ -88,9 +85,9 @@ Aside from these comments, you may modify and distribute this file as you please
 					case true: //set up default nav button
 					case undefined:
 						if(direction == ".next"){
-							this.CSSSelectorToHTML($(prependNextButtonTo),  $.fn.sequence.defaults.nextButton);
+							this.CSSSelectorToHTML($(prependNextButtonTo),  defaults.nextButton);
 						}else{
-							this.CSSSelectorToHTML($(prependPrevButtonTo),  $.fn.sequence.defaults.prevButton);
+							this.CSSSelectorToHTML($(prependPrevButtonTo),  defaults.prevButton);
 						}			
 					break;
 					
@@ -116,7 +113,6 @@ Aside from these comments, you may modify and distribute this file as you please
 				switch(pauseIcon){
 					case true:
 					case undefined:
-						
 						this.CSSSelectorToHTML($(prependPauseIconTo), ".pause-icon", pauseIconSrc);
 						$(".pause-icon").hide();
 						return ".pause-icon";
@@ -157,7 +153,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		},		
 		
 		//INIT
-		self.settings = $.extend({}, $.fn.sequence.defaults, options);
+		self.settings = $.extend({}, defaults, options),
 		self.settings.preloader = self.init.preloader(self.settings.preloader);
 
 		if(self.settings.animateStartingFrameIn){
@@ -185,8 +181,8 @@ Aside from these comments, you may modify and distribute this file as you please
 		}
 		
 		function init(){
-			self.settings.nextButton = self.init.navButtons(options.nextButton, $.fn.sequence.defaults.nextButton);
-			self.settings.prevButton = self.init.navButtons(options.prevButton, $.fn.sequence.defaults.prevButton);
+			self.settings.nextButton = self.init.navButtons(options.nextButton, defaults.nextButton);
+			self.settings.prevButton = self.init.navButtons(options.prevButton, defaults.prevButton);
 			self.settings.prependPauseIcon = (self.settings.prependPauseIcon != undefined) 
 				? self.settings.prependPauseIcon 
 				: self.container;
@@ -704,17 +700,26 @@ Aside from these comments, you may modify and distribute this file as you please
 
 	$.fn.sequence = function(options){
 		return this.each(function(){
-			var sequence = new Sequence($(this), options);
+			var sequence = new Sequence($(this), options, defaults, get);
 			$(this).data("sequence", sequence);
 		});
 	};
 	
-	/* Modernizr 2.5.3 (Custom Build) | MIT & BSD
-	 * Build: http://www.modernizr.com/download/#-prefixed-testprop-testallprops-domprefixes */
-	getModernizr = function(){ window.Modernizr=function(a,b,c){function w(a){i.cssText=a}function x(a,b){return w(prefixes.join(a+";")+(b||""))}function y(a,b){return typeof a===b}function z(a,b){return!!~(""+a).indexOf(b)}function A(a,b){for(var d in a)if(i[a[d]]!==c)return b=="pfx"?a[d]:!0;return!1}function B(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:y(f,"function")?f.bind(d||b):f}return!1}function C(a,b,c){var d=a.charAt(0).toUpperCase()+a.substr(1),e=(a+" "+m.join(d+" ")+d).split(" ");return y(b,"string")||y(b,"undefined")?A(e,b):(e=(a+" "+n.join(d+" ")+d).split(" "),B(e,b,c))}var d="2.5.3",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l="Webkit Moz O ms",m=l.split(" "),n=l.toLowerCase().split(" "),o={},p={},q={},r=[],s=r.slice,t,u={}.hasOwnProperty,v;!y(u,"undefined")&&!y(u.call,"undefined")?v=function(a,b){return u.call(a,b)}:v=function(a,b){return b in a&&y(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=s.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(s.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(s.call(arguments)))};return e});for(var D in o)v(o,D)&&(t=D.toLowerCase(),e[t]=o[D](),r.push((e[t]?"":"no-")+t));return w(""),h=j=null,e._version=d,e._domPrefixes=n,e._cssomPrefixes=m,e.testProp=function(a){return A([a])},e.testAllProps=C,e.prefixed=function(a,b,c){return b?C(a,b,c):C(a,"pfx")},e}(this,this.document);
-	};
+	//some external functions
+	var get = {
+		/* Modernizr 2.5.3 (Custom Build) | MIT & BSD
+		 * Build: http://www.modernizr.com/download/#-prefixed-testprop-testallprops-domprefixes*/
+		 modernizr: function(){
+		;window.Modernizr = function(a,b,c){function w(a){i.cssText=a}function x(a,b){return w(prefixes.join(a+";")+(b||""))}function y(a,b){return typeof a===b}function z(a,b){return!!~(""+a).indexOf(b)}function A(a,b){for(var d in a)if(i[a[d]]!==c)return b=="pfx"?a[d]:!0;return!1}function B(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:y(f,"function")?f.bind(d||b):f}return!1}function C(a,b,c){var d=a.charAt(0).toUpperCase()+a.substr(1),e=(a+" "+m.join(d+" ")+d).split(" ");return y(b,"string")||y(b,"undefined")?A(e,b):(e=(a+" "+n.join(d+" ")+d).split(" "),B(e,b,c))}var d="2.5.3",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l="Webkit Moz O ms",m=l.split(" "),n=l.toLowerCase().split(" "),o={},p={},q={},r=[],s=r.slice,t,u={}.hasOwnProperty,v;!y(u,"undefined")&&!y(u.call,"undefined")?v=function(a,b){return u.call(a,b)}:v=function(a,b){return b in a&&y(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=self;if(typeof c!="function")throw new TypeError;var d=s.call(arguments,1),e=function(){if(self instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(s.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(s.call(arguments)))};return e});for(var D in o)v(o,D)&&(t=D.toLowerCase(),e[t]=o[D](),r.push((e[t]?"":"no-")+t));return w(""),h=j=null,e._version=d,e._domPrefixes=n,e._cssomPrefixes=m,e.testProp=function(a){return A([a])},e.testAllProps=C,e.prefixed=function(a,b,c){return b?C(a,b,c):C(a,"pfx")},e}(self,self.document)
+		},
+		
+		defaultPreloader: function(){
+			$("head").append("<style>#sequence-preloader{height: 100%;position: absolute;width: 100%;z-index: 999999;}@"+self.prefix+"keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}@keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}#sequence-preloader img{background: #ff9933;border-radius: 6px;display: inline-block;height: 12px;opacity: "+opacity+";position: relative;top: -50%;width: 12px;"+self.prefix+"animation: preload 1s infinite; animation: preload 1s infinite;}.preloading{height: 12px;margin: 0 auto;top: 50%;position: relative;width: 48px;}#sequence-preloader img:nth-child(2){"+self.prefix+"animation-delay: .15s; animation-delay: .15s;}#sequence-preloader img:nth-child(3){"+self.prefix+"animation-delay: .3s; animation-delay: .3s;}.preloading-complete{opacity: 0;visibility: hidden;"+self.prefix+"transition-duration: 1s; transition-duration: 1s;}</style>");
+			$(prependPreloaderTo).prepend('<div id="sequence-preloader"><div class="preloading"><img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." /></div></div>');
+		}
+	},
 	
-	$.fn.sequence.defaults = {
+	defaults = {
 		nextButton: ".next",
 		prependNextButton: true,
 		prevButton: ".prev",
@@ -757,5 +762,4 @@ Aside from these comments, you may modify and distribute this file as you please
 		afterLastFrameAnimatesIn: function(){},			//triggers after the last frame animates in
 		afterPreload: function(){}
 	};
-	$.fn.sequence.settings = {};
 })(jQuery);
