@@ -64,7 +64,7 @@
 				
 <pre><code>&lt;script type="text/javascript"&gt; 
     $(document).ready(function(){
-        var sequence = $("#sequence").sequence(options);
+        var sequence = $("#sequence").sequence(options).data("sequence");
     }
 &lt;/script&gt;</code></pre>
 				
@@ -80,8 +80,8 @@
 				
 <pre><code>&lt;script type="text/javascript"&gt; 
     $(document).ready(function(){
-        var sequence = $("#sequence").sequence(options);
-        var sequence2 = $("#sequence2").sequence(options2);
+        var sequence = $("#sequence").sequence(options).data("sequence");
+        var sequence2 = $("#sequence2").sequence(options2).data("sequence2");
     }
 &lt;/script&gt;</code></pre>
 				
@@ -336,7 +336,7 @@
             autoPlay: true,
             autoPlayDelay: 3000
         }
-        var sequence = $("#sequence").sequence(options);
+        var sequence = $("#sequence").sequence(options).data("sequence");
     }
 &lt;/script&gt;</code></pre>
 				
@@ -348,8 +348,8 @@
             autoPlay: true,
             autoPlayDelay: 3000
         }
-        var sequence = $("#sequence").sequence(options);
-        var sequence2 = $("#sequence2").sequence(options);
+        var sequence = $("#sequence").sequence(options).data("sequence");
+        var sequence2 = $("#sequence2").sequence(options).data("sequence2");
     }
 &lt;/script&gt;</code></pre>
 				
@@ -366,8 +366,8 @@
             autoPlay: true,
             autoPlayDelay: 5000
         }
-        var sequence = $("#sequence").sequence(options);
-        var sequence2 = $("#sequence2").sequence(options2);
+        var sequence = $("#sequence").sequence(options).data("sequence");
+        var sequence2 = $("#sequence2").sequence(options2).data("sequence2");
     }
 &lt;/script&gt;</code></pre>
 				
@@ -561,7 +561,7 @@
             	speed: 500
             }
         }
-        var sequence = $("#sequence").sequence(options);
+        var sequence = $("#sequence").sequence(options).data("sequence");
     }
 &lt;/script&gt;</code></pre>
 				
@@ -617,7 +617,7 @@
             	myCustomFunction(); //...or specify a function
             }
         }
-        var sequence = $("#sequence").sequence(options);
+        var sequence = $("#sequence").sequence(options).data("sequence");
     }
     
     function myCustomFunction(){
