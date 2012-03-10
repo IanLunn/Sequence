@@ -67,6 +67,7 @@ body {
 }
 
 #sequence {
+	-webkit-transform: translateZ(0);
 	height: 600px;
 	margin: 0 auto;
 	position: relative;

@@ -13,7 +13,7 @@ Aside from these comments, you may modify and distribute this file as you please
 */
 (function($){	
 	function Sequence(element, options, defaults, get){	
-		var self = this;	
+		var self = this;
 		self.container = $(element),
 		self.sequence = self.container.children("ul");
 		
@@ -41,7 +41,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		    'msTransition'     : 'MSTransitionEnd MSAnimationEnd',
 		    'transition'       : 'transitionend animationend'
 		};
-				
+		
 		self.prefix = prefixes[Modernizr.prefixed('transition')],
 		self.transitionEnd = transitions[Modernizr.prefixed('transition')],
 		self.transitionProperties = {},
@@ -54,13 +54,12 @@ Aside from these comments, you may modify and distribute this file as you please
 		self.defaultPreloader,
 		self.init = {
 			preloader: function(optionPreloader){
-				prependPreloaderTo = (self.settings.prependPreloader == true) ? self.container : self.settings.prependPreloader;
-
-				opacity = (self.transitionsSupported) ? 0 : 1;
+				prependTo = (self.settings.prependPreloader == true) ? self.container : self.settings.prependPreloader;
+				
 				switch(optionPreloader){
 					case true:
 					case undefined:
-						get.defaultPreloader();
+						get.defaultPreloader(prependTo, self.transitionsSupported, self.prefix);
 						if(!self.transitionsSupported || self.prefix == "-o-"){
 							self.preloaderFallback();
 						}
@@ -71,83 +70,45 @@ Aside from these comments, you may modify and distribute this file as you please
 					break;
 					
 					default:
-						this.CSSSelectorToHTML($(prependPreloaderTo),  optionPreloader);
+						this.CSSSelectorToHTML(optionPreloader);
 						return $(optionPreloader);
 					break;
 				}
 			},
 			
-			navButtons: function(optionButton, direction){
-				prependNextButtonTo = (self.settings.prependNextButton == true) ? self.container : self.settings.prependNextButton;
-				prependPrevButtonTo = (self.settings.prependPrevButton == true) ? self.container : self.settings.prependPrevButton;
+			uiElements: function(prependTo, devOption, defaultOption, elementSrc, elementAlt){
+				prependElement = (prependTo == true) ? self.container : prependTo;
 				
-				switch(optionButton){
-					case true: //set up default nav button
-					case undefined:
-						if(direction == ".next"){
-							this.CSSSelectorToHTML($(prependNextButtonTo),  defaults.nextButton);
-						}else{
-							this.CSSSelectorToHTML($(prependPrevButtonTo),  defaults.prevButton);
-						}			
-					break;
-					
-					case false: //don't use a nav button
-					break;
-					
-					default: //set up the dev defined button	
-						if(direction == ".next"){
-							this.CSSSelectorToHTML($(prependNextButtonTo),  optionButton);
-							$(optionButton).show(); //this will most likely be removed in future versions
-							return $(optionButton);
-						}else{
-							this.CSSSelectorToHTML($(prependPrevButtonTo),  optionButton);
-							$(optionButton).show(); //this will most likely be removed in future versions
-							return $(optionButton);
-						}
-					break;
-				}
-			},
-			
-			pauseIcon: function(pauseIcon, pauseIconSrc){
-				prependPauseIconTo = (self.settings.prependPauseIcon == true) ? self.container : self.settings.prependPauseIcon;
-				switch(pauseIcon){
+				switch(devOption){
 					case true:
 					case undefined:
-						this.CSSSelectorToHTML($(prependPauseIconTo), ".pause-icon", pauseIconSrc);
-						$(".pause-icon").hide();
-						return ".pause-icon";
+						$(prependElement).prepend('<img '+this.CSSSelectorToHTML(defaultOption)+ 'src="'+elementSrc+'" alt="'+elementAlt+'" />');
+						return $(defaultOption);
 					break;
 					
 					case false:
 					break;
 					
 					default:
-						this.CSSSelectorToHTML($(prependPauseIconTo), self.settings.pauseIcon, pauseIconSrc);
-						$(self.settings.pauseIcon).hide();
-						return $(self.settings.pauseIcon);
+						$(prependElement).prepend('<img '+this.CSSSelectorToHTML(devOption)+ 'src="'+elementSrc+'" alt="'+elementAlt+'" />');
+						return $(devOption);
 					break;
 				}
 			},
 			
-			CSSSelectorToHTML: function(prependTo, selector, pauseIconSrc){
+			CSSSelectorToHTML: function(selector){
 				switch(selector.charAt(0)){
 					case ".":
-						buttonSelector = 'class="'+selector.split(".")[1]+'"';
+						return 'class="'+selector.split(".")[1]+'"';
 						break;
 					
 					case "#":
-						buttonSelector = 'id="'+selector.split("#")[1]+'"';
+						return 'id="'+selector.split("#")[1]+'"';
 						break;
 					
 					default:
-						buttonSelector = selector;
+						return selector;
 						break;
-				}
-				
-				if(pauseIconSrc != undefined && (self.settings.pauseIcon != true || self.settings.pauseIcon != undefined)){				
-					$(prependTo).prepend('<div '+buttonSelector+'><img src="'+pauseIconSrc+'" alt="Pause" /></div>');
-				}else{
-					$(prependTo).prepend('<div '+buttonSelector+'></div>');
 				}
 			}
 		},		
@@ -181,16 +142,23 @@ Aside from these comments, you may modify and distribute this file as you please
 		}
 		
 		function init(){
-			self.settings.nextButton = self.init.navButtons(options.nextButton, defaults.nextButton);
-			self.settings.prevButton = self.init.navButtons(options.prevButton, defaults.prevButton);
-			self.settings.prependPauseIcon = (self.settings.prependPauseIcon != undefined) 
-				? self.settings.prependPauseIcon 
-				: self.container;
+			self.settings.nextButton = self.init.uiElements(self.settings.prependNextButton, options.nextButton, defaults.nextButton, self.settings.nextButtonSrc, self.settings.nextButtonAlt); 
+			self.settings.prevButton = self.init.uiElements(self.settings.prependPrevButton, options.prevButton, defaults.prevButton, self.settings.prevButtonSrc, self.settings.prevButtonAlt);
+			
+			if(options.nextButton != false && self.settings.showNextButtonOnInit){self.settings.nextButton.show()};
+			if(options.prevButton != false && self.settings.showPrevButtonOnInit){self.settings.prevButton.show()};
+			
+			if(self.settings.pauseIcon != false){
+				self.settings.pauseIcon = self.init.uiElements(self.settings.prependPauseIcon, options.pauseIcon, ".pause-icon", self.settings.pauseIconSrc);
+				if(self.settings.pauseIcon != undefined){
+					self.settings.pauseIcon.hide();
+				}
+			}
+						
 			if(self.hasTouch){
 				self.settings.calculatedSwipeThreshold = self.container.width() * (self.settings.swipeThreshold / 100);
 			}
-			self.settings.pauseIcon = self.init.pauseIcon(self.settings.pauseIcon, self.settings.pauseIconSrc);
-			
+					
 			self.currentFrame = self.sequence.children("li:nth-child("+self.settings.startingFrameID+")").addClass("current");	
 			self.currentFrameChildren = self.currentFrame.children();
 			self.currentFrameID = self.settings.startingFrameID;
@@ -199,7 +167,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.direction;
 			
 			self.sequence.css({"width": "100%", "height": "100%"}); //set the sequence list to 100% width/height just incase it hasn't been specified in the CSS
-			
+						
 			if(self.transitionsSupported){ //initiate the full featured Sequence if transitions are supported...
 				whenFirstAnimateInEnds = function(){
 					animationComplete = function(){
@@ -262,16 +230,14 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 				}
 			}
-			//END INIT
-					
+			//END INIT			
 			//EVENTS
-			
 			if(self.settings.nextButton != undefined){
 				self.settings.nextButton.click(function(){
 					self.next();
 				});
 			}
-			
+									
 			if(self.settings.prevButton != undefined){
 				self.settings.prevButton.click(function(){
 					self.prev();
@@ -288,7 +254,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					}
 				});
 			}
-			
+						
 			if(self.settings.pauseOnHover && !self.settings.pauseOnElementsOutsideContainer && self.settings.autoPlay){
 				function hoverDetect(e){
 					containerLeft = self.container.position().left;
@@ -713,17 +679,24 @@ Aside from these comments, you may modify and distribute this file as you please
 		;window.Modernizr = function(a,b,c){function w(a){i.cssText=a}function x(a,b){return w(prefixes.join(a+";")+(b||""))}function y(a,b){return typeof a===b}function z(a,b){return!!~(""+a).indexOf(b)}function A(a,b){for(var d in a)if(i[a[d]]!==c)return b=="pfx"?a[d]:!0;return!1}function B(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:y(f,"function")?f.bind(d||b):f}return!1}function C(a,b,c){var d=a.charAt(0).toUpperCase()+a.substr(1),e=(a+" "+m.join(d+" ")+d).split(" ");return y(b,"string")||y(b,"undefined")?A(e,b):(e=(a+" "+n.join(d+" ")+d).split(" "),B(e,b,c))}var d="2.5.3",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l="Webkit Moz O ms",m=l.split(" "),n=l.toLowerCase().split(" "),o={},p={},q={},r=[],s=r.slice,t,u={}.hasOwnProperty,v;!y(u,"undefined")&&!y(u.call,"undefined")?v=function(a,b){return u.call(a,b)}:v=function(a,b){return b in a&&y(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=self;if(typeof c!="function")throw new TypeError;var d=s.call(arguments,1),e=function(){if(self instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(s.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(s.call(arguments)))};return e});for(var D in o)v(o,D)&&(t=D.toLowerCase(),e[t]=o[D](),r.push((e[t]?"":"no-")+t));return w(""),h=j=null,e._version=d,e._domPrefixes=n,e._cssomPrefixes=m,e.testProp=function(a){return A([a])},e.testAllProps=C,e.prefixed=function(a,b,c){return b?C(a,b,c):C(a,"pfx")},e}(self,self.document)
 		},
 		
-		defaultPreloader: function(){
-			$("head").append("<style>#sequence-preloader{height: 100%;position: absolute;width: 100%;z-index: 999999;}@"+self.prefix+"keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}@keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}#sequence-preloader img{background: #ff9933;border-radius: 6px;display: inline-block;height: 12px;opacity: "+opacity+";position: relative;top: -50%;width: 12px;"+self.prefix+"animation: preload 1s infinite; animation: preload 1s infinite;}.preloading{height: 12px;margin: 0 auto;top: 50%;position: relative;width: 48px;}#sequence-preloader img:nth-child(2){"+self.prefix+"animation-delay: .15s; animation-delay: .15s;}#sequence-preloader img:nth-child(3){"+self.prefix+"animation-delay: .3s; animation-delay: .3s;}.preloading-complete{opacity: 0;visibility: hidden;"+self.prefix+"transition-duration: 1s; transition-duration: 1s;}</style>");
-			$(prependPreloaderTo).prepend('<div id="sequence-preloader"><div class="preloading"><img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." /></div></div>');
+		defaultPreloader: function(prependTo, transitions, prefix){
+			opacity = (transitions) ? 0 : 1;
+			$("head").append("<style>#sequence-preloader{height: 100%;position: absolute;width: 100%;z-index: 999999;}@"+prefix+"keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}#sequence-preloader img{background: #ff9933;border-radius: 6px;display: inline-block;height: 12px;opacity: "+opacity+";position: relative;top: -50%;width: 12px;"+prefix+"animation: preload 1s infinite; animation: preload 1s infinite;}.preloading{height: 12px;margin: 0 auto;top: 50%;position: relative;width: 48px;}#sequence-preloader img:nth-child(2){"+prefix+"animation-delay: .15s; animation-delay: .15s;}#sequence-preloader img:nth-child(3){"+prefix+"animation-delay: .3s; animation-delay: .3s;}.preloading-complete{opacity: 0;visibility: hidden;"+prefix+"transition-duration: 1s; transition-duration: 1s;}</style>");
+			$(prependTo).prepend('<div id="sequence-preloader"><div class="preloading"><img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." /></div></div>');
 		}
 	},
 	
 	defaults = {
 		nextButton: ".next",
 		prependNextButton: true,
+		nextButtonSrc: "images/bt-next.png",
+		nextButtonAlt: "&#gt;",
+		showNextButtonOnInit: true,
 		prevButton: ".prev",
 		prependPrevButton: true,
+		prevButtonSrc: "images/bt-prev.png",
+		prevButtonAlt: "&#lt;",
+		showPrevButtonOnInit: true,
 		preloader: true,
 		prependPreloader: true,
 		prependPreloadingComplete: true,
@@ -738,6 +711,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		pauseIcon: false,
 		prependPauseIcon: true,
 		pauseIconSrc: "images/pause-icon.png",
+		pauseAlt: "Pause",
 		keysNavigate: true,
 		delayDuringOutInTransitions: 1000,
 		touchEnabled: true,

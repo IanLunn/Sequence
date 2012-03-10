@@ -15,7 +15,7 @@
 	    document.write(unescape("%3Cscript src='../../scripts/jquery.js' type='text/javascript'%3E%3C/script%3E"));
 	}
 	</script>
-	<script type="text/javascript" src="../../scripts/sequence.jquery-min.js"></script>
+	<script type="text/javascript" src="../../scripts/sequence.jquery.js"></script>
 	<script type="text/javascript">	
 		$(document).ready(function(){
 			var options = {
@@ -31,8 +31,9 @@
 				keysNavigate: true,								
 				touchEnabled: false,
 				startingFrameID: 1,
-				preloader: true,
-				prependPreloader: true,
+				//preloader: false,
+				pauseOnElementsOutsideContainer: true,
+				//prependPreloader: true,
 				fallbackTheme: { 							
 					speed: 500
 				}
@@ -40,13 +41,6 @@
 
 			var sequence = $("#sequence").sequence(options).data("sequence");
 			
-			$("#start").click(function(){
-				sequence.startAutoPlay();
-			});
-			
-			$("#stop").click(function(){
-				sequence.stopAutoPlay();
-			});
 		})	
 	</script>
 	<script type="text/javascript">
