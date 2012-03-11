@@ -1,7 +1,6 @@
 .DS_Store
 .espressostorage
 *.esproj
-*.php
 themes/dev/*
 downloads/*
 inc/*
@@ -10,3 +9,6 @@ css/*
 _notes/*
 themes/demo-theme/*
 */Raw Files
+themes.html
+index.html
+documentation.html

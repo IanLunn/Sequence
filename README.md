@@ -35,6 +35,18 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+(v0.4 11/03/2012)
+
+###Previous/Next Button Options
+The previous and next buttons now have a couple more options:
+- nextButtonSrc: specify a path to an image to be used as the next button
+- nextButtonAlt: specify a string to be used as the alt text for the next button image
+- prevButtonSrc: specify a path to an image to be used as the previous button
+- prevButtonAlt: specify a string to be used as the alt text for the previous button image
+
+###Maintenance
+General tidy up of the script. Made some changes for better practice -- now only using one jQuery function etc, all dependencies are enclosed within the Sequence function. Also optimised .init().
+
 (v0.3 06/03/2012)
 
 ###Modernizr Detect
