@@ -14,31 +14,16 @@
 	    document.write(unescape("%3Cscript src='../../scripts/jquery.js' type='text/javascript'%3E%3C/script%3E"));
 	}
 	</script>
-	<script type="text/javascript" src="../../scripts/sequence.jquery.js"></script>
+	<script type="text/javascript" src="../../scripts/sequence.jquery-min.js"></script>
 	<script type="text/javascript">	
 		$(document).ready(function(){
 			var options = {
-				nextButton: ".next",
-				prependNextButton: true,
-				prevButton: ".prev",
-				prependPrevButton: true,
-				startingFrameID: 1,
-				autoPlay: true,
-				autoPlayDirection: 1,
-				animatestartingFrameIn: false,
-				autoPlayDelay: 5000,
-				pauseOnHover: true,
+				nextButton: false,
+				prevButton: false,
 				pauseIcon: false,
 				prependPauseIcon: true,
-				pauseIconSrc: "images/pause-icon.png",
-				keysNavigate: true,
+				preloader: false,
 				delayDuringOutInTransitions: 1000,
-				touchEnabled: true,
-				swipeThreshold: 15,
-				
-				fallbackTheme: {
-					speed: 500
-				},
 				beforeCurrentFrameAnimatesIn: function(){
 					if(sequence.direction == 1){
 						changeText(sequence.nextFrameID, "");
