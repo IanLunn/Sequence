@@ -3,3 +3,8 @@
 *.esproj
 _notes/*
 */Raw Files
+css/*
+index.html
+documentation.html
+themes/dev/*
+images/*
