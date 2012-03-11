@@ -1,14 +1,5 @@
 .DS_Store
 .espressostorage
 *.esproj
-themes/dev/*
-downloads/*
-inc/*
-images/*
-css/*
 _notes/*
-themes/demo-theme/*
 */Raw Files
-themes.html
-index.html
-documentation.html
