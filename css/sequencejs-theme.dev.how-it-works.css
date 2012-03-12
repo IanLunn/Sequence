@@ -1,0 +1,56 @@
+.sequence {
+	background: white;
+	border: black solid 3px;
+	height: 370px;
+	margin: 10px auto;
+	position: relative;
+	width: 450px;
+}
+
+.class,.sequence-class {
+	font-size: 0.8em;
+}
+
+.info1,.info2,.info3 {
+	background: #3f7ad6;
+	color: white;
+	height: 95px;
+	padding: 5px;
+	position: absolute;
+	width: 95px;
+}
+
+.info1 {
+	left: -150px;
+	top: 10px;
+}
+
+.info2 {
+	left: -150px;
+	top: 130px;
+}
+
+.info3 {
+	left: -150px;
+	top: 250px;
+}
+
+.info1.animate-in,.info2.animate-in,.info3.animate-in {
+	left: 165px;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+.info1.animate-out,.info2.animate-out,.info3.animate-out {
+	left: 500px;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
