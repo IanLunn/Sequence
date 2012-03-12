@@ -142,7 +142,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		}
 		
 		function init(){
-			$("#sequence-preloader").remove();
+			$(self.settings.preloader).remove();
 			
 			self.settings.nextButton = self.init.uiElements(self.settings.prependNextButton, options.nextButton, defaults.nextButton, self.settings.nextButtonSrc, self.settings.nextButtonAlt); 
 			self.settings.prevButton = self.init.uiElements(self.settings.prependPrevButton, options.prevButton, defaults.prevButton, self.settings.prevButtonSrc, self.settings.prevButtonAlt);
