@@ -122,7 +122,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.sequence.children("li").children().removeClass("animate-in");
 		}
 				
-		if(options.preloader != false){
+		if(self.settings.preloader){
 			$(window).bind("load", function(){
 				self.settings.afterPreload();
 				if(self.settings.hidePreloaderUsingCSS && self.transitionsSupported && self.prefix != "-o-"){
@@ -142,6 +142,8 @@ Aside from these comments, you may modify and distribute this file as you please
 		}
 		
 		function init(){
+			$("#sequence-preloader").remove();
+			
 			self.settings.nextButton = self.init.uiElements(self.settings.prependNextButton, options.nextButton, defaults.nextButton, self.settings.nextButtonSrc, self.settings.nextButtonAlt); 
 			self.settings.prevButton = self.init.uiElements(self.settings.prependPrevButton, options.prevButton, defaults.prevButton, self.settings.prevButtonSrc, self.settings.prevButtonAlt);
 			
@@ -167,7 +169,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.direction;
 			
 			self.sequence.css({"width": "100%", "height": "100%"}); //set the sequence list to 100% width/height just incase it hasn't been specified in the CSS
-						
+			
 			if(self.transitionsSupported){ //initiate the full featured Sequence if transitions are supported...
 				whenFirstAnimateInEnds = function(){
 					animationComplete = function(){
