@@ -666,11 +666,17 @@ Aside from these comments, you may modify and distribute this file as you please
 		}
 	}; //END PROTOTYPE
 
-	$.fn.sequence = function(options){
-		return this.each(function(){
-			var sequence = new Sequence($(this), options, defaults, get);
-			$(this).data("sequence", sequence);
-		});
+	$.fn.sequence = function(options, returnSequenceObject){
+		var 
+			self = this
+			, sequence
+			, iterator = 
+				self.each( function(){
+					sequence = new Sequence($(this), options, defaults, get);
+					$(this).data("sequence", sequence);
+				});
+
+		return returnSequenceObject ? sequence : iterator;
 	};
 	
 	//some external functions
