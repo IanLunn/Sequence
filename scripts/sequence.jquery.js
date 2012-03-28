@@ -520,11 +520,13 @@ Aside from these comments, you may modify and distribute this file as you please
 					}
 				}else{ //if the browser doesn't support CSS3 transitions...
 					self.sequence.children("li").css({"position": "relative"}); //this allows for fadein/out in IE
-					self.currentFrame.animate({"opacity": 0}, self.settings.fallbackTheme.speed, function(){ //hide the current frame
+					self.currentFrame.css({opacity: 1.0}).animate({"opacity": 0}, self.settings.fallbackTheme.speed, function(){ //hide the current frame
 						self.currentFrame.css({"display": "none", "z-index": "1"});
 						self.currentFrame.removeClass("current");
 						self.settings.beforeNextFrameAnimatesIn();
-						nextFrame.addClass("current").css({"display": "block", "z-index": self.numberOfFrames}).animate({"opacity": 1}, 500); //make the next frame the current one and show it
+						nextFrame.addClass("current").css({"display": "block", "z-index": self.numberOfFrames}).css({ opacity: 0.0 }).animate({"opacity": 1}, 500, function(){
+							self.settings.afterNextFrameAnimatesIn();
+						}); //make the next frame the current one and show it
 						self.currentFrame = nextFrame;
 						self.currentFrameID = self.currentFrame.index() + 1;
 						self.active = false;
@@ -584,24 +586,28 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		waitForAnimationsToComplete: function(elements, onceComplete){
 			var self = this;
-			elementsAnimated = {};
-			elements.each(function(){
-				elementsAnimated[$(this).attr("class")] = false;
-			});
-									
-			self.currentFrame.bind(self.transitionEnd, function(e){ //wait for elements to finish animating...				
-				elementsAnimated[e.target.className] = true;
-				total = 0;
-				for(element in elementsAnimated){
-					if(elementsAnimated[element] == true){
-						total++;
+			if (!self.settings.animationWait) {
+				onceComplete();
+			} else {
+				elementsAnimated = {};
+				elements.each(function(){
+					elementsAnimated[$(this).attr("class")] = false;
+				});
+										
+				self.currentFrame.bind(self.transitionEnd, function(e){ //wait for elements to finish animating...				
+					elementsAnimated[e.target.className] = true;
+					total = 0;
+					for(element in elementsAnimated){
+						if(elementsAnimated[element] == true){
+							total++;
+						}
 					}
-				}
-								
-				if(total == elements.length){
-					onceComplete();
-				}
-			});	
+									
+					if(total == elements.length){
+						onceComplete();
+					}
+				});	
+			}
 		},
 		
 		animateIn: function(direction){
@@ -722,7 +728,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		disableAnimateOut: false,
 		reverseAnimationsWhenNavigatingBackwards: true,
 		pauseOnElementsOutsideContainer: false,
-		
+		animationWait: true,
 		fallbackTheme: {
 			speed: 500
 		},
