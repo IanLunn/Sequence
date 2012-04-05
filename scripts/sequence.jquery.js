@@ -525,6 +525,7 @@ Aside from these comments, you may modify and distribute this file as you please
 						self.currentFrame.removeClass("current");
 						self.settings.beforeNextFrameAnimatesIn();
 						nextFrame.addClass("current").css({"display": "block", "z-index": self.numberOfFrames}).animate({"opacity": 1}, 500); //make the next frame the current one and show it
+						self.settings.afterNextFrameAnimatesIn();
 						self.currentFrame = nextFrame;
 						self.currentFrameID = self.currentFrame.index() + 1;
 						self.active = false;
