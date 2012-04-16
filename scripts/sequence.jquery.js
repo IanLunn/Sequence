@@ -54,12 +54,12 @@ Aside from these comments, you may modify and distribute this file as you please
 		self.defaultPreloader,
 		self.init = {
 			preloader: function(optionPreloader){
-				prependTo = (self.settings.prependPreloader == true) ? self.container : self.settings.prependPreloader;
+				self.prependTo = (self.settings.prependPreloader == true) ? self.container : self.settings.prependPreloader;
 				
 				switch(optionPreloader){
 					case true:
 					case undefined:
-						get.defaultPreloader(prependTo, self.transitionsSupported, self.prefix);
+						get.defaultPreloader(self.prependTo, self.transitionsSupported, self.prefix);
 						if(!self.transitionsSupported || self.prefix == "-o-"){
 							self.preloaderFallback();
 						}
@@ -77,7 +77,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			},
 			
 			uiElements: function(prependTo, devOption, defaultOption, elementSrc, elementAlt){
-				prependElement = (prependTo == true) ? self.container : prependTo;
+				var prependElement = (prependTo == true) ? self.container : prependTo;
 				
 				switch(devOption){
 					case true:
@@ -126,8 +126,8 @@ Aside from these comments, you may modify and distribute this file as you please
 			$(window).bind("load", function(){
 				self.settings.afterPreload();
 				if(self.settings.hidePreloaderUsingCSS && self.transitionsSupported && self.prefix != "-o-"){
-					prependPreloadingCompleteTo = (self.settings.prependPreloadingComplete == true) ? self.settings.preloader : $(self.settings.prependPreloadingComplete);
-					prependPreloadingCompleteTo.addClass("preloading-complete");
+					self.prependPreloadingCompleteTo = (self.settings.prependPreloadingComplete == true) ? self.settings.preloader : $(self.settings.prependPreloadingComplete);
+					self.prependPreloadingCompleteTo.addClass("preloading-complete");
 					setTimeout(init, self.settings.hidePreloaderDelay);
 				}else{
 					self.settings.preloader.fadeOut(self.settings.hidePreloaderDelay, function(){
@@ -171,12 +171,12 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.sequence.css({"width": "100%", "height": "100%"}); //set the sequence list to 100% width/height just incase it hasn't been specified in the CSS
 			
 			if(self.transitionsSupported){ //initiate the full featured Sequence if transitions are supported...
-				whenFirstAnimateInEnds = function(){
+				var whenFirstAnimateInEnds = function(){
 					animationComplete = function(){
 						self.settings.afterNextFrameAnimatesIn();
 						self.active = false;
 						if(self.settings.autoPlay){
-							autoPlaySequence = function(){self.autoPlaySequence()};
+							var autoPlaySequence = function(){self.autoPlaySequence()};
 							clearTimeout(self.sequenceTimer);
 							self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 						}
@@ -193,7 +193,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					}, 100);
 					
 					if(self.settings.autoPlay){
-						autoPlaySequence = function(){self.autoPlaySequence()};
+						var autoPlaySequence = function(){self.autoPlaySequence()};
 						clearTimeout(self.sequenceTimer);
 						self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 					}
@@ -227,7 +227,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				self.currentFrame.css("z-index", self.numberOfFrames);
 				self.sequence.children(":not(li:nth-child("+self.settings.startingFrameID+"))").css({"display": "none", "opacity": 0});
 				if(self.settings.autoPlay){
-					autoPlaySequence = function(){self.autoPlaySequence()};
+					var autoPlaySequence = function(){self.autoPlaySequence()};
 					clearTimeout(self.sequenceTimer);
 					self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 				}
@@ -259,13 +259,13 @@ Aside from these comments, you may modify and distribute this file as you please
 						
 			if(self.settings.pauseOnHover && !self.settings.pauseOnElementsOutsideContainer && self.settings.autoPlay){
 				function hoverDetect(e){
-					containerLeft = self.container.position().left;
-					containerRight = (self.container.position().left + self.container.width());
-					containerTop = self.container.position().top;
-					containerBottom = (self.container.position().top + self.container.height());
+					self.containerLeft = self.container.position().left;
+					self.containerRight = (self.container.position().left + self.container.width());
+					self.containerTop = self.container.position().top;
+					self.containerBottom = (self.container.position().top + self.container.height());
 					pageX = e.pageX;
 					pageY = e.pageY;
-					if(pageX >= containerLeft && pageX <= containerRight && pageY >= containerTop && pageY <= containerBottom){
+					if(pageX >= self.containerLeft && pageX <= self.containerRight && pageY >= self.containerTop && pageY <= self.containerBottom){
 						self.settings.autoPlay = false;
 						clearTimeout(self.sequenceTimer);
 						$(self.settings.pauseIcon).show();
@@ -279,7 +279,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				
 				self.sequence.mouseleave(function(e){
 						self.settings.autoPlay = true;
-						autoPlaySequence = function(){self.autoPlaySequence()};
+						var autoPlaySequence = function(){self.autoPlaySequence()};
 						clearTimeout(self.sequenceTimer);
 						self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 						$(self.settings.pauseIcon).hide();
@@ -297,7 +297,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					$(self.settings.pauseIcon).show();
 				}, function(){
 					self.settings.autoPlay = true;
-					autoPlaySequence = function(){self.autoPlaySequence()};
+					var autoPlaySequence = function(){self.autoPlaySequence()};
 					clearTimeout(self.sequenceTimer);
 					self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 					$(self.settings.pauseIcon).hide();
@@ -412,7 +412,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			wait = (wait == undefined) ? 0 : wait;
 			self.settings.autoPlayDelay = (newAutoPlayDelay == undefined) ? self.settings.autoPlayDelay : newAutoPlayDelay;
 			self.settings.autoPlay = true;
-			autoPlaySequence = function(){self.autoPlaySequence()};
+			var autoPlaySequence = function(){self.autoPlaySequence()};
 			clearTimeout(self.sequenceTimer);
 			self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 			if(self.settings.pauseOnHover){
@@ -422,7 +422,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					$(self.settings.pauseIcon).show();
 				}, function(){
 					self.settings.autoPlay = true;
-					autoPlaySequence = function(){self.autoPlaySequence()};
+					var autoPlaySequence = function(){self.autoPlaySequence()};
 					clearTimeout(self.sequenceTimer);
 					self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 					$(self.settings.pauseIcon).hide();
@@ -486,7 +486,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			}else if(!self.active){ //if there are no animations running...
 				self.active = true; //set the sequence as active
 				self.currentFrame = self.sequence.children(".current"); //find which frame is active
-				nextFrame = self.sequence.children("li:nth-child("+id+")"); //grab the next frame
+				self.nextFrame = self.sequence.children("li:nth-child("+id+")"); //grab the next frame
 				
 				if(direction == undefined){ //if no direction is specified...
 					self.direction = (id > self.currentFrameID) ? 1 : -1; //work out which way to go based on what frame is currently active
@@ -494,20 +494,20 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.direction = direction;
 				}
 				
-				frameChildren = self.currentFrame.children(); //save the child elements
-				nextFrameChildren = nextFrame.children(); //save the child elements				
+				self.frameChildren = self.currentFrame.children(); //save the child elements
+				self.nextFrameChildren = self.nextFrame.children(); //save the child elements				
 				
 				if(self.transitionsSupported){ //if the browser supports CSS3 transitions...
 					self.settings.beforeCurrentFrameAnimatesOut();		
 					self.animateOut(self.direction);
-					animateIn = function(){
+					var animateIn = function(){
 						self.animateIn(self.direction);
 						self.currentFrameID = id;
 					}
 						
 					switch(self.settings.delayDuringOutInTransitions){
 						case true:
-							self.waitForAnimationsToComplete(frameChildren, animateIn);
+							self.waitForAnimationsToComplete(self.frameChildren, animateIn);
 							break;
 						
 						case false:
@@ -524,12 +524,12 @@ Aside from these comments, you may modify and distribute this file as you please
 						self.currentFrame.css({"display": "none", "z-index": "1"});
 						self.currentFrame.removeClass("current");
 						self.settings.beforeNextFrameAnimatesIn();
-						nextFrame.addClass("current").css({"display": "block", "z-index": self.numberOfFrames}).animate({"opacity": 1}, 500); //make the next frame the current one and show it
-						self.currentFrame = nextFrame;
+						self.nextFrame.addClass("current").css({"display": "block", "z-index": self.numberOfFrames}).animate({"opacity": 1}, 500); //make the next frame the current one and show it
+						self.currentFrame = self.nextFrame;
 						self.currentFrameID = self.currentFrame.index() + 1;
 						self.active = false;
 						if(self.settings.autoPlay){
-							autoPlaySequence = function(){self.autoPlaySequence()};
+							var autoPlaySequence = function(){self.autoPlaySequence()};
 							clearTimeout(self.sequenceTimer);
 							self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 						}
@@ -543,26 +543,26 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.settings.beforeCurrentFrameAnimatesIn();
 			if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction == 1){ //if user hit next button...
 				//reset the position of the next frames elements ready for animating in again
-				self.modifyElements(nextFrameChildren, "0s");
-				nextFrameChildren.removeClass("animate-out");
+				self.modifyElements(self.nextFrameChildren, "0s");
+				self.nextFrameChildren.removeClass("animate-out");
 				
 				//make the current frames elements animate out
-				self.modifyElements(frameChildren, "");
+				self.modifyElements(self.frameChildren, "");
 				if(!self.settings.disableAnimateOut){
-					frameChildren.addClass("animate-out").removeClass("animate-in");
+					self.frameChildren.addClass("animate-out").removeClass("animate-in");
 				}
 			}
 			
 			if(self.settings.reverseAnimationsWhenNavigatingBackwards && direction == -1){ //if the user hit prev button
-				self.modifyElements(nextFrameChildren, "0s");	
+				self.modifyElements(self.nextFrameChildren, "0s");	
 				if(!self.settings.disableAnimateOut){				
-					nextFrameChildren.addClass("animate-out");		
+					self.nextFrameChildren.addClass("animate-out");		
 				}else{
 					self.active = false;
 				}
-				self.modifyElements(frameChildren, "");
+				self.modifyElements(self.frameChildren, "");
 					
-				frameChildren.each(function(){
+				self.frameChildren.each(function(){
 					if(self.prefix == "-o-"){
 						selector = "." + $(this).attr("class").replace(" ", ".");
 						previousFrameTransitionProperties = self.getStyleBySelector(selector);
@@ -584,7 +584,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		waitForAnimationsToComplete: function(elements, onceComplete){
 			var self = this;
-			elementsAnimated = {};
+			var elementsAnimated = {};
 			elements.each(function(){
 				elementsAnimated[$(this).attr("class")] = false;
 			});
@@ -608,41 +608,41 @@ Aside from these comments, you may modify and distribute this file as you please
 			var self = this;
 			self.currentFrame.removeClass("current");	//remove the active class
 			self.currentFrame.unbind(self.transitionEnd); //remove the animation end event
-			nextFrame.addClass("current"); //activate the next frame
-			self.currentFrame = nextFrame; //the next frame is now the current one
+			self.nextFrame.addClass("current"); //activate the next frame
+			self.currentFrame = self.nextFrame; //the next frame is now the current one
 			if(direction == 1){
 				self.currentFrameID = (self.currentFrameID != self.numberOfFrames) ? self.currentFrameID + 1 : 1;
 			}else{
 				self.currentFrameID = (self.currentFrameID != 1) ? self.currentFrameID - 1 : self.numberOfFrames;
 			}
 																														
-			nextFrameChildren = nextFrame.children(); //save the child elements
-			frameChildren = self.currentFrame.children(); //save the child elements (the ones we'll animate) in an array
+			self.nextFrameChildren = self.nextFrame.children(); //save the child elements
+			self.frameChildren = self.currentFrame.children(); //save the child elements (the ones we'll animate) in an array
 									
 			self.settings.beforeNextFrameAnimatesIn();
 							
 			if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction == 1){ //if user hit next button...
 				//reset the position of the next frames elements ready for animating in again
-				self.modifyElements(nextFrameChildren, "0s");
-				nextFrameChildren.removeClass("animate-out");
+				self.modifyElements(self.nextFrameChildren, "0s");
+				self.nextFrameChildren.removeClass("animate-out");
 				
 				setTimeout(function(){
-					frameChildren.removeClass("animate-out");
-					self.modifyElements(frameChildren, "");
-					frameChildren.addClass("animate-in");
+					self.frameChildren.removeClass("animate-out");
+					self.modifyElements(self.frameChildren, "");
+					self.frameChildren.addClass("animate-in");
 					whenAnimationEnds();
 				}, 50);
 			}
 			
 			if(self.settings.reverseAnimationsWhenNavigatingBackwards && direction == -1){ //if the user hit prev button
 				setTimeout(function(){
-					self.modifyElements(frameChildren, "");
-					frameChildren.addClass("animate-in").removeClass("animate-out");
+					self.modifyElements(self.frameChildren, "");
+					self.frameChildren.addClass("animate-in").removeClass("animate-out");
 					whenAnimationEnds();					
 				}, 50);				
 			}
 			
-			whenAnimationEnds = function(){
+			var whenAnimationEnds = function(){
 				unbind = function(){
 					self.settings.afterNextFrameAnimatesIn();
 					
@@ -654,13 +654,13 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.currentFrame.unbind(self.transitionEnd); //unbind waiting for the frame to finish as it's no longer needed
 					self.active = false; //set the sequence as inactive to allow the next frames to be activated
 					if(self.settings.autoPlay){
-						autoPlaySequence = function(){self.autoPlaySequence()};
+						var autoPlaySequence = function(){self.autoPlaySequence()};
 						clearTimeout(self.sequenceTimer);
 						self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 					}
 				}
 				
-				self.waitForAnimationsToComplete(nextFrameChildren, unbind);
+				self.waitForAnimationsToComplete(self.nextFrameChildren, unbind);
 			}
 			
 		}
@@ -682,7 +682,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		},
 		
 		defaultPreloader: function(prependTo, transitions, prefix){
-			opacity = (transitions) ? 0 : 1;
+			var opacity = (transitions) ? 0 : 1;
 			$("head").append("<style>#sequence-preloader{height: 100%;position: absolute;width: 100%;z-index: 999999;}@"+prefix+"keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}#sequence-preloader img{background: #ff9933;border-radius: 6px;display: inline-block;height: 12px;opacity: "+opacity+";position: relative;top: -50%;width: 12px;"+prefix+"animation: preload 1s infinite; animation: preload 1s infinite;}.preloading{height: 12px;margin: 0 auto;top: 50%;position: relative;width: 48px;}#sequence-preloader img:nth-child(2){"+prefix+"animation-delay: .15s; animation-delay: .15s;}#sequence-preloader img:nth-child(3){"+prefix+"animation-delay: .3s; animation-delay: .3s;}.preloading-complete{opacity: 0;visibility: hidden;"+prefix+"transition-duration: 1s; transition-duration: 1s;}</style>");
 			$(prependTo).prepend('<div id="sequence-preloader"><div class="preloading"><img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." /></div></div>');
 		}
