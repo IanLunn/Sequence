@@ -35,6 +35,16 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+(v0.5.1 17/04/2012)
+
+###Changed Default Values for nextButton and prevButton
+The nextButton and prevButton options are now turned off out of the box. To turn them on, either use the defaults by setting these options to true or by specifying a CSS selector to use your own custom buttons
+
+(v0.5 15/04/2012)
+
+###Multiple Instances Now Working
+Merged a pull request that got multiple instances of Sequence on one page working.
+
 (v0.4 11/03/2012)
 
 ###Previous/Next Button Options
