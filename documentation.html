@@ -17,18 +17,12 @@
 	<script type="text/javascript">	
 			$(document).ready(function(){
 				var options = {
-					nextButton: false,
-					prependNextButton: true,
-					prevButton: false,
-					prependPrevButton: true,
 					startingFrameID: 1,
 					autoPlay: true,
 					autoPlayDirection: 1,
 					animatestartingFrameIn: false,
 					autoPlayDelay: 5000,
 					pauseOnHover: true,
-					pauseIcon: false,
-					prependPauseIcon: true,
 					pauseIconSrc: "images/pause-icon.png",
 					keysNavigate: true,
 					delayDuringOutInTransitions: 1000,
@@ -509,13 +503,13 @@
 						<tr>
 							<td>nextButton</td>
 							<td>true/false or a CSS selector</td>
-							<td>".next"</td>
+							<td>false</td>
 							<td>A CSS selector that, when clicked, causes the current frame to animate out and the next to animate in.<br /><br /><strong>true</strong>: use the default CSS selector (".next") <br /><strong>false</strong>: don't use a button</td>
 						</tr>
 						<tr>
 							<td>prependNextButton</td>
 							<td>true/false or a CSS selector</td>
-							<td>true</td>
+							<td>false</td>
 							<td>If nextButton is true, specify which element to prepend the nextButton to.<br /><br />
 							<strong>true</strong>: automatically prepend to the Sequence container<br />
 							<strong>false</strong>: don't automatically prepend (when you want to manually add the button via HTML)<br />
@@ -543,14 +537,14 @@
 						<tr>
 							<td>prevButton</td>
 							<td>true/false or a CSS selector</td>
-							<td>".prev"</td>
-							<td>A CSS selector that, when clicked, causes the current frame to animate out and the previous to animate in.<br /><br /><strong>true</strong>: use the default CSS selector<br />
+							<td>false</td>
+							<td>A CSS selector that, when clicked, causes the current frame to animate out and the previous to animate in.<br /><br /><strong>true</strong>: use the default CSS selector (".prev")<br />
 							<strong>false</strong>: don't use a button</td>
 						</tr>
 						<tr>
 							<td>prependPrevButton</td>
 							<td>true/false or a CSS selector</td>
-							<td>true</td>
+							<td>false</td>
 							<td>If prevButton is true, specify which element to prepend the prevButton to.<br /><br />
 							<strong>true</strong>: automatically prepend to the Sequence container<br />
 							<strong>false</strong>: don't automatically prepend (when you want to manually add the button via HTML)<br />

@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.5 Beta
+Version: 0.5.1 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -77,19 +77,25 @@ Aside from these comments, you may modify and distribute this file as you please
 			},
 			
 			uiElements: function(prependTo, devOption, defaultOption, elementSrc, elementAlt){
-				var prependElement = (prependTo == true) ? self.container : prependTo;
-				
+								
 				switch(devOption){
 					case true:
 					case undefined:
+						
+						if(devOption && !prependTo){
+							prependTo = true;
+						}
+						var prependElement = (prependTo == true) ? self.container : prependTo;
 						$(prependElement).prepend('<img '+this.CSSSelectorToHTML(defaultOption)+ 'src="'+elementSrc+'" alt="'+elementAlt+'" />');
 						return $(defaultOption);
 					break;
 					
 					case false:
+						return undefined;
 					break;
 					
 					default:
+						var prependElement = (prependTo == true) ? self.container : prependTo;
 						$(prependElement).prepend('<img '+this.CSSSelectorToHTML(devOption)+ 'src="'+elementSrc+'" alt="'+elementAlt+'" />');
 						return $(devOption);
 					break;
@@ -143,15 +149,16 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		function init(){
 			$(self.settings.preloader).remove();
+						
+			self.settings.nextButton = self.init.uiElements(self.settings.prependNextButton, self.settings.nextButton, ".next", self.settings.nextButtonSrc, self.settings.nextButtonAlt); 
 			
-			self.settings.nextButton = self.init.uiElements(self.settings.prependNextButton, options.nextButton, defaults.nextButton, self.settings.nextButtonSrc, self.settings.nextButtonAlt); 
-			self.settings.prevButton = self.init.uiElements(self.settings.prependPrevButton, options.prevButton, defaults.prevButton, self.settings.prevButtonSrc, self.settings.prevButtonAlt);
+			self.settings.prevButton = self.init.uiElements(self.settings.prependPrevButton, self.settings.prevButton, ".prev", self.settings.prevButtonSrc, self.settings.prevButtonAlt);
 			
-			if(options.nextButton != false && self.settings.showNextButtonOnInit){self.settings.nextButton.show()};
-			if(options.prevButton != false && self.settings.showPrevButtonOnInit){self.settings.prevButton.show()};
+			if((self.settings.nextButton != undefined && self.settings.nextButton != false) && self.settings.showNextButtonOnInit){self.settings.nextButton.show()};
+			if((self.settings.prevButton != undefined && self.settings.prevButton != false) && self.settings.showPrevButtonOnInit){self.settings.prevButton.show()};
 			
 			if(self.settings.pauseIcon != false){
-				self.settings.pauseIcon = self.init.uiElements(self.settings.prependPauseIcon, options.pauseIcon, ".pause-icon", self.settings.pauseIconSrc);
+				self.settings.pauseIcon = self.init.uiElements(self.settings.prependPauseIcon, self.settings.pauseIcon, ".pause-icon", self.settings.pauseIconSrc);
 				if(self.settings.pauseIcon != undefined){
 					self.settings.pauseIcon.hide();
 				}
@@ -689,13 +696,13 @@ Aside from these comments, you may modify and distribute this file as you please
 	},
 	
 	defaults = {
-		nextButton: ".next",
-		prependNextButton: true,
+		nextButton: false, //if dev settings are true, the nextButton will be ".next"
+		prependNextButton: false,
 		nextButtonSrc: "images/bt-next.png",
 		nextButtonAlt: "&#gt;",
 		showNextButtonOnInit: true,
-		prevButton: ".prev",
-		prependPrevButton: true,
+		prevButton: false, //if dev settings are true, the prevButton will be ".prev"
+		prependPrevButton: false,
 		prevButtonSrc: "images/bt-prev.png",
 		prevButtonAlt: "&#lt;",
 		showPrevButtonOnInit: true,
@@ -711,7 +718,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		autoPlayDelay: 5000,
 		pauseOnHover: true,
 		pauseIcon: false,
-		prependPauseIcon: true,
+		prependPauseIcon: false,
 		pauseIconSrc: "images/pause-icon.png",
 		pauseAlt: "Pause",
 		keysNavigate: true,
