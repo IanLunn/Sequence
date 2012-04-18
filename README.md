@@ -35,6 +35,10 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+(v0.5.2 18/04/2012)
+###Touch Swiping Improved
+Swiping on touch devices has been improved and swipeThreshold is working again. Links within frames are clickable and the page can be scrolled vertically without initiating a frame change.
+
 (v0.5.1 17/04/2012)
 
 ###Changed Default Values for nextButton and prevButton
