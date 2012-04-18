@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.5.1 Beta
+Version: 0.5.2 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -313,32 +313,37 @@ Aside from these comments, you may modify and distribute this file as you please
 			
 			
 			if(self.settings.touchEnabled && self.hasTouch){
-				var touch,
-					touches = {
-						"touchstart": -1,
-						"touchmove" : -1, 
-						"swipeDirection" : ""
-					};
-				self.sequence.bind("touchstart touchmove touchend", function(e){
-					e.preventDefault(); 
-					switch(e.originalEvent.type){
-						case "touchstart":
-						case "touchmove":
-							touches[e.originalEvent.type] = e.originalEvent.touches[0].pageX;
-							break;
-						case 'touchend':
-							if(touches["touchstart"] > -1 && touches["touchmove"] > self.settings.calculatedSwipeThreshold){
-								if(touches["touchstart"] < touches["touchmove"]){
-									self.next();
-								}else{
-									self.prev();
-								}
-							}
-						default:
-							break;
-					}
-				});
-			}
+			        var touches = {
+			            "touchstart": -1,
+			            "touchmove": -1
+			        };
+			        self.sequence.on("touchstart touchmove touchend", function(e){
+			            switch(e.originalEvent.type){
+			            case "touchstart":
+			            case "touchmove":
+			                touches[e.originalEvent.type] = e.originalEvent.touches[0].pageX;
+			                break;
+			            case 'touchend':			            	
+			                if(touches["touchmove"] > -1){
+				                if(touches["touchstart"] < touches["touchmove"]){
+				                    if((touches["touchmove"] - touches["touchstart"]) > self.settings.calculatedSwipeThreshold){
+				                    	self.next();
+				                    }
+				                }else{
+				                    if((touches["touchstart"] - touches["touchmove"]) > self.settings.calculatedSwipeThreshold){
+				                    	self.prev();
+				                    }
+				                }
+			                }
+			                touches = {
+			                "touchstart": -1,
+			                "touchmove": -1,
+			                };
+			            default:
+			                break;
+			            }
+			        });
+			        }
 			$(window).resize(function(){ //if the window is resized...
 				self.settings.calculatedSwipeThreshold = self.container.width() * (self.settings.swipeThreshold / 100); //recalculate the swipe threshold
 			});
