@@ -2,3 +2,4 @@
 .espressostorage
 *.esproj
 /_notes/*
+themes/dev/*
