@@ -1,8 +1,8 @@
 /*
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
-Theme:   Sliding Horizontal Parallax
-Version:   0.1 Beta
+Theme:   Sliding Horizontal Parallax (Responsive)
+Version:   0.2 Beta
 Theme Author:   Ian Lunn @IanLunn
 Author URL:   http://www.ianlunn.co.uk/
 Theme URL:   http://www.sequencejs.com/themes/sliding-horizontal-parallax/
@@ -51,37 +51,61 @@ table {
 }
 
 body {
-	background: #D9D9D9;
-	color: black;
+	background: #323333;
+	color: white;
 	font-family: sans-serif;
+	font-size: 0.625em;
+	min-width: 320px;
+}
+
+#header-container{
+	background: #d9d9d9;
+	border-bottom: black solid 5px;
+	width: 100%;
+}
+
+#header {
+	background:  #D9D9D9;
+	height: 600px;
+	margin: 0 auto;
+	position: relative;
+	overflow: hidden;
+	max-width: 1280px;
+	width: 100%;
+}
+
+#main, #aside{
+	font-size: 1.6em;
+}
+
+a{
+	color: white;
 }
 
 .next,.prev {
 	color: white;
 	cursor: pointer;
 	display: none;
-	font-size: 50px;
 	font-weight: bold;
+	padding: 10px 15px;
 	position: absolute;
-	top: 0;
-	width: 50px;
+	top: 50%;
 	z-index: 1000;
+	height: 75px;
+	margin-top: -47.5px;
 }
 
 .prev {
-	left: 0;
+	left: 3%;
 }
 
 .next {
-	right: 0;
+	right: 3%;
 }
 
-#header {
-	height: 600px;
-	margin: 10px auto 0 auto;
-	position: relative;
-	overflow: hidden;
-	width: 960px;
+.prev img, .next img{
+	height: 100%;
+	width: auto;
 }
 
 #sequence-preloader{
@@ -89,9 +113,9 @@ body {
 }
 
 #nav {
-	bottom: 0;
+	bottom: 1%;
 	display: none;
-	right: 0;
+	right: 6%;
 	position: absolute;
 
 	-webkit-transition-duration: .5s;
@@ -104,7 +128,6 @@ body {
 #nav li {
 	display: inline-block;
 	height: 140px;
-	width: 80px;
 }
 
 #nav li img {
@@ -126,60 +149,59 @@ body {
 	opacity: 1;
 }
 
-.frame3 .subtitle {
-	width: 380px;
-}
-
 @media only screen and (min-width : 1224px) {
 	/*only display the hover effect on desktops/laptops*/
-#nav li img:hover {
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-	filter: alpha(opacity=100);
-	opacity: 1;
+	#nav li img:hover {
+		-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+		filter: alpha(opacity=100);
+		opacity: 1;
+	
+		-webkit-transition-duration: 1s;
+		-moz-transition-duration: 1s;
+		-o-transition-duration: 1s;
+		-ms-transition-duration: 1s;
+		transition-duration: 1s;
+	}
 
-	-webkit-transition-duration: 1s;
-	-moz-transition-duration: 1s;
-	-o-transition-duration: 1s;
-	-ms-transition-duration: 1s;
-	transition-duration: 1s;
 }
 
+#sequence li{
+	height: 100%;
+	position: absolute;
+	top: -50%;
+	width: 100%;
 }
 
 #sequence li * {
 	-webkit-backface-visibility: hidden;
 	-ms-backface-visibility: hidden;
 	backface-visibility: hidden;
+	position: absolute;
 }
 
-#sequence li * {
-	position: absolute;
+#sequence li img{
+	height: 96%;
 }
 
 #sequence {
-	background: url("../images/bg-sequence.jpg") no-repeat;
+	background: url("../images/bg-sequence.jpg") no-repeat 50% 100%;
 	display: block;
-	height: 600px;
+	height: 100%;
 	margin: 0;
 	position: absolute;
-	width: 960px;
+	max-width: 1280px;
+	width: 100%;
 }
 
 h2 {
 	color: white;
-	font-family: 'Sirin Stencil', cursive;
-	font-size: 34px;
+	font-family: 'Sirin Stencil', serif;
 	font-weight: bold;
 	text-transform: uppercase;
 }
 
 h3 {
-	font-family: 'Ruluko', cursive;
-	font-size: 20px;
-}
-
-#content h3 {
-	font-size: 30px;
+	font-family: 'Ruluko', serif;
 }
 
 .next,.prev {
@@ -187,7 +209,6 @@ h3 {
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
 	filter: alpha(opacity=60);
 	opacity: 0.6;
-	top: 250px;
 
 	-webkit-transition-duration: 1s;
 	-moz-transition-duration: 1s;
@@ -209,19 +230,21 @@ h3 {
 }
 
 .title {
-	left: 400px;
+	font-size: 3.4em;
+	left: 65%;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
 	filter: alpha(opacity=0);
+	width: 35%;
 	opacity: 0;
-	top: 240px;
+	bottom: 1%;
+	z-index: 50;
 }
 
 .title.animate-in {
-	left: 450px;
+	left: 50%;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
 	filter: alpha(opacity=100);
 	opacity: 1;
-	top: 240px;
 
 	-webkit-transition-duration: .5s;
 	-moz-transition-duration: .5s;
@@ -231,11 +254,10 @@ h3 {
 }
 
 .title.animate-out {
-	left: 450px;
+	left: 35%;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
 	filter: alpha(opacity=0);
 	opacity: 0;
-	top: 240px;
 
 	-webkit-transition-duration: .5s;
 	-moz-transition-duration: .5s;
@@ -245,19 +267,21 @@ h3 {
 }
 
 .subtitle {
-	left: 500px;
+	color: black;
+	font-size: 2em;
+	left: 35%;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
 	filter: alpha(opacity=0);
+	width: 35%;
 	opacity: 0;
-	top: 280px;
+	top: 101%;
 }
 
 .subtitle.animate-in {
-	left: 450px;
+	left: 50%;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
 	filter: alpha(opacity=100);
 	opacity: 1;
-	top: 280px;
 
 	-webkit-transition-duration: .5s;
 	-moz-transition-duration: .5s;
@@ -267,11 +291,10 @@ h3 {
 }
 
 .subtitle.animate-out {
-	left: 450px;
+	left: 65%;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
 	filter: alpha(opacity=0);
 	opacity: 0;
-	top: 280px;
 
 	-webkit-transition-duration: .5s;
 	-moz-transition-duration: .5s;
@@ -281,16 +304,21 @@ h3 {
 }
 
 .model {
-	left: 600px;
-	top: 10px;
+	left: 30%;
+	bottom: -48%;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
 	filter: alpha(opacity=0);
 	opacity: 0;
+	position: relative;
+	height: auto !important;
+	max-height: 568px !important;
+	width: 30%;
+	min-width: 225px; /*prevents the model from shrinking when the browser is resized*/
+	max-width: 266px;
 }
 
 .model.animate-in {
-	left: 50px;
-	top: 10px;
+	left: 15%;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
 	filter: alpha(opacity=100);
 	opacity: 1;
@@ -303,8 +331,7 @@ h3 {
 }
 
 .model.animate-out {
-	left: 50px;
-	top: 10px;
+	left: 15%;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
 	filter: alpha(opacity=0);
 	opacity: 0;
@@ -314,4 +341,180 @@ h3 {
 	-o-transition-duration: .5s;
 	-ms-transition-duration: .5s;
 	transition-duration: .5s;
+}
+
+@media only screen and (min-width : 992px) {
+	.title{
+		width: 42%;
+	}
+}
+
+@media only screen and (max-width : 838px) {
+	#header{
+		height: 550px;
+	}
+	
+	.model{
+		max-height: 530px !important;
+		width: auto;
+	}
+}
+
+@media only screen and (max-width : 768px) {
+	#header{
+		height: 500px;
+	}
+	
+	.title{
+		font-size: 2.8em;
+	}
+	
+	.subtitle{
+		font-size: 1.6em;
+	}
+	
+	.next,.prev {
+		height: 60px;
+		margin-top: -40px;
+	}
+	
+	.model{
+		max-height: 480px !important;
+		width: auto;
+	}
+}
+
+@media only screen
+and (max-width : 568px) {
+	.model{
+		left: 50%;
+		min-width: 40%; /*prevents the model from shrinking when the browser is resized*/
+			width: 40%;	
+	}
+	
+	.model.animate-in {
+		left: 50%;
+		margin-left: -20%;
+	}
+	
+	.model.animate-out {
+		left: 50%;
+		margin-left: -20%;
+	}
+	
+	.title{
+		background: #a1a1a1;
+		background: rgba(0,0,0,0.3);
+		bottom: 0;
+		left: 100%;
+		padding: 4%;
+		bottom: -50%;
+		width: 100%;
+		z-index: 10;
+	}
+	
+	.title.animate-in{
+		left: 0%;
+	}
+	
+	.title.animate-out{
+		left: -100%;	
+	}
+	
+	.subtitle{
+		visibility: hidden;
+	}
+	
+	#nav{
+		bottom: 40px;
+	}
+	
+	#nav li img{
+		height: 100px;
+	}
+}
+
+@media only screen
+and (max-width : 518px) {
+	#header{
+		height: 450px;
+	}
+}
+
+@media only screen
+and (max-width : 468px) {
+	#header{
+		height: 415px;
+	}
+	
+	#nav{
+		opacity: 0;
+		visibility: hidden;
+	}
+}
+
+@media only screen
+and (max-width : 418px) {
+	#header{
+		height: 375px;
+	}
+}
+
+@media only screen
+and (max-width : 368px) {
+	#header{
+		height: 325px;
+	}
+	.title{
+		font-size: 2.2em;
+	}
+}
+
+@media 	only screen
+		and (max-width : 320px)
+		and (orientation : portrait) { /*iphone portrait*/
+	#header{
+		height: 320px;
+	}
+	
+	.model{
+		min-width: 45%;
+		width: 45%;
+	}
+	
+	.model.animate-in{
+		margin-left: -22.5%;
+	}
+	
+	.model.animate-out{
+		margin-left: -22.5%;
+	}
+}
+
+@media 	only screen
+		and (min-width : 321px)
+		and (max-width : 480px)
+		and (orientation : landscape) {
+		#header{
+			height: 260px;
+		}
+		
+		.model{
+			min-width: 24%;
+			width: 24%;
+		}
+		
+		.model.animate-in{
+			left: 17.5%;
+			margin-left: 0;
+		}
+		
+		.model.animate-out{
+			left: 17.5%;
+			margin-left: 0;
+		}
+		
+		#nav{
+			right: 17.5%;
+		}
 }

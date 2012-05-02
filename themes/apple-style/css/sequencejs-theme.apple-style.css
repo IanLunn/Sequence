@@ -64,6 +64,7 @@ table {
 body {
 	background: #ededed;
 	font-family: Verdana, sans-serif;
+	min-width: 960px;
 }
 
 #sequence {

@@ -25,14 +25,13 @@ body{
 	background-color: rgba(0, 0, 0, 0.7);
 	font-family: 'Play', sans-serif !important;
 	left: 0;
-	min-width: 960px;
+/*	min-width: 960px;*/
 	position: fixed;
 	width: 100%;	
 	z-index: 99999999;
 	color: white;
 	font-size: 1.2em;
 	padding: 10px 0 5px 0;
-	overflow: auto;
 }
 
 #demo-details li{
@@ -41,24 +40,26 @@ body{
 
 #demo-details h1{
 	font-size: 18px;
+	text-align: center;
+	width: 100%;
 }
 
 #share{
 	float: right;
-	line-height: 200%;
+/*	line-height: 200%;*/
 	list-style: none;
-	margin: 0 40px 0 0;
-	text-align: right;
-	width: 390px;	
+	text-align: center;
+	width: 450px;	
 }
 
 .logo-small{
 	padding: 0 5px;
+	margin: 0 !important;
 	vertical-align: middle;
 }
 
 .facebook{
-	padding: 7px 0 0 0;	
+	padding: 6px 0 0 0;	
 }
 
 .twitter{
@@ -67,11 +68,10 @@ body{
 
 .hire{
 	font-size: 12px;
-	padding: 5px 0 0 0;
 }
 
 .hire p{
-	width: 170px;
+	width: 110px;
 }
 
 .hire span{
@@ -93,7 +93,14 @@ body{
 
 #demo-details li{
 	display: inline-block;
+}
+
+#demo-details li iframe, #demo-details li p{
 	margin: 0 10px 0 0;
+}
+
+#demo-details li img{
+	margin: 0 20px;
 }
 
 .medium{
@@ -115,7 +122,6 @@ body{
 	font-size: 18px !important;
 	font-weight: 200;
 	margin: 5px 0 0 20px;
-	width: 450px;
 }
 
 #demo-links ul{
@@ -138,8 +144,8 @@ a:hover{
 #main{
 	border-top: #333 solid 3px;
 	margin: 0 auto;
-	padding: 40px 0 0 0;
-	width: 960px;
+	padding: 40px;
+	max-width: 960px;
 }
 
 #content p{
@@ -160,12 +166,12 @@ a:hover{
 	float: left;
 	line-height: 1.6em;
 	margin: 0 60px 0 0;
-	width: 580px;
+	width: 65%;
 }
 
 #aside{
 	float: right;
-	width: 320px;
+	width: 25%;
 }
 
 #aside small{
@@ -173,7 +179,7 @@ a:hover{
 }
 
 #aside .features{
-	font-family: tahoma;
+	font-family: Tahoma, sans-serif;
 	font-size: 14px;
 }
 
@@ -233,37 +239,84 @@ ol{
 }
 
 #footer {
-	margin: 120px 0 0 0;
+	margin: 20px 0 0 0;
 	position: relative;
 }
 
 #footer ul {
-	position: absolute;
-	bottom: 0;
-	margin: 0;
-	right: 0;
+	padding: 0;
 	line-height: 1em;
 }
 
 #footer li {
 	display: inline-block;
+	width: 100%;
 }
 
 .twitter-follow-button {
 	clear: both;
 	float: right;
-	font-family: Tahoma;
+	font-family: Tahoma, sans-serif;
 	font-size: 0.8em;
 	line-height: 2em;
-	width: 140px !important;
+	width: 120px !important;
 }
 
 #footer small{
 	font-size: 0.8em;
 	line-height: 1.6em;
-	margin-top: 27px;
-	position: absolute;
-	bottom: 0;
+}
+
+@media only screen and (max-width : 768px) {
+	body{
+		padding: 0 !important;
+	}
+	
+	#demo-links{
+		width: 100%;
+	}
+	
+	.theme-title li{
+		width: 100%;
+	}
+	
+	#aside{
+		float: none;
+	}
+	
+	#demo-details{
+		bottom: 0;
+		position: relative;
+		width: 100%;
+	}
+	
+	#demo-links, #share{
+		float: none;
+		margin: 0 auto;
+	}
+	
+	#content, #aside{
+		width: 100%;
+	}
+	
+	#footer ul, #footer small{
+		position: relative;
+		padding: 0;
+	}
+	
+	#footer ul{
+		margin: 20px 0 0 0;
+	}
+	
+	#demo-links{
+		margin: 0 0 20px 0;
+	}
+	
+	#share{
+		width: 100%;
+	}
+	
+	
 }
 
 /*!DEMO STYLES*/

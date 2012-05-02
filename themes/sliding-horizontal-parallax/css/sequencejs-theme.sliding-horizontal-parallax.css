@@ -56,9 +56,7 @@ body {
 	font-family: 'Play', sans-serif;
 	max-width: 2560px;
 	margin: 0 auto;
-
-	-ms-overflow-x: hidden;
-	overflow-x: hidden;
+	min-width: 960px;
 }
 
 a {
