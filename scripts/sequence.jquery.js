@@ -593,29 +593,33 @@ Aside from these comments, you may modify and distribute this file as you please
 				})
 			}
 		},
-		
-		waitForAnimationsToComplete: function(elements, onceComplete){
-			var self = this;
-			var elementsAnimated = {};
-			elements.each(function(){
-				elementsAnimated[$(this).attr("class")] = false;
-			});
-									
-			self.currentFrame.bind(self.transitionEnd, function(e){ //wait for elements to finish animating...				
-				elementsAnimated[e.target.className] = true;
-				total = 0;
-				for(element in elementsAnimated){
-					if(elementsAnimated[element] == true){
-						total++;
-					}
-				}
-								
-				if(total == elements.length){
-					onceComplete();
-				}
-			});	
-		},
-		
+
+        waitForAnimationsToComplete: function(elements, onceComplete){
+            var self = this;
+
+            elements.each(function() {
+                $(this).data('animationEnded', false); // set the data attribute to indicate that the elements animation has not yet ended
+            });
+
+            self.currentFrame.bind(self.transitionEnd, function(e) {
+                $(e.target).data('animationEnded', true); // this element has finished it's animation
+
+                // now we'll check if all elements are finished
+                // animating
+                var allAnimationsEnded = true;
+                elements.each(function() {
+                    if($(this).data('animationEnded') == false) {
+                        allAnimationsEnded = false;
+                    }
+                });
+
+                if(allAnimationsEnded) {
+                    onceComplete(); // call the callback
+                }
+            });
+
+        },
+
 		animateIn: function(direction){
 			var self = this;
 			self.currentFrame.removeClass("current");	//remove the active class
