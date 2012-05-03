@@ -35,6 +35,10 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.6.1 03/05/2012
+####Bug Fix
+In previous versions of Sequence, all frame elements *HAD* to have a class for Sequence to work. This was unintentional but is now resolved in 0.6.1. Use IDs and classes as you see fit, but they're no longer necessary.
+
 ###v0.6 03/05/2012
 ####Code Optimisation and General Tweaks
 **Note: 0.6 may not be backwards compatible with existing themes, particularly if they use before/after callbacks or rely on the "current" class**

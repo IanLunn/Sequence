@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.6 Beta
+Version: 0.6.1 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -635,6 +635,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		waitForAnimationsToComplete: function(frame, elements){
 			var self = this;
+			
 			onceComplete = function(){
 				frame.unbind(self.transitionEnd);	
 				self.settings.afterNextFrameAnimatesIn();
@@ -654,28 +655,26 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 				}
 			}
-						
-			var elementsAnimated = {};
+		
 			elements.each(function(){
-				elementsAnimated[elements.attr("class")] = false;
-			});
-													
-			frame.bind(self.transitionEnd, function(e){ //wait for elements to finish animating...
-				total = 0;
-				elementsAnimated[e.target.className] = true;
-				
-				for(element in elementsAnimated){
-					if(elementsAnimated[element] == true){
-						total++;
-					}
-				}				
-												
-				if(total == elements.length){
-					onceComplete();
-				}
-				
-				
-			});
+	            $(this).data('animationEnded', false); // set the data attribute to indicate that the elements animation has not yet ended
+	        });
+
+	        self.currentFrame.bind(self.transitionEnd, function(e){
+	            $(e.target).data('animationEnded', true); // this element has finished it's animation
+	
+	            // now we'll check if all elements are finished animating
+	            var allAnimationsEnded = true;
+	            elements.each(function(){
+	                if($(this).data('animationEnded') == false){
+	                    allAnimationsEnded = false;
+	                }
+	            });
+	
+	            if(allAnimationsEnded){
+	                onceComplete();
+	            }
+	        });
 		}
 	}; //END PROTOTYPE
 
