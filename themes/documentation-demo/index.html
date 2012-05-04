@@ -31,13 +31,19 @@
 				beforeCurrentFrameAnimatesOut: function(){
 					if(sequence.direction == 1){
 						changeText(sequence.currentFrameID, ".animate-out");
+						changeText(sequence.nextFrameID, "");
 					}else{
 						changeText(sequence.currentFrameID, "");
+						changeText(sequence.nextFrameID, ".animate-out");
 					}
 				},
 				
 				beforeNextFrameAnimatesIn: function(){
-					changeText(sequence.currentFrameID, ".animate-in");
+					if(sequence.direction == 1){
+						changeText(sequence.nextFrameID, ".animate-in");
+					}else{
+						changeText(sequence.nextFrameID, ".animate-in");
+					}
 				}
 			};
 

@@ -5,6 +5,10 @@ body{
 	padding: 0 0 100px 0 !important;
 }
 
+#header{
+	position: relative;
+}
+
 .clear{
 	clear: both;
 }
@@ -36,6 +40,24 @@ body{
 
 #demo-details li{
 	vertical-align: middle;
+}
+
+.tag {
+	background: black;
+	color: white;
+	font-size: 1.6em;
+	font-weight: bold;
+	padding: 5px;
+	position: absolute;
+	right: 20px;
+	top: 30px;
+
+	-webkit-transform: rotate(10deg);
+	-moz-transform: rotate(10deg);
+	-o-transform: rotate(10deg);
+	-ms-transform: rotate(10deg);
+	transform: rotate(10deg);
+	z-index: 10000;
 }
 
 #demo-details h1{
@@ -270,6 +292,10 @@ ol{
 @media only screen and (max-width : 768px) {
 	body{
 		padding: 0 !important;
+	}
+	
+	.tag {
+		font-size: 1.2em;
 	}
 	
 	#demo-links{

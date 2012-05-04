@@ -1,6 +1,6 @@
 /* http://meyerweb.com/eric/tools/css/reset/
 v2.0 | 20110126
-License:   none (public domain)
+License:    none (public domain)
  */
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video {
 	margin: 0;
@@ -210,7 +210,7 @@ h2 + h3 {
 	float: left;
 }
 
-#social{
+#social {
 	float: right;
 	font-size: 0.8em;
 }
@@ -221,7 +221,7 @@ h2 + h3 {
 	margin: 0;
 }
 
-#nav li, #social li{
+#nav li,#social li {
 	display: inline-block;
 	vertical-align: middle;
 }
@@ -293,6 +293,7 @@ h2 {
 	display: inline-block;
 	margin: 0 0 3% 0;
 	padding: 1% 1% 0 1%;
+	position: relative;
 	width: 28%;
 
 	-webkit-box-shadow: 2px 2px 5px #ccc;
@@ -300,7 +301,22 @@ h2 {
 	box-shadow: 2px 2px 5px #ccc;
 }
 
-.themes li:nth-child(2), .themes li:nth-child(5), .themes li:nth-child(8), .themes li:nth-child(11) {
+.themes li span {
+	background: black;
+	color: white;
+	padding: 5px;
+	position: absolute;
+	right: 20px;
+	top: 30px;
+
+	-webkit-transform: rotate(10deg);
+	-moz-transform: rotate(10deg);
+	-o-transform: rotate(10deg);
+	-ms-transform: rotate(10deg);
+	transform: rotate(10deg);
+}
+
+.themes li:nth-child(2),.themes li:nth-child(5),.themes li:nth-child(8),.themes li:nth-child(11) {
 	margin: 0 5%;
 }
 
@@ -312,8 +328,9 @@ h2 {
 	line-height: 2em;
 }
 
-.theme-tags li, .theme-type li{
+.theme-tags li,.theme-type li {
 	background: white;
+
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
@@ -325,16 +342,16 @@ h2 {
 	display: inline-block;
 }
 
-.theme-tags li.on, .theme-type li.on{
+.theme-tags li.on,.theme-type li.on {
 	background: #3f7ad6;
 	color: white;
 }
 
-.theme-tags{
+.theme-tags {
 	float: left;
 }
 
-.theme-type{
+.theme-type {
 	border-left: solid black 2px;
 	float: left;
 	margin: 0 0 0 10px;

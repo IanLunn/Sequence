@@ -24,10 +24,7 @@
 					autoPlayDelay: 5000,
 					pauseOnHover: true,
 					pauseIconSrc: "images/pause-icon.png",
-					keysNavigate: true,
 					delayDuringOutInTransitions: 1000,
-					touchEnabled: true,
-					swipeThreshold: 15,
 					
 					fallbackTheme: {
 						speed: 500
@@ -43,13 +40,19 @@
 					beforeCurrentFrameAnimatesOut: function(){
 						if(sequence.direction == 1){
 							changeText(sequence.currentFrameID, ".animate-out");
+							changeText(sequence.nextFrameID, "");
 						}else{
 							changeText(sequence.currentFrameID, "");
+							changeText(sequence.nextFrameID, ".animate-out");
 						}
 					},
 					
 					beforeNextFrameAnimatesIn: function(){
-						changeText(sequence.currentFrameID, ".animate-in");
+						if(sequence.direction == 1){
+							changeText(sequence.nextFrameID, ".animate-in");
+						}else{
+							changeText(sequence.nextFrameID, ".animate-in");
+						}
 					}
 				};
 	
@@ -777,13 +780,13 @@
 							<td>touchEnabled</td>
 							<td>true/false</td>
 							<td>true</td>
-							<td><strike>Whether to allow the user to navigate between frames by swiping left and right on touch enabled devices</strike> Coming in version 1.0</td>
+							<td>Whether to allow the user to navigate between frames by swiping left and right on touch enabled devices</td>
 						</tr>
 						<tr>
 							<td>swipeThreshold</td>
 							<td>A number</td>
 							<td>15</td>
-							<td><strike>The percentage size of the Sequence container the user's finger must move before a swipe event is triggered</strike> Coming in version 1.0</td>
+							<td>The percentage size of the Sequence container the user's finger must move before a swipe event is triggered</td>
 						</tr>
 						<tr>
 							<td>fallbackTheme</td>
@@ -851,14 +854,6 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td>beforeCurrentFrameAnimatesIn</td>
-							<td>Executes before the current frame begins to animate in</td>
-						</tr>
-						<tr>
-							<td>beforeCurrentFrameAnimatesOut</td>
-							<td>Executes before the current frame begins to animate out</td>
-						</tr>
-						<tr>
 							<td>beforeNextFrameAnimatesIn</td>
 							<td>Executes before the next frame begins to animate in</td>
 						</tr>
@@ -866,6 +861,28 @@
 							<td>afterNextFrameAnimatesIn</td>
 							<td>Executes after the next frame has animated in (and becomes the current frame)</td>
 						</tr>
+						<tr>
+							<td>beforeCurrentFrameAnimatesOut</td>
+							<td>Executes before the current frame begins to animate out</td>
+						</tr>
+						
+						<tr>
+							<td>beforeFirstFrameAnimatesIn</td>
+							<td>Executes before the first frame animates in</td>
+						</tr>
+						<tr>
+							<td>afterFirstFrameAnimatesIn</td>
+							<td>Executes after the first frame has finished animating in</td>
+						</tr>
+						<tr>
+							<td>beforeLastFrameAnimatesIn</td>
+							<td>Executes before the last frame animates in</td>
+						</tr>
+						<tr>
+							<td>afterLastFrameAnimatesIn</td>
+							<td>Executes after the last frame has finished animating in</td>
+						</tr>
+						
 						<tr>
 							<td>afterPreload</td>
 							<td>Executes after Sequence has preloaded</td>
