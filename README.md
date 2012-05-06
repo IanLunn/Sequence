@@ -31,9 +31,34 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 Theme files, their HTML, CSS, JavaScript/jQuery and images are licensed under the following unless otherwise stated:
 http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
 
-[http://www.sequencejs.com/](SequenceJS.com), the sequence.js script and its dependencies are &copy; 2012 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
+[SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2012 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
 
 ##What's New? 
+
+###v0.6.2 06/05/2012
+**Note: 0.6.2 may not be backwards compatible with existing themes if those themes use the touchEnabled and keysNavigate settings (these settings have changed names, see below)**
+
+####Added keyEvents Option
+keyEvents allows you to specify which way the left and right arrows should cause Sequence to navigate. [See Keyboard Options](http://www.sequencejs.com/documentation.html#options-keyboard)
+
+####Added customKeyEvents Option
+customKeyEvents are keyEvents on steroids! Specify a key (using a keyCode) and the event to be trigger when the user hits that key. Example: 65: "prev" causes Sequence to navigate backwards when the "a" key is pressed on the keyboard.
+
+####Added numericKeysGoToFrames Option
+When the keyboards numeric keys are pressed, if there is a frame that represents that number, Sequence will navigate to that frame.
+
+####Added swipeEvents Option
+swipeEvents allows you to specify which way Sequence should navigate when the user swipes in a particular direction. Up/Down/Left/Right supported.
+
+####Added swipePreventsDefault Option
+If set to true, on touch devices, when swiping over Sequence, the default will be prevented (the page will not scroll). Useful if you want up/down swiping to cause Sequence to navigate but be careful that this doesn't affect user experience by preventing scrolling the page all together.
+
+####Changed the Names of a Few Options
+touchEnabled changed to swipeNavigation
+keysNavigate changed to keyNavigation
+
+####Tidied up the Documentation
+Changed the layout of the options in the documentation
 
 ###v0.6.1 03/05/2012
 ####Bug Fix

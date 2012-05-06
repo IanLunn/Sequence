@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.6.1 Beta
+Version: 0.6.2 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -121,7 +121,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		//INIT
 		self.settings = $.extend({}, defaults, options),
 		self.settings.preloader = self.init.preloader(self.settings.preloader);
-
+		
 		if(self.settings.animateStartingFrameIn){
 			self.modifyElements(self.sequence.children("li").children(), "0s");
 			self.sequence.children("li").children().removeClass("animate-in");
@@ -230,13 +230,35 @@ Aside from these comments, you may modify and distribute this file as you please
 				});
 			}
 			
-			if(self.settings.keysNavigate == true){
+			if(self.settings.keyNavigation){
+				defaultKeys = {
+					'left'	: 37,
+					'right'	: 39
+				}
+				
 				$(document).keydown(function(e){
-					if(e.keyCode == 39){
-						self.next();
-					}else if(e.keyCode == 37){
-						self.prev();
+					function keyEvents(keyPressed, keyDirections){
+						for(keyCodes in keyDirections){
+							if(keyCodes == "left" || keyCodes == "right"){
+								keyCode = defaultKeys[keyCodes];
+							}else{
+								keyCode = keyCodes;
+							}
+							if(keyPressed == keyCode){
+								self.initCustomKeyEvent(keyDirections[keyCodes]);
+							}
+						}
 					}
+					
+					//if numeric keys should go to a specific frame...
+					char = parseFloat(String.fromCharCode(e.keyCode));
+					if((char > 0 && char <= self.numberOfFrames) && (self.settings.numericKeysGoToFrames)){
+						self.nextFrameID = char;
+						self.goTo(char); //go to specified frame
+					} 
+					
+					keyEvents(e.keyCode, self.settings.keyEvents); //run default keyevents
+					keyEvents(e.keyCode, self.settings.customKeyEvents); //run custom keyevents
 				});
 			}
 						
@@ -287,43 +309,57 @@ Aside from these comments, you may modify and distribute this file as you please
 				});
 			}
 			
-			
-			if(self.settings.touchEnabled && self.hasTouch){
-			        var touches = {
-			            "touchstart": -1,
-			            "touchmove": -1
-			        };
-			        self.sequence.on("touchstart touchmove touchend", function(e){
-			            switch(e.originalEvent.type){
-			            case "touchstart":
+			if(self.settings.swipeNavigation && self.hasTouch){
+		        var touches = {
+		            "touchstartX": -1,
+		            "touchstartY": -1,
+		            "touchmoveX": -1,
+		            "touchmoveY": -1
+		        };
+		        self.sequence.on("touchstart touchmove touchend", function(e){
+		        	if(self.settings.swipePreventsDefault){
+		        		e.preventDefault();
+		        	}
+		            switch(e.originalEvent.type){
 			            case "touchmove":
-			                touches[e.originalEvent.type] = e.originalEvent.touches[0].pageX;
+			            case "touchstart":
+			                touches[e.originalEvent.type + "X"] = e.originalEvent.touches[0].pageX;
+			                 touches[e.originalEvent.type + "Y"] = e.originalEvent.touches[0].pageY;
 			                break;
-			            case 'touchend':			            	
-			                if(touches["touchmove"] > -1){
-				                if(touches["touchstart"] < touches["touchmove"]){
-				                    if((touches["touchmove"] - touches["touchstart"]) > self.settings.calculatedSwipeThreshold){
-				                    	self.next();
-				                    }else if((touches["touchmove"] - touches["touchstart"]) > self.settings.calculatedSwipeThreshold){
-				                    	self.prev();
-				                    }
-				                }else{
-				                    if((touches["touchstart"] - touches["touchmove"]) > self.settings.calculatedSwipeThreshold){
-				                    	self.prev();
-				                    }else if((touches["touchstart"] - touches["touchmove"]) > self.settings.calculatedSwipeThreshold){
-				                    	self.next();
-				                    }
-				                }
+			            case 'touchend':
+			            	if(touches["touchmoveX"] != -1){
+				            	//find out which way the user moved their finger the most
+				            	xAmount = touches["touchmoveX"] - touches["touchstartX"];
+				            	yAmount = touches["touchmoveY"] - touches["touchstartY"];	
+				            				            	
+				            	if(Math.abs(xAmount) > Math.abs(yAmount) && (xAmount > self.settings.calculatedSwipeThreshold)){
+				            		//user swiped right
+				            		self.initCustomKeyEvent(self.settings.swipeEvents.right);
+				            	}else if(Math.abs(xAmount) > Math.abs(yAmount) && (Math.abs(xAmount) > self.settings.calculatedSwipeThreshold)){
+				            		//user swiped left
+				            		self.initCustomKeyEvent(self.settings.swipeEvents.left);
+				            	}else if(Math.abs(yAmount) > Math.abs(xAmount) && (yAmount > self.settings.calculatedSwipeThreshold)){
+				            		//user swiped down
+				            		self.initCustomKeyEvent(self.settings.swipeEvents.down);
+				            	}else if(Math.abs(yAmount) > Math.abs(xAmount) && (Math.abs(yAmount) > self.settings.calculatedSwipeThreshold)){
+									//user swiped up
+				            		self.initCustomKeyEvent(self.settings.swipeEvents.up);
+				            	}
+		            	
+				                touches = {
+					                "touchstartX": -1,
+					                "touchstartY": -1,
+					                "touchmoveX": -1,
+					                "touchmoveY": -1
+				                };
 			                }
-			                touches = {
-			                "touchstart": -1,
-			                "touchmove": -1,
-			                };
+			                break;
 			            default:
 			                break;
-			            }
-			        });
-			        }
+		            }
+		        });
+			}
+			
 			$(window).resize(function(){ //if the window is resized...
 				self.settings.calculatedSwipeThreshold = self.container.width() * (self.settings.swipeThreshold / 100); //recalculate the swipe threshold
 			});
@@ -344,6 +380,18 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.defaultPreloader = setInterval(function(){
 				preload();
 			}, 600);
+		},
+		
+		initCustomKeyEvent: function(event){ //trigger keyEvents, customKeyEvents and swipeEvents
+			var self = this;
+			switch(event){
+				case "next":
+					self.next();
+					break;
+				case "prev":
+					self.prev();
+					break;
+			}
 		},
 		
 		autoPlaySequence: function(direction){
@@ -419,6 +467,10 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.prefixCSS(self.prefix, self.transitionProperties)
 				);
 			});
+		},
+		
+		pause: function(){
+			//toggle start/stopAutoPlay
 		},
 		
 		//start Sequence causing frames to change every x amount of seconds
@@ -500,7 +552,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			}else if(id == 1){
 				self.settings.beforeFirstFrameAnimatesIn();
 			}
-						
+									
 			if(self.currentFrame != undefined && id == self.currentFrame.index() + 1){ //if the user is trying to go to the frame that is already active...
 				return false; //...don't go to that frame
 			}else if(!self.active){ //if there are no animations running...
@@ -603,7 +655,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			}else{
 				self.currentFrameID = (self.currentFrameID != 1) ? self.currentFrameID - 1 : self.numberOfFrames;
 			}
-																														
+
 			self.nextFrameChildren = self.nextFrame.children(); //save the child elements
 			self.frameChildren = self.currentFrame.children(); //save the child elements (the ones we'll animate) in an array
 									
@@ -701,6 +753,20 @@ Aside from these comments, you may modify and distribute this file as you please
 	},
 	
 	defaults = {
+		//General Settings
+		startingFrameID: 1,
+		cycle: true,
+		animatestartingFrameIn: false,
+		delayDuringOutInTransitions: 1000,
+		disableAnimateOut: false,
+		reverseAnimationsWhenNavigatingBackwards: true,
+		
+		//Autoplay Settings
+		autoPlay: true,
+		autoPlayDirection: 1,
+		autoPlayDelay: 5000,
+		
+		//Next/Prev Button Settings
 		nextButton: false, //if dev settings are true, the nextButton will be ".next"
 		prependNextButton: false,
 		nextButtonSrc: "images/bt-next.png",
@@ -711,30 +777,51 @@ Aside from these comments, you may modify and distribute this file as you please
 		prevButtonSrc: "images/bt-prev.png",
 		prevButtonAlt: "&#lt;",
 		showPrevButtonOnInit: true,
-		preloader: true,
-		prependPreloader: true,
-		prependPreloadingComplete: true,
-		hidePreloaderUsingCSS: true,
-		hidePreloaderDelay: 0,	
-		startingFrameID: 1,
-		autoPlay: true,
-		autoPlayDirection: 1,
-		animatestartingFrameIn: false,
-		autoPlayDelay: 5000,
+		
+		//Pause Settings
 		pauseOnHover: true,
 		pauseIcon: false,
 		prependPauseIcon: false,
 		pauseIconSrc: "images/pause-icon.png",
 		pauseAlt: "Pause",
-		keysNavigate: true,
-		delayDuringOutInTransitions: 1000,
-		touchEnabled: true,
-		swipeThreshold: 15,
-		cycle: true,
-		disableAnimateOut: false,
-		reverseAnimationsWhenNavigatingBackwards: true,
 		pauseOnElementsOutsideContainer: false,
 		
+		//Preloader Settings
+		preloader: true,
+		prependPreloader: true,
+		prependPreloadingComplete: true,
+		hidePreloaderUsingCSS: true,
+		hidePreloaderDelay: 0,		
+		
+		//Keyboard settings
+		keyNavigation: true, //false prevents the following keyboard settings
+		numericKeysGoToFrames: true,
+		keyPreventsDefault: false, //
+		keyEvents: {
+			left: "prev",
+			right: "next"
+		},
+		customKeyEvents: {
+			/* Example usage
+			65: "prev",	//a
+			68: "next",	//d
+			83: "prev",	//s
+			87: "next"	//w
+			*/
+		},
+		
+		//Touch Swipe Settings
+		swipeNavigation: true,
+		swipeThreshold: 15,
+		swipePreventsDefault: false, //be careful if setting this to true
+		swipeEvents: {
+			left: "prev",
+			right: "next",
+			up: false,
+			down: false
+		},
+		
+		//Fallback Theme Settings (For browsers that don't support CSS3 transitions)
 		fallbackTheme: {
 			speed: 500
 		},
