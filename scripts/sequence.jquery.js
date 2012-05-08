@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.6.2 Beta
+Version: 0.6.3 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -153,8 +153,13 @@ Aside from these comments, you may modify and distribute this file as you please
 			
 			self.settings.prevButton = self.init.uiElements(self.settings.prependPrevButton, self.settings.prevButton, ".prev", self.settings.prevButtonSrc, self.settings.prevButtonAlt);
 			
+			self.settings.pauseButton = self.init.uiElements(self.settings.prependPauseButton, self.settings.pauseButton, ".pause", self.settings.pauseButtonSrc, self.settings.pauseButtonAlt);
+			
 			if((self.settings.nextButton != undefined && self.settings.nextButton != false) && self.settings.showNextButtonOnInit){self.settings.nextButton.show()};
+			
 			if((self.settings.prevButton != undefined && self.settings.prevButton != false) && self.settings.showPrevButtonOnInit){self.settings.prevButton.show()};
+			
+			if((self.settings.pauseButton != undefined && self.settings.pauseButton != false)){self.settings.pauseButton.show()};
 			
 			if(self.settings.pauseIcon != false){
 				self.settings.pauseIcon = self.init.uiElements(self.settings.prependPauseIcon, self.settings.pauseIcon, ".pause-icon", self.settings.pauseIconSrc);
@@ -201,6 +206,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.goTo(1, 1); 
 				}
 			}else{ //initiate a basic slider for browsers that don't support CSS3 transitions
+				self.container.addClass("sequence-fallback");
 				self.currentFrame = self.nextFrame;
 				self.currentFrame.addClass("current-frame");
 				self.settings.beforeNextFrameAnimatesIn();
@@ -227,6 +233,12 @@ Aside from these comments, you may modify and distribute this file as you please
 			if(self.settings.prevButton != undefined){
 				self.settings.prevButton.click(function(){
 					self.prev();
+				});
+			}
+						
+			if(self.settings.pauseButton != undefined){
+				self.settings.pauseButton.click(function(){
+					self.pause();
 				});
 			}
 			
@@ -274,6 +286,10 @@ Aside from these comments, you may modify and distribute this file as you please
 						self.settings.autoPlay = false;
 						clearTimeout(self.sequenceTimer);
 						$(self.settings.pauseIcon).show();
+						if(self.settings.pauseButton != undefined){
+							self.settings.pauseButton.addClass("paused");
+						}
+						self.settings.paused();
 						self.sequence.unbind("mousemove");
 					};
 				}
@@ -288,6 +304,10 @@ Aside from these comments, you may modify and distribute this file as you please
 						clearTimeout(self.sequenceTimer);
 						self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 						$(self.settings.pauseIcon).hide();
+						if(self.settings.pauseButton != undefined){
+							self.settings.pauseButton.removeClass("paused");
+						}
+						self.settings.unpaused();
 						
 						if(self.sequence.data("events").mousemove == undefined){
 							self.sequence.mousemove(function(e){
@@ -300,12 +320,20 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.settings.autoPlay = false;
 					clearTimeout(self.sequenceTimer);
 					$(self.settings.pauseIcon).show();
+					if(self.settings.pauseButton != undefined){
+						self.settings.pauseButton.addClass("paused");
+					}
+					self.settings.paused();
 				}, function(){
 					self.settings.autoPlay = true;
 					var autoPlaySequence = function(){self.autoPlaySequence()};
 					clearTimeout(self.sequenceTimer);
 					self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 					$(self.settings.pauseIcon).hide();
+					if(self.settings.pauseButton != undefined){
+						self.settings.pauseButton.removeClass("paused");
+					}
+					self.settings.unpaused();
 				});
 			}
 			
@@ -391,6 +419,9 @@ Aside from these comments, you may modify and distribute this file as you please
 				case "prev":
 					self.prev();
 					break;
+				case "pause":
+					self.pause();
+					break;
 			}
 		},
 		
@@ -469,8 +500,22 @@ Aside from these comments, you may modify and distribute this file as you please
 			});
 		},
 		
+		//toggle start/stopAutoPlay
 		pause: function(){
-			//toggle start/stopAutoPlay
+			var self = this;
+			if(self.settings.autoPlay){ //pause Sequence
+				if(self.settings.pauseButton != undefined){
+					self.settings.pauseButton.addClass("paused");
+				}
+				self.settings.paused();
+				self.stopAutoPlay();
+			}else{ //start autoPlay
+				if(self.settings.pauseButton != undefined){
+					self.settings.pauseButton.removeClass("paused");
+				}
+				self.settings.unpaused();
+				self.startAutoPlay(self.settings.unpauseDelay);
+			}
 		},
 		
 		//start Sequence causing frames to change every x amount of seconds
@@ -481,20 +526,30 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.settings.autoPlay = true;
 			var autoPlaySequence = function(){self.autoPlaySequence()};
 			clearTimeout(self.sequenceTimer);
-			self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
+			self.sequenceTimer = setTimeout(autoPlaySequence, wait, self);
 			if(self.settings.pauseOnHover){
 				self.hoverEvent = self.sequence.hover(function(){
 					self.settings.autoPlay = false;
 					clearTimeout(self.sequenceTimer);
 					$(self.settings.pauseIcon).show();
+					if(self.settings.pauseButton != undefined){
+						self.settings.pauseButton.addClass("paused");
+					}
+					self.settings.paused();
 				}, function(){
 					self.settings.autoPlay = true;
 					var autoPlaySequence = function(){self.autoPlaySequence()};
 					clearTimeout(self.sequenceTimer);
 					self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 					$(self.settings.pauseIcon).hide();
+					if(self.settings.pauseButton != undefined){
+						self.settings.pauseButton.removeClass("paused");
+					}
+					self.settings.unpaused();
 				});
 			}
+			
+			
 		},
 		
 		//stop causing Sequence to automatically change frame every x amount of seconds
@@ -779,8 +834,13 @@ Aside from these comments, you may modify and distribute this file as you please
 		showPrevButtonOnInit: true,
 		
 		//Pause Settings
+		pauseButton: false,
+		prependPauseButton: false,
+		pauseButtonSrc: "images/bt-pause.png",
+		pauseButtonAlt: "&#166;&#166;",
+		unpauseDelay: 0, //the time to wait before navigating to the next frame when Sequence is unpaused from the pause button
 		pauseOnHover: true,
-		pauseIcon: false,
+		pauseIcon: false, //this is an indicator to show Sequence is paused
 		prependPauseIcon: false,
 		pauseIconSrc: "images/pause-icon.png",
 		pauseAlt: "Pause",
@@ -827,6 +887,9 @@ Aside from these comments, you may modify and distribute this file as you please
 		},
 		
 		//Callbacks
+		paused: function(){},							//triggers when Sequence is paused
+		unpaused: function(){},							//triggers when Sequence is unpaused
+		
 		beforeNextFrameAnimatesIn: function(){},		//triggers before the next frame animates in
 		afterNextFrameAnimatesIn: function(){},			//triggers after the next frame animates in
 		beforeCurrentFrameAnimatesOut: function(){},	//triggers before the current frame animates out
