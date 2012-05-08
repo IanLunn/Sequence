@@ -17,9 +17,6 @@
 	<script type="text/javascript">	
 			$(document).ready(function(){
 				var options = {
-					startingFrameID: 1,
-					autoPlay: true,
-					autoPlayDirection: 1,
 					animatestartingFrameIn: false,
 					autoPlayDelay: 5000,
 					pauseOnHover: true,
@@ -698,6 +695,39 @@
 							<td>Whether or not Sequence should pause when the user hovers over one of its child elements outside of the Sequence container</td>
 						</tr>
 						<tr>
+							<td>pauseButton</td>
+							<td>true/false or a CSS selector</td>
+							<td>false</td>
+							<td>A CSS selector that, when clicked, causes Sequence to pause the autoPlay feature<br /><br /><strong>true</strong>: use the default CSS selector (".pause") <br /><strong>false</strong>: don't use a button</td>
+						</tr>
+						<tr>
+							<td>prependPauseButton</td>
+							<td>true/false or a CSS selector</td>
+							<td>false</td>
+							<td>If pauseButton is true, specify which element to prepend the pauseButton to.<br /><br />
+							<strong>true</strong>: automatically prepend to the Sequence container<br />
+							<strong>false</strong>: don't automatically prepend (when you want to manually add the button via HTML)<br />
+							<strong>CSS Selector</strong>: Specify a CSS Selector to automatically prepend the prevButton to</td>
+						</tr>
+						<tr>
+							<td>pauseButtonSrc</td>
+							<td>A path to an image</td>
+							<td>"images/bt-pause.png"</td>
+							<td>If prependPauseButton is true or a CSS selector, specify a path to the prev button image</td>
+						</tr>
+						<tr>
+							<td>pauseButtonAlt</td>
+							<td>A string</td>
+							<td>"&#166;&#166;"</td>
+							<td>If prependPauseButton is true or a CSS selector, specify alt text for the pause button image</td>
+						</tr>
+						<tr>
+							<td>unpauseDelay</td>
+							<td>A time in milliseconds</td>
+							<td>0</td>
+							<td>The time Sequence should wait before starting autoPlay again once the user unpauses via the pause button. This only applies for the pause button and not the unpausing that occurs when the cursor is moved outside of the Sequence container for example</td>
+						</tr>
+						<tr>
 							<td>pauseIcon</td>
 							<td>true/false or a CSS selector</td>
 							<td>false</td>
@@ -865,7 +895,7 @@
 							<td>Object/false</td>
 							<td>{left: "prev", right: "next"}</td>
 							<td>The public method that should occur when the left or right arrow keys are pressed.<br/></br>
-							<strong>JSON object</strong>: "prev" goes to the previous frame, "next" go to the next frame. False prevents that key from having an event. <a href="#methods-functions" title="Public Functions">See Public Functions next()/prev()</a>.<br />
+							<strong>JSON object</strong>: "prev" goes to the previous frame, "next" go to the next frame. False prevents that key from having an event. <a href="#methods-functions" title="Public Functions">See Public Functions next(), prev() and pause()</a>.<br />
 							<strong>false</strong>: Don't use left/right key events.
 							
 							</td>
@@ -882,7 +912,7 @@
 87: "next"	//w</code></pre>
 In this example, when the 'a' and 's' keys are pressed, Sequence will go to the previous frame. When 'd' and 'w' are pressed, Sequence will go to the next frame.<br /><br />
 							
-							<a href="#methods-functions" title="Public Functions">See Public Functions next()/prev()</a>.
+							<a href="#methods-functions" title="Public Functions">See Public Functions next(), prev() and pause()</a>.
 							</td>
 						</tr>
 					</tbody>
@@ -979,6 +1009,14 @@ In this example, when the 'a' and 's' keys are pressed, Sequence will go to the 
 					</thead>
 					<tbody>
 						<tr>
+							<td>paused</td>
+							<td>Executes after Sequence's autoPlay feature is paused</td>
+						</tr>
+						<tr>
+							<td>unpaused</td>
+							<td>Executes after Sequence in unpaused and autoPlay resumes</td>
+						</tr>
+						<tr>
 							<td>beforeNextFrameAnimatesIn</td>
 							<td>Executes before the next frame begins to animate in</td>
 						</tr>
@@ -1061,19 +1099,25 @@ In this example, when the 'a' and 's' keys are pressed, Sequence will go to the 
 							Specifying a value of -1 will change the current frame from "animate-in" to the "start" position and the next frame will be changed from "animate-out" to "animate-in".<br /><br />
 							If a "direction" is not specified, Sequence will consider a frame with a higher id than the current frame as being ahead of it (1), and frames with a lower id will be considered as being behind (-1).
 							</td>
-							<td><code>sequence.goTo(3, 1)</code></td>
+							<td><pre><code>sequence.goTo(3, 1)</code></pre></td>
+						</tr>
+						<tr>
+							<td>pause()</td>
+							<td>If using autoPlay pause() will either pause or unpause that feature depending on its current state.</td>
+							<td>None</td>
+							<td><pre><code>sequence.pause()</code></pre></td>
 						</tr>
 						<tr>
 							<td>next()</td>
 							<td>Causes Sequence to animate to the next frame</td>
 							<td>None</td>
-							<td><code>sequence.next()</code></td>
+							<td><pre><code>sequence.next()</code></pre></td>
 						</tr>
 						<tr>
 							<td>prev()</td>
 							<td>Causes Sequence to animate to the previous frame</td>
 							<td>None</td>
-							<td><code>sequence.prev()</code></td>
+							<td><pre><code>sequence.prev()</code></pre></td>
 						</tr>
 						<tr>
 							<td>startAutoPlay(wait, newAutoPlayDelay)</td>
@@ -1081,13 +1125,13 @@ In this example, when the 'a' and 's' keys are pressed, Sequence will go to the 
 							<td><strong>wait(optional)</strong>: A number in milliseconds to wait before autoPlay feature is started. If undefined, the value will be 0<br /><br />
 								<strong>newAutoPlayDelay (optional)</strong>: The delay between frames automatically animating in/out. If undefined, the existing autoPlayDelay value will be used	
 							</td>
-							<td><code>sequence.startAutoPlay(1000, 3000)</code></td>
+							<td><pre><code>sequence.startAutoPlay(1000, 3000)</code></pre></td>
 						</tr>
 						<tr>
 							<td>stopAutoPlay()</td>
 							<td>Stop Sequence from auto playing</td>
 							<td>None</td>
-							<td><code>sequence.stopAutoPlay()</code></td>
+							<td><pre><code>sequence.stopAutoPlay()</code></pre></td>
 						</tr>
 						<tr>
 							<td>preloaderFallback()</td>

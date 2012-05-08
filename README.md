@@ -35,6 +35,25 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+
+###v0.6.3 08/05/2012
+**Check out the updated [Apple Style theme](http://www.sequencejs.com/themes/apple-style/) that showcases the new pause options and callbacks.**
+
+####New Pause Options
+pauseButton, prependPauseButton, pauseButtonSrc, pauseButtonAlt, unpauseDelay have been added to allow for a pause button when using autoPlay. 
+
+####New Pause Callbacks
+Two new callbacks added for pause and unpause
+
+####New customKeyEvent for Pausing
+If using customKeyEvents, you can now hook a key to the pause event.
+
+####startAutoPlay Public Method Bug Fix
+The public method startAutoPlay accepted an argument that would cause Sequence to wait x amount of milliseconds before autoPlay was started. This argument wasn't correctly implemented but should now work.
+
+####Sequence Container is Given a Class of "sequence-fallback" When in Fallback Mode
+If Sequence goes into fallback mode because the browser doesn't support CSS3 transitions, it is given the class of "sequence-fallback" allowing for the application of styles specifically for older browsers
+
 ###v0.6.2 06/05/2012
 **Note: 0.6.2 may not be backwards compatible with existing themes if those themes use the touchEnabled and keysNavigate settings (these settings have changed names, see below)**
 
