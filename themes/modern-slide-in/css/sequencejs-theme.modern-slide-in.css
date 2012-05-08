@@ -95,6 +95,17 @@ a{
 	margin-top: -47.5px;
 }
 
+.pause {
+	bottom: 0;
+	cursor: pointer;
+	position: absolute;
+	z-index: 1000;
+}
+
+.paused {
+	opacity: 0.3;
+}
+
 .prev {
 	left: 3%;
 }
