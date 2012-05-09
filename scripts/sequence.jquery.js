@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.6.3 Beta
+Version: 0.6.4 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -78,26 +78,24 @@ Aside from these comments, you may modify and distribute this file as you please
 			
 			uiElements: function(prependTo, devOption, defaultOption, elementSrc, elementAlt){
 				switch(devOption){
-					case true:
-					case undefined:
-						
-						if(devOption && !prependTo){
-							prependTo = true;
-						}
-						var prependElement = (prependTo == true) ? self.container : prependTo;
-						$(prependElement).prepend('<img '+this.CSSSelectorToHTML(defaultOption)+ 'src="'+elementSrc+'" alt="'+elementAlt+'" />');
-						return $(defaultOption);
-					break;
-					
 					case false:
 						return undefined;
-					break;
-					
+						break;
+
+					case true:					
+						if(prependTo == true){
+							$(self.container).prepend('<img '+this.CSSSelectorToHTML(defaultOption)+ 'src="'+elementSrc+'" alt="'+elementAlt+'" />');
+						}else if(prependTo != false){
+							$(prependTo).prepend('<img '+this.CSSSelectorToHTML(defaultOption)+ 'src="'+elementSrc+'" alt="'+elementAlt+'" />');
+						}
+						return $(defaultOption);
+						break;
+
 					default:
 						var prependElement = (prependTo == true) ? self.container : prependTo;
 						$(prependElement).prepend('<img '+this.CSSSelectorToHTML(devOption)+ 'src="'+elementSrc+'" alt="'+elementAlt+'" />');
 						return $(devOption);
-					break;
+						break;
 				}
 			},
 			
@@ -834,7 +832,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		showPrevButtonOnInit: true,
 		
 		//Pause Settings
-		pauseButton: false,
+		pauseButton: false, //if dev settings are true, the pauseButton will be ".pause"
 		prependPauseButton: false,
 		pauseButtonSrc: "images/bt-pause.png",
 		pauseButtonAlt: "&#166;&#166;",

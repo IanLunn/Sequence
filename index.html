@@ -32,7 +32,7 @@
 			
 			<ul id="nav">
 				<li><a href="documentation.html" title="Documentation">Documentation</a></li>
-				<li><a class="link-button" href="https://github.com/IanLunn/Sequence" title="Download from GitHub">Download Beta</a></li>
+				<li><a class="link-button" href="https://github.com/IanLunn/Sequence" title="Download from GitHub">Download</a></li>
 			</ul>
 		</div>
 		<div id="content">
@@ -54,8 +54,30 @@
 					<h2>The jQuery Slider Plugin with Infinite Style</h2>
 					<p>Sequence is the jQuery slider plugin with infinite style. It provides the complete functionality for a website slider without forcing you to use a set theme. In fact, Sequence has no in-built theme, leaving you complete creative control to build a unique slider using only CSS3 -- no jQuery knowledge required!</p>
 					
-					<h3>Get Involved</h3>
-					<p>Sequence is in beta and constantly improving! To help make Sequence.js great, please consider <a href="https://github.com/IanLunn/Sequence" title="Follow Sequence.js on GitHub">following the project on GitHub</a> and submitting any feedback or test themes you may have.</p>
+					<h3>Latest Update</h3><a href="release-history.html" title="View the complete release history">Release History &gt;</a>
+					<h3>v0.6.3 08/05/2012</h3>
+					
+					<p><strong>Check out the updated <a href="http://www.sequencejs.com/themes/apple-style/">Apple Style theme</a> that showcases the new pause options and callbacks.</strong></p>
+					
+					<h4>New Pause Options</h4>
+					
+					<p>pauseButton, prependPauseButton, pauseButtonSrc, pauseButtonAlt, unpauseDelay have been added to allow for a pause button when using autoPlay. </p>
+					
+					<h4>New Pause Callbacks</h4>
+					
+					<p>Two new callbacks added for pause and unpause</p>
+					
+					<h4>New customKeyEvent for Pausing</h4>
+					
+					<p>If using customKeyEvents, you can now hook a key to the pause event.</p>
+					
+					<h4>startAutoPlay Public Method Bug Fix</h4>
+					
+					<p>The public method startAutoPlay accepted an argument that would cause Sequence to wait x amount of milliseconds before autoPlay was started. This argument wasn't correctly implemented but should now work.</p>
+					
+					<h4>Sequence Container is Given a Class of "sequence-fallback" When in Fallback Mode</h4>
+					
+					<p>If Sequence goes into fallback mode because the browser doesn't support CSS3 transitions, it is given the class of "sequence-fallback" allowing for the application of styles specifically for older browsers</p>
 				</div>
 				<div class="aside right">
 					<h3>Features</h3>
@@ -69,6 +91,14 @@
 						<li>Semantic and easy to use markup</li>
 						<li>Open source</li>
 					</ul>
+					
+					<h3>Get Involved</h3>
+					<iframe src="http://markdotto.github.com/github-buttons/github-btn.html?user=IanLunn&repo=Sequence&type=watch&count=true"
+					  allowtransparency="true" frameborder="0" scrolling="0" width="110px" height="20px"></iframe>
+					  <iframe src="http://markdotto.github.com/github-buttons/github-btn.html?user=IanLunn&repo=Sequence&type=fork&count=true"
+					    allowtransparency="true" frameborder="0" scrolling="0" width="110px" height="20px"></iframe>
+					<p>Sequence is constantly improving! To help make Sequence.js great, please consider <a href="https://github.com/IanLunn/Sequence" title="Follow Sequence.js on GitHub">following the project on GitHub</a> and submitting any feedback or test themes you may have.</p>
+					
 					<small>*Tested down to Firefox 3.6 and IE7. Extensive support details to come</small>
 				</div>
 			</div>

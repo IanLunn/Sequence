@@ -35,6 +35,8 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.6.4 09/05/2012
+Minor changes to how the nextButton/prevButton/pauseButton and prependNextButton/prependPrevButton/prependPauseButton options work. Now closer match how they are described in the documentation.
 
 ###v0.6.3 08/05/2012
 **Check out the updated [Apple Style theme](http://www.sequencejs.com/themes/apple-style/) that showcases the new pause options and callbacks.**
