@@ -35,6 +35,17 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.6.5 14/05/2012
+
+**Note: 0.6.5 may not be backwards compatible with existing themes if those themes use the delayDuringOutInTransitions setting, which has now been renamed to transitionThreshold**
+
+####New callback
+You can now use afterCurrentFrameAnimatesOut which is triggered once the current frame reaches the end of its animate out transition
+
+####Minor changes to delayDuringOutInTransitions Setting
+`delayDurintOutInTransitions` option renamed to `transitionThreshold`
+Fix for `transitionThreshold` which now makes all possible settings work
+
 ###v0.6.4 09/05/2012
 Minor changes to how the nextButton/prevButton/pauseButton and prependNextButton/prependPrevButton/prependPauseButton options work. Now closer match how they are described in the documentation.
 
