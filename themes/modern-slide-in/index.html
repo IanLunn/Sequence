@@ -26,10 +26,10 @@
 		
 		$(document).ready(function(){
 			var options = {
-				nextButton: ".next",
-				prevButton: ".prev",
+				nextButton: true,
+				prevButton: true,
 				animateStartingFrameIn: true,
-				delayDuringOutInTransitions: 500,
+				transitionThreshold: 250,
 				afterPreload: function(){
 					$("#nav").fadeIn(100);
 					$("#nav li:nth-child("+(sequence.settings.startingFrameID)+") img").addClass("active");

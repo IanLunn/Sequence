@@ -21,7 +21,7 @@
 					autoPlayDelay: 5000,
 					pauseOnHover: true,
 					pauseIconSrc: "images/pause-icon.png",
-					delayDuringOutInTransitions: 1000,
+					transitionThreshold: 1000,
 					
 					fallbackTheme: {
 						speed: 500
@@ -525,7 +525,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td>delayDuringOutInTransitions</td>
+							<td>transitionThreshold</td>
 							<td>true/false or a number in milliseconds</td>
 							<td>1000</td>
 							<td>Whether or not there should be a delay between a frame animating out and the next animating in.<br /><br />
@@ -1027,6 +1027,10 @@ In this example, when the 'a' and 's' keys are pressed, Sequence will go to the 
 						<tr>
 							<td>beforeCurrentFrameAnimatesOut</td>
 							<td>Executes before the current frame begins to animate out</td>
+						</tr>
+						<tr>
+							<td>afterCurrentFrameAnimatesOut</td>
+							<td>Executes after the current frame has animated out</td>
 						</tr>
 						
 						<tr>
