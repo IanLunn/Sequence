@@ -172,7 +172,7 @@
 <pre><code>&lt;script type="text/javascript"&gt; 
     $(document).ready(function(){
         var sequence = $("#sequence").sequence(options).data("sequence");
-        var sequence2 = $("#sequence2").sequence(options2).data("sequence2");
+        var sequence2 = $("#sequence2").sequence(options2).data("sequence");
     }
 &lt;/script&gt;</code></pre>
 				
@@ -466,7 +466,7 @@
             autoPlayDelay: 3000
         }
         var sequence = $("#sequence").sequence(options).data("sequence");
-        var sequence2 = $("#sequence2").sequence(options).data("sequence2");
+        var sequence2 = $("#sequence2").sequence(options).data("sequence");
     }
 &lt;/script&gt;</code></pre>
 				
@@ -484,7 +484,7 @@
             autoPlayDelay: 5000
         }
         var sequence = $("#sequence").sequence(options).data("sequence");
-        var sequence2 = $("#sequence2").sequence(options2).data("sequence2");
+        var sequence2 = $("#sequence2").sequence(options2).data("sequence");
     }
 &lt;/script&gt;</code></pre>
 				
@@ -771,11 +771,11 @@
 							<td>true/false or a CSS Selector</td>
 							<td>true</td>
 							<td>
-							<strong>true</strong>: Use the default preloader and styles<br />
+							<strong>true</strong>: Use the default preloader and styles (".sequence-preloader")<br />
 							<strong>false</strong>: don't use a preloader<br />
 							<strong>CSS Selector</strong>: Specify a CSS Selector to use as the preloader<br /><br />
 							If true, the following default preloading styles will be applied to the document:
-							<pre><code>#sequence-preloader{
+							<pre><code>.sequence-preloader{
 	height: 100%;
 	position: absolute;
 	width: 100%;
@@ -796,7 +796,7 @@
 	}
 }
 
-#sequence-preloader img{
+.sequence-preloader img{
 	background: #ff9933;
 	border-radius: 6px;
 	display: inline-block;
@@ -816,11 +816,11 @@
 	width: 48px;
 }
 
-#sequence-preloader img:nth-child(2){
+.sequence-preloader img:nth-child(2){
 	-*-animation-delay: .15s;
 }
 
-#sequence-preloader img:nth-child(3){
+.sequence-preloader img:nth-child(3){
 	-*-animation-delay: .3s;
 }
 

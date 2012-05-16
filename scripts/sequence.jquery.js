@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.6.5 Beta
+Version: 0.6.6 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -63,7 +63,7 @@ Aside from these comments, you may modify and distribute this file as you please
 						if(!self.transitionsSupported || self.prefix === "-o-"){
 							self.preloaderFallback();
 						}
-						return $("#sequence-preloader");
+						return $(".sequence-preloader");
 					
 					case false:
 						break;
@@ -393,9 +393,9 @@ Aside from these comments, you may modify and distribute this file as you please
 			var self = this, i = 0;
 			function preload(){
 				i = (i === 1) ? 0 : 1;
-				$("#sequence-preloader img:nth-child(1)").animate({"opacity": i}, 100);
-				$("#sequence-preloader img:nth-child(2)").animate({"opacity": i}, 350);
-				$("#sequence-preloader img:nth-child(3)").animate({"opacity": i}, 600);
+				$(".sequence-preloader img:nth-child(1)").animate({"opacity": i}, 100);
+				$(".sequence-preloader img:nth-child(2)").animate({"opacity": i}, 350);
+				$(".sequence-preloader img:nth-child(3)").animate({"opacity": i}, 600);
 			}
 			preload();
 			self.defaultPreloader = setInterval(function(){
@@ -821,8 +821,8 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		defaultPreloader: function(prependTo, transitions, prefix){
 			var opacity = (transitions) ? 0 : 1;
-			$("head").append("<style>#sequence-preloader{height: 100%;position: absolute;width: 100%;z-index: 999999;}@"+prefix+"keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}#sequence-preloader img{background: #ff9933;border-radius: 6px;display: inline-block;height: 12px;opacity: "+opacity+";position: relative;top: -50%;width: 12px;"+prefix+"animation: preload 1s infinite; animation: preload 1s infinite;}.preloading{height: 12px;margin: 0 auto;top: 50%;position: relative;width: 48px;}#sequence-preloader img:nth-child(2){"+prefix+"animation-delay: .15s; animation-delay: .15s;}#sequence-preloader img:nth-child(3){"+prefix+"animation-delay: .3s; animation-delay: .3s;}.preloading-complete{opacity: 0;visibility: hidden;"+prefix+"transition-duration: 1s; transition-duration: 1s;}</style>");
-			$(prependTo).prepend('<div id="sequence-preloader"><div class="preloading"><img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." /></div></div>');
+			$("head").append("<style>.sequence-preloader{height: 100%;position: absolute;width: 100%;z-index: 999999;}@"+prefix+"keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}.sequence-preloader img{background: #ff9933;border-radius: 6px;display: inline-block;height: 12px;opacity: "+opacity+";position: relative;top: -50%;width: 12px;"+prefix+"animation: preload 1s infinite; animation: preload 1s infinite;}.preloading{height: 12px;margin: 0 auto;top: 50%;position: relative;width: 48px;}.sequence-preloader img:nth-child(2){"+prefix+"animation-delay: .15s; animation-delay: .15s;}.sequence-preloader img:nth-child(3){"+prefix+"animation-delay: .3s; animation-delay: .3s;}.preloading-complete{opacity: 0;visibility: hidden;"+prefix+"transition-duration: 1s; transition-duration: 1s;}</style>");
+			$(prependTo).prepend('<div class="sequence-preloader"><div class="preloading"><img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." /></div></div>');
 		}
 	},
 	

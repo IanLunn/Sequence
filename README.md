@@ -35,6 +35,11 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.6.6 16/05/2012
+
+####Bug fix for Multiple Instances of Sequence
+The documentation has been slightly modified to better assist with multiple instances of Sequence on the same page. The default Sequence preloader was originally appended to the Sequence container as an ID but this caused issues when using more than one Sequence instance, so it's now a class.
+
 ###v0.6.5 14/05/2012
 
 **Note: 0.6.5 may not be backwards compatible with existing themes if those themes use the delayDuringOutInTransitions setting, which has now been renamed to transitionThreshold**
