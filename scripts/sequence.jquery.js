@@ -134,6 +134,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				$(window).unbind("load");
 			});
 		}else{
+			self.settings.afterPreload();
 			init();
 		}
 		
