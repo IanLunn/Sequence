@@ -17,14 +17,11 @@
 	<script type="text/javascript">	
 			$(document).ready(function(){
 				var options = {
-					startingFrameID: 1,
-					autoPlay: true,
-					autoPlayDirection: 1,
 					animatestartingFrameIn: false,
 					autoPlayDelay: 5000,
 					pauseOnHover: true,
 					pauseIconSrc: "images/pause-icon.png",
-					delayDuringOutInTransitions: 1000,
+					transitionThreshold: 1000,
 					
 					fallbackTheme: {
 						speed: 500
@@ -80,16 +77,16 @@
 	<body id="documentation">
 		<div id="header">
 			<a class="logo" href="http://www.sequencejs.com/" title="Sequence.js"><img src="images/sequence-logo.png" alt="Sequence.js" /></a>
-			<ul id="social">
+			<!--<ul id="social">
 				<li>Twitter</li>
 				<li>RSS</li>
 				<li>Contact</li>
-			</ul>
+			</ul>-->
 			<ul id="nav">
-				<li><a href="themes.html" title="Themes">Themes</a></li>
-				<li><a href="blog/" title="Blog">Blog</a></li>
+				<!--<li><a href="themes.html" title="Themes">Themes</a></li>
+				<li><a href="blog/" title="Blog">Blog</a></li>-->
 				<li><a href="documentation.html" title="Documentation">Documentation</a></li>
-				<li><a class="link-button" href="https://github.com/IanLunn/Sequence" title="Download from GitHub">Download Beta</a></li>
+				<li><a class="link-button" href="https://github.com/IanLunn/Sequence" title="Download from GitHub">Download</a></li>
 			</ul>
 		</div>
 		<div id="content">
@@ -116,8 +113,14 @@
 						<ol>
 							<li><a href="#options" title="Options">Options</a>
 								<ol>
-									<li><a href="#options-list" title="List of Options">List of Options</a></li>
-									<li><a href="#options-fallback" title="Fallback Theme Options">Fallback Theme Options</a></li>
+									<li><a href="#options-general" title="General">General</a></li>
+									<li><a href="#options-autoplay" title="Autoplay">Autoplay</a></li>
+									<li><a href="#options-nextprev" title="Next/Previous Buttons">Next/Previous</a></li>
+									<li><a href="#options-pause" title="Pause Options">Pause</a></li>
+									<li><a href="#options-preloader" title="Preloader">Preloader</a></li>
+									<li><a href="#options-keyboard" title="Keyboard Options">Keyboard</a></li>
+									<li><a href="#options-swiping" title="Touch Swipe Options">Swiping</a></li>
+									<li><a href="#options-fallback" title="Fallback Theme Options">Fallback Theme</a></li>
 								</ol>
 							</li>
 							<li><a href="#callbacks" title="Callbacks">Callbacks</a>
@@ -132,11 +135,6 @@
 									<li><a href="#methods-variables" title="Public Variables">Public Variables</a></li>
 								</ol>
 							</li>
-						</ol>
-					</li>
-					<li><a href="#tips-tricks" title="Tips and Tricks">Tips and Tricks</a>
-						<ol>
-							<li><a href="#tips-prefixing" title="Vendor Prefixing">Vendor Prefixing</a></li>
 						</ol>
 					</li>
 				</ol>
@@ -174,7 +172,7 @@
 <pre><code>&lt;script type="text/javascript"&gt; 
     $(document).ready(function(){
         var sequence = $("#sequence").sequence(options).data("sequence");
-        var sequence2 = $("#sequence2").sequence(options2).data("sequence2");
+        var sequence2 = $("#sequence2").sequence(options2).data("sequence");
     }
 &lt;/script&gt;</code></pre>
 				
@@ -468,7 +466,7 @@
             autoPlayDelay: 3000
         }
         var sequence = $("#sequence").sequence(options).data("sequence");
-        var sequence2 = $("#sequence2").sequence(options).data("sequence2");
+        var sequence2 = $("#sequence2").sequence(options).data("sequence");
     }
 &lt;/script&gt;</code></pre>
 				
@@ -485,14 +483,112 @@
             autoPlay: true,
             autoPlayDelay: 5000
         }
-        var sequence = $("#sequence").sequence(options);
-        var sequence2 = $("#sequence2").sequence(options2);
+        var sequence = $("#sequence").sequence(options).data("sequence");
+        var sequence2 = $("#sequence2").sequence(options2).data("sequence");
     }
 &lt;/script&gt;</code></pre>
 				
 				<h3 id="options-list">List of Options</h3>
 				
 				<p>The following is the complete set of options implemented within Sequence:</p>
+				
+				<h4 id="options-general">General Options</h4>
+				<table>
+					<thead>
+						<tr>
+							<td>Option Name</td>
+							<td>Value</td>
+							<td>Default</td>
+							<td>Description</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>startingFrameID</td>
+							<td>A number</td>
+							<td>1</td>
+							<td>The frame that should first be displayed when Sequence loads.</td>
+						</tr>
+						<tr>
+							<td>cycle</td>
+							<td>true/false</td>
+							<td>true</td>
+							<td>Whether or not Sequence should go to the first frame when a user navigates forward from the last frame. Likewise, whether Sequence should go to the last frame when a user navigates in reverse from the first frame.
+							</td>
+						</tr>
+						<tr>
+							<td>animateStartingFrameIn</td>
+							<td>true/false</td>
+							<td>false</td>
+							<td><strong>true</strong>: The starting frame will begin in its "start" position and move to its "animate-in" position when Sequence loads<br />
+								<strong>false</strong>: The starting frame will begin in its "animate-in" position when Sequence loads
+							</td>
+						</tr>
+						<tr>
+							<td>transitionThreshold</td>
+							<td>true/false or a number in milliseconds</td>
+							<td>1000</td>
+							<td>Whether or not there should be a delay between a frame animating out and the next animating in.<br /><br />
+							<strong>true</strong>: the next frame will not animate in until the current frame has completely animated out<br />
+							<strong>false</strong>: the next frame will animate in at the same time as the current frame animating out<br />
+							<strong>A number</strong>: The amount of milliseconds to wait after animating the current frame out, before the next frame is animated in
+							</td>
+						</tr>
+						<tr>
+							<td>disableAnimateOut</td>
+							<td>n/a</td>
+							<td>n/a</td>
+							<td>Description coming soon. This option is likely to be changed</td>
+						</tr>
+						<tr>
+							<td>reverseAnimationsWhenNavigatingBackwards</td>
+							<td>true/false</td>
+							<td>true</td>
+							<td>Whether animations should be reversed when a user navigates backwards by clicking a previous button/swiping/pressing the left key<br /><br />
+							<strong>true</strong>: when navigating backwards, Sequence will animate the preceding frame from its "animate-out" position to its "animate-in" position (creating a reversed animation)<br />
+							<strong>false</strong>: when navigating backwards, Sequence will animate the preceding frame from its "start" position to its "animate-in" position (as it does when navigating forwards)</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<h4 id="options-autoplay">Autoplay Options</h4>
+				<table>
+					<thead>
+						<tr>
+							<td>Option Name</td>
+							<td>Value</td>
+							<td>Default</td>
+							<td>Description</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>autoPlay</td>
+							<td>true/false</td>
+							<td>true</td>
+							<td><strong>true</strong>: Sequence will automatically animate from frame to frame with a delay between each frame (specified using the autoPlayDelay setting)<br />
+							<strong>false</strong>: Sequence will display the starting frame until a user chooses to navigate Sequence using next/previous buttons/swiping etc.
+							</td>
+						</tr>
+						<tr>
+							<td>autoPlayDelay</td>
+							<td>A number in milliseconds</td>
+							<td>5000</td>
+							<td>If using autoPlay, the speed at which frames should remain on screen before animating to the next.</td>
+						</tr>
+						<tr>
+							<td>autoPlayDirection</td>
+							<td>1/-1</td>
+							<td>1</td>
+							<td>If using autoPlay, the direction in which Sequence should play.<br /><br />
+							<strong>1</strong>: Forward<br />
+							<strong>-1</strong>: Reverse
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<h4 id="options-nextprev">Next/Prev Options</h4>
 				<table>
 					<thead>
 						<tr>
@@ -572,42 +668,20 @@
 							<td>true</td>
 							<td>By default, the previous button will be shown when Sequence is initiated. Set this to false should you wish for it to be hidden on initiation (you may like to do this to fade the button in using CSS for example)</td>
 						</tr>
+					</tbody>
+				</table>
+				
+				<h4 id="options-pause">Pause Options</h4>
+				<table>
+					<thead>
 						<tr>
-							<td>startingFrameID</td>
-							<td>A number</td>
-							<td>1</td>
-							<td>The frame that should first be displayed when Sequence loads.</td>
+							<td>Option Name</td>
+							<td>Value</td>
+							<td>Default</td>
+							<td>Description</td>
 						</tr>
-						<tr>
-							<td>autoPlay</td>
-							<td>true/false</td>
-							<td>true</td>
-							<td><strong>true</strong>: Sequence will automatically animate from frame to frame with a delay between each frame (specified using the autoPlayDelay setting)<br />
-							<strong>false</strong>: Sequence will display the starting frame until a user chooses to navigate Sequence using next/previous buttons/swiping etc.
-							</td>
-						</tr>
-						<tr>
-							<td>autoPlayDelay</td>
-							<td>A number in milliseconds</td>
-							<td>5000</td>
-							<td>If using autoPlay, the speed at which frames should remain on screen before animating to the next.</td>
-						</tr>
-						<tr>
-							<td>autoPlayDirection</td>
-							<td>1/-1</td>
-							<td>1</td>
-							<td>If using autoPlay, the direction in which Sequence should play.<br /><br />
-							<strong>1</strong>: Forward<br />
-							<strong>-1</strong>: Reverse
-							</td>
-						</tr>
-						<tr>
-							<td>cycle</td>
-							<td>true/false</td>
-							<td>true</td>
-							<td>Whether or not Sequence should go to the first frame when a user navigates forward from the last frame. Likewise, whether Sequence should go to the last frame when a user navigates in reverse from the first frame.
-							</td>
-						</tr>
+					</thead>
+					<tbody>
 						<tr>
 							<td>pauseOnHover</td>
 							<td>true/false</td>
@@ -619,6 +693,39 @@
 							<td>true/false</td>
 							<td>false</td>
 							<td>Whether or not Sequence should pause when the user hovers over one of its child elements outside of the Sequence container</td>
+						</tr>
+						<tr>
+							<td>pauseButton</td>
+							<td>true/false or a CSS selector</td>
+							<td>false</td>
+							<td>A CSS selector that, when clicked, causes Sequence to pause the autoPlay feature<br /><br /><strong>true</strong>: use the default CSS selector (".pause") <br /><strong>false</strong>: don't use a button</td>
+						</tr>
+						<tr>
+							<td>prependPauseButton</td>
+							<td>true/false or a CSS selector</td>
+							<td>false</td>
+							<td>If pauseButton is true, specify which element to prepend the pauseButton to.<br /><br />
+							<strong>true</strong>: automatically prepend to the Sequence container<br />
+							<strong>false</strong>: don't automatically prepend (when you want to manually add the button via HTML)<br />
+							<strong>CSS Selector</strong>: Specify a CSS Selector to automatically prepend the prevButton to</td>
+						</tr>
+						<tr>
+							<td>pauseButtonSrc</td>
+							<td>A path to an image</td>
+							<td>"images/bt-pause.png"</td>
+							<td>If prependPauseButton is true or a CSS selector, specify a path to the prev button image</td>
+						</tr>
+						<tr>
+							<td>pauseButtonAlt</td>
+							<td>A string</td>
+							<td>"&#166;&#166;"</td>
+							<td>If prependPauseButton is true or a CSS selector, specify alt text for the pause button image</td>
+						</tr>
+						<tr>
+							<td>unpauseDelay</td>
+							<td>A time in milliseconds</td>
+							<td>0</td>
+							<td>The time Sequence should wait before starting autoPlay again once the user unpauses via the pause button. This only applies for the pause button and not the unpausing that occurs when the cursor is moved outside of the Sequence container for example</td>
 						</tr>
 						<tr>
 							<td>pauseIcon</td>
@@ -645,34 +752,30 @@
 							<td>"images/pause-icon.png"</td>
 							<td>If prependPauseIcon is true or a CSS selector, specify a path to the pause icon image</td>
 						</tr>
+					</tbody>
+				</table>
+				
+				<h4 id="options-preloader">Preloader Options</h4>
+				<table>
+					<thead>
 						<tr>
-							<td>animateStartingFrameIn</td>
-							<td>true/false</td>
-							<td>false</td>
-							<td><strong>true</strong>: The starting frame will begin in its "start" position and move to its "animate-in" position when Sequence loads<br />
-								<strong>false</strong>: The starting frame will begin in its "animate-in" position when Sequence loads
-							</td>
+							<td>Option Name</td>
+							<td>Value</td>
+							<td>Default</td>
+							<td>Description</td>
 						</tr>
-						<tr>
-							<td>delayDuringOutInTransitions</td>
-							<td>true/false or a number in milliseconds</td>
-							<td>1000</td>
-							<td>Whether or not there should be a delay between a frame animating out and the next animating in.<br /><br />
-							<strong>true</strong>: the next frame will not animate in until the current frame has completely animated out<br />
-							<strong>false</strong>: the next frame will animate in at the same time as the current frame animating out<br />
-							<strong>A number</strong>: The amount of milliseconds to wait after animating the current frame out, before the next frame is animated in
-							</td>
-						</tr>
-						<tr>
+					</thead>
+					<tbody>
+<tr>
 							<td>preloader</td>
 							<td>true/false or a CSS Selector</td>
 							<td>true</td>
 							<td>
-							<strong>true</strong>: Use the default preloader and styles<br />
+							<strong>true</strong>: Use the default preloader and styles (".sequence-preloader")<br />
 							<strong>false</strong>: don't use a preloader<br />
 							<strong>CSS Selector</strong>: Specify a CSS Selector to use as the preloader<br /><br />
 							If true, the following default preloading styles will be applied to the document:
-							<pre><code>#sequence-preloader{
+							<pre><code>.sequence-preloader{
 	height: 100%;
 	position: absolute;
 	width: 100%;
@@ -693,7 +796,7 @@
 	}
 }
 
-#sequence-preloader img{
+.sequence-preloader img{
 	background: #ff9933;
 	border-radius: 6px;
 	display: inline-block;
@@ -713,11 +816,11 @@
 	width: 48px;
 }
 
-#sequence-preloader img:nth-child(2){
+.sequence-preloader img:nth-child(2){
 	-*-animation-delay: .15s;
 }
 
-#sequence-preloader img:nth-child(3){
+.sequence-preloader img:nth-child(3){
 	-*-animation-delay: .3s;
 }
 
@@ -761,23 +864,73 @@
 							<td>0</td>
 							<td>If hidePreloaderUsingCSS is true, the number of milliseconds to wait after the preloader has been hidden before initiating the first animation.</td>
 						</tr>
-						
+					</tbody>
+				</table>
+				
+				<h4 id="options-keyboard">Keyboard Options</h4>
+				<table>
+					<thead>
 						<tr>
-							<td>keysNavigate</td>
+							<td>Option Name</td>
+							<td>Value</td>
+							<td>Default</td>
+							<td>Description</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>keyNavigation</td>
 							<td>true/false</td>
 							<td>true</td>
 							<td>Whether to allow the user to navigate between frames using the left and right arrow keys</td>
 						</tr>
 						<tr>
-							<td>reverseAnimationsWhenNavigatingBackwards</td>
+							<td>numericKeysGoToFrames</td>
 							<td>true/false</td>
 							<td>true</td>
-							<td>Whether animations should be reversed when a user navigates backwards by clicking a previous button/swiping/pressing the left key<br /><br />
-							<strong>true</strong>: when navigating backwards, Sequence will animate the preceding frame from its "animate-out" position to its "animate-in" position (creating a reversed animation)<br />
-							<strong>false</strong>: when navigating backwards, Sequence will animate the preceding frame from its "start" position to its "animate-in" position (as it does when navigating forwards)</td>
+							<td>Whether Sequence should go to a specific frame when the user presses a numeric key. Pressing 1 goes to frame 1 etc.</td>
 						</tr>
 						<tr>
-							<td>touchEnabled</td>
+							<td>keyEvents</td>
+							<td>Object/false</td>
+							<td>{left: "prev", right: "next"}</td>
+							<td>The public method that should occur when the left or right arrow keys are pressed.<br/></br>
+							<strong>JSON object</strong>: "prev" goes to the previous frame, "next" go to the next frame. False prevents that key from having an event. <a href="#methods-functions" title="Public Functions">See Public Functions next(), prev() and pause()</a>.<br />
+							<strong>false</strong>: Don't use left/right key events.
+							
+							</td>
+						</tr>
+						<tr>
+							<td>customKeyEvents</td>
+							<td>Object</td>
+							<td>No default</td>
+							<td>A JSON object containing the <a href="http://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes" title="A list of keyCodes">keyCodes</a> and events to be triggered when those keys are pressed.<br/></br />
+							Example:<br /><br />
+<pre><code>65: "prev",	//a
+68: "next",	//d
+83: "prev",	//s
+87: "next"	//w</code></pre>
+In this example, when the 'a' and 's' keys are pressed, Sequence will go to the previous frame. When 'd' and 'w' are pressed, Sequence will go to the next frame.<br /><br />
+							
+							<a href="#methods-functions" title="Public Functions">See Public Functions next(), prev() and pause()</a>.
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<h4 id="options-swiping">Touch Swipe Options</h4>
+				<table>
+					<thead>
+						<tr>
+							<td>Option Name</td>
+							<td>Value</td>
+							<td>Default</td>
+							<td>Description</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>swipeNavigation</td>
 							<td>true/false</td>
 							<td>true</td>
 							<td>Whether to allow the user to navigate between frames by swiping left and right on touch enabled devices</td>
@@ -789,19 +942,21 @@
 							<td>The percentage size of the Sequence container the user's finger must move before a swipe event is triggered</td>
 						</tr>
 						<tr>
-							<td>fallbackTheme</td>
-							<td>A JavaScript object containing more options</td>
-							<td><a href="#options-fallback" title="Fallback Theme Options">See Fallback Theme Options</a></td>
-							<td>Settings for the fallback theme when a browser does not support CSS3 transitions. Please see <a href="#options-fallback" title="Fallback Theme Options">Fallback Theme Options</a> for more information</td>
+							<td>swipeEvents</td>
+							<td>Object/false</td>
+							<td>{left: "prev", right: "next", up: false, down: false}</td>
+							<td>The public method that should occur when the user swipes in a particular direction<br/></br>
+							<strong>JSON object</strong>: "prev" goes to the previous frame, "next" go to the next frame. False prevents that swipe action from having an event. <a href="#methods-functions" title="Public Functions">See Public Functions next()/prev()</a>.<br />
+							<strong>false</strong>: Don't use swipe events.
+							
+							</td>
 						</tr>
 					</tbody>
-				</table>
-				
-				<h3>Fallback Theme Options</h3>
-				<p>The fallback theme options control Sequence when it is being viewed in browsers that do not support CSS3 transitions. When in these browsers, Sequence will fallback to a theme that animates each frames opacity -- fading in and out of frames.</p>
-				<p>More fallback themes and options will be made available with future releases of Sequence.</p>
+				</table>				
 				
 				<h4 id="options-fallback">Complete List of Fallback Theme Options</h4>
+				<p>The fallback theme options control Sequence when it is being viewed in browsers that do not support CSS3 transitions. When in these browsers, Sequence will fallback to a theme that animates each frames opacity -- fading in and out of frames.</p>
+				<p>More fallback themes and options will be made available with future releases of Sequence.</p>
 				<table>
 					<thead>
 						<tr>
@@ -854,6 +1009,14 @@
 					</thead>
 					<tbody>
 						<tr>
+							<td>paused</td>
+							<td>Executes after Sequence's autoPlay feature is paused</td>
+						</tr>
+						<tr>
+							<td>unpaused</td>
+							<td>Executes after Sequence in unpaused and autoPlay resumes</td>
+						</tr>
+						<tr>
 							<td>beforeNextFrameAnimatesIn</td>
 							<td>Executes before the next frame begins to animate in</td>
 						</tr>
@@ -864,6 +1027,10 @@
 						<tr>
 							<td>beforeCurrentFrameAnimatesOut</td>
 							<td>Executes before the current frame begins to animate out</td>
+						</tr>
+						<tr>
+							<td>afterCurrentFrameAnimatesOut</td>
+							<td>Executes after the current frame has animated out</td>
 						</tr>
 						
 						<tr>
@@ -936,19 +1103,25 @@
 							Specifying a value of -1 will change the current frame from "animate-in" to the "start" position and the next frame will be changed from "animate-out" to "animate-in".<br /><br />
 							If a "direction" is not specified, Sequence will consider a frame with a higher id than the current frame as being ahead of it (1), and frames with a lower id will be considered as being behind (-1).
 							</td>
-							<td><code>sequence.goTo(3, 1)</code></td>
+							<td><pre><code>sequence.goTo(3, 1)</code></pre></td>
+						</tr>
+						<tr>
+							<td>pause()</td>
+							<td>If using autoPlay pause() will either pause or unpause that feature depending on its current state.</td>
+							<td>None</td>
+							<td><pre><code>sequence.pause()</code></pre></td>
 						</tr>
 						<tr>
 							<td>next()</td>
 							<td>Causes Sequence to animate to the next frame</td>
 							<td>None</td>
-							<td><code>sequence.next()</code></td>
+							<td><pre><code>sequence.next()</code></pre></td>
 						</tr>
 						<tr>
 							<td>prev()</td>
 							<td>Causes Sequence to animate to the previous frame</td>
 							<td>None</td>
-							<td><code>sequence.prev()</code></td>
+							<td><pre><code>sequence.prev()</code></pre></td>
 						</tr>
 						<tr>
 							<td>startAutoPlay(wait, newAutoPlayDelay)</td>
@@ -956,13 +1129,13 @@
 							<td><strong>wait(optional)</strong>: A number in milliseconds to wait before autoPlay feature is started. If undefined, the value will be 0<br /><br />
 								<strong>newAutoPlayDelay (optional)</strong>: The delay between frames automatically animating in/out. If undefined, the existing autoPlayDelay value will be used	
 							</td>
-							<td><code>sequence.startAutoPlay(1000, 3000)</code></td>
+							<td><pre><code>sequence.startAutoPlay(1000, 3000)</code></pre></td>
 						</tr>
 						<tr>
 							<td>stopAutoPlay()</td>
 							<td>Stop Sequence from auto playing</td>
 							<td>None</td>
-							<td><code>sequence.stopAutoPlay()</code></td>
+							<td><pre><code>sequence.stopAutoPlay()</code></pre></td>
 						</tr>
 						<tr>
 							<td>preloaderFallback()</td>

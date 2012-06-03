@@ -31,9 +31,71 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 Theme files, their HTML, CSS, JavaScript/jQuery and images are licensed under the following unless otherwise stated:
 http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
 
-[http://www.sequencejs.com/](SequenceJS.com), the sequence.js script and its dependencies are &copy; 2012 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
+[SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2012 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
 
 ##What's New? 
+
+###v0.6.6 16/05/2012
+
+####Bug fix for Multiple Instances of Sequence
+The documentation has been slightly modified to better assist with multiple instances of Sequence on the same page. The default Sequence preloader was originally appended to the Sequence container as an ID but this caused issues when using more than one Sequence instance, so it's now a class.
+
+###v0.6.5 14/05/2012
+
+**Note: 0.6.5 may not be backwards compatible with existing themes if those themes use the delayDuringOutInTransitions setting, which has now been renamed to transitionThreshold**
+
+####New callback
+You can now use afterCurrentFrameAnimatesOut which is triggered once the current frame reaches the end of its animate out transition
+
+####Minor changes to delayDuringOutInTransitions Setting
+`delayDurintOutInTransitions` option renamed to `transitionThreshold`
+Fix for `transitionThreshold` which now makes all possible settings work
+
+###v0.6.4 09/05/2012
+Minor changes to how the nextButton/prevButton/pauseButton and prependNextButton/prependPrevButton/prependPauseButton options work. Now closer match how they are described in the documentation.
+
+###v0.6.3 08/05/2012
+**Check out the updated [Apple Style theme](http://www.sequencejs.com/themes/apple-style/) that showcases the new pause options and callbacks.**
+
+####New Pause Options
+pauseButton, prependPauseButton, pauseButtonSrc, pauseButtonAlt, unpauseDelay have been added to allow for a pause button when using autoPlay. 
+
+####New Pause Callbacks
+Two new callbacks added for pause and unpause
+
+####New customKeyEvent for Pausing
+If using customKeyEvents, you can now hook a key to the pause event.
+
+####startAutoPlay Public Method Bug Fix
+The public method startAutoPlay accepted an argument that would cause Sequence to wait x amount of milliseconds before autoPlay was started. This argument wasn't correctly implemented but should now work.
+
+####Sequence Container is Given a Class of "sequence-fallback" When in Fallback Mode
+If Sequence goes into fallback mode because the browser doesn't support CSS3 transitions, it is given the class of "sequence-fallback" allowing for the application of styles specifically for older browsers
+
+###v0.6.2 06/05/2012
+**Note: 0.6.2 may not be backwards compatible with existing themes if those themes use the touchEnabled and keysNavigate settings (these settings have changed names, see below)**
+
+####Added keyEvents Option
+keyEvents allows you to specify which way the left and right arrows should cause Sequence to navigate. [See Keyboard Options](http://www.sequencejs.com/documentation.html#options-keyboard)
+
+####Added customKeyEvents Option
+customKeyEvents are keyEvents on steroids! Specify a key (using a keyCode) and the event to be trigger when the user hits that key. Example: 65: "prev" causes Sequence to navigate backwards when the "a" key is pressed on the keyboard.
+
+####Added numericKeysGoToFrames Option
+When the keyboards numeric keys are pressed, if there is a frame that represents that number, Sequence will navigate to that frame.
+
+####Added swipeEvents Option
+swipeEvents allows you to specify which way Sequence should navigate when the user swipes in a particular direction. Up/Down/Left/Right supported.
+
+####Added swipePreventsDefault Option
+If set to true, on touch devices, when swiping over Sequence, the default will be prevented (the page will not scroll). Useful if you want up/down swiping to cause Sequence to navigate but be careful that this doesn't affect user experience by preventing scrolling the page all together.
+
+####Changed the Names of a Few Options
+touchEnabled changed to swipeNavigation
+keysNavigate changed to keyNavigation
+
+####Tidied up the Documentation
+Changed the layout of the options in the documentation
 
 ###v0.6.1 03/05/2012
 ####Bug Fix

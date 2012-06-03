@@ -285,10 +285,6 @@ a {
 	background: #278ace;
 }
 
-#slideshow * {
-	-webkit-backface-visibility: hidden;
-}
-
 #slideshow li > * {
 	position: absolute;
 }

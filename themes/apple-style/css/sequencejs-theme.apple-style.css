@@ -1,11 +1,11 @@
 /*
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
-Theme:  Apple Style
-Version:  0.1 Beta
-Theme Author:  Ian Lunn @IanLunn
-Author URL:  http://www.ianlunn.co.uk/
-Theme URL:  http://www.sequencejs.com/themes/apple-style/
+Theme:   Apple Style
+Version:   0.2 Beta
+Theme Author:   Ian Lunn @IanLunn
+Author URL:   http://www.ianlunn.co.uk/
+Theme URL:   http://www.sequencejs.com/themes/apple-style/
 
 This is a FREE theme and is dual licensed under the following: 
 http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
@@ -15,7 +15,7 @@ Aside from these comments, you may modify and distribute this file as you please
  */
 /* http://meyerweb.com/eric/tools/css/reset/
 v2.0 | 20110126
-License:   none (public domain)
+License:    none (public domain)
  */
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video {
 	margin: 0;
@@ -71,6 +71,7 @@ body {
 	height: 600px;
 	margin: 0 auto;
 	position: relative;
+	top: -30px;
 	width: 960px;
 }
 
@@ -92,6 +93,201 @@ h2 {
 h3 {
 	font-family: 'Magra', sans-serif;
 	font-size: 20px;
+}
+
+.controls {
+	background: url("../images/bg-controls.png") no-repeat;
+	height: 49px;
+	margin: 0 auto;
+	position: relative;
+	top: 0;
+	width: 198px;
+	z-index: 9999;
+}
+
+.prev, .next {
+	opacity: 0.7;
+}
+
+.next,.prev,.pause {
+	position: absolute;
+	z-index: 10000;
+	top: 10px;
+}
+
+.next {
+	background: url("../images/bt-next.png") 50% 4px no-repeat;
+	height: 34px;
+	left: 128px;
+	width: 41px;
+}
+
+.next:hover,.prev:hover,.pause:hover {
+	background-position: 50% -26px;
+}
+
+.pause.paused:hover {
+	background-position: 50% -25px;
+}
+
+.prev {
+	left: 28px;
+	background: url("../images/bt-prev.png") 50% 4px no-repeat;
+	height: 34px;
+	width: 41px;
+}
+
+.pause {
+	background: url("../images/bt-pause.png") 50% 4px no-repeat;
+	cursor: pointer;
+	height: 33px;
+	left: 78px;
+	width: 42px;
+}
+
+.pause.paused {
+	background: url("../images/bt-play.png") 50% 4px no-repeat;
+	height: 33px;
+	left: 78px;
+	width: 42px;
+}
+
+.status {
+	background: url("../images/status-bar.png") -119px 0 repeat-y;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	height: 6px;
+	margin: 0 auto;
+	position: relative;
+	top: 4px;
+	width: 118px;
+}
+
+.status.paused {
+	-webkit-animation: paused 1s linear alternate infinite;
+	-moz-animation: paused 1s linear alternate infinite;
+	-ms-animation: paused 1s linear alternate infinite;
+	-o-animation: paused 1s linear alternate infinite;
+	animation: paused 1s linear alternate infinite;
+}
+
+@keyframes "paused" {
+ 0% {
+    background-position: 0 0;
+   	opacity: 0;
+ }
+ 100% {
+    background-position: 0 0;
+   	opacity: .7;
+ }
+
+}
+
+@-moz-keyframes paused {
+ 0% {
+   background-position: 0 0;
+   opacity: 0;
+ }
+ 100% {
+   background-position: 0 0;
+   opacity: .7;
+ }
+
+}
+
+@-webkit-keyframes "paused" {
+ 0% {
+   background-position: 0 0;
+   opacity: 0;
+ }
+ 100% {
+   background-position: 0 0;
+   opacity: .7;
+ }
+
+}
+
+@-ms-keyframes "paused" {
+ 0% {
+   background-position: 0 0;
+   opacity: 0;
+ }
+ 100% {
+   background-position: 0 0;
+   opacity: .7;
+ }
+
+}
+
+@-o-keyframes "paused" {
+ 0% {
+   background-position: 0 0;
+   opacity: 0;
+ }
+ 100% {
+   background-position: 0 0;
+   opacity: .7;
+ }
+
+}
+
+@keyframes "status-bar" {
+ 0% {
+    background-position: -119px 0;
+ }
+ 100% {
+    background-position: 0 0;
+ }
+
+}
+
+@-moz-keyframes status-bar {
+ 0% {
+   background-position: -119px 0;
+ }
+ 100% {
+   background-position: 0 0;
+ }
+
+}
+
+@-webkit-keyframes "status-bar" {
+ 0% {
+   background-position: -119px 0;
+ }
+ 100% {
+   background-position: 0 0;
+ }
+
+}
+
+@-ms-keyframes "status-bar" {
+ 0% {
+   background-position: -119px 0;
+ }
+ 100% {
+   background-position: 0 0;
+ }
+
+}
+
+@-o-keyframes "status-bar" {
+ 0% {
+   background-position: -119px 0;
+ }
+ 100% {
+   background-position: 0 0;
+ }
+
+}
+
+.status.active {
+	-webkit-animation: status-bar 4s linear;
+	-moz-animation: status-bar 4s linear;
+	-ms-animation: status-bar 4s linear;
+	-o-animation: status-bar 4s linear;
+	animation: status-bar 4s linear;
 }
 
 .pause-icon {
@@ -155,14 +351,15 @@ h3 {
    filter: alpha(opacity=0);
    opacity: 0;
  }
+
 }
 
 @-ms-keyframes "preload" {
- 0% {
-   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-   filter: alpha(opacity=0);
-   opacity: 0;
- }
+	0%  {
+	 -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+	filter: alpha(opacity=0);
+	opacity: 0;
+}
  50% {
    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
    filter: alpha(opacity=100);
@@ -173,25 +370,29 @@ h3 {
    filter: alpha(opacity=0);
    opacity: 0;
  }
+
 }
 
-@-o-keyframes "preload" {
- 0% {
-   filter: alpha(opacity=0);
-   opacity: 0;
- }
+ @-o-keyframes "preload" {
+	0%  {
+	 filter: alpha(opacity=0);
+	filter: alpha(opacity=0);
+	opacity: 0;
+}
  50% {
+   filter: alpha(opacity=100);
    filter: alpha(opacity=100);
    opacity: 1;
  }
  100% {
    filter: alpha(opacity=0);
+   filter: alpha(opacity=0);
    opacity: 0;
  }
+
 }
 
-
-#sequence-preloader img {
+ #sequence-preloader img {
 	background: #ff9933;
 
 	-webkit-border-radius: 6px;
@@ -250,33 +451,34 @@ h3 {
 	transition-duration: 1s;
 }
 
-
-.iphone{
+.iphone {
 	left: -450px;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+	filter: alpha(opacity=100);
 	opacity: 1;
 	position: absolute;
 	top: -550px;
-	
+
 	-webkit-transform: rotate(-40deg);
 	-moz-transform: rotate(-40deg);
 	-o-transform: rotate(-40deg);
 	-ms-transform: rotate(-40deg);
 	transform: rotate(-40deg);
-	
+
 	-webkit-transition-duration: 1.5s;
 	-moz-transition-duration: 1.5s;
 	-o-transition-duration: 1.5s;
 	-ms-transition-duration: 1.5s;
 	transition-duration: 1.5s;
-		
 }
 
-.iphone.animate-in{
+.iphone.animate-in {
 	left: 600px;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
 	filter: alpha(opacity=100);
 	opacity: 1;
 	top: 50px;
+
 	-webkit-transform: rotate(0deg);
 	-moz-transform: rotate(0deg);
 	-o-transform: rotate(0deg);
@@ -290,7 +492,7 @@ h3 {
 	transition-duration: 1.5s;
 }
 
-.iphone.animate-out{
+.iphone.animate-out {
 	left: 1100px;
 	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
 	filter: alpha(opacity=0);
@@ -364,7 +566,7 @@ h3 {
 	-o-transform: rotate(-40deg);
 	-ms-transform: rotate(-40deg);
 	transform: rotate(-40deg);
-	
+
 	-webkit-transition-duration: 1.5s;
 	-moz-transition-duration: 1.5s;
 	-o-transition-duration: 1.5s;

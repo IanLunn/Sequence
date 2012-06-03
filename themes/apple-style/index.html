@@ -18,14 +18,42 @@
 	<script type="text/javascript" src="../../scripts/sequence.jquery-min.js"></script>
 	<script type="text/javascript">	
 		$(document).ready(function(){
-			var options = {				
+			$status = $(".status");
+			var options = {		
 				autoPlayDelay: 4000,
 				hidePreloaderDelay: 500,
+				nextButton: ".next",
+				prevButton: ".prev",
+				pauseButton: ".pause",
 				hidePreloaderusingCSS: false,						
 				animateStartingFrameIn: true, 			
-				delayDuringOutInTransitions: 750,
+				transitionThreshold: 500,
+				pauseOnHover: false,
 				fallbackTheme: { 							
 					speed: 500
+				},
+				customKeyEvents: {
+					80: "pause"
+				},
+				afterNextFrameAnimatesIn: function(){
+					if(sequence.settings.autoPlay){
+						$status.addClass("active").css("opacity", 1);
+					}
+					$(".prev, .next").css("cursor", "pointer").animate({"opacity": 1}, 500);
+				},
+				beforeCurrentFrameAnimatesOut: function(){
+					$status.animate({"opacity": 0}, 500, function(){
+						$status.removeClass("active");
+					});
+					$(".prev, .next").css("cursor", "auto").animate({"opacity": .7}, 500);
+				},
+				paused: function(){
+					$status.animate({"opacity": 0}, 500, function(){
+						$status.removeClass("active").addClass("paused");
+					});
+				},
+				unpaused: function(){
+					$status.removeClass("active paused");
 				}
 			};
 
@@ -49,6 +77,12 @@
 </head>
 <body>
 	<div id="header">
+		<ul class="controls">
+			<li class="status"></li>
+			<li class="prev"></li>
+			<li class="pause"></li>
+			<li class="next"></li>
+		</ul>
 		<div id="sequence">
 			<ul>
 				<li>

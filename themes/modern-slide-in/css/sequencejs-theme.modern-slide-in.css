@@ -2,7 +2,7 @@
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
 Theme:   Sliding Horizontal Parallax (Responsive)
-Version:   0.2 Beta
+Version:   0.2.1 Beta
 Theme Author:   Ian Lunn @IanLunn
 Author URL:   http://www.ianlunn.co.uk/
 Theme URL:   http://www.sequencejs.com/themes/sliding-horizontal-parallax/
@@ -95,6 +95,17 @@ a{
 	margin-top: -47.5px;
 }
 
+.pause {
+	bottom: 0;
+	cursor: pointer;
+	position: absolute;
+	z-index: 1000;
+}
+
+.paused {
+	opacity: 0.3;
+}
+
 .prev {
 	left: 3%;
 }
@@ -173,9 +184,6 @@ a{
 }
 
 #sequence li * {
-	-webkit-backface-visibility: hidden;
-	-ms-backface-visibility: hidden;
-	backface-visibility: hidden;
 	position: absolute;
 }
 
