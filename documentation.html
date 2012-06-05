@@ -942,6 +942,12 @@ In this example, when the 'a' and 's' keys are pressed, Sequence will go to the 
 							<td>The percentage size of the Sequence container the user's finger must move before a swipe event is triggered</td>
 						</tr>
 						<tr>
+							<td>swipePreventsDefault</td>
+							<td>true/false</td>
+							<td>false</td>
+							<td>If true, when a user swipes their finger over an instance of Sequence, the page will be prevented from scrolling. Be careful with this option, make sure the user can touch an area of the page that still allows them to scroll</td>
+						</tr>
+						<tr>
 							<td>swipeEvents</td>
 							<td>Object/false</td>
 							<td>{left: "prev", right: "next", up: false, down: false}</td>
@@ -1051,8 +1057,8 @@ In this example, when the 'a' and 's' keys are pressed, Sequence will go to the 
 						</tr>
 						
 						<tr>
-							<td>afterPreload</td>
-							<td>Executes after Sequence has preloaded</td>
+							<td>afterLoaded</td>
+							<td>Executes after Sequence has loaded</td>
 						</tr>
 					</tbody>
 				</table>

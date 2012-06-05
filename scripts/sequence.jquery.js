@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.6.6 Beta
+Version: 0.6.7 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -81,7 +81,7 @@ Aside from these comments, you may modify and distribute this file as you please
 
 					case true:
 						if(prependTo === true){
-							$(self.container).prepend('<img '+this.CSSSelectorToHTML(defaultOption)+ 'src="'+elementSrc+'" alt="'+elementAlt+'" />');
+							self.container.prepend('<img '+this.CSSSelectorToHTML(defaultOption)+ 'src="'+elementSrc+'" alt="'+elementAlt+'" />');
 						}else if(prependTo !== false){
 							$(prependTo).prepend('<img '+this.CSSSelectorToHTML(defaultOption)+ 'src="'+elementSrc+'" alt="'+elementAlt+'" />');
 						}
@@ -113,14 +113,15 @@ Aside from these comments, you may modify and distribute this file as you please
 		self.settings.preloader = self.init.preloader(self.settings.preloader);
 		self.firstFrame = (self.settings.animateStartingFrameIn) ? true : false;
 		
+		
 		if(self.settings.animateStartingFrameIn){
 			self.modifyElements(self.sequence.children("li").children(), "0s");
 			self.sequence.children("li").children().removeClass("animate-in");
 		}
-				
-		if(self.settings.preloader){
-			$(window).bind("load", function(){
-				self.settings.afterPreload();
+		
+		$(window).bind("load", function(){
+			self.settings.afterLoaded();
+			if(self.settings.preloader){
 				if(self.settings.hidePreloaderUsingCSS && self.transitionsSupported && self.prefix !== "-o-"){
 					self.prependPreloadingCompleteTo = (self.settings.prependPreloadingComplete == true) ? self.settings.preloader : $(self.settings.prependPreloadingComplete);
 					self.prependPreloadingCompleteTo.addClass("preloading-complete");
@@ -131,11 +132,11 @@ Aside from these comments, you may modify and distribute this file as you please
 						init();
 					});
 				}
-				$(window).unbind("load");
-			});
-		}else{
-			init();
-		}
+			}else{
+				init();
+			}
+			$(this).unbind("load");
+		});
 		
 		function init(){
 			$(self.settings.preloader).remove();
@@ -166,15 +167,14 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.nextFrame = self.sequence.children("li:nth-child("+self.settings.startingFrameID+")");
 			self.nextFrameChildren = self.nextFrame.children();
 			self.nextFrameID = self.settings.startingFrameID;
-			self.sequence.children("li").children().removeClass("animate-in"); //remove any instance of "animate-in" that was used for when JS is disabled
+			//self.sequence.children("li").children().removeClass("animate-in"); //remove any instance of "animate-in" that was used for when JS is disabled
 			self.direction;
 			
 			self.sequence.css({"width": "100%", "height": "100%"}); //set the sequence list to 100% width/height just incase it hasn't been specified in the CSS
 			
 			if(self.transitionsSupported){ //initiate the full featured Sequence if transitions are supported...
 				if(!self.settings.animateStartingFrameIn){ //start first frame in animated in position
-					self.currentFrame = self.nextFrame;
-					self.currentFrame.addClass("current-frame");
+					self.currentFrame = self.nextFrame.addClass("current-frame");
 					self.currentFrameChildren = self.currentFrame.children();
 					self.currentFrameID = self.settings.startingFrameID;
 					self.modifyElements(self.currentFrameChildren, "0s");
@@ -268,9 +268,9 @@ Aside from these comments, you may modify and distribute this file as you please
 			
 			function hoverDetect(e){
 				self.containerLeft = self.container.position().left;
-				self.containerRight = (self.container.position().left + self.container.width());
+				self.containerRight = (self.containerLeft + self.container.width());
 				self.containerTop = self.container.position().top;
-				self.containerBottom = (self.container.position().top + self.container.height());
+				self.containerBottom = (self.containerTop + self.container.height());
 				var pageX = e.pageX;
 				var pageY = e.pageY;
 				if(pageX >= self.containerLeft && pageX <= self.containerRight && pageY >= self.containerTop && pageY <= self.containerBottom){
@@ -339,7 +339,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		};
 		self.sequence.on("touchstart touchmove touchend", function(e){
 		if(self.settings.swipePreventsDefault){
-		e.preventDefault();
+			e.preventDefault();
 		}
 		switch(e.originalEvent.type){
 			case "touchmove":
@@ -429,7 +429,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		modifyElements: function($elementToReset, cssValue){
 			var self = this;
-			$elementToReset.css(
+				$elementToReset.css(
 				self.prefixCSS(self.prefix, {
 					"transition-duration": cssValue,
 					"transition-delay": cssValue
@@ -471,7 +471,6 @@ Aside from these comments, you may modify and distribute this file as you please
 			return null;
 		},
 		
-		//
 		setTransitionProperties: function(frameChildren){
 			var self = this;
 			self.modifyElements(self.frameChildren, "");
@@ -541,8 +540,6 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.settings.unpaused();
 				});
 			}
-			
-			
 		},
 		
 		//stop causing Sequence to automatically change frame every x amount of seconds
@@ -591,7 +588,6 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.paused = true;
 					self.stopAutoPlay();
 				}
-
 			}
 		},
 		
@@ -653,7 +649,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				}else{ //if the browser doesn't support CSS3 transitions...
 					self.sequence.children("li").css({"position": "relative"}); //this allows for fadein/out in IE
 						self.settings.beforeCurrentFrameAnimatesOut();
-					self.currentFrame.animate({"opacity": 0}, self.settings.fallbackTheme.speed, function(){ //hide the current frame
+					self.currentFrame.animate({"opacity": 0}, self.settings.fallback.speed, function(){ //hide the current frame
 						self.currentFrame.css({"display": "none", "z-index": "1"});
 						self.currentFrame.removeClass("current-frame");
 						self.settings.beforeNextFrameAnimatesIn();
@@ -713,19 +709,19 @@ Aside from these comments, you may modify and distribute this file as you please
 
 			self.nextFrameChildren = self.nextFrame.children(); //save the child elements
 			self.frameChildren = self.currentFrame.children(); //save the child elements (the ones we'll animate) in an array
-									
+			
 			self.settings.beforeNextFrameAnimatesIn();
 							
 			if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction === 1){ //if user hit next button...
+			
 				//reset the position of the next frames elements ready for animating in again
-				
-				self.modifyElements(self.nextFrameChildren, "0s");
-				self.nextFrameChildren.removeClass("animate-out");
+				//self.modifyElements(self.nextFrameChildren, "0s");
+				//self.nextFrameChildren.removeClass("animate-out");
 				
 				setTimeout(function(){
-					self.frameChildren.removeClass("animate-out");
+					//self.frameChildren.removeClass("animate-out");
+					
 					self.modifyElements(self.frameChildren, "");
-					//self.active = true;
 					self.frameChildren.addClass("animate-in");
 					self.waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in");
 					if(self.settings.transitionThreshold !== true && self.settings.afterCurrentFrameAnimatesOut != "function () {}"){
@@ -807,7 +803,7 @@ Aside from these comments, you may modify and distribute this file as you please
 	$.fn.sequence = function(options){
 		return this.each(function(){
 			var sequence = new Sequence($(this), options, defaults, get);
-			$(this).data("sequence", sequence);
+			$(this).data("sequence", sequence); 
 		});
 	};
 	
@@ -874,7 +870,6 @@ Aside from these comments, you may modify and distribute this file as you please
 		//Keyboard settings
 		keyNavigation: true, //false prevents the following keyboard settings
 		numericKeysGoToFrames: true,
-		keyPreventsDefault: false, //
 		keyEvents: {
 			left: "prev",
 			right: "next"
@@ -900,7 +895,8 @@ Aside from these comments, you may modify and distribute this file as you please
 		},
 		
 		//Fallback Theme Settings (For browsers that don't support CSS3 transitions)
-		fallbackTheme: {
+		fallback: {
+			theme: "fade",
 			speed: 500
 		},
 		
@@ -918,6 +914,6 @@ Aside from these comments, you may modify and distribute this file as you please
 		beforeLastFrameAnimatesIn: function() {},		//triggers before the last frame animates in
 		afterLastFrameAnimatesIn: function() {},			//triggers after the last frame animates in
 		
-		afterPreload: function() {}						//triggers after preloading is complete
+		afterLoaded: function() {}						//triggers after Sequence is initiated
 	};
 })(jQuery);

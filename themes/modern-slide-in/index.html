@@ -30,7 +30,7 @@
 				prevButton: true,
 				animateStartingFrameIn: true,
 				transitionThreshold: 250,
-				afterPreload: function(){
+				afterLoaded: function(){
 					$("#nav").fadeIn(100);
 					$("#nav li:nth-child("+(sequence.settings.startingFrameID)+") img").addClass("active");
 				},

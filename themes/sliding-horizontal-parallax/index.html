@@ -27,7 +27,7 @@
 				prependPreloadingComplete: "#sequence-preloader, #slideshow",
 				animateStartingFrameIn: false, 
 				transitionThreshold: 500,
-				afterPreload: function(){
+				afterLoaded: function(){
 					$(".prev, .next").fadeIn(500);
 					if(!slideShow.transitionsSupported){
 						$("#slideshow").animate({"opacity": "1"}, 1000);

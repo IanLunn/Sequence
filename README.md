@@ -35,6 +35,15 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.6.7 5/06/2012
+
+**Note: 0.6.7 may not be backwards compatible with existing themes if those themes use the afterPreload callback, which has now been renamed to afterLoaded**
+
+- Fixed bug that prevented Sequence from initiating when the preloader was disabled
+- Changed the name of the afterPreload callback to afterLoaded and made it execute whether a preloader is used or not
+- Changed the name of the `FallbackTheme` object to `fallback`. `fallback` now has an option within it called `theme`. In the future, the `theme` option can be given different strings such as `fade` and `slide` to provide different fallback themes for older browsers.
+- A few minor adjustments to improve or remove redundant code
+
 ###v0.6.6 16/05/2012
 
 ####Bug fix for Multiple Instances of Sequence
