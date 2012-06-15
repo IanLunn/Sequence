@@ -19,7 +19,7 @@ Sequence is the jQuery slider plugin with infinite style. It provides the comple
 - [Apple Style](http://www.sequencejs.com/themes/apple-style/)
 
 ##Documentation
-The unashamedly technical documentation can be found here: [SequenceJS Demo](http://www.sequencejs.com/documentation.php). Quick guides are on their way!
+The unashamedly technical documentation can be found here: [SequenceJS Demo](http://www.sequencejs.com/documentation.html). Quick guides are on their way!
 
 ##Author
 [Ian Lunn](http://twitter.com/#!/IanLunn) (say hi on Twitter!)
