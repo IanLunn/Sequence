@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.6.7 Beta
+Version: 0.6.7.1 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -37,7 +37,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		transitions = {
 		'WebkitTransition' : 'webkitTransitionEnd webkitAnimationEnd',
 		'MozTransition'    : 'transitionend animationend',
-		'OTransition'      : 'oTransitionEnd oAnimationEnd',
+		'OTransition'      : 'oTransitionEnd oAnimationEnd otransitionend oanimationend',
 		'msTransition'     : 'MSTransitionEnd MSAnimationEnd',
 		'transition'       : 'transitionend animationend'
 		};
