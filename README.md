@@ -35,6 +35,9 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.6.7.1 19/06/2012
+- Minor fix to get Sequence working in Opera 12
+
 ###v0.6.7 5/06/2012
 
 **Note: 0.6.7 may not be backwards compatible with existing themes if those themes use the afterPreload callback, which has now been renamed to afterLoaded**
