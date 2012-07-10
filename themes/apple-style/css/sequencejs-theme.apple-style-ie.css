@@ -1,0 +1,5 @@
+#sequence li, #sequence li * {
+    /*By making sure IE filters never run, jQuery won't animate a fade between frames in IE6/7/8. This prevents the black halo around transparent images.*/
+    filter: "" !important;
+    -ms-filter: "" !important;
+}

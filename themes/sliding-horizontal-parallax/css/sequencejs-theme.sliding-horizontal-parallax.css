@@ -2,7 +2,7 @@
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
 Theme:   Sliding Horizontal Parallax
-Version:   0.1 Beta
+Version:   0.3 Beta
 Theme Author:   Ian Lunn @IanLunn
 Author URL:   http://www.ianlunn.co.uk/
 Theme URL:   http://www.sequencejs.com/themes/sliding-horizontal-parallax/
@@ -13,45 +13,9 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
 Aside from these comments, you may modify and distribute this file as you please. Have fun!
  */
-/* http://meyerweb.com/eric/tools/css/reset/ v2.0 | 20110126 License:   none (public domain) */
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
-}
-
-/* HTML5 display-role reset for older browsers */
-article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section {
-	display: block;
-}
 
 body {
-	line-height: 1;
-}
-
-ol,ul {
-	list-style: none;
-}
-
-blockquote,q {
-	quotes: none;
-}
-
-blockquote:before,blockquote:after,q:before,q:after {
-	content: '';
-	content: none;
-}
-
-table {
-	border-collapse: collapse;
-	border-spacing: 0;
-}
-
-body {
-	background: url(../images/bg-sky.png) repeat-x #4da5e4;
+	background: url(../images/bg-sky.png) repeat-x #65B7F1;
 	color: white;
 	font-family: 'Play', sans-serif;
 	max-width: 2560px;
@@ -71,22 +35,22 @@ a {
 	overflow: hidden;
 }
 
-#slideshow {
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-	filter: alpha(opacity=0);
+#sequence {
 	opacity: 0;
+	/*backface-visibility prevents graphical glitches when frames are animating*/
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+	-ms-backface-visibility: hidden;
+	-o-backface-visibility: hidden;
+	backface-visibility: hidden;
 }
 
 #sequence-preloader.preloading-complete {
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-	filter: alpha(opacity=0);
 	opacity: 0;
 	visibility: hidden;
 }
 
-#slideshow.preloading-complete {
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-	filter: alpha(opacity=100);
+#sequence.preloading-complete {
 	opacity: 1;
 
 	-webkit-transition-duration: 1s;
@@ -101,10 +65,10 @@ a {
 	height: 100%;
 	position: absolute;
 	width: 100%;
-	z-index: 999999;
+	z-index: 99;
 }
 
-@keyframes "preload" {
+@keyframes preload {
  0% {
    	opacity: 0;
  }
@@ -119,37 +83,31 @@ a {
 
 @-moz-keyframes preload {
  0% {
-   filter: alpha(opacity=0);
    opacity: 0;
  }
  50% {
-   filter: alpha(opacity=100);
    opacity: 1;
  }
  100% {
-   filter: alpha(opacity=0);
    opacity: 0;
  }
 
 }
 
-@-webkit-keyframes "preload" {
+@-webkit-keyframes preload {
  0% {
-   filter: alpha(opacity=0);
    opacity: 0;
  }
  50% {
-   filter: alpha(opacity=100);
    opacity: 1;
  }
  100% {
-   filter: alpha(opacity=0);
    opacity: 0;
  }
 
 }
 
-@-ms-keyframes "preload" {
+@-ms-keyframes preload {
 	0%  {
 	opacity: 0;
 }
@@ -162,20 +120,14 @@ a {
 
 }
 
- @-o-keyframes "preload" {
+ @-o-keyframes preload {
 	0%  {
-	 filter: alpha(opacity=0);
-	filter: alpha(opacity=0);
 	opacity: 0;
 }
  50% {
-   filter: alpha(opacity=100);
-   filter: alpha(opacity=100);
    opacity: 1;
  }
  100% {
-   filter: alpha(opacity=0);
-   filter: alpha(opacity=0);
    opacity: 0;
  }
 
@@ -189,8 +141,6 @@ a {
 	border-radius: 6px;
 	display: inline-block;
 	height: 12px;
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-	filter: alpha(opacity=0);
 	opacity: 0;
 	position: relative;
 	top: -50%;
@@ -199,6 +149,7 @@ a {
 	-webkit-animation: preload 1s infinite;
 	-moz-animation: preload 1s infinite;
 	-ms-animation: preload 1s infinite;
+	-o-animation: preload 1s infinite;
 	animation: preload 1s infinite;
 }
 
@@ -214,6 +165,7 @@ a {
 	-webkit-animation-delay: .15s;
 	-moz-animation-delay: .15s;
 	-ms-animation-delay: .15s;
+	-o-animation-delay: .15s;
 	animation-delay: .15s;
 }
 
@@ -221,6 +173,7 @@ a {
 	-webkit-animation-delay: .3s;
 	-moz-animation-delay: .3s;
 	-ms-animation-delay: .3s;
+	-o-animation-delay: .3s;
 	animation-delay: .3s;
 }
 
@@ -238,8 +191,6 @@ a {
 	font-size: 80px;
 	font-weight: bold;
 	position: absolute;
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
-	filter: alpha(opacity=40);
 	opacity: 0.4;
 	top: 280px;
 	height: 41px;
@@ -264,8 +215,6 @@ a {
 }
 
 .next:hover,.prev:hover {
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-	filter: alpha(opacity=100);
 	opacity: 1;
 
 	-webkit-transform: scale(1.2);
@@ -281,15 +230,11 @@ a {
 	transition-duration: .4s;
 }
 
-#sequence-preloader {
-	background: #278ace;
-}
-
-#slideshow li > * {
+#sequence li > * {
 	position: absolute;
 }
 
-#slideshow {
+#sequence {
 	height: 600px;
 	margin: 0 auto;
 	position: relative;
@@ -449,9 +394,9 @@ h2 {
 }
 
 .sky {
+    height: auto;
+    width: 100%;
 	left: -6%;
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-	filter: alpha(opacity=0);
 	opacity: 0;
 	top: 0;
 	vertical-align: middle;
@@ -466,10 +411,8 @@ h2 {
 
 .sky.animate-in {
 	left: 0%;
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-	filter: alpha(opacity=100);
 	opacity: 1;
-	top: 0px;
+	top: 0;
 
 	-webkit-transition-duration: 4s;
 	-moz-transition-duration: 4s;
@@ -487,8 +430,6 @@ h2 {
 
 .sky.animate-out {
 	left: 6%;
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-	filter: alpha(opacity=0);
 	opacity: 0;
 	top: 0;
 
@@ -508,8 +449,6 @@ h2 {
 
 .kite {
 	left: -30%;
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-	filter: alpha(opacity=0);
 	opacity: 0;
 	max-width: 40%;
 	top: 300px;
@@ -531,8 +470,6 @@ h2 {
 .kite.animate-in {
 	left: -15%;
 	top: 300px;
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
-	filter: alpha(opacity=100);
 	opacity: 1;
 
 	-webkit-transform: rotate(80deg);
@@ -563,8 +500,6 @@ h2 {
 
 .kite.animate-out {
 	left: -15%;
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-	filter: alpha(opacity=0);
 	opacity: 0;
 	top: 300px;
 
@@ -592,4 +527,9 @@ h2 {
 	-ms-transition-property: left top -ms-transform;
 	transition-property: left top transform;
 	z-index: 2;
+}
+
+.sequence-fallback .kite.animate-in {
+    left: 20%;
+    top: 200px;
 }

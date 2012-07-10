@@ -7,8 +7,8 @@
 	<link rel="stylesheet" type="text/css" media="screen" href="../../demo-assets/css/demo-styles.css" />
 	<!--[if lt IE 8]><link rel="stylesheet" type="text/css" media="screen" href="../../demo-assets/css/demo-styles-ie.css" /><![endif]-->
 	<link rel="stylesheet" type="text/css" media="screen" href="css/sequencejs-theme.sliding-horizontal-parallax.css" />
+	<!--[if lt IE 9]><link rel="stylesheet" type="text/css" media="screen" href="css/sequencejs-theme.sliding-horizontal-parallax-ie.css" /><![endif]-->
 	<link href="http://fonts.googleapis.com/css?family=Play:400,700" rel="stylesheet" type="text/css">
-	
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script type="text/javascript">
 	if (typeof jQuery == 'undefined'){
@@ -24,20 +24,20 @@
 				prevButton: ".prev",
 				preloader: "#sequence-preloader",
 				prependPreloader: false,
-				prependPreloadingComplete: "#sequence-preloader, #slideshow",
+				prependPreloadingComplete: "#sequence-preloader, #sequence",
 				animateStartingFrameIn: false, 
 				transitionThreshold: 500,
 				afterLoaded: function(){
 					$(".prev, .next").fadeIn(500);
-					if(!slideShow.transitionsSupported){
-						$("#slideshow").animate({"opacity": "1"}, 1000);
+					if(!sequence.transitionsSupported){
+						$("#sequence").animate({"opacity": "1"}, 1000);
 					}
 				}
 			};
-			var slideShow = $("#slideshow").sequence(options).data("sequence");
-			if(!slideShow.transitionsSupported || slideShow.prefix == "-o-"){
-				$("#slideshow").animate({"opacity": "1"}, 1000);
-				slideShow.preloaderFallback();
+			var sequence = $("#sequence").sequence(options).data("sequence");
+			if(!sequence.transitionsSupported || sequence.prefix == "-o-"){
+				$("#sequence").animate({"opacity": "1"}, 1000);
+				sequence.preloaderFallback();
 			}
 		})
 	</script>
@@ -65,7 +65,7 @@
 				<img src="../../images/sequence-preloader.png" alt="Sequence is loading, please wait..." />
 			</div>
 		</div>
-		<div id="slideshow">
+		<div id="sequence">
 			<img class="prev" src="images/bt-prev.png" alt="Previous" />
 			<img class="next" src="images/bt-next.png" alt="Next" />
 			<ul>
