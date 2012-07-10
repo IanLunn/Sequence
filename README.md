@@ -35,6 +35,11 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.6.8 10/07/2012
+- Added "Slide" fallback theme and made it the default. "Slide" provides better support for older versions of Internet Explorer because opacity is no longer needed. In the original "Fade" fallback, opacity was used which caused a black halo around PNGs.
+- Added new option `hideFramesUntilPreloaded`, which is `true` by default. When `true`, frames will be hidden as soon as Sequence is loaded and then shown when everything has preloaded.
+- Lots of changes made to the themes to better assist with Internet Explorer support. Also removed CSS Resets into their own files to make themes a little more modular.
+
 ###v0.6.7.1 19/06/2012
 - Minor fix to get Sequence working in Opera 12
 
