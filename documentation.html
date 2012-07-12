@@ -23,7 +23,8 @@
 					pauseIconSrc: "images/pause-icon.png",
 					transitionThreshold: 1000,
 					
-					fallbackTheme: {
+					fallback: {
+					    theme: "slide",
 						speed: 500
 					},
 					beforeCurrentFrameAnimatesIn: function(){
@@ -841,6 +842,15 @@
 							<strong>CSS Selector</strong>: Specify a CSS Selector to automatically prepend the preloader to</td>
 						</tr>
 						<tr>
+							<td>hideFramesUntilPreloaded</td>
+							<td>true or false</td>
+							<td>true</td>
+							<td>If preloader is true, specify whether frames should be hidden during preloading and then shown afterwards.<br /><br />
+							<strong>true</strong>: hide frames until preloaded<br />
+							<strong>false</strong>: don't hide frames during preloading<br />
+					        </td>
+						</tr>
+						<tr>
 							<td>hidePreloaderUsingCSS</td>
 							<td>true/false</td>
 							<td>true</td>
@@ -973,6 +983,12 @@ In this example, when the 'a' and 's' keys are pressed, Sequence will go to the 
 						</tr>
 					</thead>
 					<tbody>
+    					<tr>
+    						<td>theme</td>
+    						<td>A string</td>
+    						<td>slide</td>
+    						<td>The name of the fallback theme to be used when the browser doesn't support CSS3 transitions<br /><br /><strong>slide</strong>: The default theme which causes frames to slide left and right.<br /><strong>fade</strong>: Causes an frame to fade out before the next fades in (note: due to poor support for opacity in Internet Explorer 8 and below it's advised to use the "slide" theme instead).</td>
+    					</tr>
 						<tr>
 							<td>speed</td>
 							<td>A number in milliseconds</td>
@@ -989,7 +1005,8 @@ In this example, when the 'a' and 's' keys are pressed, Sequence will go to the 
 <pre><code>&lt;script type="text/javascript"&gt; 
     $(document).ready(function(){
         var options = {
-            fallbackTheme: {
+            fallback: {
+                theme: "slide",
             	speed: 500
             }
         }
