@@ -121,6 +121,7 @@
 									<li><a href="#options-preloader" title="Preloader">Preloader</a></li>
 									<li><a href="#options-keyboard" title="Keyboard Options">Keyboard</a></li>
 									<li><a href="#options-swiping" title="Touch Swipe Options">Swiping</a></li>
+									<li><a href="#options-hashtag" title="HashTag Options">hashTags</a></li>
 									<li><a href="#options-fallback" title="Fallback Theme Options">Fallback Theme</a></li>
 								</ol>
 							</li>
@@ -145,10 +146,10 @@
 				<h2 id="basic-setup">Basic Set Up</h2>
 				<h3 id="add-files">Add Files</h3>
 				
-				<p>Place a link to jQuery and the sequence.js file in the <code>&lt;head&gt;</code> of your document:</p>
+				<p>Place a link to jQuery and the sequence.jquery-min.js file in the <code>&lt;head&gt;</code> of your document:</p>
 				
 <pre><code>&lt;script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"&gt;&lt;/script&gt;
-&lt;script type="text/javascript" src="scripts/sequence.js"&gt;&lt;/script&gt;</code></pre>
+&lt;script type="text/javascript" src="scripts/sequence.jquery-min.js"&gt;&lt;/script&gt;</code></pre>
 				
 				<h3 id="initiate">Initiate Sequence</h3>
 				
@@ -968,7 +969,60 @@ In this example, when the 'a' and 's' keys are pressed, Sequence will go to the 
 							</td>
 						</tr>
 					</tbody>
-				</table>				
+				</table>
+				
+				<h4 id="options-hashtag">HashTag Options</h4>
+				<p>The hashTag options are to be used with <a href="http://benalman.com/projects/jquery-hashchange-plugin/" title="">Ben Alman's jQuery HashChange plugin</a>.</p>
+				<p>Please place a reference to the jQuery HashChange plugin above your reference to the Sequence plugin, like so:</p>
+				<pre><code>&lt;script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="scripts/jquery.ba-hashchange.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="scripts/sequence.jquery-min.js"&gt;&lt;/script&gt;</code></pre>
+				<table>
+					<thead>
+						<tr>
+							<td>Option Name</td>
+							<td>Value</td>
+							<td>Default</td>
+							<td>Description</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>hashTags</td>
+							<td>true/false</td>
+							<td>false</td>
+							<td>If true, when a frame is navigated to and becomes active, the hashTag will change to reflect the frames ID. In the following example, when the first frame becomes active, the URL will be changed to end with the hashTag <solid>#intro</solid>. <solid>intro</solid> is taken from the list item's ID attribute.
+							<pre><code>&lt;div id="sequence"&gt;
+	&lt;ul&gt;
+		&lt;li id="intro"&gt;
+			&lt;h2 class="title animate-in">Built using Sequence.js&lt;/h2&gt;
+		&lt;/li&gt;
+	&lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+							</td>
+						</tr>
+						<tr>
+							<td>hashDataAttribute</td>
+							<td>true/false</td>
+							<td>false</td>
+							<td>Whether the hashTag should be taken from a list items ID attribute or a data attribute named data-sequence-hash<br /><br /><strong>true</strong>: Use the data attribute named data-sequence-hash.<br /><strong>false</strong>: Use the ID attribute<br /><br />In the following example, when hashDataAttribute is true and the first frame becomes active, the URL will be changed to end with the hashTag <solid>#superAwesome</solid>.
+							<pre><code>&lt;div id="sequence"&gt;
+    &lt;ul&gt;
+    	&lt;li id="intro" data-sequence-hash="superAwesome"&gt;
+    		&lt;h2 class="title animate-in">Built using Sequence.js&lt;/h2&gt;
+    	&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+							</td>
+						</tr>
+						<tr>
+							<td>hashChangesOnFirstFrame</td>
+							<td>true/false</td>
+							<td>false</td>
+							<td>Whether the hashTag should be changed when the first frame becomes active<br /><br /><strong>true</strong>: The hashTag will change as soon as the first frame reaches its "animate-in" position.<br /><strong>false</strong>: The hashTag will not change when the first frame becomes active but will change for every other frame after that.</td>
+						</tr>
+					</tbody>
+				</table>			
 				
 				<h4 id="options-fallback">Complete List of Fallback Theme Options</h4>
 				<p>The fallback theme options control Sequence when it is being viewed in browsers that do not support CSS3 transitions. When in these browsers, Sequence will fallback to a theme that animates each frames opacity -- fading in and out of frames.</p>

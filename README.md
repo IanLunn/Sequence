@@ -19,10 +19,10 @@ Sequence is the jQuery slider plugin with infinite style. It provides the comple
 - [Apple Style](http://www.sequencejs.com/themes/apple-style/)
 
 ##Documentation
-The unashamedly technical documentation can be found here: [SequenceJS Demo](http://www.sequencejs.com/documentation.html). Quick guides are on their way!
+Technical documentation can be found here: [SequenceJS Demo](http://www.sequencejs.com/documentation.html).
 
 ##Author
-[Ian Lunn](http://twitter.com/#!/IanLunn) (say hi on Twitter!)
+[@Ian Lunn](http://twitter.com/#!/IanLunn)
 
 ##License
 sequence.js is a FREE script and is dual licensed under the following:
@@ -34,6 +34,12 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 [SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2012 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
 
 ##What's New? 
+
+###v0.6.9 07/08/2012
+- HashTag Support. Options to enable hashTags so that the URL will update whenever a frame becomes active. The hashTag name can either be taken from a frame's ID attribute or a data attribute named `data-sequence-hash`
+- Due to a bug in Opera 11 and a not-so-great workaround, Opera 11 support is now the equivalent of Internet Explorer 7-9. Opera 12+ works fine.
+- General tidy up of code
+
 
 ###v0.6.8 10/07/2012
 - Added "Slide" fallback theme and made it the default. "Slide" provides better support for older versions of Internet Explorer because opacity is no longer needed. In the original "Fade" fallback, opacity was used which caused a black halo around PNGs.
