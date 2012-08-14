@@ -53,72 +53,45 @@ Aside from these comments, you may modify and distribute this file as you please
 		self.hoverEvent,
 		self.defaultPreloader,
 		self.init = {
-			preloader: function(optionPreloader){
-				self.prependTo = (self.settings.prependPreloader == true) ? self.container : self.settings.prependPreloader;
-				
-				switch(optionPreloader){
-					case true:
-					case undefined:
-						get.defaultPreloader(self.prependTo, self.transitionsSupported, self.prefix);
-						if(!self.transitionsSupported || self.prefix === "-o-"){
-							self.preloaderFallback();
-						}
-						return $(".sequence-preloader");
-					
-					case false:
-						break;
-					
-					default:
-						this.CSSSelectorToHTML(optionPreloader);
-						return $(optionPreloader);
-				}
-			},
-			
 			uiElements: function(devOption, defaultOption){
 				switch(devOption){
 					case false:
 						return undefined;
 
 					case true:
+					    if(defaultOption === ".sequence-preloader"){ //if setting up the preloader
+					        get.defaultPreloader(self.container, self.transitionsSupported, self.prefix);
+					    };
 						return $(defaultOption);
 
 					default:
 						return $(devOption);
-				}
-			},
-			
-			CSSSelectorToHTML: function(selector){
-				switch(selector.charAt(0)){
-					case ".":
-						return 'class="'+selector.split(".")[1]+'"';
-					
-					case "#":
-						return 'id="'+selector.split("#")[1]+'"';
-					
-					default:
-						return selector;
 				}
 			}
 		},
 		
 		//INIT
 		self.settings = $.extend({}, defaults, options),
-		self.settings.preloader = self.init.preloader(self.settings.preloader);
+		self.settings.preloader = self.init.uiElements(self.settings.preloader, ".sequence-preloader");
 		self.firstFrame = (self.settings.animateStartingFrameIn) ? true : false;
 		
 		if(self.settings.hideFramesUntilPreloaded && self.settings.preloader){
 		    self.sequence.children("li").hide();
 		}
+		
+		if(self.prefix === "-o-"){
+		    self.transitionsSupported = get.operaTest();
+		}
 
 		self.sequence.children("li").children().removeClass("animate-in");
-		
+				
 		$(window).bind("load", function(){
 			self.settings.afterLoaded();
 			if(self.settings.hideFramesUntilPreloaded && self.settings.preloader){
 			    self.sequence.children("li").show();
 			}
 			if(self.settings.preloader){
-				if(self.settings.hidePreloaderUsingCSS && self.transitionsSupported && self.prefix !== "-o-"){
+				if(self.settings.hidePreloaderUsingCSS && self.transitionsSupported){
 					self.prependPreloadingCompleteTo = (self.settings.prependPreloadingComplete == true) ? self.settings.preloader : $(self.settings.prependPreloadingComplete);
 					self.prependPreloadingCompleteTo.addClass("preloading-complete");
 					setTimeout(init, self.settings.hidePreloaderDelay);
@@ -146,12 +119,14 @@ Aside from these comments, you may modify and distribute this file as you please
 			if((self.settings.prevButton !== undefined && self.settings.prevButton !== false) && self.settings.showPrevButtonOnInit){self.settings.prevButton.show();}
 			
 			if((self.settings.pauseButton !== undefined && self.settings.pauseButton !== false)){self.settings.pauseButton.show();}
-			
+						
 			if(self.settings.pauseIcon !== false){
 				self.settings.pauseIcon = self.init.uiElements(self.settings.pauseIcon, ".pause-icon");
 				if(self.settings.pauseIcon !== undefined){
 					self.settings.pauseIcon.hide();
 				}
+			}else{
+			    self.settings.pauseIcon = undefined;
 			}
 						
 			if(self.hasTouch){
@@ -200,7 +175,7 @@ Aside from these comments, you may modify and distribute this file as you please
     			self.settings.beforeNextFrameAnimatesIn();
     			self.settings.afterNextFrameAnimatesIn();
     			self.currentFrameChildren = self.currentFrame.children();
-    			self.currentFrameID = self.settings.startingFrameID;			    			        
+    			self.currentFrameID = self.nextFrameID;			    			        
                 self.sequence.children("li").children().addClass("animate-in");
                 self.sequence.children(":not(li:nth-child("+self.settings.startingFrameID+"))").css({"display": "none", "opacity": 0});
                 if(self.settings.autoPlay){
@@ -272,7 +247,9 @@ Aside from these comments, you may modify and distribute this file as you please
 				if(pageX >= self.containerLeft && pageX <= self.containerRight && pageY >= self.containerTop && pageY <= self.containerBottom){
 					self.settings.autoPlay = false;
 					clearTimeout(self.sequenceTimer);
-					$(self.settings.pauseIcon).show();
+					if(self.settings.pauseIcon !== undefined){
+						self.settings.pauseIcon.show();
+					}
 					if(self.settings.pauseButton !== undefined){
 						self.settings.pauseButton.addClass("paused");
 					}
@@ -292,7 +269,9 @@ Aside from these comments, you may modify and distribute this file as you please
 						var autoPlaySequence = function(){self.autoPlaySequence();};
 						clearTimeout(self.sequenceTimer);
 						self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
-						$(self.settings.pauseIcon).hide();
+						if(self.settings.pauseIcon !== undefined){
+							self.settings.pauseIcon.hide();
+						}
 						if(self.settings.pauseButton !== undefined){
 							self.settings.pauseButton.removeClass("paused");
 						}
@@ -308,7 +287,9 @@ Aside from these comments, you may modify and distribute this file as you please
 				self.hoverEvent = self.sequence.hover(function(e){
 					self.settings.autoPlay = false;
 					clearTimeout(self.sequenceTimer);
-					$(self.settings.pauseIcon).show();
+					if(self.settings.pauseIcon !== undefined){
+						self.settings.pauseIcon.show();
+					}
 					if(self.settings.pauseButton !== undefined){
 						self.settings.pauseButton.addClass("paused");
 					}
@@ -318,7 +299,9 @@ Aside from these comments, you may modify and distribute this file as you please
 					var autoPlaySequence = function(){self.autoPlaySequence();};
 					clearTimeout(self.sequenceTimer);
 					self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
-					$(self.settings.pauseIcon).hide();
+					if(self.settings.pauseIcon !== undefined){
+						self.settings.pauseIcon.hide();
+					}
 					if(self.settings.pauseButton !== undefined){
 						self.settings.pauseButton.removeClass("paused");
 					}
@@ -442,49 +425,16 @@ Aside from these comments, you may modify and distribute this file as you please
 			return css;
 		},
 		
-		//Opera workaround: currently Opera has a bug that prevents retrieving a prefixed CSS property from the DOM, meaning we have to search through the CSS file instead. It's not ideal in terms of performance but hopefully it'll be fixed in the future
-		getStyleBySelector: function(selector){
-			var css = {};
-			var sheetList = document.styleSheets, ruleList, i, j;
-			for(i = sheetList.length - 1; i >= 0; i--){
-				var error = false;
-				try{
-					ruleList = sheetList[i].cssRules;
-				}
-				catch(e){
-					error = true;
-				}
-				if(!error){
-					for(j = 0; j < ruleList.length; j++){
-						if(ruleList[j].type === CSSRule.STYLE_RULE && ruleList[j].selectorText === selector){
-							css["-o-transition-duration"] = ruleList[j].style.OTransitionDuration;
-							css["-o-transition-delay"] = ruleList[j].style.OTransitionDelay;
-							return css;
-						}
-					}
-				}
-			}
-			return null;
-		},
-		
 		setTransitionProperties: function(frameChildren){
 			var self = this;
 			self.modifyElements(self.frameChildren, "");
 			self.frameChildren.each(function(){
-				if(self.prefix === "-o-"){
-					var selector = "." + $(this).attr("class").replace(" ", ".");
-					var previousFrameTransitionProperties = self.getStyleBySelector(selector);
-					self.transitionProperties["transition-duration"] = previousFrameTransitionProperties["-o-transition-duration"];
-					self.transitionProperties["transition-delay"] = previousFrameTransitionProperties["-o-transition-delay"];
-					self.transitionProperties["transition-delay"] = (self.transitionProperties["transition-delay"] === "") ? "0s" : self.transitionProperties["transition-delay"];
-				}else{
-					self.transitionProperties["transition-duration"] = $(this).css(self.prefix + "transition-duration");
-					self.transitionProperties["transition-delay"] = $(this).css(self.prefix + "transition-delay");
-				}
-
-				$(this).css(
-					self.prefixCSS(self.prefix, self.transitionProperties)
-				);
+    			self.transitionProperties["transition-duration"] = $(this).css(self.prefix + "transition-duration");
+    			self.transitionProperties["transition-delay"] = $(this).css(self.prefix + "transition-delay");
+    
+    			$(this).css(
+    				self.prefixCSS(self.prefix, self.transitionProperties)
+    			);
 			});
 		},
 		
@@ -494,14 +444,18 @@ Aside from these comments, you may modify and distribute this file as you please
 			if(self.settings.autoPlay){ //pause Sequence
 				if(self.settings.pauseButton !== undefined){
 					self.settings.pauseButton.addClass("paused");
-					self.settings.pauseIcon.show();
+					if(self.settings.pauseIcon !== undefined){
+						self.settings.pauseIcon.show();
+					}
 				}
 				self.settings.paused();
 				self.stopAutoPlay();
 			}else{ //start autoPlay
 				if(self.settings.pauseButton !== undefined){
 					self.settings.pauseButton.removeClass("paused");
-					self.settings.pauseIcon.hide();
+					if(self.settings.pauseIcon !== undefined){
+						self.settings.pauseIcon.hide();
+					}
 				}
 				self.settings.unpaused();
 				self.startAutoPlay(self.settings.unpauseDelay);
@@ -521,7 +475,9 @@ Aside from these comments, you may modify and distribute this file as you please
 				self.hoverEvent = self.sequence.hover(function(){
 					self.settings.autoPlay = false;
 					clearTimeout(self.sequenceTimer);
-					$(self.settings.pauseIcon).show();
+					if(self.settings.pauseIcon !== undefined){
+						self.settings.pauseIcon.show();
+					};
 					if(self.settings.pauseButton !== undefined){
 						self.settings.pauseButton.addClass("paused");
 					}
@@ -531,7 +487,9 @@ Aside from these comments, you may modify and distribute this file as you please
 					var autoPlaySequence = function(){self.autoPlaySequence();};
 					clearTimeout(self.sequenceTimer);
 					self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
-					$(self.settings.pauseIcon).hide();
+					if(self.settings.pauseIcon !== undefined){
+						self.settings.pauseIcon.hide();
+					}
 					if(self.settings.pauseButton !== undefined){
 						self.settings.pauseButton.removeClass("paused");
 					}
@@ -614,7 +572,6 @@ Aside from these comments, you may modify and distribute this file as you please
 				self.frameChildren = self.currentFrame.children(); //save the child elements
 				self.nextFrameChildren = self.nextFrame.children(); //save the child elements
 				
-				
 				if(self.transitionsSupported){ //if the browser supports CSS3 transitions...
 					if(self.currentFrame.length !== 0){
 						self.settings.beforeCurrentFrameAnimatesOut();
@@ -642,7 +599,7 @@ Aside from these comments, you may modify and distribute this file as you please
 						}
 					}else{					
 						animateIn();
-						self.firstFrame = false;
+						//self.firstFrame = false;
 					}
 				}else{ //if the browser doesn't support CSS3 transitions...				    
 				    switch(self.settings.fallback.theme){
@@ -765,14 +722,8 @@ Aside from these comments, you may modify and distribute this file as you please
 			}
 							
 			if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction === 1){ //if user hit next button...
-			
-				//reset the position of the next frames elements ready for animating in again
-				//self.modifyElements(self.nextFrameChildren, "0s");
-				//self.nextFrameChildren.removeClass("animate-out");
-				
-				setTimeout(function(){
-					//self.frameChildren.removeClass("animate-out");
-					
+
+				setTimeout(function(){					
 					self.modifyElements(self.frameChildren, "");
 					self.frameChildren.addClass("animate-in");
 					self.waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in");
@@ -795,7 +746,6 @@ Aside from these comments, you may modify and distribute this file as you please
 		waitForAnimationsToComplete: function(frame, elements, direction, inAfterwards){
 			var self = this;
 			if(direction === "out"){
-				
 				//animate out complete
 				var onceComplete = function(){
 					self.active = false;
@@ -861,16 +811,44 @@ Aside from these comments, you may modify and distribute this file as you please
 	
 	//some external functions
 	var get = {
-		/* Modernizr 2.5.3 (Custom Build) | MIT & BSD
-		* Build: http://www.modernizr.com/download/#-prefixed-testprop-testallprops-domprefixes*/
+		/* Modernizr 2.6.1 (Custom Build) | MIT & BSD
+		 * Build: http://modernizr.com/download/#-svg-prefixed-testprop-testallprops-domprefixes
+		 */
 		modernizr: function(){
-		;window.Modernizr = function(a,b,c){function w(a){i.cssText=a}function x(a,b){return w(prefixes.join(a+";")+(b||""))}function y(a,b){return typeof a===b}function z(a,b){return!!~(""+a).indexOf(b)}function A(a,b){for(var d in a)if(i[a[d]]!==c)return b=="pfx"?a[d]:!0;return!1}function B(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:y(f,"function")?f.bind(d||b):f}return!1}function C(a,b,c){var d=a.charAt(0).toUpperCase()+a.substr(1),e=(a+" "+m.join(d+" ")+d).split(" ");return y(b,"string")||y(b,"undefined")?A(e,b):(e=(a+" "+n.join(d+" ")+d).split(" "),B(e,b,c))}var d="2.5.3",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l="Webkit Moz O ms",m=l.split(" "),n=l.toLowerCase().split(" "),o={},p={},q={},r=[],s=r.slice,t,u={}.hasOwnProperty,v;!y(u,"undefined")&&!y(u.call,"undefined")?v=function(a,b){return u.call(a,b)}:v=function(a,b){return b in a&&y(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=self;if(typeof c!="function")throw new TypeError;var d=s.call(arguments,1),e=function(){if(self instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(s.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(s.call(arguments)))};return e});for(var D in o)v(o,D)&&(t=D.toLowerCase(),e[t]=o[D](),r.push((e[t]?"":"no-")+t));return w(""),h=j=null,e._version=d,e._domPrefixes=n,e._cssomPrefixes=m,e.testProp=function(a){return A([a])},e.testAllProps=C,e.prefixed=function(a,b,c){return b?C(a,b,c):C(a,"pfx")},e}(self,self.document)
+		
+		;window.Modernizr=function(a,b,c){function x(a){i.cssText=a}function y(a,b){return x(prefixes.join(a+";")+(b||""))}function z(a,b){return typeof a===b}function A(a,b){return!!~(""+a).indexOf(b)}function B(a,b){for(var d in a){var e=a[d];if(!A(e,"-")&&i[e]!==c)return b=="pfx"?e:!0}return!1}function C(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:z(f,"function")?f.bind(d||b):f}return!1}function D(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+m.join(d+" ")+d).split(" ");return z(b,"string")||z(b,"undefined")?B(e,b):(e=(a+" "+n.join(d+" ")+d).split(" "),C(e,b,c))}var d="2.6.1",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l="Webkit Moz O ms",m=l.split(" "),n=l.toLowerCase().split(" "),o={svg:"http://www.w3.org/2000/svg"},p={},q={},r={},s=[],t=s.slice,u,v={}.hasOwnProperty,w;!z(v,"undefined")&&!z(v.call,"undefined")?w=function(a,b){return v.call(a,b)}:w=function(a,b){return b in a&&z(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=self;if(typeof c!="function")throw new TypeError;var d=t.call(arguments,1),e=function(){if(self instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(t.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(t.call(arguments)))};return e}),p.svg=function(){return!!b.createElementNS&&!!b.createElementNS(o.svg,"svg").createSVGRect};for(var E in p)w(p,E)&&(u=E.toLowerCase(),e[u]=p[E](),s.push((e[u]?"":"no-")+u));return e.addTest=function(a,b){if(typeof a=="object")for(var d in a)w(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,enableClasses&&(f.className+=" "+(b?"":"no-")+a),e[a]=b}return e},x(""),h=j=null,e._version=d,e._domPrefixes=n,e._cssomPrefixes=m,e.testProp=function(a){return B([a])},e.testAllProps=D,e.prefixed=function(a,b,c){return b?D(a,b,c):D(a,"pfx")},e}(self,self.document);
 		},
 		
 		defaultPreloader: function(prependTo, transitions, prefix){
 			var opacity = (transitions) ? 0 : 1;
-			$("head").append("<style>.sequence-preloader{height: 100%;position: absolute;width: 100%;z-index: 999999;}@"+prefix+"keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}.sequence-preloader img{background: #ff9933;border-radius: 6px;display: inline-block;height: 12px;opacity: "+opacity+";position: relative;top: -50%;width: 12px;"+prefix+"animation: preload 1s infinite; animation: preload 1s infinite;}.preloading{height: 12px;margin: 0 auto;top: 50%;position: relative;width: 48px;}.sequence-preloader img:nth-child(2){"+prefix+"animation-delay: .15s; animation-delay: .15s;}.sequence-preloader img:nth-child(3){"+prefix+"animation-delay: .3s; animation-delay: .3s;}.preloading-complete{opacity: 0;visibility: hidden;"+prefix+"transition-duration: 1s; transition-duration: 1s;}</style>");
-			$(prependTo).prepend('<div class="sequence-preloader"><div class="preloading"><img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." />    <img src="images/sequence-preloader.png" alt="Sequence is loading, please wait..." /></div></div>');
+			var icon = '<div class="sequence-preloader"><svg class="preloading" xmlns="http://www.w3.org/2000/svg"><circle class="circle" cx="6" cy="6" r="6" /><circle class="circle" cx="22" cy="6" r="6" /><circle class="circle" cx="38" cy="6" r="6" /></svg></div>';
+			
+			$("head").append("<style>.sequence-preloader{height: 100%;position: absolute;width: 100%;z-index: 999999;}@"+prefix+"keyframes preload{0%{opacity: 0;}50%{opacity: 1;}100%{opacity: 0;}}.sequence-preloader .preloading .circle{fill: #ff9442;display: inline-block;height: 12px;position: relative;top: -50%;width: 12px;"+prefix+"animation: preload 1s infinite; animation: preload 1s infinite;}.preloading{display:block;height: 12px;margin: 0 auto;top: 50%;margin-top:-6px;position: relative;width: 48px;}.sequence-preloader .preloading .circle:nth-child(2){"+prefix+"animation-delay: .15s; animation-delay: .15s;}.sequence-preloader .preloading .circle:nth-child(3){"+prefix+"animation-delay: .3s; animation-delay: .3s;}.preloading-complete{opacity: 0;visibility: hidden;"+prefix+"transition-duration: 1s; transition-duration: 1s;}div.inline{background-color: #ff9442; margin-right: 4px; float: left;}</style>");
+			prependTo.prepend(icon);
+			if(!Modernizr.svg && !transitions){ //if SVG isn't supported, remain calm and add this fallback instead...
+			    $(".sequence-preloader").prepend('<div class="preloading"><div class="circle inline"></div><div class="circle inline"></div><div class="circle inline"></div></div>');
+			    setInterval(function(){
+			        $(".sequence-preloader .circle").fadeToggle(500);
+			    }, 500);
+			}else if(!transitions){ //if transitions aren't supported, toggle the opacity instead  
+			    setInterval(function(){
+			        $(".sequence-preloader").fadeToggle(500);
+			    }, 500);
+			}
+			
+		},
+		
+		//a quick test to work out if Opera supports transitions properly (to work around the fact that Opera 11 supports transitions but doesn't return a transition value properly)
+		operaTest: function(){
+		    $("body").append('<span id="sequence-opera-test"></span>');
+		    var $operaTest = $("#sequence-opera-test");
+		    $operaTest.css("-o-transition", "1s");
+		    if($operaTest.css("-o-transition") != "1s"){ //if the expected value isn't returned...
+		        return false; //cause Opera to go into the fallback theme
+		    }else{
+		        return true;
+		    }
+		    $operaTest.remove();
 		}
 	},
 	
@@ -903,7 +881,6 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		//Preloader Settings
 		preloader: true,
-		prependPreloader: true,
 		hideFramesUntilPreloaded: true,
 		prependPreloadingComplete: true,
 		hidePreloaderUsingCSS: true,

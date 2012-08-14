@@ -612,7 +612,7 @@
 							<td>nextButton</td>
 							<td>true/false or a CSS selector</td>
 							<td>false</td>
-							<td>A CSS selector that, when clicked, causes the current frame to animate out and the next to animate in.<br /><br /><strong>true</strong>: use the default CSS selector (".next") <br /><strong>false</strong>: don't use a button</td>
+							<td>A CSS selector that, when clicked, causes the current frame to animate out and the next to animate in.<br /><br /><strong>true</strong>: use the default CSS selector (".next")<br /><strong>false</strong>: don't use a button<br /><strong>CSS Selector</strong>:  Specify a CSS selector to an HTML element you have manually added to the document</td>
 						</tr>
 						<tr>
 							<td>showNextButtonOnInit</td>
@@ -625,7 +625,9 @@
 							<td>true/false or a CSS selector</td>
 							<td>false</td>
 							<td>A CSS selector that, when clicked, causes the current frame to animate out and the previous to animate in.<br /><br /><strong>true</strong>: use the default CSS selector (".prev")<br />
-							<strong>false</strong>: don't use a button</td>
+							<strong>false</strong>: don't use a button<br />
+							<strong>CSS Selector</strong>:  Specify a CSS selector to an HTML element you have manually added to the document
+							</td>
 						</tr>
 						<tr>
 							<td>showPrevButtonOnInit</td>
@@ -663,7 +665,9 @@
 							<td>pauseButton</td>
 							<td>true/false or a CSS selector</td>
 							<td>false</td>
-							<td>A CSS selector that, when clicked, causes Sequence to pause the autoPlay feature<br /><br /><strong>true</strong>: use the default CSS selector (".pause") <br /><strong>false</strong>: don't use a button</td>
+							<td>A CSS selector that, when clicked, causes Sequence to pause the autoPlay feature<br /><br /><strong>true</strong>: use the default CSS selector (".pause") <br /><strong>false</strong>: don't use a button<br />
+							<strong>CSS Selector</strong>:  Specify a CSS selector to an HTML element you have manually added to the document
+							</td>
 						</tr>
 						<tr>
 							<td>unpauseDelay</td>
@@ -702,8 +706,19 @@
 							<td>
 							<strong>true</strong>: Use the default preloader and styles (".sequence-preloader")<br />
 							<strong>false</strong>: don't use a preloader<br />
-							<strong>CSS Selector</strong>: Specify a CSS Selector to use as the preloader<br /><br />
-							If true, the following default preloading styles will be applied to the document:
+							<strong>CSS Selector</strong>:  Specify a CSS selector to an HTML element you have manually added to the document<br /><br />
+							If true, the following default preloading HTML and styles will be applied to the document:
+							<br /><br />
+							HTML:
+							<pre><code>&lt;div class="sequence-preloader"&gt;
+    &lt;svg class="preloading" xmlns="http://www.w3.org/2000/svg"&gt;
+        &lt;circle class="circle" cx="6" cy="6" r="6" /&gt;
+        &lt;circle class="circle" cx="22" cy="6" r="6" /&gt;
+        &lt;circle class="circle" cx="38" cy="6" r="6" /&gt;
+    &lt;/svg&gt;
+&lt;/div&gt;</code></pre>
+							<br /><br />
+							Styles:
 							<pre><code>.sequence-preloader{
 	height: 100%;
 	position: absolute;
@@ -738,6 +753,7 @@
 }
 
 .preloading{
+    display: block;
 	height: 12px;
 	margin: 0 auto;
 	top: 50%;
@@ -759,15 +775,6 @@
 	-*-transition-duration: 1s;
 }</code></pre>
 							</td>
-						</tr>
-						<tr>
-							<td>prependPreloader</td>
-							<td>true/false or a CSS Selector</td>
-							<td>true</td>
-							<td>If preloader is true, specify which element to prepend the preloader to.<br /><br />
-							<strong>true</strong>: automatically prepend to the Sequence container<br />
-							<strong>false</strong>: don't automatically prepend (when you want to manually add the preloader via HTML)<br />
-							<strong>CSS Selector</strong>: Specify a CSS Selector to automatically prepend the preloader to</td>
 						</tr>
 						<tr>
 							<td>hideFramesUntilPreloaded</td>
