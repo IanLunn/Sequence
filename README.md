@@ -35,6 +35,13 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.6.9 14/08/2012
+- Added `moveActiveFrameToTop` option that will bring an active frame to the top via z-index
+- Dropped Opera 11 down to fallback theme support due to it's poor implementation of CSS3 transitions
+- Made adding UI elements simpler (which reduced a lot of code too)
+- The default preloader icon now uses SVG - no more 404s for the preloader image!
+- General fixes and tidy up
+
 ###v0.6.8 10/07/2012
 - Added "Slide" fallback theme and made it the default. "Slide" provides better support for older versions of Internet Explorer because opacity is no longer needed. In the original "Fade" fallback, opacity was used which caused a black halo around PNGs.
 - Added new option `hideFramesUntilPreloaded`, which is `true` by default. When `true`, frames will be hidden as soon as Sequence is loaded and then shown when everything has preloaded.
