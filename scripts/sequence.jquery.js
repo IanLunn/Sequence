@@ -117,10 +117,10 @@ Aside from these comments, you may modify and distribute this file as you please
 		    self.sequence.children("li").hide();
 		}
 		
-		if(self.settings.animateStartingFrameIn){
-			self.modifyElements(self.sequence.children("li").children(), "0s");
+		//if(self.settings.animateStartingFrameIn){
+		//	self.modifyElements(self.sequence.children("li").children(), "0s");
 			self.sequence.children("li").children().removeClass("animate-in");
-		}
+		//}
 		
 		$(window).bind("load", function(){
 			self.settings.afterLoaded();
@@ -170,9 +170,10 @@ Aside from these comments, you may modify and distribute this file as you please
 				self.settings.calculatedSwipeThreshold = self.container.width() * (self.settings.swipeThreshold / 100);
 			}
 			
-			self.nextFrame = self.sequence.children("li:nth-child("+self.settings.startingFrameID+")");
-			self.nextFrameChildren = self.nextFrame.children();
 			self.nextFrameID = self.settings.startingFrameID;
+			self.nextFrame = self.sequence.children("li:nth-child("+self.nextFrameID+")");
+			self.nextFrameChildren = self.nextFrame.children();
+			
 			//self.sequence.children("li").children().removeClass("animate-in"); //remove any instance of "animate-in" that was used for when JS is disabled
 			self.direction;
 			
@@ -183,8 +184,11 @@ Aside from these comments, you may modify and distribute this file as you please
 			if(self.transitionsSupported){ //initiate the full featured Sequence if transitions are supported...
 				if(!self.settings.animateStartingFrameIn){ //start first frame in animated in position
 					self.currentFrame = self.nextFrame.addClass("current-frame");
+					if(self.settings.moveActiveFrameToTop){
+					    self.currentFrame.css("z-index", self.numberOfFrames);
+					}
 					self.currentFrameChildren = self.currentFrame.children();
-					self.currentFrameID = self.settings.startingFrameID;
+					self.currentFrameID = self.nextFrameID;
 					self.modifyElements(self.currentFrameChildren, "0s");
 					self.currentFrameChildren.addClass("animate-in");
 					
@@ -200,9 +204,9 @@ Aside from these comments, you may modify and distribute this file as you please
 				}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.settings.autoPlayDirection -1 && self.settings.animateStartingFrameIn){ //animate in backwards
 					self.modifyElements(self.nextFrameChildren, "0s");
 					self.nextFrameChildren.addClass("animate-out");
-					self.goTo(1, -1);
+					self.goTo(self.nextFrameID, -1);
 				}else{ //animate in forwards
-					self.goTo(1, 1);
+					self.goTo(self.nextFrameID, 1);
 				}
 			}else{ //initiate a basic slider for browsers that don't support CSS3 transitions
     			self.container.addClass("sequence-fallback");
@@ -728,29 +732,30 @@ Aside from these comments, you may modify and distribute this file as you please
 			if(self.settings.moveActiveFrameToTop){
 			    self.currentFrame.css("z-index", 1);
 			}
-			    self.currentFrame.removeClass("current-frame");
+			
+		    self.currentFrame.removeClass("current-frame");
+			
+			self.nextFrame.addClass("next-frame")
+			if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction === 1){ //if user hit next button...
+				//reset the position of the next frames elements ready for animating in again
+				self.modifyElements(self.nextFrameChildren, "0s");
+				self.nextFrameChildren.removeClass("animate-out");
 				
-				self.nextFrame.addClass("next-frame")
-				if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction === 1){ //if user hit next button...
-					//reset the position of the next frames elements ready for animating in again
-					self.modifyElements(self.nextFrameChildren, "0s");
-					self.nextFrameChildren.removeClass("animate-out");
-					
-					//make the current frames elements animate out
-					self.modifyElements(self.frameChildren, "");				
-					self.frameChildren.addClass("animate-out").removeClass("animate-in");
-				}
-				
-				if(self.settings.reverseAnimationsWhenNavigatingBackwards && direction === -1){ //if the user hit prev button
-					self.modifyElements(self.nextFrameChildren, "0s");
-					self.nextFrameChildren.addClass("animate-out");
-					self.setTransitionProperties(self.frameChildren);
-					self.frameChildren.removeClass("animate-in");
-				}
-				
-				if(self.settings.transitionThreshold){
-					self.waitForAnimationsToComplete(self.currentFrame, self.currentFrame.children(), "out", true);
-				}
+				//make the current frames elements animate out
+				self.modifyElements(self.frameChildren, "");				
+				self.frameChildren.addClass("animate-out").removeClass("animate-in");
+			}
+			
+			if(self.settings.reverseAnimationsWhenNavigatingBackwards && direction === -1){ //if the user hit prev button
+				self.modifyElements(self.nextFrameChildren, "0s");
+				self.nextFrameChildren.addClass("animate-out");
+				self.setTransitionProperties(self.frameChildren);
+				self.frameChildren.removeClass("animate-in");
+			}
+			
+			if(self.settings.transitionThreshold){
+				self.waitForAnimationsToComplete(self.currentFrame, self.currentFrame.children(), "out", true);
+			}
 		},
 		
 		animateIn: function(direction){
