@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.6.8 Beta
+Version: 0.6.8.1 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -725,7 +725,10 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		animateOut: function(direction){
 			var self = this;
-			self.currentFrame.removeClass("current-frame");
+			if(self.settings.moveActiveFrameToTop){
+			    self.currentFrame.css("z-index", 1);
+			}
+			    self.currentFrame.removeClass("current-frame");
 				
 				self.nextFrame.addClass("next-frame")
 				if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction === 1){ //if user hit next button...
@@ -765,6 +768,9 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.frameChildren = self.currentFrame.children(); //save the child elements (the ones we'll animate) in an array
 			
 			self.settings.beforeNextFrameAnimatesIn();
+			if(self.settings.moveActiveFrameToTop){
+			    self.nextFrame.css({"z-index": self.numberOfFrames});
+			}
 							
 			if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction === 1){ //if user hit next button...
 			
@@ -883,6 +889,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		animateStartingFrameIn: false,
 		transitionThreshold: 1000,
 		reverseAnimationsWhenNavigatingBackwards: true,
+		moveActiveFrameToTop: true,
 		
 		//Autoplay Settings
 		autoPlay: true,

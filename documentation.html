@@ -549,6 +549,14 @@
 							<strong>true</strong>: when navigating backwards, Sequence will animate the preceding frame from its "animate-out" position to its "animate-in" position (creating a reversed animation)<br />
 							<strong>false</strong>: when navigating backwards, Sequence will animate the preceding frame from its "start" position to its "animate-in" position (as it does when navigating forwards)</td>
 						</tr>
+						<tr>
+							<td>moveActiveFrameToTop</td>
+							<td>true/false</td>
+							<td>true</td>
+							<td>Whether a frame should be given a higher z-index than other frames whilst it is active, to bring it above the others<br /><br />
+							<strong>true</strong>: an active frame will be given a z-index value the same as the number of frames in the Sequence slider (bringing it to the top).<br />
+							<strong>false</strong>: frames will not have a z-index applied to them</td>
+						</tr>
 					</tbody>
 				</table>
 				
