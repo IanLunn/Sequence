@@ -109,11 +109,8 @@ Aside from these comments, you may modify and distribute this file as you please
 		if(self.settings.hideFramesUntilPreloaded && self.settings.preloader){
 		    self.sequence.children("li").hide();
 		}
-		
-		//if(self.settings.animateStartingFrameIn){
-		//	self.modifyElements(self.sequence.children("li").children(), "0s");
-			self.sequence.children("li").children().removeClass("animate-in");
-		//}
+
+		self.sequence.children("li").children().removeClass("animate-in");
 		
 		$(window).bind("load", function(){
 			self.settings.afterLoaded();
@@ -164,8 +161,6 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.nextFrameID = self.settings.startingFrameID;
 			self.nextFrame = self.sequence.children("li:nth-child("+self.nextFrameID+")");
 			self.nextFrameChildren = self.nextFrame.children();
-			
-			//self.sequence.children("li").children().removeClass("animate-in"); //remove any instance of "animate-in" that was used for when JS is disabled
 			self.direction;
 			
 			self.sequence.css({"width": "100%", "height": "100%", "position": "relative"}); //set the sequence list to 100% width/height just incase it hasn't been specified in the CSS
