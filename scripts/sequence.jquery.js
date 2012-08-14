@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.6.8.1 Beta
+Version: 0.6.9 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -74,22 +74,15 @@ Aside from these comments, you may modify and distribute this file as you please
 				}
 			},
 			
-			uiElements: function(prependTo, devOption, defaultOption, elementSrc, elementAlt){
+			uiElements: function(devOption, defaultOption){
 				switch(devOption){
 					case false:
 						return undefined;
 
 					case true:
-						if(prependTo === true){
-							self.container.prepend('<img '+this.CSSSelectorToHTML(defaultOption)+ 'src="'+elementSrc+'" alt="'+elementAlt+'" />');
-						}else if(prependTo !== false){
-							$(prependTo).prepend('<img '+this.CSSSelectorToHTML(defaultOption)+ 'src="'+elementSrc+'" alt="'+elementAlt+'" />');
-						}
 						return $(defaultOption);
 
 					default:
-						var prependElement = (prependTo == true) ? self.container : prependTo;
-						$(prependElement).prepend('<img '+this.CSSSelectorToHTML(devOption)+ 'src="'+elementSrc+'" alt="'+elementAlt+'" />');
 						return $(devOption);
 				}
 			},
@@ -147,11 +140,9 @@ Aside from these comments, you may modify and distribute this file as you please
 		function init(){
 			$(self.settings.preloader).remove();
 						
-			self.settings.nextButton = self.init.uiElements(self.settings.prependNextButton, self.settings.nextButton, ".next", self.settings.nextButtonSrc, self.settings.nextButtonAlt);
-			
-			self.settings.prevButton = self.init.uiElements(self.settings.prependPrevButton, self.settings.prevButton, ".prev", self.settings.prevButtonSrc, self.settings.prevButtonAlt);
-			
-			self.settings.pauseButton = self.init.uiElements(self.settings.prependPauseButton, self.settings.pauseButton, ".pause", self.settings.pauseButtonSrc, self.settings.pauseButtonAlt);
+			self.settings.nextButton = self.init.uiElements(self.settings.nextButton, ".next");			
+			self.settings.prevButton = self.init.uiElements(self.settings.prevButton, ".prev");
+			self.settings.pauseButton = self.init.uiElements(self.settings.pauseButton, ".pause");
 			
 			if((self.settings.nextButton !== undefined && self.settings.nextButton !== false) && self.settings.showNextButtonOnInit){self.settings.nextButton.show();}
 			
@@ -160,7 +151,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			if((self.settings.pauseButton !== undefined && self.settings.pauseButton !== false)){self.settings.pauseButton.show();}
 			
 			if(self.settings.pauseIcon !== false){
-				self.settings.pauseIcon = self.init.uiElements(self.settings.prependPauseIcon, self.settings.pauseIcon, ".pause-icon", self.settings.pauseIconSrc);
+				self.settings.pauseIcon = self.init.uiElements(self.settings.pauseIcon, ".pause-icon");
 				if(self.settings.pauseIcon !== undefined){
 					self.settings.pauseIcon.hide();
 				}
@@ -179,7 +170,6 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.sequence.css({"width": "100%", "height": "100%", "position": "relative"}); //set the sequence list to 100% width/height just incase it hasn't been specified in the CSS
 			self.sequence.children("li").css({"width": "100%", "height": "100%", "position": "absolute"}); //do the same for the frames and make them absolute
             
-            //self.transitionsSupported = false;
 			if(self.transitionsSupported){ //initiate the full featured Sequence if transitions are supported...
 				if(!self.settings.animateStartingFrameIn){ //start first frame in animated in position
 					self.currentFrame = self.nextFrame.addClass("current-frame");
@@ -505,12 +495,14 @@ Aside from these comments, you may modify and distribute this file as you please
 			if(self.settings.autoPlay){ //pause Sequence
 				if(self.settings.pauseButton !== undefined){
 					self.settings.pauseButton.addClass("paused");
+					self.settings.pauseIcon.show();
 				}
 				self.settings.paused();
 				self.stopAutoPlay();
 			}else{ //start autoPlay
 				if(self.settings.pauseButton !== undefined){
 					self.settings.pauseButton.removeClass("paused");
+					self.settings.pauseIcon.hide();
 				}
 				self.settings.unpaused();
 				self.startAutoPlay(self.settings.unpauseDelay);
@@ -898,27 +890,15 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		//Next/Prev Button Settings
 		nextButton: false, //if dev settings are true, the nextButton will be ".next"
-		prependNextButton: false,
-		nextButtonSrc: "images/bt-next.png",
-		nextButtonAlt: "&#gt;",
 		showNextButtonOnInit: true,
 		prevButton: false, //if dev settings are true, the prevButton will be ".prev"
-		prependPrevButton: false,
-		prevButtonSrc: "images/bt-prev.png",
-		prevButtonAlt: "&#lt;",
 		showPrevButtonOnInit: true,
 		
 		//Pause Settings
 		pauseButton: false, //if dev settings are true, the pauseButton will be ".pause"
-		prependPauseButton: false,
-		pauseButtonSrc: "images/bt-pause.png",
-		pauseButtonAlt: "&#166;&#166;",
 		unpauseDelay: 0, //the time to wait before navigating to the next frame when Sequence is unpaused from the pause button
 		pauseOnHover: true,
 		pauseIcon: false, //this is an indicator to show Sequence is paused
-		prependPauseIcon: false,
-		pauseIconSrc: "images/pause-icon.png",
-		pauseAlt: "Pause",
 		pauseOnElementsOutsideContainer: false,
 		
 		//Preloader Settings
