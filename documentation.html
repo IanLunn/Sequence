@@ -719,60 +719,63 @@
 &lt;/div&gt;</code></pre>
 							<br /><br />
 							Styles:
-							<pre><code>.sequence-preloader{
-	height: 100%;
-	position: absolute;
-	width: 100%;
-	z-index: 999999;
+							<pre><code>.sequence-preloader {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    z-index: 999999;
 }
 
-@-*-keyframes preload {
-	0%{
-		opacity: 0;
-	}
-	
-	50%{
-		opacity: 1;
-	}
-	
-	100%{
-		opacity: 0;
-	}
+@keyframes preload {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }
 
-.sequence-preloader img{
-	background: #ff9933;
-	border-radius: 6px;
-	display: inline-block;
-	height: 12px;
-	opacity: 0;
-	position: relative;
-	top: -50%;
-	width: 12px;
-	-*-animation: preload 1s infinite;
+.sequence-preloader .preloading .circle {
+    fill: #ff9442;
+    display: inline-block;
+    height: 12px;
+    position: relative;
+    top: -50%;
+    width: 12px;
+    animation: preload 1s infinite;
 }
-
-.preloading{
+ 
+.preloading {
     display: block;
-	height: 12px;
-	margin: 0 auto;
-	top: 50%;
-	position: relative;
-	width: 48px;
+    height: 12px;
+    margin: 0 auto;
+    top: 50%;    
+    margin-top: -6px;
+    position: relative;
+    width: 48px;
 }
-
-.sequence-preloader img:nth-child(2){
-	-*-animation-delay: .15s;
+ 
+.sequence-preloader .preloading .circle:nth-child(2){
+    animation-delay: .15s;
 }
-
-.sequence-preloader img:nth-child(3){
-	-*-animation-delay: .3s;
+ 
+ .sequence-preloader .preloading .circle:nth-child(3){
+    animation-delay: .3s;
 }
-
+ 
 .preloading-complete{
-	opacity: 0;
-	visibility: hidden;
-	-*-transition-duration: 1s;
+     opacity: 0;
+     visibility: hidden;
+     transition-duration: 1s;
+}
+
+div.inline{
+    background-color: #ff9442;
+    margin-right: 4px;
+    float: left;
 }</code></pre>
 							</td>
 						</tr>
