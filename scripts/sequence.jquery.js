@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.6.9.1 Beta
+Version: 0.7 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -83,29 +83,56 @@ Aside from these comments, you may modify and distribute this file as you please
 		    self.transitionsSupported = get.operaTest();
 		}
 
-		self.sequence.children("li").children().removeClass("animate-in");
-				
-		$(window).bind("load", function(){
-			self.settings.afterLoaded();
-			if(self.settings.hideFramesUntilPreloaded && self.settings.preloader){
-			    self.sequence.children("li").show();
-			}
-			if(self.settings.preloader){
-				if(self.settings.hidePreloaderUsingCSS && self.transitionsSupported){
-					self.prependPreloadingCompleteTo = (self.settings.prependPreloadingComplete == true) ? self.settings.preloader : $(self.settings.prependPreloadingComplete);
-					self.prependPreloadingCompleteTo.addClass("preloading-complete");
-					setTimeout(init, self.settings.hidePreloaderDelay);
-				}else{
-					self.settings.preloader.fadeOut(self.settings.hidePreloaderDelay, function(){
-						clearInterval(self.defaultPreloader);
-						init();
-					});
-				}
-			}else{
-				init();
-			}
-			$(this).unbind("load");
-		});
+		self.sequence.children("li").children().removeClass("animate-in");		
+		
+		function oncePreloaded(){
+		    self.settings.afterLoaded();
+		    if(self.settings.hideFramesUntilPreloaded && self.settings.preloader){
+		        self.sequence.children("li").show();
+		    }
+		    if(self.settings.preloader){
+		    	if(self.settings.hidePreloaderUsingCSS && self.transitionsSupported){
+		    		self.prependPreloadingCompleteTo = (self.settings.prependPreloadingComplete == true) ? self.settings.preloader : $(self.settings.prependPreloadingComplete);
+		    		self.prependPreloadingCompleteTo.addClass("preloading-complete");
+		    		setTimeout(init, self.settings.hidePreloaderDelay);
+		    	}else{
+		    		self.settings.preloader.fadeOut(self.settings.hidePreloaderDelay, function(){
+		    			clearInterval(self.defaultPreloader);
+		    			init();
+		    		});
+		    	}
+		    }else{
+		    	init();
+		    }
+		}
+		
+		var preloadTheseFramesLength = self.settings.preloadTheseFramesOnly.length; //how many frames to preload?
+		if(self.settings.preloader && preloadTheseFramesLength !== 0){ //preload specific frames...
+		    var imagesToPreload = []; //saves the frames that are to be preloaded
+		    var loaded = 0; //save how many have loaded
+		    preloadTheseFramesLength--;
+		    img = 0; //index number for each individual image
+            for(var i = preloadTheseFramesLength; i >= 0; i--){
+                $("#sequence ul").children("li:nth-child("+(i+1)+")").find("img").each(function(){
+                    imagesToPreload[img] = $(this);
+                    img++;
+                });
+            }
+            imagesToPreloadLength = imagesToPreload.length;
+            for(var i = imagesToPreloadLength; i >=0; i--){ //
+                $(imagesToPreload[i]).load(function(){ //when each image loads...
+                    loaded++; //increase the number of loaded images by 1
+                    if(imagesToPreloadLength === loaded){ //if all necessary images have preloaded...
+                        oncePreloaded();
+                    }
+                });
+            }            
+    	}else{
+		    $(window).bind("load", function(){
+		    	oncePreloaded();
+		    	$(this).unbind("load");
+		    });
+		}		
 		
 		function init(){
 			$(self.settings.preloader).remove();
@@ -880,6 +907,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		//Preloader Settings
 		preloader: true,
+		preloadTheseFramesOnly: [1],
 		hideFramesUntilPreloaded: true,
 		prependPreloadingComplete: true,
 		hidePreloaderUsingCSS: true,
