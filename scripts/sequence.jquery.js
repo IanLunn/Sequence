@@ -82,8 +82,9 @@ Aside from these comments, you may modify and distribute this file as you please
 		if(self.prefix === "-o-"){
 		    self.transitionsSupported = get.operaTest();
 		}
-
-		self.sequence.children("li").children().removeClass("animate-in");		
+        
+        self.modifyElements(self.sequence.children("li").children(), "0s"); //reset transition time to 0s
+		self.sequence.children("li").children().removeClass("animate-in");
 		
 		function oncePreloaded(){
 		    self.settings.afterLoaded();
@@ -624,6 +625,7 @@ Aside from these comments, you may modify and distribute this file as you please
 						self.settings.beforeCurrentFrameAnimatesOut();
 						self.animateOut(self.direction);
 					}
+					
 
 					var animateIn = function(){
 						self.animateIn(self.direction);
@@ -644,7 +646,7 @@ Aside from these comments, you may modify and distribute this file as you please
 								setTimeout(animateIn, self.settings.transitionThreshold);
 								break;
 						}
-					}else{					
+					}else{		
 						animateIn();
 						//self.firstFrame = false;
 					}
