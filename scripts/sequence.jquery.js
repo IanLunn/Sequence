@@ -106,26 +106,46 @@ Aside from these comments, you may modify and distribute this file as you please
 		    }
 		}
 		
-		var preloadTheseFramesLength = self.settings.preloadTheseFramesOnly.length; //how many frames to preload?
-		if(self.settings.preloader && preloadTheseFramesLength !== 0){ //preload specific frames...
-		    var imagesToPreload = []; //saves the frames that are to be preloaded
-		    var loaded = 0; //save how many have loaded
-		    preloadTheseFramesLength--;
-		    img = 0; //index number for each individual image
-            for(var i = preloadTheseFramesLength; i >= 0; i--){
-                $("#sequence ul").children("li:nth-child("+(i+1)+")").find("img").each(function(){
-                    imagesToPreload[img] = $(this);
-                    img++;
-                });
-            }
-            imagesToPreloadLength = imagesToPreload.length;
-            for(var i = imagesToPreloadLength; i >=0; i--){ //
+		var preloadTheseFramesLength = self.settings.preloadTheseFrames.length; //how many frames to preload?
+		var preloadTheseImagesLength = self.settings.preloadTheseImages.length; //how many single images to load?
+		
+		if(self.settings.preloader && 
+		(preloadTheseFramesLength !== 0 || preloadTheseImagesLength !== 0)){ //if using the preloader and the dev has specified some images should preload...
+		    function saveImagesToArray(length, frame){
+		        var imagesToPreload = []; //saves the frames that are to be preloaded
+		        var img = 0; //index number for each individual image
+		        length--; //reduce the length by 1 to accomdate indexes start at 0
+		        for(var i = length; i >= 0; i--){ //for each frame to be preloaded...
+		            if(frame){ //if getting images from frames...
+		                selector = self.sequence.children("li:nth-child("+(self.settings.preloadTheseFrames[i])+")").find("img");
+		                selector.each(function(){ //grab each image in the frame
+		                    imagesToPreload[img] = $(this); //add the image selector to an array
+		                    img++; //increase the image count by one
+		                });
+		            }else{ //if getting individual images...
+		                selector = self.sequence.children("li").find('img[src="'+self.settings.preloadTheseImages[i]+'"]');
+		                imagesToPreload[img] = selector; //add the image selector to an array
+		                img++; //increase the image count by one
+		            }
+		            
+		        }
+		        return imagesToPreload;
+		    }
+		    
+            frameImagesToPreload = saveImagesToArray(preloadTheseFramesLength, true);
+            individualImagesToPreload = saveImagesToArray(preloadTheseImagesLength, false);
+            imagesToPreload = frameImagesToPreload.concat(individualImagesToPreload);           
+            
+            var loaded = 0; //save how many have loaded
+            var imagesToPreloadLength = imagesToPreload.length; //number of images to preload
+            for(var i = imagesToPreloadLength; i >=0; i--){ //for each image to be preloaded...
+                var imgSrc = $(imagesToPreload[i]).attr("src"); //used to get .load() working in IE and Opera
                 $(imagesToPreload[i]).load(function(){ //when each image loads...
                     loaded++; //increase the number of loaded images by 1
                     if(imagesToPreloadLength === loaded){ //if all necessary images have preloaded...
-                        oncePreloaded();
+                        oncePreloaded(); //initate Sequence
                     }
-                });
+                }).attr('src', imgSrc);
             }            
     	}else{
 		    $(window).bind("load", function(){
@@ -907,7 +927,14 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		//Preloader Settings
 		preloader: true,
-		preloadTheseFramesOnly: [1],
+		preloadTheseFrames: [1], //all images in these frames will load before Sequence initiates
+		preloadTheseImages: [ //specify particular images to load before Sequence initiates
+		    /* Example usage
+		    "images/catEatingSalad.jpg",
+		    "images/meDressedAsBatman.png"
+		    */
+		],
+		/*Note: You can use preloadTheseFrames and preloadTheseImages together. You might want to load all images in frame 1 and just one big image from frame 2 for example*/
 		hideFramesUntilPreloaded: true,
 		prependPreloadingComplete: true,
 		hidePreloaderUsingCSS: true,

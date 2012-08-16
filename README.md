@@ -35,6 +35,9 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.7 16/08/2012
+- Added `preloadTheseFrames` and `preloadTheseImages` options. Previously, when the `preloader` option was true, Sequence wouldn't initiate until the entire page had loaded. By giving the `preloadTheseFrames` option a comma separated list of frame numbers, you can tell Sequence which images need to be loaded before Sequence initiates. The `preloadTheseImages` can be given a comma separated list of image paths that tells Sequence to only initiate once those images have loaded. If you'd like, you can combine these options to have all images in frame 1 and one image from frame 2 to load before Sequence initiates.
+
 ###v0.6.9 14/08/2012
 - Added `moveActiveFrameToTop` option that will bring an active frame to the top via z-index
 - Dropped Opera 11 down to fallback theme support due to it's poor implementation of CSS3 transitions
