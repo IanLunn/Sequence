@@ -699,7 +699,7 @@
 						</tr>
 					</thead>
 					<tbody>
-<tr>
+                        <tr>
 							<td>preloader</td>
 							<td>true/false or a CSS Selector</td>
 							<td>true</td>
@@ -778,6 +778,25 @@ div.inline{
     float: left;
 }</code></pre>
 							</td>
+						</tr>
+						<tr>
+							<td>preloadTheseFrames</td>
+							<td>an integer array</td>
+							<td>[1]</td>
+							<td>If preloader is true, specify which frames should have their images loaded before Sequence initiates. By default, images in the first frame are loaded before Sequence initiates.<br /><br />
+							The following example will load all images in frames 1 and 2:<br />
+							<pre><code>preloadTheseFrames: [1,2]</code></pre>
+						    </td>
+						</tr>
+						<tr>
+							<td>preloadTheseImages</td>
+							<td>a string array</td>
+							<td>[]</td>
+							<td>If preloader is true, specify which images should be loaded before Sequence initiates. By default, no individual images are loaded (note that all images in frame 1 load by default, as described in the preloadTheseFrames option)<br /><br />
+							The following example will load all images in frame 1 and one image from frame 2:<br />
+							<pre><code>preloadTheseFrames: [1],
+preloadTheseImages: ["images/frame2image.png"]</code></pre>
+						    </td>
 						</tr>
 						<tr>
 							<td>hideFramesUntilPreloaded</td>
