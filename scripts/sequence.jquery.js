@@ -677,10 +677,10 @@ Aside from these comments, you may modify and distribute this file as you please
 				            
 				            self.settings.beforeNextFrameAnimatesIn();
 				            self.nextFrame.addClass("current-frame").show().css(animateIn).animate(moveIn, self.settings.fallback.speed, function(){
-				                self.settings.afterNextFrameAnimatesIn();
 				                self.currentFrame = self.nextFrame;
 				                self.currentFrameID = self.currentFrame.index() + 1;
 				                self.active = false;
+				                self.settings.afterNextFrameAnimatesIn();
 				                if(self.settings.autoPlay){
 				                	var autoPlaySequence = function(){self.autoPlaySequence();};
 				                	clearTimeout(self.sequenceTimer);
