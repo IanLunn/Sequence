@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.7 Beta
+Version: 0.7.0.1 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -559,7 +559,6 @@ Aside from these comments, you may modify and distribute this file as you please
 		//go to the frame ahead of the current one
 		next: function(){
 			var self = this;
-			
 			if(!self.active){
 				if(self.settings.cycle || (!self.settings.cycle && self.currentFrameID !== self.numberOfFrames)){
 					if(self.paused){
@@ -648,7 +647,6 @@ Aside from these comments, you may modify and distribute this file as you please
 						}
 					}else{		
 						animateIn();
-						//self.firstFrame = false;
 					}
 				}else{ //if the browser doesn't support CSS3 transitions...				    
 				    switch(self.settings.fallback.theme){
@@ -753,6 +751,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		animateIn: function(direction){
 			var self = this;
+			self.active = true;
 			self.currentFrame.unbind(self.transitionEnd); //remove the animation end event
 			self.currentFrame = self.nextFrame; //the next frame is now the current one
 			
