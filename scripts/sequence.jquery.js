@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.7.0.1 Beta
+Version: 0.7.0.1 (Custom with HashTag Support) Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -53,6 +53,27 @@ Aside from these comments, you may modify and distribute this file as you please
 		self.hoverEvent,
 		self.defaultPreloader,
 		self.init = {
+			preloader: function(optionPreloader){
+				self.prependTo = (self.settings.prependPreloader == true) ? self.container : self.settings.prependPreloader;
+				
+				switch(optionPreloader){
+					case true:
+					case undefined:
+						get.defaultPreloader(self.prependTo, self.transitionsSupported, self.prefix);
+						if(!self.transitionsSupported){
+							self.preloaderFallback();
+						}
+						return $(".sequence-preloader");
+					
+					case false:
+						break;
+					
+					default:
+						this.CSSSelectorToHTML(optionPreloader);
+						return $(optionPreloader);
+				}
+			},
+			
 			uiElements: function(devOption, defaultOption){
 				switch(devOption){
 					case false:
@@ -74,6 +95,10 @@ Aside from these comments, you may modify and distribute this file as you please
 		self.settings = $.extend({}, defaults, options),
 		self.settings.preloader = self.init.uiElements(self.settings.preloader, ".sequence-preloader");
 		self.firstFrame = (self.settings.animateStartingFrameIn) ? true : false;
+		
+		self.currentHashTag; //the current hash tag taken from the URL
+		self.getHashTagFrom = (self.settings.hashDataAttribute) ? "data-sequence-hashtag": "id"; //get the hashtag from the ID or data attribute?  
+		self.frameHashID = []; //array that matches frames with has IDs
 		
 		if(self.settings.hideFramesUntilPreloaded && self.settings.preloader){
 		    self.sequence.children("li").hide();
@@ -106,7 +131,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		    	init();
 		    }
 		}
-		
+
 		var preloadTheseFramesLength = self.settings.preloadTheseFrames.length; //how many frames to preload?
 		var preloadTheseImagesLength = self.settings.preloadTheseImages.length; //how many single images to load?
 		
@@ -156,7 +181,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		}		
 		
 		function init(){
-			$(self.settings.preloader).remove();
+			$(self.settings.preloader).remove(); //remove the preloader element
 						
 			self.settings.nextButton = self.init.uiElements(self.settings.nextButton, ".next");			
 			self.settings.prevButton = self.init.uiElements(self.settings.prevButton, ".prev");
@@ -183,14 +208,37 @@ Aside from these comments, you may modify and distribute this file as you please
 			
 			self.nextFrameID = self.settings.startingFrameID;
 			self.nextFrame = self.sequence.children("li:nth-child("+self.nextFrameID+")");
+			
+			//if using hashtags...
+			if(self.settings.hashTags){
+			    self.sequence.children("li").each(function(){ //for each frame...
+			        self.frameHashID.push($(this).attr(self.getHashTagFrom)); //add the hashtag to an array
+			    });
+			    			    
+			    self.currentHashTag = location.hash.replace("#", ""); //get the current hashtag
+			    if(self.currentHashTag === undefined || self.currentHashTag === ""){ //if there is no hashtag...
+			        self.nextFrameID = self.settings.startingFrameID; //use the startingFrameID
+			    }else{			        
+			        self.frameHashIndex = $.inArray(self.currentHashTag, self.frameHashID); //get the index of the frame that matches the hashtag
+			        if(self.frameHashIndex !== -1){  //if the hashtag matches a Sequence frame ID...
+			            self.nextFrameID = self.frameHashIndex + 1; //use the frame associated to the hashtag
+			        }else{			            
+			            self.nextFrameID = self.settings.startingFrameID; //use the startingFrameID
+			        }
+			    }
+			}			
+									
+			self.nextFrame = self.sequence.children("li:nth-child("+self.nextFrameID+")");
+						
 			self.nextFrameChildren = self.nextFrame.children();
 			self.direction;
 			
 			self.sequence.css({"width": "100%", "height": "100%", "position": "relative"}); //set the sequence list to 100% width/height just incase it hasn't been specified in the CSS
 			self.sequence.children("li").css({"width": "100%", "height": "100%", "position": "absolute"}); //do the same for the frames and make them absolute
-            
+
 			if(self.transitionsSupported){ //initiate the full featured Sequence if transitions are supported...
-				if(!self.settings.animateStartingFrameIn){ //start first frame in animated in position
+						
+				if(!self.settings.animateStartingFrameIn){ //start first frame in animated in position				    
 					self.currentFrame = self.nextFrame.addClass("current-frame");
 					if(self.settings.moveActiveFrameToTop){
 					    self.currentFrame.css("z-index", self.numberOfFrames);
@@ -199,6 +247,10 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.currentFrameID = self.nextFrameID;
 					self.modifyElements(self.currentFrameChildren, "0s");
 					self.currentFrameChildren.addClass("animate-in");
+					if(self.settings.hashChangesOnFirstFrame){
+					    self.currentHashTag = self.currentFrame.attr(self.getHashTagFrom);
+					    document.location.hash = "#"+self.currentHashTag;
+					}
 					
 					setTimeout(function(){
 						self.modifyElements(self.currentFrameChildren, "");
@@ -222,10 +274,14 @@ Aside from these comments, you may modify and distribute this file as you please
     			self.currentFrame.addClass("current-frame");
     			self.settings.beforeNextFrameAnimatesIn();
     			self.settings.afterNextFrameAnimatesIn();
+    			if(self.settings.hashChangesOnFirstFrame){
+    			    self.currentHashTag = self.currentFrame.attr(self.getHashTagFrom);
+    			    document.location.hash = "#"+self.currentHashTag;
+    			}
     			self.currentFrameChildren = self.currentFrame.children();
-    			self.currentFrameID = self.nextFrameID;			    			        
+    			self.currentFrameID = self.nextFrameID;			    		
                 self.sequence.children("li").children().addClass("animate-in");
-                self.sequence.children(":not(li:nth-child("+self.settings.startingFrameID+"))").css({"display": "none", "opacity": 0});
+                self.sequence.children(":not(li:nth-child("+self.nextFrameID+"))").css({"display": "none", "opacity": 0});
                 if(self.settings.autoPlay){
                 	var autoPlaySequence = function(){self.autoPlaySequence();};
                 	clearTimeout(self.sequenceTimer);
@@ -357,55 +413,72 @@ Aside from these comments, you may modify and distribute this file as you please
 				});
 			}
 			
-			if(self.settings.swipeNavigation && self.hasTouch){
-		var touches = {
-		"touchstartX": -1,
-		"touchstartY": -1,
-		"touchmoveX": -1,
-		"touchmoveY": -1
-		};
-		self.sequence.on("touchstart touchmove touchend", function(e){
-		if(self.settings.swipePreventsDefault){
-			e.preventDefault();
-		}
-		switch(e.originalEvent.type){
-			case "touchmove":
-			case "touchstart":
-			touches[e.originalEvent.type + "X"] = e.originalEvent.touches[0].pageX;
-			touches[e.originalEvent.type + "Y"] = e.originalEvent.touches[0].pageY;
-			break;
-			case 'touchend':
-			if(touches.touchmoveX !== -1){
-				//find out which way the user moved their finger the most
-				var xAmount = touches.touchmoveX - touches.touchstartX;
-				var yAmount = touches.touchmoveY - touches.touchstartY;
-				
-				if(Math.abs(xAmount) > Math.abs(yAmount) && (xAmount > self.settings.calculatedSwipeThreshold)){
-				//user swiped right
-				self.initCustomKeyEvent(self.settings.swipeEvents.right);
-				}else if(Math.abs(xAmount) > Math.abs(yAmount) && (Math.abs(xAmount) > self.settings.calculatedSwipeThreshold)){
-				//user swiped left
-				self.initCustomKeyEvent(self.settings.swipeEvents.left);
-				}else if(Math.abs(yAmount) > Math.abs(xAmount) && (yAmount > self.settings.calculatedSwipeThreshold)){
-				//user swiped down
-				self.initCustomKeyEvent(self.settings.swipeEvents.down);
-				}else if(Math.abs(yAmount) > Math.abs(xAmount) && (Math.abs(yAmount) > self.settings.calculatedSwipeThreshold)){
-				//user swiped up
-				self.initCustomKeyEvent(self.settings.swipeEvents.up);
-				}
-		
-				touches = {
-					"touchstartX": -1,
-					"touchstartY": -1,
-					"touchmoveX": -1,
-					"touchmoveY": -1
-				};
+			if(self.settings.hashTags){ //if hashchange is enabled in the settings...
+    			$(window).hashchange(function(){ //when the hashtag changes...
+    			    newTag = location.hash.replace("#", ""); //grab the new hashtag
+    			    
+    			    if(self.currentHashTag !== newTag){ //if the last hashtag is not the same as the current one...
+    			        self.currentHashTag = newTag; //save the new tag
+    			        self.frameHashIndex = $.inArray(self.currentHashTag, self.frameHashID); //get the index of the frame that matches the hashtag
+    			        //if the hashtag matches a Sequence frame ID...
+    			        if(self.frameHashIndex !== -1){
+    			            self.nextFrameID = self.frameHashIndex + 1;
+                            self.goTo(self.nextFrameID);
+    			        }
+    			    }
+    			});
 			}
-			break;
-			default:
-			break;
-		}
-		});
+			
+			if(self.settings.swipeNavigation && self.hasTouch){
+        		var touches = {
+        		"touchstartX": -1,
+        		"touchstartY": -1,
+        		"touchmoveX": -1,
+        		"touchmoveY": -1
+        		};
+		
+        		self.sequence.on("touchstart touchmove touchend", function(e){
+            		if(self.settings.swipePreventsDefault){
+            			e.preventDefault();
+            		}
+            		switch(e.originalEvent.type){
+            			case "touchmove":
+            			case "touchstart":
+            			touches[e.originalEvent.type + "X"] = e.originalEvent.touches[0].pageX;
+            			touches[e.originalEvent.type + "Y"] = e.originalEvent.touches[0].pageY;
+            			break;
+            			case 'touchend':
+            			if(touches.touchmoveX !== -1){
+            				//find out which way the user moved their finger the most
+            				var xAmount = touches.touchmoveX - touches.touchstartX;
+            				var yAmount = touches.touchmoveY - touches.touchstartY;
+            				
+            				if(Math.abs(xAmount) > Math.abs(yAmount) && (xAmount > self.settings.calculatedSwipeThreshold)){
+            				//user swiped right
+            				self.initCustomKeyEvent(self.settings.swipeEvents.right);
+            				}else if(Math.abs(xAmount) > Math.abs(yAmount) && (Math.abs(xAmount) > self.settings.calculatedSwipeThreshold)){
+            				//user swiped left
+            				self.initCustomKeyEvent(self.settings.swipeEvents.left);
+            				}else if(Math.abs(yAmount) > Math.abs(xAmount) && (yAmount > self.settings.calculatedSwipeThreshold)){
+            				//user swiped down
+            				self.initCustomKeyEvent(self.settings.swipeEvents.down);
+            				}else if(Math.abs(yAmount) > Math.abs(xAmount) && (Math.abs(yAmount) > self.settings.calculatedSwipeThreshold)){
+            				//user swiped up
+            				self.initCustomKeyEvent(self.settings.swipeEvents.up);
+            				}
+            		
+            				touches = {
+            					"touchstartX": -1,
+            					"touchstartY": -1,
+            					"touchmoveX": -1,
+            					"touchmoveY": -1
+            				};
+            			}
+            			break;
+            			default:
+            			break;
+            		}
+		        });
 			}
 			
 			$(window).resize(function(){ //if the window is resized...
@@ -477,12 +550,12 @@ Aside from these comments, you may modify and distribute this file as you please
 			var self = this;
 			self.modifyElements(self.frameChildren, "");
 			self.frameChildren.each(function(){
-    			self.transitionProperties["transition-duration"] = $(this).css(self.prefix + "transition-duration");
-    			self.transitionProperties["transition-delay"] = $(this).css(self.prefix + "transition-delay");
-    
-    			$(this).css(
-    				self.prefixCSS(self.prefix, self.transitionProperties)
-    			);
+				self.transitionProperties["transition-duration"] = $(this).css(self.prefix + "transition-duration");
+				self.transitionProperties["transition-delay"] = $(this).css(self.prefix + "transition-delay");
+
+				$(this).css(
+					self.prefixCSS(self.prefix, self.transitionProperties)
+				);
 			});
 		},
 		
@@ -565,8 +638,10 @@ Aside from these comments, you may modify and distribute this file as you please
 						self.paused = false;
 						self.startAutoPlay();
 					}
-					
+										
 					self.nextFrameID = (self.currentFrameID !== self.numberOfFrames) ? self.currentFrameID + 1 : 1;
+					
+					
 					self.goTo(self.nextFrameID, 1); //go to the next frame
 				}else if(self.settings.autoPlayDirection === 1){
 					self.paused = true;
@@ -595,8 +670,8 @@ Aside from these comments, you may modify and distribute this file as you please
 		},
 		
 		//go to a specific frame
-		goTo: function(id, direction){
-			var self = this;
+		goTo: function(id, direction){		    
+			var self = this;			
 			if(id === self.numberOfFrames){
 				self.settings.beforeLastFrameAnimatesIn();
 			}else if(id === 1){
@@ -630,7 +705,7 @@ Aside from these comments, you may modify and distribute this file as you please
 						self.animateIn(self.direction);
 						self.currentFrameID = id;
 					};
-										
+															
 					if(!self.firstFrame){
 						switch(self.settings.transitionThreshold){
 							case true:
@@ -676,6 +751,21 @@ Aside from these comments, you may modify and distribute this file as you please
 				            self.settings.beforeNextFrameAnimatesIn();
 				            self.nextFrame.addClass("current-frame").show().css(animateIn).animate(moveIn, self.settings.fallback.speed, function(){
 				                self.currentFrame = self.nextFrame;
+				                
+				                
+				                
+				                if(self.settings.hashTags){ //if hashTags is enabled...
+				                    self.currentHashTag = self.currentFrame.attr(self.getHashTagFrom); //get the hashtag name
+				                    self.frameHashIndex = $.inArray(self.currentHashTag, self.frameHashID); //get the index of the frame that matches the hashtag
+				                    //if the hashtag matches a Sequence frame ID...
+				                    if(self.frameHashIndex !== -1){
+				                        self.nextFrameID = self.frameHashIndex + 1;
+				                        document.location.hash = "#"+self.currentHashTag;
+				                    }else{
+				                        self.nextFrameID = self.settings.startingFrameID;
+				                    }					    
+				                }				                
+				                
 				                self.currentFrameID = self.currentFrame.index() + 1;
 				                self.active = false;
 				                self.settings.afterNextFrameAnimatesIn();
@@ -770,7 +860,6 @@ Aside from these comments, you may modify and distribute this file as you please
 			}
 							
 			if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction === 1){ //if user hit next button...
-
 				setTimeout(function(){					
 					self.modifyElements(self.frameChildren, "");
 					self.frameChildren.addClass("animate-in");
@@ -809,6 +898,19 @@ Aside from these comments, you may modify and distribute this file as you please
 				var onceComplete = function(){
 					frame.unbind(self.transitionEnd);
 					self.settings.afterNextFrameAnimatesIn();
+
+					if(self.settings.hashTags){ //if hashTags is enabled...
+					    self.currentHashTag = self.currentFrame.attr(self.getHashTagFrom); //get the hashtag name
+					    self.frameHashIndex = $.inArray(self.currentHashTag, self.frameHashID); //get the index of the frame that matches the hashtag
+					    //if the hashtag matches a Sequence frame ID...
+					    if(self.frameHashIndex !== -1 && (self.settings.hashChangesOnFirstFrame || !self.firstFrame)){
+					        self.nextFrameID = self.frameHashIndex + 1;
+                            document.location.hash = "#"+self.currentHashTag;
+					    }else{
+					        self.nextFrameID = self.settings.startingFrameID;
+					        self.firstFrame = false;
+					    }					    
+					}
 					
 					if(self.currentFrameID === self.numberOfFrames){
 						self.settings.afterLastFrameAnimatesIn();
@@ -825,7 +927,6 @@ Aside from these comments, you may modify and distribute this file as you please
 						self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
 					}				
 				};
-			
 			}
 		
 			elements.each(function(){
@@ -882,7 +983,6 @@ Aside from these comments, you may modify and distribute this file as you please
 			        $(".sequence-preloader").fadeToggle(500);
 			    }, 500);
 			}
-			
 		},
 		
 		//a quick test to work out if Opera supports transitions properly (to work around the fact that Opera 11 supports transitions but doesn't return a transition value properly)
@@ -890,8 +990,10 @@ Aside from these comments, you may modify and distribute this file as you please
 		    $("body").append('<span id="sequence-opera-test"></span>');
 		    var $operaTest = $("#sequence-opera-test");
 		    $operaTest.css("-o-transition", "1s");
-		    if($operaTest.css("-o-transition") != "1s"){ //if the expected value isn't returned...
-		        return false; //cause Opera to go into the fallback theme
+		    //if the expected value isn't returned...
+		    if($operaTest.css("-o-transition") != "1s"){
+		        //cause Opera to go into the fallback theme
+		        return false;
 		    }else{
 		        return true;
 		    }
@@ -968,27 +1070,36 @@ Aside from these comments, you may modify and distribute this file as you please
 			down: false
 		},
 		
+		//hashTags Settings
+		//when using hashTags, please include a reference to Ben Alman's jQuery HashChange plugin above your reference to Sequence.js
+		
+		//info : http://benalman.com/projects/jquery-hashchange-plugin/
+		//plugin: https://raw.github.com/cowboy/jquery-hashchange/v1.3/jquery.ba-hashchange.min.js
+		//GitHub: https://github.com/cowboy/jquery-hashchange
+		hashTags: false, //when a frame is navigated to, change the hashtag to the frames ID
+		hashDataAttribute: false, //false = the hashTag is taken from a frames ID attribute | true = the hashTag is taken from the data attribute "data-sequence-hash"	
+		hashChangesOnFirstFrame: false,	
+        		
 		//Fallback Theme Settings (For browsers that don't support CSS3 transitions)
 		fallback: {
 			theme: "slide",
-			mode: "horizontal",
 			speed: 500
 		},
 		
 		//Callbacks
 		paused: function() {},							//triggers when Sequence is paused
-		unpaused: function() {},							//triggers when Sequence is unpaused
+		unpaused: function() {},						//triggers when Sequence is unpaused
 		
 		beforeNextFrameAnimatesIn: function() {},		//triggers before the next frame animates in
-		afterNextFrameAnimatesIn: function() {},			//triggers after the next frame animates in
+		afterNextFrameAnimatesIn: function() {},		//triggers after the next frame animates in
 		beforeCurrentFrameAnimatesOut: function() {},	//triggers before the current frame animates out
-		afterCurrentFrameAnimatesOut: function() {},		//triggers after the current frame animates out
+		afterCurrentFrameAnimatesOut: function() {},	//triggers after the current frame animates out
 		
 		beforeFirstFrameAnimatesIn: function() {},		//triggers before the first frame animates in
 		afterFirstFrameAnimatesIn: function() {},		//triggers after the first frame animates in
 		beforeLastFrameAnimatesIn: function() {},		//triggers before the last frame animates in
-		afterLastFrameAnimatesIn: function() {},			//triggers after the last frame animates in
-		
+		afterLastFrameAnimatesIn: function() {},		//triggers after the last frame animates in
+
 		afterLoaded: function() {}						//triggers after Sequence is initiated
 	};
 })(jQuery);

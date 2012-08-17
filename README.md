@@ -19,10 +19,10 @@ Sequence is the jQuery slider plugin with infinite style. It provides the comple
 - [Apple Style](http://www.sequencejs.com/themes/apple-style/)
 
 ##Documentation
-The unashamedly technical documentation can be found here: [SequenceJS Demo](http://www.sequencejs.com/documentation.html). Quick guides are on their way!
+Technical documentation can be found here: [SequenceJS Demo](http://www.sequencejs.com/documentation.html).
 
 ##Author
-[Ian Lunn](http://twitter.com/#!/IanLunn) (say hi on Twitter!)
+[@Ian Lunn](http://twitter.com/#!/IanLunn)
 
 ##License
 sequence.js is a FREE script and is dual licensed under the following:
@@ -34,7 +34,6 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 [SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2012 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
 
 ##What's New? 
-
 
 ###v0.7.0.1 17/08/2012
 - Minor fix to prevent frames from being able to animate in before another frame has finished animating (when the transitionThreshold is greater than the animation time).

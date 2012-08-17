@@ -12,6 +12,7 @@
 	<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Ruluko|Sirin+Stencil'>
 	
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/javascript" src="../../scripts/jquery.ba-hashchange.min.js"></script>
 	<script type="text/javascript">
 	if (typeof jQuery == 'undefined'){
 	    document.write(unescape("%3Cscript src='../../scripts/jquery.js' type='text/javascript'%3E%3C/script%3E"));
@@ -26,6 +27,7 @@
 		
 		$(document).ready(function(){
 			var options = {
+			    hashTags: true,
 				nextButton: true,
 				prevButton: true,
 				animateStartingFrameIn: true,
@@ -73,17 +75,17 @@
 				
 			<div id="sequence">
 				<ul>
-					<li>
+					<li id="intro">
 						<h2 class="title animate-in">Built using Sequence.js</h2>
 						<h3 class="subtitle animate-in">The jQuery Slider Plugin with Infinite Style</h3>
 						<img class="model animate-in" src="images/model1.png" alt="Model 1" />
 					</li>
-					<li>
+					<li id="creative">
 						<h2 class="title">Creative Control</h2>
 						<h3 class="subtitle">Create unique sliders using CSS3 transitions</h3>
 						<img class="model" src="images/model2.png" alt="Model 2" />
 					</li>
-					<li class="frame3">
+					<li id="support" class="frame3">
 						<h2 class="title">Cutting Edge</h2>
 						<h3 class="subtitle">Supports modern browsers, old browsers (IE7+), touch devices and responsive designs</h3>
 						<img class="model" src="images/model3.png" alt="Model 3" />
