@@ -17,16 +17,7 @@
 	<script type="text/javascript">	
 			$(document).ready(function(){
 				var options = {
-					animatestartingFrameIn: false,
-					autoPlayDelay: 5000,
-					pauseOnHover: true,
-					pauseIconSrc: "images/pause-icon.png",
-					transitionThreshold: 1000,
-					
-					fallback: {
-					    theme: "slide",
-						speed: 500
-					},
+				    preloader: false,
 					beforeCurrentFrameAnimatesIn: function(){
 						if(sequence.direction == 1){
 							changeText(sequence.nextFrameID, "");
