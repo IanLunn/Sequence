@@ -20,12 +20,10 @@
 		$(document).ready(function(){
 			var options = {
 				autoPlay: false,
-				nextButton: ".next",
-				prevButton: ".prev",
+				nextButton: true,
+				prevButton: true,
 				preloader: "#sequence-preloader",
-				prependPreloader: false,
 				prependPreloadingComplete: "#sequence-preloader, #sequence",
-				animateStartingFrameIn: false, 
 				transitionThreshold: 500,
 				afterLoaded: function(){
 					$(".prev, .next").fadeIn(500);
