@@ -1,0 +1,7 @@
+#nav li {
+	display: inline;
+}
+
+body {
+	min-width: 960px;
+}

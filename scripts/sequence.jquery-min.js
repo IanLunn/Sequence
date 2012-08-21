@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.7.0.1 (Custom with HashTag Support) Beta
+Version: 0.7.1 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence

@@ -1,0 +1,471 @@
+/*
+Theme created for use with Sequence.js (http://www.sequencejs.com/)
+
+Theme:   Sliding Horizontal Parallax (Responsive)
+Version:   0.2.2 Beta
+Theme Author:   Ian Lunn @IanLunn
+Author URL:   http://www.ianlunn.co.uk/
+Theme URL:   http://www.sequencejs.com/themes/sliding-horizontal-parallax/
+
+This is a FREE theme and is dual licensed under the following: 
+http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
+
+Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
+Aside from these comments, you may modify and distribute this file as you please. Have fun!
+ */
+body {
+	background: #323333;
+	color: white;
+	font-family: sans-serif;
+	font-size: 0.625em;
+	min-width: 320px;
+}
+
+#header-container{
+	background: #d9d9d9;
+	border-bottom: black solid 5px;
+	width: 100%;
+}
+
+#header {
+	background:  #D9D9D9;
+	height: 600px;
+	margin: 0 auto;
+	position: relative;
+	overflow: hidden;
+	max-width: 1280px;
+	width: 100%;
+}
+
+#main, #aside{
+	font-size: 1.6em;
+}
+
+a{
+	color: white;
+}
+
+.next,.prev {
+	color: white;
+	cursor: pointer;
+	display: none;
+	font-weight: bold;
+	padding: 10px 15px;
+	position: absolute;
+	top: 50%;
+	z-index: 1000;
+	height: 75px;
+	margin-top: -47.5px;
+}
+
+.pause {
+	bottom: 0;
+	cursor: pointer;
+	position: absolute;
+	z-index: 1000;
+}
+
+.paused {
+	opacity: 0.3;
+}
+
+.prev {
+	left: 3%;
+}
+
+.next {
+	right: 3%;
+}
+
+.prev img, .next img{
+	height: 100%;
+	width: auto;
+}
+
+#sequence-preloader{
+	background: #d9d9d9;
+}
+
+#nav {
+	bottom: 1%;
+	display: none;
+	right: 6%;
+	position: absolute;
+
+	-webkit-transition-duration: .5s;
+	-moz-transition-duration: .5s;
+	-o-transition-duration: .5s;
+	-ms-transition-duration: .5s;
+	transition-duration: .5s;
+}
+
+#nav li {
+	display: inline-block;
+	height: 140px;
+}
+
+#nav li img {
+	cursor: pointer;
+	opacity: 0.5;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+#nav li img.active {
+	opacity: 1;
+}
+
+@media only screen and (min-width : 1224px) {
+	/*only display the hover effect on desktops/laptops*/
+	#nav li img:hover {
+		opacity: 1;
+	
+		-webkit-transition-duration: 1s;
+		-moz-transition-duration: 1s;
+		-o-transition-duration: 1s;
+		-ms-transition-duration: 1s;
+		transition-duration: 1s;
+	}
+
+}
+
+#sequence li{
+	height: 100%;
+	position: absolute;
+	top: -50%;
+	width: 100%;
+}
+
+#sequence li * {
+	position: absolute;
+}
+
+#sequence li img{
+	height: 96%;
+}
+
+#sequence {
+	background: url("../images/bg-sequence.jpg") no-repeat 50% 100%;
+	display: block;
+	height: 100%;
+	margin: 0;
+	position: absolute;
+	max-width: 1280px;
+	width: 100%;
+	
+	/*backface-visibility prevents graphical glitches when frames are animating*/
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+	-ms-backface-visibility: hidden;
+	-o-backface-visibility: hidden;
+	backface-visibility: hidden;
+}
+
+h2 {
+	color: white;
+	font-family: 'Sirin Stencil', serif;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+h3 {
+	font-family: 'Ruluko', serif;
+}
+
+.next,.prev {
+	position: absolute;
+	opacity: 0.6;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+	z-index: 11;
+}
+
+.next:hover,.prev:hover {
+	opacity: 1;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+.title {
+	font-size: 3.4em;
+	left: 65%;
+	width: 35%;
+	opacity: 0;
+	bottom: 1%;
+	z-index: 50;
+}
+
+.title.animate-in {
+	left: 50%;
+	opacity: 1;
+
+	-webkit-transition-duration: .5s;
+	-moz-transition-duration: .5s;
+	-o-transition-duration: .5s;
+	-ms-transition-duration: .5s;
+	transition-duration: .5s;
+}
+
+.title.animate-out {
+	left: 35%;
+	opacity: 0;
+
+	-webkit-transition-duration: .5s;
+	-moz-transition-duration: .5s;
+	-o-transition-duration: .5s;
+	-ms-transition-duration: .5s;
+	transition-duration: .5s;
+}
+
+.subtitle {
+	color: black;
+	font-size: 2em;
+	left: 35%;
+	width: 35%;
+	opacity: 0;
+	top: 101%;
+}
+
+.subtitle.animate-in {
+	left: 50%;
+	opacity: 1;
+
+	-webkit-transition-duration: .5s;
+	-moz-transition-duration: .5s;
+	-o-transition-duration: .5s;
+	-ms-transition-duration: .5s;
+	transition-duration: .5s;
+}
+
+.subtitle.animate-out {
+	left: 65%;
+	opacity: 0;
+
+	-webkit-transition-duration: .5s;
+	-moz-transition-duration: .5s;
+	-o-transition-duration: .5s;
+	-ms-transition-duration: .5s;
+	transition-duration: .5s;
+}
+
+.model {
+	left: 30%;
+	bottom: -48%;
+	opacity: 0;
+	position: relative;
+	height: auto !important;
+	max-height: 568px !important;
+	width: 30%;
+	min-width: 225px; /*prevents the model from shrinking when the browser is resized*/
+	max-width: 266px;
+}
+
+.model.animate-in {
+	left: 15%;
+	opacity: 1;
+
+	-webkit-transition-duration: 1s;
+	-moz-transition-duration: 1s;
+	-o-transition-duration: 1s;
+	-ms-transition-duration: 1s;
+	transition-duration: 1s;
+}
+
+.model.animate-out {
+	left: 15%;
+	opacity: 0;
+
+	-webkit-transition-duration: .5s;
+	-moz-transition-duration: .5s;
+	-o-transition-duration: .5s;
+	-ms-transition-duration: .5s;
+	transition-duration: .5s;
+}
+
+@media only screen and (min-width : 992px) {
+	.title{
+		width: 42%;
+	}
+}
+
+@media only screen and (max-width : 838px) {
+	#header{
+		height: 550px;
+	}
+	
+	.model{
+		max-height: 530px !important;
+		width: auto;
+	}
+}
+
+@media only screen and (max-width : 768px) {
+	#header{
+		height: 500px;
+	}
+	
+	.title{
+		font-size: 2.8em;
+	}
+	
+	.subtitle{
+		font-size: 1.6em;
+	}
+	
+	.next,.prev {
+		height: 60px;
+		margin-top: -40px;
+	}
+	
+	.model{
+		max-height: 480px !important;
+		width: auto;
+	}
+}
+
+@media only screen
+and (max-width : 568px) {
+	.model{
+		left: 50%;
+		min-width: 40%; /*prevents the model from shrinking when the browser is resized*/
+			width: 40%;	
+	}
+	
+	.model.animate-in {
+		left: 50%;
+		margin-left: -20%;
+	}
+	
+	.model.animate-out {
+		left: 50%;
+		margin-left: -20%;
+	}
+	
+	.title{
+		background: #a1a1a1;
+		background: rgba(0,0,0,0.3);
+		bottom: 0;
+		left: 100%;
+		padding: 4%;
+		bottom: -50%;
+		width: 100%;
+		z-index: 10;
+	}
+	
+	.title.animate-in{
+		left: 0%;
+	}
+	
+	.title.animate-out{
+		left: -100%;	
+	}
+	
+	.subtitle{
+		visibility: hidden;
+	}
+	
+	#nav{
+		bottom: 40px;
+	}
+	
+	#nav li img{
+		height: 100px;
+	}
+}
+
+@media only screen
+and (max-width : 518px) {
+	#header{
+		height: 450px;
+	}
+}
+
+@media only screen
+and (max-width : 468px) {
+	#header{
+		height: 415px;
+	}
+	
+	#nav{
+		opacity: 0;
+		visibility: hidden;
+	}
+}
+
+@media only screen
+and (max-width : 418px) {
+	#header{
+		height: 375px;
+	}
+}
+
+@media only screen
+and (max-width : 368px) {
+	#header{
+		height: 325px;
+	}
+	.title{
+		font-size: 2.2em;
+	}
+}
+
+@media 	only screen
+		and (max-width : 320px)
+		and (orientation : portrait) { /*iphone portrait*/
+	#header{
+		height: 320px;
+	}
+	
+	.model{
+		min-width: 45%;
+		width: 45%;
+	}
+	
+	.model.animate-in{
+		margin-left: -22.5%;
+	}
+	
+	.model.animate-out{
+		margin-left: -22.5%;
+	}
+}
+
+@media 	only screen
+		and (min-width : 321px)
+		and (max-width : 480px)
+		and (orientation : landscape) {
+		#header{
+			height: 260px;
+		}
+		
+		.model{
+			min-width: 24%;
+			width: 24%;
+		}
+		
+		.model.animate-in{
+			left: 17.5%;
+			margin-left: 0;
+		}
+		
+		.model.animate-out{
+			left: 17.5%;
+			margin-left: 0;
+		}
+		
+		#nav{
+			right: 17.5%;
+		}
+}

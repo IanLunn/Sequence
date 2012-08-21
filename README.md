@@ -35,6 +35,9 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.7.1 21/08/2012
+- Added hashTag support. See [the modified Modern Slide In demo](http://www.sequencejs.com/themes/modern-slide-in-hashtags/) to see hashTags in action. Also see the [documentation](http://www.sequencejs.com/documentation.html#options-hashtag) for relevant options.
+
 ###v0.7.0.1 17/08/2012
 - Minor fix to prevent frames from being able to animate in before another frame has finished animating (when the transitionThreshold is greater than the animation time).
 
