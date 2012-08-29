@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.7.1 Beta
+Version: 0.7.1.1 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -160,19 +160,23 @@ Aside from these comments, you may modify and distribute this file as you please
 		    
             frameImagesToPreload = saveImagesToArray(preloadTheseFramesLength, true);
             individualImagesToPreload = saveImagesToArray(preloadTheseImagesLength, false);
-            imagesToPreload = frameImagesToPreload.concat(individualImagesToPreload);           
+            imagesToPreload = frameImagesToPreload.concat(individualImagesToPreload);  
             
-            var loaded = 0; //save how many have loaded
-            var imagesToPreloadLength = imagesToPreload.length; //number of images to preload
-            for(var i = imagesToPreloadLength; i >=0; i--){ //for each image to be preloaded...
-                var imgSrc = $(imagesToPreload[i]).attr("src"); //used to get .load() working in IE and Opera
-                $(imagesToPreload[i]).load(function(){ //when each image loads...
-                    loaded++; //increase the number of loaded images by 1
-                    if(imagesToPreloadLength === loaded){ //if all necessary images have preloaded...
-                        oncePreloaded(); //initate Sequence
-                    }
-                }).attr('src', imgSrc);
-            }            
+            if(imagesToPreload.length === 0){
+                oncePreloaded();
+            }else{        
+                var loaded = 0; //save how many have loaded
+                var imagesToPreloadLength = imagesToPreload.length; //number of images to preload
+                for(var i = imagesToPreloadLength; i >=0; i--){ //for each image to be preloaded...
+                    var imgSrc = $(imagesToPreload[i]).attr("src"); //used to get .load() working in IE and Opera
+                    $(imagesToPreload[i]).load(function(){ //when each image loads...
+                        loaded++; //increase the number of loaded images by 1
+                        if(imagesToPreloadLength === loaded){ //if all necessary images have preloaded...
+                            oncePreloaded(); //initate Sequence
+                        }
+                    }).attr('src', imgSrc);
+                }
+            }        
     	}else{
 		    $(window).bind("load", function(){
 		    	oncePreloaded();
