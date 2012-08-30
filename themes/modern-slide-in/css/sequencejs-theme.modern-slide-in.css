@@ -185,7 +185,6 @@ h3 {
 	-o-transition-duration: 1s;
 	-ms-transition-duration: 1s;
 	transition-duration: 1s;
-	z-index: 11;
 }
 
 .next:hover,.prev:hover {
