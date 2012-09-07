@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.7.1 Beta
+Version: 0.7.2 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -137,42 +137,42 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		if(self.settings.preloader && 
 		(preloadTheseFramesLength !== 0 || preloadTheseImagesLength !== 0)){ //if using the preloader and the dev has specified some images should preload...
-		    function saveImagesToArray(length, frame){
+		    function saveImagesToArray(length){
 		        var imagesToPreload = []; //saves the frames that are to be preloaded
 		        var img = 0; //index number for each individual image
-		        length--; //reduce the length by 1 to accomdate indexes start at 0
-		        for(var i = length; i >= 0; i--){ //for each frame to be preloaded...
-		            if(frame){ //if getting images from frames...
-		                selector = self.sequence.children("li:nth-child("+(self.settings.preloadTheseFrames[i])+")").find("img");
-		                selector.each(function(){ //grab each image in the frame
-		                    imagesToPreload[img] = $(this); //add the image selector to an array
-		                    img++; //increase the image count by one
-		                });
-		            }else{ //if getting individual images...
-		                selector = self.sequence.children("li").find('img[src="'+self.settings.preloadTheseImages[i]+'"]');
-		                imagesToPreload[img] = selector; //add the image selector to an array
-		                img++; //increase the image count by one
-		            }
-		            
+		        for(var i = length; i > 0; i--){ //for each frame to be preloaded...
+                    images = self.sequence.children("li:nth-child("+self.settings.preloadTheseFrames[i-1]+")").find("img");
+                    imagesLength = images.length;
+                    
+                    for(var j = 0; j < imagesLength; j++){
+                        imagesToPreload[img] = images[j].src; //add the image src to an array
+                        img++; //increase the image count by one		                    
+                    }
 		        }
+		        		        
 		        return imagesToPreload;
 		    }
 		    
-            frameImagesToPreload = saveImagesToArray(preloadTheseFramesLength, true);
-            individualImagesToPreload = saveImagesToArray(preloadTheseImagesLength, false);
-            imagesToPreload = frameImagesToPreload.concat(individualImagesToPreload);           
+            frameImagesToPreload = saveImagesToArray(preloadTheseFramesLength);
+            individualImagesToPreload = self.settings.preloadTheseImages;
+            imagesToPreload = frameImagesToPreload.concat(individualImagesToPreload);   
+                        
+            if(imagesToPreload.length === 0){ //if there aren't any images to preload...
+                oncePreloaded(); //skip preloading
+            }          
             
             var loaded = 0; //save how many have loaded
             var imagesToPreloadLength = imagesToPreload.length; //number of images to preload
-            for(var i = imagesToPreloadLength; i >=0; i--){ //for each image to be preloaded...
-                var imgSrc = $(imagesToPreload[i]).attr("src"); //used to get .load() working in IE and Opera
-                $(imagesToPreload[i]).load(function(){ //when each image loads...
-                    loaded++; //increase the number of loaded images by 1
-                    if(imagesToPreloadLength === loaded){ //if all necessary images have preloaded...
-                        oncePreloaded(); //initate Sequence
+            for(var i = 0; i < imagesToPreloadLength; i++){ //for each image to be preloaded...
+                var img = new Image();
+                img.onload  = function(){ //when images load...
+                    loaded++; //increase the load count by one
+                    if(loaded == imagesToPreloadLength){ //if all images have loaded...
+                        oncePreloaded();
                     }
-                }).attr('src', imgSrc);
-            }            
+                }
+                img.src = imagesToPreload[i];
+            }          
     	}else{
 		    $(window).bind("load", function(){
 		    	oncePreloaded();
