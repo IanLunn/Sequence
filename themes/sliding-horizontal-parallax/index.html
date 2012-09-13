@@ -5,7 +5,6 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title>Sequence Theme Demo - Sliding Horizontal Parallax</title>
 	<link rel="stylesheet" type="text/css" media="screen" href="../../demo-assets/css/demo-styles.css" />
-	<!--[if lt IE 8]><link rel="stylesheet" type="text/css" media="screen" href="../../demo-assets/css/demo-styles-ie.css" /><![endif]-->
 	<link rel="stylesheet" type="text/css" media="screen" href="css/sequencejs-theme.sliding-horizontal-parallax.css" />
 	<!--[if lt IE 9]><link rel="stylesheet" type="text/css" media="screen" href="css/sequencejs-theme.sliding-horizontal-parallax-ie.css" /><![endif]-->
 	<link href="http://fonts.googleapis.com/css?family=Play:400,700" rel="stylesheet" type="text/css">
@@ -22,26 +21,17 @@
 				autoPlay: false,
 				nextButton: true,
 				prevButton: true,
-				preloader: "#sequence-preloader",
-				prependPreloadingComplete: "#sequence-preloader, #sequence",
-				transitionThreshold: 500,
-				afterLoaded: function(){
-					$(".prev, .next").fadeIn(500);
-					if(!sequence.transitionsSupported){
-						$("#sequence").animate({"opacity": "1"}, 1000);
-					}
-				}
+				transitionThreshold: 500
 			};
 			var sequence = $("#sequence").sequence(options).data("sequence");
-			if(!sequence.transitionsSupported || sequence.prefix == "-o-"){
-				$("#sequence").animate({"opacity": "1"}, 1000);
-				sequence.preloaderFallback();
+
+			sequence.afterLoaded = function(){
+				$(".prev, .next").fadeIn(500);
 			}
 		})
 	</script>
 	
 	<script type="text/javascript">
-	
 	  var _gaq = _gaq || [];
 	  _gaq.push(['_setAccount', 'UA-11991680-3']);
 	  _gaq.push(['_trackPageview']);
@@ -51,18 +41,10 @@
 	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
 	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 	  })();
-	
 	</script>
 </head>
 <body>	
 	<div id="header">
-		<div id="sequence-preloader">
-			<div class="preloading">
-				<img src="../../images/sequence-preloader.png" alt="Sequence is loading, please wait..." />
-				<img src="../../images/sequence-preloader.png" alt="Sequence is loading, please wait..." />
-				<img src="../../images/sequence-preloader.png" alt="Sequence is loading, please wait..." />
-			</div>
-		</div>
 		<div id="sequence">
 			<img class="prev" src="images/bt-prev.png" alt="Previous" />
 			<img class="next" src="images/bt-next.png" alt="Next" />
@@ -70,7 +52,7 @@
 				<li>
 					<div class="info animate-in">
 						<h2>Built using Sequence.js</h2>
-						<p>The jQuery Slider Plugin with Infinite Style</p>
+						<p>The Responsive Slider with Advanced CSS3 Transitions</p>
 					</div>
 					<img class="sky animate-in" src="images/bg-clouds.png" alt="Blue Sky" />
 					<img class="balloon animate-in" src="images/balloon.png" alt="Balloon" />

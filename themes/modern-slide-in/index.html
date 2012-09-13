@@ -29,19 +29,20 @@
 				nextButton: true,
 				prevButton: true,
 				animateStartingFrameIn: true,
-				transitionThreshold: 250,
-				
-				afterLoaded: function(){
-					$("#nav").fadeIn(100);
-					$("#nav li:nth-child("+(sequence.settings.startingFrameID)+") img").addClass("active");
-				},
-				beforeNextFrameAnimatesIn: function(){
-					$("#nav li:not(:nth-child("+(sequence.nextFrameID)+")) img").removeClass("active");
-					$("#nav li:nth-child("+(sequence.nextFrameID)+") img").addClass("active");
-				}
+				transitionThreshold: 250
 			};
 
 			var sequence = $("#sequence").sequence(options).data("sequence");
+
+			sequence.afterLoaded = function(){
+				$("#nav").fadeIn(100);
+				$("#nav li:nth-child("+(sequence.settings.startingFrameID)+") img").addClass("active");
+			}
+
+			sequence.beforeNextFrameAnimatesIn = function(){
+				$("#nav li:not(:nth-child("+(sequence.nextFrameID)+")) img").removeClass("active");
+				$("#nav li:nth-child("+(sequence.nextFrameID)+") img").addClass("active");
+			}
 			
 			$("#nav li").click(function(){
 				if(!sequence.active){
@@ -75,7 +76,7 @@
 				<ul>
 					<li id="intro">
 						<h2 class="title animate-in">Built using Sequence.js</h2>
-						<h3 class="subtitle animate-in">The jQuery Slider Plugin with Infinite Style</h3>
+						<h3 class="subtitle animate-in">The Responsive Slider with Advanced CSS3 Transitions</h3>
 						<img class="model animate-in" src="images/model1.png" alt="Model 1" />
 					</li>
 					<li id="creative">
@@ -162,4 +163,3 @@
 	</script>		
 	</body>
 </html>
-

@@ -17,39 +17,41 @@
 	<script type="text/javascript" src="../../scripts/sequence.jquery-min.js"></script>
 	<script type="text/javascript">	
 		$(document).ready(function(){
-			var options = {
-				preloader: false,
-				beforeCurrentFrameAnimatesIn: function(){
-					if(sequence.direction == 1){
-						changeText(sequence.nextFrameID, "");
-					}else{
-						changeText(sequence.nextFrameID, ".animate-out");
-					}
-				},					
-				
-				beforeCurrentFrameAnimatesOut: function(){
-					if(sequence.direction == 1){
-						changeText(sequence.currentFrameID, ".animate-out");
-						changeText(sequence.nextFrameID, "");
-					}else{
-						changeText(sequence.currentFrameID, "");
-						changeText(sequence.nextFrameID, ".animate-out");
-					}
-				},
-				
-				beforeNextFrameAnimatesIn: function(){
-					if(sequence.direction == 1){
-						changeText(sequence.nextFrameID, ".animate-in");
-					}else{
-						changeText(sequence.nextFrameID, ".animate-in");
-					}
-				}
-			};
-
-			var sequence = $("#sequence").sequence(options).data("sequence");
-
 			function changeText(id, text){
 				$("#sequence ul li:nth-child("+id+")").children().children(".sequence-class").text(text);
+			}
+
+			var options = {
+				//Sequence options go here. This theme doesn't use any but if you'd like to add your own, see here: http://www.sequencejs.com/documentation.html#developers
+			}
+
+			var sequence = $("#sequence").sequence(options).data("sequence"); //initiate Sequence
+			var sequence2 = $("#sequence2").sequence(options).data("sequence"); //initiate a second Sequence
+
+			sequence.beforeCurrentFrameAnimatesIn = function(){
+				if(sequence.direction === 1){
+					changeText(sequence.nextFrameID, "");
+				}else{
+					changeText(sequence.nextFrameID, ".animate-out");
+				}
+			},					
+				
+			sequence.beforeCurrentFrameAnimatesOut = function(){
+				if(sequence.direction === 1){
+					changeText(sequence.currentFrameID, ".animate-out");
+					changeText(sequence.nextFrameID, "");
+				}else{
+					changeText(sequence.currentFrameID, "");
+					changeText(sequence.nextFrameID, ".animate-out");
+				}
+			},
+				
+			sequence.beforeNextFrameAnimatesIn = function(){
+				if(sequence.direction === 1){
+					changeText(sequence.nextFrameID, ".animate-in");
+				}else{
+					changeText(sequence.nextFrameID, ".animate-in");
+				}
 			}
 		})
 	</script>
@@ -69,6 +71,30 @@
 </head>
 	<body> 
 		<div id="sequence" class="sequence">
+			<ul>
+				<li>
+					<div class="info1 animate-in">
+						<p class="class">.info1</p>
+						<p class="sequence-class">.animate-in</p>
+					</div>
+				</li>
+				<li>
+					<div class="info2">
+						<p class="class">.info2</p>
+						<p class="sequence-class"></p>
+					</div>
+				</li>
+				<li>
+					<div class="info3">
+						<p class="class">.info3</p>
+						<p class="sequence-class"></p>
+					</div>
+				</li>
+			</ul>
+		</div>
+
+		<div id="sequence2" class="sequence">
+			<p>Second instance of Sequence, just to test multiple instances!</p>
 			<ul>
 				<li>
 					<div class="info1 animate-in">
@@ -133,7 +159,7 @@
 		            	<li><h1><a class="no-underline" href="http://www.sequencejs.com/" title="Sequence Homepage">A <img class="logo-small" src="../../demo-assets/images/sequence-logo-small.png" alt="Sequence" /> Theme</a>: Modern Slide In</h1></li>
 		            </ul>
 		        </div>  
-		        <ul id="share">
+		        <!--<ul id="share">
 		            <li class="twitter"><a href="https://twitter.com/share" class="twitter-share-button" data-via="IanLunn" data-related="IanLunn" data-count="none">Tweet</a>
 		            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></li> 
 		            <li class="facebook"><iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.sequencejs.com%2Fthemes%2Fdocumentation-demo%2F&amp;layout=button_count&amp;show_faces=false&amp;width=100&amp;action=like&amp;colorscheme=light&amp;height=21" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:52px; height:21px;" allowTransparency="true"></iframe></li>
@@ -141,10 +167,10 @@
 		            <li class="hire"><a href="http://www.ianlunn.co.uk/" title="Ian Lunn Design"><img src="http://www.ianlunn.co.uk//demo-assets/hire-ian.png" alt="Ian Lunn Design"></a></li>
 		            <li class="twitter"><div class="twitter-follow-button"><a href="https://twitter.com/IanLunn" class="twitter-follow-button" data-show-count="false">Follow @IanLunn</a>
 		            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script></div></li>
-		        </ul>
+		        </ul>-->
 		    </div>
 		<!--//code for the demo overlay and details, not needed for the demo to work-->
-		<script type="text/javascript">
+		<!--<script type="text/javascript">
 		  window.___gcfg = {lang: 'en-GB'};
 		
 		  (function() {
@@ -152,7 +178,7 @@
 		    po.src = 'https://apis.google.com/js/plusone.js';
 		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
 		  })();
-		</script>
+		</script>-->
 	</body>
 </html>
 

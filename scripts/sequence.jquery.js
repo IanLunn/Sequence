@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.7.1.1 Beta
+Version: 0.7.2 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -49,7 +49,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		self.transitionsSupported = (self.prefix !== undefined) ? true : false, //determine if transitions are supported
 		self.hasTouch = ("ontouchstart" in window) ? true : false, //determine if this is a touch enabled device
 		self.sequenceTimer,
-		self.paused = false,
+		self.isPaused = false,
 		self.hoverEvent,
 		self.defaultPreloader,
 		self.init = {
@@ -89,7 +89,23 @@ Aside from these comments, you may modify and distribute this file as you please
 						return $(devOption);
 				}
 			}
-		},
+		};
+
+		//Callbacks
+		self.paused = function() {},						//executes when Sequence is paused
+		self.unpaused = function() {},						//executes when Sequence is unpaused
+		
+		self.beforeNextFrameAnimatesIn = function() {},		//executes before the next frame animates in
+		self.afterNextFrameAnimatesIn = function() {},		//executes after the next frame animates in
+		self.beforeCurrentFrameAnimatesOut = function() {},	//executes before the current frame animates out
+		self.afterCurrentFrameAnimatesOut = function() {},	//executes after the current frame animates out
+		
+		self.beforeFirstFrameAnimatesIn = function() {},	//executes before the first frame animates in
+		self.afterFirstFrameAnimatesIn = function() {},		//executes after the first frame animates in
+		self.beforeLastFrameAnimatesIn = function() {},		//executes before the last frame animates in
+		self.afterLastFrameAnimatesIn = function() {},		//executes after the last frame animates in
+
+		self.afterLoaded = function() {};					//executes after Sequence is initiated
 		
 		//INIT
 		self.settings = $.extend({}, defaults, options),
@@ -112,7 +128,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		self.sequence.children("li").children().removeClass("animate-in");
 		
 		function oncePreloaded(){
-		    self.settings.afterLoaded();
+		    self.afterLoaded();
 		    if(self.settings.hideFramesUntilPreloaded && self.settings.preloader){
 		        self.sequence.children("li").show();
 		    }
@@ -134,49 +150,45 @@ Aside from these comments, you may modify and distribute this file as you please
 
 		var preloadTheseFramesLength = self.settings.preloadTheseFrames.length; //how many frames to preload?
 		var preloadTheseImagesLength = self.settings.preloadTheseImages.length; //how many single images to load?
-		
+
 		if(self.settings.preloader && 
 		(preloadTheseFramesLength !== 0 || preloadTheseImagesLength !== 0)){ //if using the preloader and the dev has specified some images should preload...
-		    function saveImagesToArray(length, frame){
-		        var imagesToPreload = []; //saves the frames that are to be preloaded
-		        var img = 0; //index number for each individual image
-		        length--; //reduce the length by 1 to accomdate indexes start at 0
-		        for(var i = length; i >= 0; i--){ //for each frame to be preloaded...
-		            if(frame){ //if getting images from frames...
-		                selector = self.sequence.children("li:nth-child("+(self.settings.preloadTheseFrames[i])+")").find("img");
-		                selector.each(function(){ //grab each image in the frame
-		                    imagesToPreload[img] = $(this); //add the image selector to an array
-		                    img++; //increase the image count by one
-		                });
-		            }else{ //if getting individual images...
-		                selector = self.sequence.children("li").find('img[src="'+self.settings.preloadTheseImages[i]+'"]');
-		                imagesToPreload[img] = selector; //add the image selector to an array
-		                img++; //increase the image count by one
-		            }
-		            
-		        }
+		    function saveImagesToArray(length, srcOnly){
+		    	var imagesToPreload = []; //saves the images that are to be preloaded
+			    	if(!srcOnly){
+			    		for(var i = length; i > 0; i--){ //for each frame to be preloaded...
+			    			self.sequence.children("li:nth-child("+self.settings.preloadTheseFrames[i-1]+")").find("img").each(function(){ //find <img>'s in specific frames, and for each found...
+			    				imagesToPreload.push($(this)); //add it to the array of images to be preloaded
+			    			});
+		            	}
+			    	}else{
+			    		for(var i = length; i > 0; i--){ //for each frame to be preloaded...
+		            		imagesToPreload.push($("body").find('img[src="'+self.settings.preloadTheseImages[i-1]+'"]')); //find any <img> with the given source and add it to the array of images to be preloaded
+			    		}
+			    	}
+			    
 		        return imagesToPreload;
 		    }
-		    
-            frameImagesToPreload = saveImagesToArray(preloadTheseFramesLength, true);
-            individualImagesToPreload = saveImagesToArray(preloadTheseImagesLength, false);
-            imagesToPreload = frameImagesToPreload.concat(individualImagesToPreload);  
+	
+            frameImagesToPreload = saveImagesToArray(preloadTheseFramesLength); //get images from particular Sequence frames to be preloaded
+            individualImagesToPreload = saveImagesToArray(preloadTheseImagesLength, true); //get images with specific source values to be preloaded
+            imagesToPreload = frameImagesToPreload.concat(individualImagesToPreload); //combine frame images and individual images
+
+            if(imagesToPreload.length !== 0){ //if there are images to preload...
+                loaded = 0;
+	            $(imagesToPreload).each(function(){
+	            	var imgSrc = $(this).attr("src"); //get the image src so it can be put back in to convince IE to run the .load() function correctly
+	            	$(this).load(function(){
+		            	loaded++;
+		            	if(loaded === imagesToPreload.length){
+		            		oncePreloaded();
+		            	}
+	            	}).attr("src", imgSrc); //makes .load() work in IE when images are cached
+	            });
+            }else{ //if there aren't images to preload...
+	            oncePreloaded(); //skip preloading
+        	}
             
-            if(imagesToPreload.length === 0){
-                oncePreloaded();
-            }else{        
-                var loaded = 0; //save how many have loaded
-                var imagesToPreloadLength = imagesToPreload.length; //number of images to preload
-                for(var i = imagesToPreloadLength; i >=0; i--){ //for each image to be preloaded...
-                    var imgSrc = $(imagesToPreload[i]).attr("src"); //used to get .load() working in IE and Opera
-                    $(imagesToPreload[i]).load(function(){ //when each image loads...
-                        loaded++; //increase the number of loaded images by 1
-                        if(imagesToPreloadLength === loaded){ //if all necessary images have preloaded...
-                            oncePreloaded(); //initate Sequence
-                        }
-                    }).attr('src', imgSrc);
-                }
-            }        
     	}else{
 		    $(window).bind("load", function(){
 		    	oncePreloaded();
@@ -276,8 +288,8 @@ Aside from these comments, you may modify and distribute this file as you please
     			self.container.addClass("sequence-fallback");
     			self.currentFrame = self.nextFrame;
     			self.currentFrame.addClass("current-frame");
-    			self.settings.beforeNextFrameAnimatesIn();
-    			self.settings.afterNextFrameAnimatesIn();
+    			self.beforeNextFrameAnimatesIn();
+    			self.afterNextFrameAnimatesIn();
     			if(self.settings.hashChangesOnFirstFrame){
     			    self.currentHashTag = self.currentFrame.attr(self.getHashTagFrom);
     			    document.location.hash = "#"+self.currentHashTag;
@@ -361,7 +373,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					if(self.settings.pauseButton !== undefined){
 						self.settings.pauseButton.addClass("paused");
 					}
-					self.settings.paused();
+					self.paused();
 					self.sequence.unbind("mousemove");
 				}
 			}
@@ -383,7 +395,7 @@ Aside from these comments, you may modify and distribute this file as you please
 						if(self.settings.pauseButton !== undefined){
 							self.settings.pauseButton.removeClass("paused");
 						}
-						self.settings.unpaused();
+						self.unpaused();
 						
 						if(self.sequence.data("events").mousemove === undefined){
 							self.sequence.mousemove(function(e){
@@ -401,7 +413,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					if(self.settings.pauseButton !== undefined){
 						self.settings.pauseButton.addClass("paused");
 					}
-					self.settings.paused();
+					self.paused();
 				}, function(){
 					self.settings.autoPlay = true;
 					var autoPlaySequence = function(){self.autoPlaySequence();};
@@ -413,7 +425,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					if(self.settings.pauseButton !== undefined){
 						self.settings.pauseButton.removeClass("paused");
 					}
-					self.settings.unpaused();
+					self.unpaused();
 				});
 			}
 			
@@ -573,7 +585,7 @@ Aside from these comments, you may modify and distribute this file as you please
 						self.settings.pauseIcon.show();
 					}
 				}
-				self.settings.paused();
+				self.paused();
 				self.stopAutoPlay();
 			}else{ //start autoPlay
 				if(self.settings.pauseButton !== undefined){
@@ -582,7 +594,7 @@ Aside from these comments, you may modify and distribute this file as you please
 						self.settings.pauseIcon.hide();
 					}
 				}
-				self.settings.unpaused();
+				self.unpaused();
 				self.startAutoPlay(self.settings.unpauseDelay);
 			}
 		},
@@ -606,7 +618,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					if(self.settings.pauseButton !== undefined){
 						self.settings.pauseButton.addClass("paused");
 					}
-					self.settings.paused();
+					self.paused();
 				}, function(){
 					self.settings.autoPlay = true;
 					var autoPlaySequence = function(){self.autoPlaySequence();};
@@ -618,7 +630,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					if(self.settings.pauseButton !== undefined){
 						self.settings.pauseButton.removeClass("paused");
 					}
-					self.settings.unpaused();
+					self.unpaused();
 				});
 			}
 		},
@@ -638,8 +650,8 @@ Aside from these comments, you may modify and distribute this file as you please
 			var self = this;
 			if(!self.active){
 				if(self.settings.cycle || (!self.settings.cycle && self.currentFrameID !== self.numberOfFrames)){
-					if(self.paused){
-						self.paused = false;
+					if(self.isPaused){
+						self.isPaused = false;
 						self.startAutoPlay();
 					}
 										
@@ -648,7 +660,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					
 					self.goTo(self.nextFrameID, 1); //go to the next frame
 				}else if(self.settings.autoPlayDirection === 1){
-					self.paused = true;
+					self.isPaused = true;
 					self.stopAutoPlay();
 				}
 			}
@@ -659,15 +671,15 @@ Aside from these comments, you may modify and distribute this file as you please
 			var self = this;
 			if(!self.active){
 				if(self.settings.cycle || (!self.settings.cycle && self.currentFrameID !== 1)){
-					if(self.paused){
-						self.paused = false;
+					if(self.isPaused){
+						self.isPaused = false;
 						self.startAutoPlay();
 					}
 					self.nextFrameID = (self.currentFrameID === 1) ? self.numberOfFrames : self.currentFrameID - 1;
 					
 					self.goTo(self.nextFrameID, -1); //go to the prev frame
 				}else if(self.settings.autoPlayDirection === -1){
-					self.paused = true;
+					self.isPaused = true;
 					self.stopAutoPlay();
 				}
 			}
@@ -677,9 +689,9 @@ Aside from these comments, you may modify and distribute this file as you please
 		goTo: function(id, direction){		    
 			var self = this;			
 			if(id === self.numberOfFrames){
-				self.settings.beforeLastFrameAnimatesIn();
+				self.beforeLastFrameAnimatesIn();
 			}else if(id === 1){
-				self.settings.beforeFirstFrameAnimatesIn();
+				self.beforeFirstFrameAnimatesIn();
 			}
 									
 			if(self.currentFrame !== undefined && id === self.currentFrame.index() + 1){ //if the user is trying to go to the frame that is already active...
@@ -700,7 +712,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				
 				if(self.transitionsSupported){ //if the browser supports CSS3 transitions...
 					if(self.currentFrame.length !== 0){
-						self.settings.beforeCurrentFrameAnimatesOut();
+						self.beforeCurrentFrameAnimatesOut();
 						self.animateOut(self.direction);
 					}
 					
@@ -748,11 +760,11 @@ Aside from these comments, you may modify and distribute this file as you please
 				            moveIn["left"] = "0%";
 				            moveIn["opacity"] = 1;				            
 				            
-				            self.settings.beforeCurrentFrameAnimatesOut();
+				            self.beforeCurrentFrameAnimatesOut();
 				            self.currentFrame.removeClass("current-frame").animate(animateOut, self.settings.fallback.speed, function(){
 				            });
 				            
-				            self.settings.beforeNextFrameAnimatesIn();
+				            self.beforeNextFrameAnimatesIn();
 				            self.nextFrame.addClass("current-frame").show().css(animateIn).animate(moveIn, self.settings.fallback.speed, function(){
 				                self.currentFrame = self.nextFrame;
 				                
@@ -772,7 +784,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				                
 				                self.currentFrameID = self.currentFrame.index() + 1;
 				                self.active = false;
-				                self.settings.afterNextFrameAnimatesIn();
+				                self.afterNextFrameAnimatesIn();
 				                if(self.settings.autoPlay){
 				                	var autoPlaySequence = function(){self.autoPlaySequence();};
 				                	clearTimeout(self.sequenceTimer);
@@ -787,13 +799,13 @@ Aside from these comments, you may modify and distribute this file as you please
 				        case "fade":
 				        default:
 				            self.sequence.children("li").css({"position": "relative"}); //this allows for fadein/out in IE
-				            self.settings.beforeCurrentFrameAnimatesOut();
+				            self.beforeCurrentFrameAnimatesOut();
 				            self.currentFrame.animate({"opacity": 0}, self.settings.fallback.speed, function(){ //hide the current frame
 				            	self.currentFrame.css({"display": "none", "z-index": "1"});
 				            	self.currentFrame.removeClass("current-frame");
-				            	self.settings.beforeNextFrameAnimatesIn();
+				            	self.beforeNextFrameAnimatesIn();
 				            	self.nextFrame.addClass("current-frame").css({"display": "block", "z-index": self.numberOfFrames}).animate({"opacity": 1}, 500, function(){
-				            		self.settings.afterNextFrameAnimatesIn();
+				            		self.afterNextFrameAnimatesIn();
 				            	}); //make the next frame the current one and show it
 				            	self.currentFrame = self.nextFrame;
 				            	self.currentFrameID = self.currentFrame.index() + 1;
@@ -858,7 +870,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.nextFrameChildren = self.nextFrame.children(); //save the child elements
 			self.frameChildren = self.currentFrame.children(); //save the child elements (the ones we'll animate) in an array
 			
-			self.settings.beforeNextFrameAnimatesIn();
+			self.beforeNextFrameAnimatesIn();
 			if(self.settings.moveActiveFrameToTop){
 			    self.nextFrame.css({"z-index": self.numberOfFrames});
 			}
@@ -868,7 +880,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.modifyElements(self.frameChildren, "");
 					self.frameChildren.addClass("animate-in");
 					self.waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in");
-					if(self.settings.transitionThreshold !== true && self.settings.afterCurrentFrameAnimatesOut != "function () {}"){
+					if(self.settings.transitionThreshold !== true && self.afterCurrentFrameAnimatesOut != "function () {}"){
 						self.waitForAnimationsToComplete(self.currentFrame, self.currentFrame.children(), "out");
 					}
 				}, 50);
@@ -877,7 +889,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.setTransitionProperties(self.frameChildren);
 					self.frameChildren.addClass("animate-in").removeClass("animate-out");
 					self.waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in");
-					if(self.settings.transitionThreshold !== true && self.settings.afterCurrentFrameAnimatesOut != "function () {}"){
+					if(self.settings.transitionThreshold !== true && self.afterCurrentFrameAnimatesOut != "function () {}"){
 						self.waitForAnimationsToComplete(self.currentFrame, self.currentFrame.children(), "out");
 					}
 				}, 50);
@@ -891,7 +903,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				var onceComplete = function(){
 					self.active = false;
 					frame.unbind(self.transitionEnd);
-					self.settings.afterCurrentFrameAnimatesOut();
+					self.afterCurrentFrameAnimatesOut();
 
 					if(inAfterwards){
 						self.animateIn(self.direction);	
@@ -901,7 +913,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				//animate in complete
 				var onceComplete = function(){
 					frame.unbind(self.transitionEnd);
-					self.settings.afterNextFrameAnimatesIn();
+					self.afterNextFrameAnimatesIn();
 
 					if(self.settings.hashTags){ //if hashTags is enabled...
 					    self.currentHashTag = self.currentFrame.attr(self.getHashTagFrom); //get the hashtag name
@@ -917,9 +929,9 @@ Aside from these comments, you may modify and distribute this file as you please
 					}
 					
 					if(self.currentFrameID === self.numberOfFrames){
-						self.settings.afterLastFrameAnimatesIn();
+						self.afterLastFrameAnimatesIn();
 					}else if(self.currentFrameID === 1){
-						self.settings.afterFirstFrameAnimatesIn();
+						self.afterFirstFrameAnimatesIn();
 					}
 					
 					self.nextFrame.removeClass("next-frame").addClass("current-frame");
@@ -956,7 +968,8 @@ Aside from these comments, you may modify and distribute this file as you please
 	}; //END PROTOTYPE
 
 	$.fn.sequence = function(options){
-		return this.each(function(){
+		var self = this;
+		return self.each(function(){
 			var sequence = new Sequence($(this), options, defaults, get);
 			$(this).data("sequence", sequence); 
 		});
@@ -1003,9 +1016,9 @@ Aside from these comments, you may modify and distribute this file as you please
 		    }
 		    $operaTest.remove();
 		}
-	},
+	};
 	
-	defaults = {
+	var defaults = {
 		//General Settings
 		startingFrameID: 1,
 		cycle: true,
@@ -1088,22 +1101,6 @@ Aside from these comments, you may modify and distribute this file as you please
 		fallback: {
 			theme: "slide",
 			speed: 500
-		},
-		
-		//Callbacks
-		paused: function() {},							//triggers when Sequence is paused
-		unpaused: function() {},						//triggers when Sequence is unpaused
-		
-		beforeNextFrameAnimatesIn: function() {},		//triggers before the next frame animates in
-		afterNextFrameAnimatesIn: function() {},		//triggers after the next frame animates in
-		beforeCurrentFrameAnimatesOut: function() {},	//triggers before the current frame animates out
-		afterCurrentFrameAnimatesOut: function() {},	//triggers after the current frame animates out
-		
-		beforeFirstFrameAnimatesIn: function() {},		//triggers before the first frame animates in
-		afterFirstFrameAnimatesIn: function() {},		//triggers after the first frame animates in
-		beforeLastFrameAnimatesIn: function() {},		//triggers before the last frame animates in
-		afterLastFrameAnimatesIn: function() {},		//triggers after the last frame animates in
-
-		afterLoaded: function() {}						//triggers after Sequence is initiated
+		}
 	};
 })(jQuery);

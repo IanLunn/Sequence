@@ -3,3 +3,4 @@
 *.esproj
 /_notes/*
 themes/dev/*
+sftp-config.json

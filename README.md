@@ -19,7 +19,7 @@ Sequence is the jQuery slider plugin with infinite style. It provides the comple
 - [Apple Style](http://www.sequencejs.com/themes/apple-style/)
 
 ##Documentation
-Technical documentation can be found here: [SequenceJS Demo](http://www.sequencejs.com/documentation.html).
+Documentation can be found here: [SequenceJS Demo](http://www.sequencejs.com/documentation.html).
 
 ##Author
 [@Ian Lunn](http://twitter.com/#!/IanLunn)
@@ -34,6 +34,14 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 [SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2012 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
 
 ##What's New? 
+
+###v0.7.2 13/09/2012
+
+**Note: 0.7.2 may not be backwards compatible with existing themes if those themes use callbacks or the public variable `paused`, which has now been renamed to `isPaused`. Please see the documentation for how callbacks now work and update your theme accordingly.**
+
+- Preloader now more stable (although still not perfect, will be fixed in 0.7.3)
+- Change how callbacks work to be more intuitive and work around IE issues
+- Updated themes to work with new callback method
 
 ###v0.7.1 21/08/2012
 - Added hashTag support. See [the modified Modern Slide In demo](http://www.sequencejs.com/themes/modern-slide-in-hashtags/) to see hashTags in action. Also see the [documentation](http://www.sequencejs.com/documentation.html#options-hashtag) for relevant options.

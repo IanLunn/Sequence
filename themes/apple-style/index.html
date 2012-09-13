@@ -25,36 +25,37 @@
 				nextButton: true,
 				prevButton: true,
 				pauseButton: true,
-				hidePreloaderusingCSS: false,						
+				hidePreloaderUsingCSS: false,						
 				animateStartingFrameIn: true, 			
 				transitionThreshold: 500,
 				pauseOnHover: false,
 				customKeyEvents: {
 					80: "pause"
-				},
-				afterNextFrameAnimatesIn: function(){
-					if(sequence.settings.autoPlay){
-						$status.addClass("active").css("opacity", 1);
-					}
-					$(".prev, .next").css("cursor", "pointer").animate({"opacity": 1}, 500);
-				},
-				beforeCurrentFrameAnimatesOut: function(){
-					$status.animate({"opacity": 0}, 500, function(){
-						$status.removeClass("active");
-					});
-					$(".prev, .next").css("cursor", "auto").animate({"opacity": .7}, 500);
-				},
-				paused: function(){
-					$status.animate({"opacity": 0}, 500, function(){
-						$status.removeClass("active").addClass("paused");
-					});
-				},
-				unpaused: function(){
-					$status.removeClass("active paused");
 				}
 			};
 
 			var sequence = $("#sequence").sequence(options).data("sequence");
+
+			sequence.afterNextFrameAnimatesIn = function(){
+				if(sequence.settings.autoPlay){
+					$status.addClass("active").css("opacity", 1);
+				}
+				$(".prev, .next").css("cursor", "pointer").animate({"opacity": 1}, 500);
+			};
+			sequence.beforeCurrentFrameAnimatesOut = function(){
+				$status.animate({"opacity": 0}, 500, function(){
+					$status.removeClass("active");
+				});
+				$(".prev, .next").css("cursor", "auto").animate({"opacity": .7}, 500);
+			};
+			sequence.paused = function(){
+				$status.animate({"opacity": 0}, 500, function(){
+					$status.removeClass("active").addClass("paused");
+				});
+			};
+			sequence.unpaused = function(){
+				$status.removeClass("active paused");
+			};
 		})	
 	</script>
 	<script type="text/javascript">
@@ -85,7 +86,7 @@
 				<li>
 					<div class="intro animate-in">
 						<h2>Built using Sequence.js</h2>
-						<h3>The jQuery Slider Plugin with Infinite Style</h3>
+						<h3>The Responsive Slider with Advanced CSS3 Transitions</h3>
 					</div>
 					<img class="iphone animate-in" src="images/iphone.png" alt="iPhone4" />
 					<img class="iphone-shadow animate-in" src="images/iphone-shadow.png" alt="" />
