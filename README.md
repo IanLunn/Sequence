@@ -19,7 +19,7 @@ Sequence is the jQuery slider plugin with infinite style. It provides the comple
 - [Apple Style](http://www.sequencejs.com/themes/apple-style/)
 
 ##Documentation
-Documentation can be found here: [SequenceJS Demo](http://www.sequencejs.com/documentation.html).
+Documentation can be found here: [SequenceJS Demo](https://github.com/IanLunn/Sequence/blob/master/documentation.md).
 
 ##Author
 [@Ian Lunn](http://twitter.com/#!/IanLunn)
@@ -44,7 +44,7 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 - Updated themes to work with new callback method
 
 ###v0.7.1 21/08/2012
-- Added hashTag support. See [the modified Modern Slide In demo](http://www.sequencejs.com/themes/modern-slide-in-hashtags/) to see hashTags in action. Also see the [documentation](http://www.sequencejs.com/documentation.html#options-hashtag) for relevant options.
+- Added hashTag support. See [the modified Modern Slide In demo](http://www.sequencejs.com/themes/modern-slide-in-hashtags/) to see hashTags in action. Also see the [documentation](https://github.com/IanLunn/Sequence/blob/master/documentation.md#options-hashtag) for relevant options.
 
 ###v0.7.0.1 17/08/2012
 - Minor fix to prevent frames from being able to animate in before another frame has finished animating (when the transitionThreshold is greater than the animation time).
@@ -117,7 +117,7 @@ If Sequence goes into fallback mode because the browser doesn't support CSS3 tra
 **Note: 0.6.2 may not be backwards compatible with existing themes if those themes use the touchEnabled and keysNavigate settings (these settings have changed names, see below)**
 
 ####Added keyEvents Option
-keyEvents allows you to specify which way the left and right arrows should cause Sequence to navigate. [See Keyboard Options](http://www.sequencejs.com/documentation.html#options-keyboard)
+keyEvents allows you to specify which way the left and right arrows should cause Sequence to navigate. [See Keyboard Options](https://github.com/IanLunn/Sequence/blob/master/documentation.md#options-keyboard)
 
 ####Added customKeyEvents Option
 customKeyEvents are keyEvents on steroids! Specify a key (using a keyCode) and the event to be trigger when the user hits that key. Example: 65: "prev" causes Sequence to navigate backwards when the "a" key is pressed on the keyboard.
