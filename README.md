@@ -34,6 +34,8 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 [SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2012 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
 
 ##What's New? 
+###v0.7.3 16/09/2012
+- Preloader should now work perfectly in all browsers
 
 ###v0.7.2 13/09/2012
 
