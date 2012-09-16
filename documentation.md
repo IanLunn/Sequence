@@ -136,7 +136,7 @@ It is possible to place multiple instances of Sequence on the same page, like so
         $(document).ready(function(){
             var sequence = $("#sequence").sequence().data("sequence");
             var sequence2 = $("#sequence2").sequence().data("sequence");
-        }
+        });
     </script>
     
 Finally, jQuery's `.data()` function is used to allow Sequence to save particuraly information about its state as a data attribute. The argument passed to the `.data()` function should always be `"sequence"`, regardless of how many Sequence instances you have on the page.
@@ -390,7 +390,7 @@ As explained in Initiate a Sequence Slider, each instance of a Sequence slider c
                 autoPlayDelay: 3000
             }
             var sequence = $("#sequence").sequence(options).data("sequence");
-        }
+        });
     </script>
 
 Multiple instances of Sequence can be passed the same options:
@@ -403,7 +403,7 @@ Multiple instances of Sequence can be passed the same options:
             }
             var sequence = $("#sequence").sequence(options).data("sequence");
             var sequence2 = $("#sequence2").sequence(options).data("sequence");
-        }
+        });
     </script>
 
 Or differing options:
@@ -421,7 +421,7 @@ Or differing options:
             }
             var sequence = $("#sequence").sequence(options).data("sequence");
             var sequence2 = $("#sequence2").sequence(options2).data("sequence");
-        }
+        });
     </script>
 
 ### <a id="all-options">List of Options</a>
@@ -863,7 +863,7 @@ Fallback theme options are included in the options of each instance of Sequence,
                 }
             }
             var sequence = $("#sequence").sequence(options).data("sequence");
-        }
+        });
     </script>
 
 #### <a id="fallback-options">Fallback Options</a>
@@ -906,7 +906,7 @@ By using the variable that the Sequence object is stored in, you can add custom 
                 //add code to execute here, such as:
                 alert("Do something before the NEXT frame animates in");
             };
-        }
+        });
     </script>
 
 ### <a id="all-callbacks">Compete List of Callbacks</a>
