@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.7.2 Beta
+Version: 0.7.3 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -11,6 +11,7 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
 Aside from these comments, you may modify and distribute this file as you please. Have fun!
 */
+
 (function($){
 	function Sequence(element, options, defaults, get){
 		var self = this;
@@ -158,37 +159,39 @@ Aside from these comments, you may modify and distribute this file as you please
 			    	if(!srcOnly){
 			    		for(var i = length; i > 0; i--){ //for each frame to be preloaded...
 			    			self.sequence.children("li:nth-child("+self.settings.preloadTheseFrames[i-1]+")").find("img").each(function(){ //find <img>'s in specific frames, and for each found...
-			    				imagesToPreload.push($(this)); //add it to the array of images to be preloaded
+			    				imagesToPreload.push($(this)[0]); //add it to the array of images to be preloaded
 			    			});
 		            	}
 			    	}else{
 			    		for(var i = length; i > 0; i--){ //for each frame to be preloaded...
-		            		imagesToPreload.push($("body").find('img[src="'+self.settings.preloadTheseImages[i-1]+'"]')); //find any <img> with the given source and add it to the array of images to be preloaded
+		            		imagesToPreload.push($("body").find('img[src="'+self.settings.preloadTheseImages[i-1]+'"]')[0]); //find any <img> with the given source and add it to the array of images to be preloaded
 			    		}
-			    	}
-			    
+			    	}			    
 		        return imagesToPreload;
 		    }
 	
-            frameImagesToPreload = saveImagesToArray(preloadTheseFramesLength); //get images from particular Sequence frames to be preloaded
-            individualImagesToPreload = saveImagesToArray(preloadTheseImagesLength, true); //get images with specific source values to be preloaded
-            imagesToPreload = frameImagesToPreload.concat(individualImagesToPreload); //combine frame images and individual images
+            var frameImagesToPreload = saveImagesToArray(preloadTheseFramesLength); //get images from particular Sequence frames to be preloaded
+           	var individualImagesToPreload = saveImagesToArray(preloadTheseImagesLength, true); //get images with specific source values to be preloaded
+            var imagesToPreload = $(frameImagesToPreload.concat(individualImagesToPreload)); //combine frame images and individual images
+			var imagesToPreloadLength = imagesToPreload.length;
 
-            if(imagesToPreload.length !== 0){ //if there are images to preload...
-                loaded = 0;
-	            $(imagesToPreload).each(function(){
-	            	var imgSrc = $(this).attr("src"); //get the image src so it can be put back in to convince IE to run the .load() function correctly
-	            	$(this).load(function(){
-		            	loaded++;
-		            	if(loaded === imagesToPreload.length){
-		            		oncePreloaded();
-		            	}
-	            	}).attr("src", imgSrc); //makes .load() work in IE when images are cached
-	            });
-            }else{ //if there aren't images to preload...
-	            oncePreloaded(); //skip preloading
-        	}
-            
+			//reliable .load() alternative from here: https://gist.github.com/797120/b7359a8ba0ab5be298875215d07819fe61f87399
+			if(!imagesToPreload.length){ //if there are no images to preload...
+				oncePreloaded();
+			}else{
+				imagesToPreload.bind("load",function(){
+					if(--imagesToPreloadLength <= 0){ 
+					  oncePreloaded();
+					}
+				}).each(function(){
+					// cached images don't fire load sometimes, so we reset src.
+					if (this.complete || this.complete === undefined){
+					  var src = this.src;				  
+					  this.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="; // webkit hack from http://groups.google.com/group/jquery-dev/browse_thread/thread/eee6ab7b2da50e1f
+					  this.src = src;
+					}  
+				}); 
+			}
     	}else{
 		    $(window).bind("load", function(){
 		    	oncePreloaded();
