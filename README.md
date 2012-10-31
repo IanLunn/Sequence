@@ -1,5 +1,5 @@
-#Sequence - The jQuery Slider Plugin with Infinite Style
-Sequence is the jQuery slider plugin with infinite style. It provides the complete functionality for a website slider without forcing you to use a set theme. In fact, Sequence has no in-built theme, leaving you complete creative control to build a unique slider using only CSS3 -- no jQuery knowledge required!
+#Sequence - The Responsive Slider with Advanced CSS3 Transitions
+Sequence provides the complete functionality for a website slider without forcing you to use a set theme. In fact, Sequence has no in-built theme, leaving you complete creative control to build a unique slider using only CSS3 -- no jQuery knowledge required!
 
 ##Features
 - Unique transition styles created using CSS3
@@ -11,12 +11,14 @@ Sequence is the jQuery slider plugin with infinite style. It provides the comple
 - Semantic and easy to use markup
 - Open source
 
-*Tested down to Firefox 3.6 and IE7. Extensive support details to come
+*Tested down to Firefox 3.6 and IE7. Extensive support details to come.
 
 ##Theme Demos
 - [Modern Slide In](http://www.sequencejs.com/themes/modern-slide-in/)
+- [Modern Slide In (with hashTags enabled)](http://www.sequencejs.com/themes/modern-slide-in-hashtags/)
 - [Sliding Horizontal Parallax](http://www.sequencejs.com/themes/sliding-horizontal-parallax/)
 - [Apple Style](http://www.sequencejs.com/themes/apple-style/)
+- [Documentation Demo](http://www.sequencejs.com/themes/documentation-demo/)
 
 ##Documentation
 Documentation can be found here: [SequenceJS Demo](https://github.com/IanLunn/Sequence/blob/master/documentation.md).
@@ -34,6 +36,16 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 [SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2012 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
 
 ##What's New? 
+###v0.7.4 31/10/2012
+- Now works with jQuery 1.8.2
+- Rewritten `autoPlay` logic, which is now much simpler and easier to maintain
+- Added `.unpause()` function for clarity (`.pause()` will still toggle between pause and unpause for backwards compaitibility)
+- Added `isHardPaused` public variable. `isHardPaused` is set to true when Sequence is paused via the pause button. You can also pass an argument of true when using the `.pause(true)` public method to manually set `isHardPaused` to true
+- The `transitionThreshold` setting now works when `animateStartingFrameIn` is true
+- Fixed keyboard events. Pressing numeric keys will now navigate to respective frames. Custom key events are also working
+- Removed `pauseOnElementsOutsideContainer` setting. Seemed to have been broken for a while and nobody noticed so decided it was useless!
+- Added more inline documentation to the non minified version -- more to come!
+
 ###v0.7.3 16/09/2012
 - Preloader should now work perfectly in all browsers
 

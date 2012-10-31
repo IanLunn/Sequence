@@ -11,7 +11,7 @@
 	<!--[if lt IE 9]><link rel="stylesheet" type="text/css" media="screen" href="css/sequencejs-theme.modern-slide-in.ie.css" /><![endif]-->
 	<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Ruluko|Sirin+Stencil'>
 	
-	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 	<script type="text/javascript">
 	if (typeof jQuery == 'undefined'){
 	    document.write(unescape("%3Cscript src='../../scripts/jquery.js' type='text/javascript'%3E%3C/script%3E"));
@@ -26,10 +26,12 @@
 		
 		$(document).ready(function(){
 			var options = {
+				autoPlay: true,
 				nextButton: true,
 				prevButton: true,
 				animateStartingFrameIn: true,
-				transitionThreshold: 250,
+				autoPlayDelay: 3000,
+				transitionThreshold: 500,
 				preloadTheseFrames: [1],
 				preloadTheseImages: [
 					"images/tn-model1.png",
@@ -105,7 +107,6 @@
 		</div>
 	</div>
 	<div id="main">
-	
 		<div id="content">
 			<img src="images/sequence-logo.png" alt="Sequence" />
 			<p>Sequence is the jQuery slider plugin with infinite style. It provides the complete functionality for a website slider without forcing you to use a set theme. In fact, Sequence has no in-built theme, leaving you complete creative control to build a unique slider using only CSS3 -- no jQuery knowledge required!</p>
@@ -166,6 +167,6 @@
 	    po.src = 'https://apis.google.com/js/plusone.js';
 	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
 	  })();
-	</script>		
+	</script>
 	</body>
 </html>

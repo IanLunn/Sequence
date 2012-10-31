@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.7.3 Beta
+Version: 0.7.4 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -38,7 +38,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		transitions = {
 		'WebkitTransition' : 'webkitTransitionEnd webkitAnimationEnd',
 		'MozTransition'    : 'transitionend animationend',
-		'OTransition'      : 'oTransitionEnd oAnimationEnd otransitionend oanimationend',
+		'OTransition'      : 'otransitionend oanimationend',
 		'msTransition'     : 'MSTransitionEnd MSAnimationEnd',
 		'transition'       : 'transitionend animationend'
 		};
@@ -49,9 +49,9 @@ Aside from these comments, you may modify and distribute this file as you please
 		self.numberOfFrames = self.sequence.children("li").length,
 		self.transitionsSupported = (self.prefix !== undefined) ? true : false, //determine if transitions are supported
 		self.hasTouch = ("ontouchstart" in window) ? true : false, //determine if this is a touch enabled device
-		self.sequenceTimer,
-		self.isPaused = false,
-		self.hoverEvent,
+		self.autoPlayTimer, //the timer used for the autoPlay feature
+		self.isPaused = false, //whether Sequence is paused via being hovered over
+		self.isHardPaused = false, //whether Sequence is paused via a pause button
 		self.defaultPreloader,
 		self.init = {
 			preloader: function(optionPreloader){
@@ -112,21 +112,21 @@ Aside from these comments, you may modify and distribute this file as you please
 		self.settings = $.extend({}, defaults, options),
 		self.settings.preloader = self.init.uiElements(self.settings.preloader, ".sequence-preloader");
 		self.firstFrame = (self.settings.animateStartingFrameIn) ? true : false;
-		
+		self.settings.unpauseDelay = (self.settings.unpauseDelay === null) ? self.settings.autoPlayDelay : self.settings.unpauseDelay; //if the unpauseDelay is not specified, make it the same as the autoPlayDelay speed
 		self.currentHashTag; //the current hash tag taken from the URL
 		self.getHashTagFrom = (self.settings.hashDataAttribute) ? "data-sequence-hashtag": "id"; //get the hashtag from the ID or data attribute?  
 		self.frameHashID = []; //array that matches frames with has IDs
 		
-		if(self.settings.hideFramesUntilPreloaded && self.settings.preloader){
-		    self.sequence.children("li").hide();
+		if(self.settings.hideFramesUntilPreloaded && self.settings.preloader){ //if using a preloader and hiding frames until preloading has completed...
+		    self.sequence.children("li").hide(); //hide Sequence's frames
 		}
 		
-		if(self.prefix === "-o-"){
-		    self.transitionsSupported = get.operaTest();
+		if(self.prefix === "-o-"){ //if Opera prefixes are required...
+		    self.transitionsSupported = get.operaTest(); //run a test to see if Opera correctly supports transitions (Opera 11 has bugs relating to transitions)
 		}
         
         self.modifyElements(self.sequence.children("li").children(), "0s"); //reset transition time to 0s
-		self.sequence.children("li").children().removeClass("animate-in");
+		self.sequence.children("li").children().removeClass("animate-in"); //remove any instance of "animate-in", which should be used incase JS is disabled
 		
 		function oncePreloaded(){
 		    self.afterLoaded();
@@ -207,9 +207,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.settings.pauseButton = self.init.uiElements(self.settings.pauseButton, ".pause");
 			
 			if((self.settings.nextButton !== undefined && self.settings.nextButton !== false) && self.settings.showNextButtonOnInit){self.settings.nextButton.show();}
-			
-			if((self.settings.prevButton !== undefined && self.settings.prevButton !== false) && self.settings.showPrevButtonOnInit){self.settings.prevButton.show();}
-			
+			if((self.settings.prevButton !== undefined && self.settings.prevButton !== false) && self.settings.showPrevButtonOnInit){self.settings.prevButton.show();}			
 			if((self.settings.pauseButton !== undefined && self.settings.pauseButton !== false)){self.settings.pauseButton.show();}
 						
 			if(self.settings.pauseIcon !== false){
@@ -228,8 +226,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.nextFrameID = self.settings.startingFrameID;
 			self.nextFrame = self.sequence.children("li:nth-child("+self.nextFrameID+")");
 			
-			//if using hashtags...
-			if(self.settings.hashTags){
+			if(self.settings.hashTags){ //if using hashtags...
 			    self.sequence.children("li").each(function(){ //for each frame...
 			        self.frameHashID.push($(this).attr(self.getHashTagFrom)); //add the hashtag to an array
 			    });
@@ -248,7 +245,6 @@ Aside from these comments, you may modify and distribute this file as you please
 			}			
 									
 			self.nextFrame = self.sequence.children("li:nth-child("+self.nextFrameID+")");
-						
 			self.nextFrameChildren = self.nextFrame.children();
 			self.direction;
 			
@@ -256,7 +252,6 @@ Aside from these comments, you may modify and distribute this file as you please
 			self.sequence.children("li").css({"width": "100%", "height": "100%", "position": "absolute"}); //do the same for the frames and make them absolute
 
 			if(self.transitionsSupported){ //initiate the full featured Sequence if transitions are supported...
-						
 				if(!self.settings.animateStartingFrameIn){ //start first frame in animated in position				    
 					self.currentFrame = self.nextFrame.addClass("current-frame");
 					if(self.settings.moveActiveFrameToTop){
@@ -275,11 +270,7 @@ Aside from these comments, you may modify and distribute this file as you please
 						self.modifyElements(self.currentFrameChildren, "");
 					}, 100);
 					
-					if(self.settings.autoPlay){
-						var autoPlaySequence = function(){self.autoPlaySequence();};
-						clearTimeout(self.sequenceTimer);
-						self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
-					}
+					self.startAutoPlay(self.settings.autoPlayDelay);
 				}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.settings.autoPlayDirection -1 && self.settings.animateStartingFrameIn){ //animate in backwards
 					self.modifyElements(self.nextFrameChildren, "0s");
 					self.nextFrameChildren.addClass("animate-out");
@@ -301,29 +292,25 @@ Aside from these comments, you may modify and distribute this file as you please
     			self.currentFrameID = self.nextFrameID;			    		
                 self.sequence.children("li").children().addClass("animate-in");
                 self.sequence.children(":not(li:nth-child("+self.nextFrameID+"))").css({"display": "none", "opacity": 0});
-                if(self.settings.autoPlay){
-                	var autoPlaySequence = function(){self.autoPlaySequence();};
-                	clearTimeout(self.sequenceTimer);
-                	self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
-                }			        			    
+                self.startAutoPlay(self.settings.autoPlayDelay);
 			}
 			//END INIT
 			//EVENTS
-			if(self.settings.nextButton !== undefined){
-				self.settings.nextButton.click(function(){
-					self.next();
+			if(self.settings.nextButton !== undefined){ //if a next button is defined...
+				self.settings.nextButton.click(function(){ //when the next button is clicked...
+					self.next(); //go to the next frame
 				});
 			}
 									
-			if(self.settings.prevButton !== undefined){
-				self.settings.prevButton.click(function(){
-					self.prev();
+			if(self.settings.prevButton !== undefined){ //if a previous button is defined...
+				self.settings.prevButton.click(function(){ //when the previous button is clicked...
+					self.prev(); //go to the previous frame
 				});
 			}
 						
-			if(self.settings.pauseButton !== undefined){
-				self.settings.pauseButton.click(function(){
-					self.pause();
+			if(self.settings.pauseButton !== undefined){ //if a pause button is defined...
+				self.settings.pauseButton.click(function(){ //when the pause button is clicked...
+					self.pause(true); //pause Sequence and set hardPause to true
 				});
 			}
 			
@@ -332,103 +319,47 @@ Aside from these comments, you may modify and distribute this file as you please
 					'left'	: 37,
 					'right'	: 39
 				};
-				
-				$(document).keydown(function(e){
-					function keyEvents(keyPressed, keyDirections){
+
+				function keyEvents(keyPressed, keyDirections){
 						var keyCode;
+
 						for(keyCodes in keyDirections){
 							if(keyCodes === "left" || keyCodes === "right"){
 								keyCode = defaultKeys[keyCodes];
 							}else{
 								keyCode = keyCodes;
 							}
-							if(keyPressed === keyCode){
-								self.initCustomKeyEvent(keyDirections[keyCodes]);
+
+							if(keyPressed === parseFloat(keyCode)){ //if the key pressed is associated with a function...
+								self.initCustomKeyEvent(keyDirections[keyCodes]); //initiate the function
 							}
 						}
 					}
-					
-					//if numeric keys should go to a specific frame...
-					var char = parseFloat(String.fromCharCode(e.keyCode));
+				
+				$(document).keydown(function(e){ //when a key is pressed...					
+					var char = String.fromCharCode(e.keyCode);
 					if((char > 0 && char <= self.numberOfFrames) && (self.settings.numericKeysGoToFrames)){
 						self.nextFrameID = char;
-						self.goTo(char); //go to specified frame
+						self.goTo(self.nextFrameID); //go to specified frame
 					}
 					
 					keyEvents(e.keyCode, self.settings.keyEvents); //run default keyevents
 					keyEvents(e.keyCode, self.settings.customKeyEvents); //run custom keyevents
 				});
 			}
-			
-			function hoverDetect(e){
-				self.containerLeft = self.container.position().left;
-				self.containerRight = (self.containerLeft + self.container.width());
-				self.containerTop = self.container.position().top;
-				self.containerBottom = (self.containerTop + self.container.height());
-				var pageX = e.pageX;
-				var pageY = e.pageY;
-				if(pageX >= self.containerLeft && pageX <= self.containerRight && pageY >= self.containerTop && pageY <= self.containerBottom){
-					self.settings.autoPlay = false;
-					clearTimeout(self.sequenceTimer);
-					if(self.settings.pauseIcon !== undefined){
-						self.settings.pauseIcon.show();
-					}
-					if(self.settings.pauseButton !== undefined){
-						self.settings.pauseButton.addClass("paused");
-					}
-					self.paused();
-					self.sequence.unbind("mousemove");
-				}
-			}
-						
-			if(self.settings.pauseOnHover && !self.settings.pauseOnElementsOutsideContainer && self.settings.autoPlay){
-				
-				self.hoverEvent = self.sequence.mousemove(function(e){
-					hoverDetect(e);
-				});
-				
-				self.sequence.mouseleave(function(e){
-						self.settings.autoPlay = true;
-						var autoPlaySequence = function(){self.autoPlaySequence();};
-						clearTimeout(self.sequenceTimer);
-						self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
-						if(self.settings.pauseIcon !== undefined){
-							self.settings.pauseIcon.hide();
-						}
-						if(self.settings.pauseButton !== undefined){
-							self.settings.pauseButton.removeClass("paused");
-						}
-						self.unpaused();
-						
-						if(self.sequence.data("events").mousemove === undefined){
-							self.sequence.mousemove(function(e){
-								hoverDetect(e);
-							});
-						}
-				});
-			}else if(self.settings.pauseOnHover && self.settings.autoPlay){
-				self.hoverEvent = self.sequence.hover(function(e){
-					self.settings.autoPlay = false;
-					clearTimeout(self.sequenceTimer);
-					if(self.settings.pauseIcon !== undefined){
-						self.settings.pauseIcon.show();
-					}
-					if(self.settings.pauseButton !== undefined){
-						self.settings.pauseButton.addClass("paused");
-					}
-					self.paused();
-				}, function(){
-					self.settings.autoPlay = true;
-					var autoPlaySequence = function(){self.autoPlaySequence();};
-					clearTimeout(self.sequenceTimer);
-					self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
-					if(self.settings.pauseIcon !== undefined){
-						self.settings.pauseIcon.hide();
-					}
-					if(self.settings.pauseButton !== undefined){
-						self.settings.pauseButton.removeClass("paused");
-					}
-					self.unpaused();
+
+			if(self.settings.pauseOnHover && self.settings.autoPlay){ //if using pauseOnHover and autoPlay
+				self.sequence.on({
+				    mouseenter: function() { //when the mouse enter the Sequence element...
+				        if(!self.isHardPaused) { //if Sequence is hard paused (via a pause button)...
+				        	self.pause(); //pause autoPlay
+				        }
+				    },
+				    mouseleave: function() { //when the mouse leaves the Sequence element...
+				        if(!self.isHardPaused) { //if Sequence is hard paused (via a pause button)...
+				        	self.unpause(); //unpause autoPlay
+				        }
+				    }
 				});
 			}
 			
@@ -439,16 +370,15 @@ Aside from these comments, you may modify and distribute this file as you please
     			    if(self.currentHashTag !== newTag){ //if the last hashtag is not the same as the current one...
     			        self.currentHashTag = newTag; //save the new tag
     			        self.frameHashIndex = $.inArray(self.currentHashTag, self.frameHashID); //get the index of the frame that matches the hashtag
-    			        //if the hashtag matches a Sequence frame ID...
-    			        if(self.frameHashIndex !== -1){
-    			            self.nextFrameID = self.frameHashIndex + 1;
-                            self.goTo(self.nextFrameID);
+    			        if(self.frameHashIndex !== -1){ //if the hashtag matches a Sequence frame ID...
+    			            self.nextFrameID = self.frameHashIndex + 1; //set that frame as the next one
+                            self.goTo(self.nextFrameID); //go to the next frame
     			        }
     			    }
     			});
 			}
 			
-			if(self.settings.swipeNavigation && self.hasTouch){
+			if(self.settings.swipeNavigation && self.hasTouch){ //if using swipeNavigation and the device has touch capabilities...
         		var touches = {
         		"touchstartX": -1,
         		"touchstartY": -1,
@@ -532,17 +462,8 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.prev();
 					break;
 				case "pause":
-					self.pause();
+					self.pause(true);
 					break;
-			}
-		},
-		
-		autoPlaySequence: function(direction){
-			var self = this;
-			if(self.settings.autoPlayDirection === 1){
-				self.next();
-			}else{
-				self.prev();
 			}
 		},
 		
@@ -577,130 +498,103 @@ Aside from these comments, you may modify and distribute this file as you please
 				);
 			});
 		},
-		
-		//toggle start/stopAutoPlay
-		pause: function(){
+
+		//start autoPlay after a specified delay
+		startAutoPlay: function(delay){
 			var self = this;
-			if(self.settings.autoPlay){ //pause Sequence
-				if(self.settings.pauseButton !== undefined){
-					self.settings.pauseButton.addClass("paused");
-					if(self.settings.pauseIcon !== undefined){
-						self.settings.pauseIcon.show();
-					}
-				}
-				self.paused();
-				self.stopAutoPlay();
-			}else{ //start autoPlay
-				if(self.settings.pauseButton !== undefined){
-					self.settings.pauseButton.removeClass("paused");
-					if(self.settings.pauseIcon !== undefined){
-						self.settings.pauseIcon.hide();
-					}
-				}
-				self.unpaused();
-				self.startAutoPlay(self.settings.unpauseDelay);
-			}
-		},
-		
-		//start Sequence causing frames to change every x amount of seconds
-		startAutoPlay: function(wait, newAutoPlayDelay){
-			var self = this;
-			wait = (wait === undefined) ? 0 : wait;
-			self.settings.autoPlayDelay = (newAutoPlayDelay === undefined) ? self.settings.autoPlayDelay : newAutoPlayDelay;
-			self.settings.autoPlay = true;
-			var autoPlaySequence = function(){self.autoPlaySequence();};
-			clearTimeout(self.sequenceTimer);
-			self.sequenceTimer = setTimeout(autoPlaySequence, wait, self);
-			if(self.settings.pauseOnHover){
-				self.hoverEvent = self.sequence.hover(function(){
-					self.settings.autoPlay = false;
-					clearTimeout(self.sequenceTimer);
-					if(self.settings.pauseIcon !== undefined){
-						self.settings.pauseIcon.show();
-					};
-					if(self.settings.pauseButton !== undefined){
-						self.settings.pauseButton.addClass("paused");
-					}
-					self.paused();
-				}, function(){
-					self.settings.autoPlay = true;
-					var autoPlaySequence = function(){self.autoPlaySequence();};
-					clearTimeout(self.sequenceTimer);
-					self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
-					if(self.settings.pauseIcon !== undefined){
-						self.settings.pauseIcon.hide();
-					}
-					if(self.settings.pauseButton !== undefined){
-						self.settings.pauseButton.removeClass("paused");
-					}
-					self.unpaused();
-				});
+			if(self.settings.autoPlay && !self.isPaused){ //if using autoPlay and Sequence isn't paused...
+				self.stopAutoPlay(); //stop autoPlay before starting it again
+				self.autoPlayTimer = setTimeout(function(){ //start a new autoPlay timer and...
+					self.settings.autoPlayDirection === 1 ? self.next(): self.prev(); //go to either the next or previous frame
+				}, delay); //after a specified delay
 			}
 		},
 		
 		//stop causing Sequence to automatically change frame every x amount of seconds
 		stopAutoPlay: function(){
 			var self = this;
-			self.settings.autoPlay = false;
-			clearTimeout(self.sequenceTimer);
-			if(self.hoverEvent !== undefined){
-				self.hoverEvent.unbind();
+			clearTimeout(self.autoPlayTimer);
+		},
+
+		/*
+		Toggle startAutoPlay (unpausing autoPlay) and stopAutoPlay (pausing autoPlay)
+
+		hardPause: if true, Sequence's pauseOnHover will not execute. Useful for pause buttons.
+
+		Note: Sequence 0.7.3 and below didn't have an .unpause() function -- .pause() would pause/unpause
+		based on the current state. .unpause() is now included for clarity but the .pause() function will
+		still toggle between paused and unpaused states.
+		*/
+		pause: function(hardPause){
+			var self = this;
+			if(!self.isPaused){ //if pausing Sequence...
+				if(self.settings.pauseButton !== undefined){ //if a pause button is defined...
+					self.settings.pauseButton.addClass("paused"); //add the class of "paused" to the pause button
+					if(self.settings.pauseIcon !== undefined){ //if a pause icon is defined...
+						self.settings.pauseIcon.show(); //show the pause icon
+					}
+				}
+				self.paused(); //callback when Sequence is paused
+				self.isPaused = true;
+				self.isHardPaused = (hardPause) ? true : false; //if hardPausing, set hardPause to true
+				self.stopAutoPlay();
+			}else{ //if unpausing Sequence...
+				self.unpause();
 			}
 		},
+
+		//Start the autoPlay feature, as well as deal with any changes to pauseButtons, pauseIcons and public variables etc
+		unpause: function(hardPause) {
+			var self = this;
+			if(self.settings.pauseButton !== undefined){ //if a pause button is defined...
+				self.settings.pauseButton.removeClass("paused"); //remove the class of "paused" from the pause button
+				if(self.settings.pauseIcon !== undefined){ //if a pause icon is defined...
+					self.settings.pauseIcon.hide(); //hide the pause icon
+				}
+			}
+			self.unpaused(); //callback when Sequence is unpaused
+			self.isPaused = false;
+			self.isHardPaused = false;
+			self.startAutoPlay(self.settings.unpauseDelay); //start autoPlay after a delay specified via the unpauseDelay setting
+		},
 		
-		//go to the frame ahead of the current one
+		//Go to the frame ahead of the current one
 		next: function(){
 			var self = this;
-			if(!self.active){
-				if(self.settings.cycle || (!self.settings.cycle && self.currentFrameID !== self.numberOfFrames)){
-					if(self.isPaused){
-						self.isPaused = false;
-						self.startAutoPlay();
-					}
-										
-					self.nextFrameID = (self.currentFrameID !== self.numberOfFrames) ? self.currentFrameID + 1 : 1;
-					
-					
-					self.goTo(self.nextFrameID, 1); //go to the next frame
-				}else if(self.settings.autoPlayDirection === 1){
-					self.isPaused = true;
-					self.stopAutoPlay();
-				}
+			if(!self.active && (self.settings.cycle || (!self.settings.cycle && self.currentFrameID !== self.numberOfFrames))){
+				self.nextFrameID = (self.currentFrameID !== self.numberOfFrames) ? self.currentFrameID + 1 : 1; //work out the next frame
+				self.goTo(self.nextFrameID, 1); //go to the next frame
 			}
 		},
 		
-		//go to the frame prior to the current one
+		//Go to the frame prior to the current one
 		prev: function(){
 			var self = this;
-			if(!self.active){
-				if(self.settings.cycle || (!self.settings.cycle && self.currentFrameID !== 1)){
-					if(self.isPaused){
-						self.isPaused = false;
-						self.startAutoPlay();
-					}
-					self.nextFrameID = (self.currentFrameID === 1) ? self.numberOfFrames : self.currentFrameID - 1;
-					
-					self.goTo(self.nextFrameID, -1); //go to the prev frame
-				}else if(self.settings.autoPlayDirection === -1){
-					self.isPaused = true;
-					self.stopAutoPlay();
-				}
+			if(!self.active && (self.settings.cycle || (!self.settings.cycle && self.currentFrameID !== 1))){
+				self.nextFrameID = (self.currentFrameID === 1) ? self.numberOfFrames : self.currentFrameID - 1; //work out the prev frame
+				self.goTo(self.nextFrameID, -1); //go to the prev frame
 			}
 		},
 		
-		//go to a specific frame
-		goTo: function(id, direction){		    
-			var self = this;			
+		/*
+		Go to a specific frame
+		
+		id: number of the frame to go to
+		direction: direction to get to that frame (1 = forward, -1 = reverse)
+		*/
+		goTo: function(id, direction){	
+			var self = this;
+			id = parseFloat(id); //convert the id to a number just in case
 			if(id === self.numberOfFrames){
 				self.beforeLastFrameAnimatesIn();
 			}else if(id === 1){
 				self.beforeFirstFrameAnimatesIn();
 			}
-									
-			if(self.currentFrame !== undefined && id === self.currentFrame.index() + 1){ //if the user is trying to go to the frame that is already active...
-				return false; //...don't go to that frame
+
+			if(id === self.currentFrameID){ //if the user is trying to go to the frame that is already active...
+				return false; //don't go to that frame
 			}else if(!self.active){ //if there are no animations running...
-				self.active = true; //set the sequence as active
+				self.active = true;
 				self.currentFrame = self.sequence.children(".current-frame"); //find which frame is active
 				self.nextFrame = self.sequence.children("li:nth-child("+id+")"); //grab the next frame
 				
@@ -718,34 +612,56 @@ Aside from these comments, you may modify and distribute this file as you please
 						self.beforeCurrentFrameAnimatesOut();
 						self.animateOut(self.direction);
 					}
-					
-
-					var animateIn = function(){
-						self.animateIn(self.direction);
-						self.currentFrameID = id;
-					};
 															
-					if(!self.firstFrame){
+					if(!self.firstFrame){ //if this isn't the first frame to be shown...
 						switch(self.settings.transitionThreshold){
 							case true:
-								self.waitForAnimationsToComplete(self.currentFrame, self.frameChildren, "out");
+								self.waitForAnimationsToComplete(self.currentFrame, self.frameChildren, "out"); //wait for the current frame to stop animating out
 								break;
 							
 							case false:
-								animateIn();
+								self.animateIn(self.direction); //cause the next frame to animate in
 								break;
 							
 							default:
-								setTimeout(animateIn, self.settings.transitionThreshold);
+								setTimeout(function(){ //cause the next frame to animate in after a certain period
+									self.animateIn(self.direction);
+								}, self.settings.transitionThreshold);
 								break;
 						}
-					}else{		
-						animateIn();
+					}else{ //if this is the first frame to be shown...
+						self.animateIn(self.direction); //cause the next frame to animate in
+						self.firstFrame = false; //no longer the first frame
 					}
-				}else{ //if the browser doesn't support CSS3 transitions...				    
-				    switch(self.settings.fallback.theme){
-				        //run the slide fallback theme
-				        case "slide":
+				}else{ //if the browser doesn't support CSS3 transitions...
+					function animationComplete() {
+			    		self.currentFrame = self.nextFrame;				                
+			            self.setHashTag();	                
+			            self.currentFrameID = self.currentFrame.index() + 1;
+			            self.active = false;
+			            self.startAutoPlay(self.settings.autoPlayDelay);
+				    }
+
+				    self.beforeCurrentFrameAnimatesOut(); //callback	
+
+				    switch(self.settings.fallback.theme) {
+				    	case "fade": //if using the fade fallback theme...
+				            self.sequence.children("li").css({"position": "relative"}); //this allows for fadein/out in IE
+				            self.currentFrame.animate({"opacity": 0}, self.settings.fallback.speed, function(){ //hide the current frame
+				            	self.currentFrame.css({"display": "none", "z-index": "1"});
+				            	self.currentFrame.removeClass("current-frame");
+				            	self.beforeNextFrameAnimatesIn();
+				            	self.nextFrame.addClass("current-frame").css({"display": "block", "z-index": self.numberOfFrames}).animate({"opacity": 1}, 500, function(){
+				            		self.afterNextFrameAnimatesIn();
+				            	}); //make the next frame the current one and show it
+				            	animationComplete();
+				            });
+				            
+				            self.sequence.children("li").css({"position": "relative"}); //this allows for fadein/out in IE
+				        break;
+
+				        case "slide": //if using the slide fallback theme...
+				        default:
                             //create objects which will save the .css() and .animation() objects
 				            var animateOut = {};
 				            var animateIn = {};
@@ -761,72 +677,21 @@ Aside from these comments, you may modify and distribute this file as you please
 				            }
 				            
 				            moveIn["left"] = "0%";
-				            moveIn["opacity"] = 1;				            
+				            moveIn["opacity"] = 1;
 				            
-				            self.beforeCurrentFrameAnimatesOut();
-				            self.currentFrame.removeClass("current-frame").animate(animateOut, self.settings.fallback.speed, function(){
-				            });
-				            
-				            self.beforeNextFrameAnimatesIn();
-				            self.nextFrame.addClass("current-frame").show().css(animateIn).animate(moveIn, self.settings.fallback.speed, function(){
-				                self.currentFrame = self.nextFrame;
-				                
-				                
-				                
-				                if(self.settings.hashTags){ //if hashTags is enabled...
-				                    self.currentHashTag = self.currentFrame.attr(self.getHashTagFrom); //get the hashtag name
-				                    self.frameHashIndex = $.inArray(self.currentHashTag, self.frameHashID); //get the index of the frame that matches the hashtag
-				                    //if the hashtag matches a Sequence frame ID...
-				                    if(self.frameHashIndex !== -1){
-				                        self.nextFrameID = self.frameHashIndex + 1;
-				                        document.location.hash = "#"+self.currentHashTag;
-				                    }else{
-				                        self.nextFrameID = self.settings.startingFrameID;
-				                    }					    
-				                }				                
-				                
-				                self.currentFrameID = self.currentFrame.index() + 1;
-				                self.active = false;
+				            self.currentFrame.removeClass("current-frame").animate(animateOut, self.settings.fallback.speed); //cause the current frame to animate out
+				            self.beforeNextFrameAnimatesIn(); //callback
+				            self.nextFrame.addClass("current-frame").show().css(animateIn).animate(moveIn, self.settings.fallback.speed, function(){ //cause the next frame to animate in
+				                animationComplete();
 				                self.afterNextFrameAnimatesIn();
-				                if(self.settings.autoPlay){
-				                	var autoPlaySequence = function(){self.autoPlaySequence();};
-				                	clearTimeout(self.sequenceTimer);
-				                	self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
-				                }
 				            });				            
-				            
-				            				            
-				        break;
-				        
-				        //run the fade fallback theme
-				        case "fade":
-				        default:
-				            self.sequence.children("li").css({"position": "relative"}); //this allows for fadein/out in IE
-				            self.beforeCurrentFrameAnimatesOut();
-				            self.currentFrame.animate({"opacity": 0}, self.settings.fallback.speed, function(){ //hide the current frame
-				            	self.currentFrame.css({"display": "none", "z-index": "1"});
-				            	self.currentFrame.removeClass("current-frame");
-				            	self.beforeNextFrameAnimatesIn();
-				            	self.nextFrame.addClass("current-frame").css({"display": "block", "z-index": self.numberOfFrames}).animate({"opacity": 1}, 500, function(){
-				            		self.afterNextFrameAnimatesIn();
-				            	}); //make the next frame the current one and show it
-				            	self.currentFrame = self.nextFrame;
-				            	self.currentFrameID = self.currentFrame.index() + 1;
-				            	self.active = false;
-				            	if(self.settings.autoPlay){
-				            		var autoPlaySequence = function(){self.autoPlaySequence();};
-				            		clearTimeout(self.sequenceTimer);
-				            		self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
-				            	}
-				            });
-				            
-				            self.sequence.children("li").css({"position": "relative"}); //this allows for fadein/out in IE
 				        break;
 				    }
 				}
 			}
 		},
 		
+		//cause an active frame to animate out
 		animateOut: function(direction){
 			var self = this;
 			if(self.settings.moveActiveFrameToTop){
@@ -853,17 +718,19 @@ Aside from these comments, you may modify and distribute this file as you please
 				self.frameChildren.removeClass("animate-in");
 			}
 			
-			if(self.settings.transitionThreshold){
+			if(self.settings.transitionThreshold === true){
 				self.waitForAnimationsToComplete(self.currentFrame, self.currentFrame.children(), "out", true);
 			}
 		},
 		
+		//case the next frame to animate in
 		animateIn: function(direction){
 			var self = this;
 			self.active = true;
+
 			self.currentFrame.unbind(self.transitionEnd); //remove the animation end event
 			self.currentFrame = self.nextFrame; //the next frame is now the current one
-			
+
 			if(direction === 1){
 				self.currentFrameID = (self.currentFrameID !== self.numberOfFrames) ? self.currentFrameID + 1 : 1;
 			}else{
@@ -883,7 +750,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.modifyElements(self.frameChildren, "");
 					self.frameChildren.addClass("animate-in");
 					self.waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in");
-					if(self.settings.transitionThreshold !== true && self.afterCurrentFrameAnimatesOut != "function () {}"){
+					if(self.settings.transitionThreshold !== true && self.afterCurrentFrameAnimatesOut !== "function () {}"){
 						self.waitForAnimationsToComplete(self.currentFrame, self.currentFrame.children(), "out");
 					}
 				}, 50);
@@ -899,7 +766,14 @@ Aside from these comments, you may modify and distribute this file as you please
 			}
 		},
 		
-		waitForAnimationsToComplete: function(frame, elements, direction, inAfterwards){
+		/*
+			initiates functionality once a frame has finished animating
+			frame: the frame <li> which is animating
+			frameChildren: the animated direct child elements of the frame
+			direction: whether the elements are animating in to an active position or out of an active position
+			inAfterwards: whether a frame will animate in once another has finished animating out
+		*/
+		waitForAnimationsToComplete: function(frame, frameChildren, direction, inAfterwards){
 			var self = this;
 			if(direction === "out"){
 				//animate out complete
@@ -908,7 +782,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					frame.unbind(self.transitionEnd);
 					self.afterCurrentFrameAnimatesOut();
 
-					if(inAfterwards){
+					if(inAfterwards === true){
 						self.animateIn(self.direction);	
 					}		
 				};
@@ -917,19 +791,8 @@ Aside from these comments, you may modify and distribute this file as you please
 				var onceComplete = function(){
 					frame.unbind(self.transitionEnd);
 					self.afterNextFrameAnimatesIn();
-
-					if(self.settings.hashTags){ //if hashTags is enabled...
-					    self.currentHashTag = self.currentFrame.attr(self.getHashTagFrom); //get the hashtag name
-					    self.frameHashIndex = $.inArray(self.currentHashTag, self.frameHashID); //get the index of the frame that matches the hashtag
-					    //if the hashtag matches a Sequence frame ID...
-					    if(self.frameHashIndex !== -1 && (self.settings.hashChangesOnFirstFrame || !self.firstFrame)){
-					        self.nextFrameID = self.frameHashIndex + 1;
-                            document.location.hash = "#"+self.currentHashTag;
-					    }else{
-					        self.nextFrameID = self.settings.startingFrameID;
-					        self.firstFrame = false;
-					    }					    
-					}
+					self.setHashTag();
+					self.currentFrameID = self.currentFrame.index() + 1;
 					
 					if(self.currentFrameID === self.numberOfFrames){
 						self.afterLastFrameAnimatesIn();
@@ -939,25 +802,22 @@ Aside from these comments, you may modify and distribute this file as you please
 					
 					self.nextFrame.removeClass("next-frame").addClass("current-frame");
 					self.active = false;
-		
-					if(self.settings.autoPlay){
-						var autoPlaySequence = function(){self.autoPlaySequence();};
-						clearTimeout(self.sequenceTimer);
-						self.sequenceTimer = setTimeout(autoPlaySequence, self.settings.autoPlayDelay, self);
-					}				
+					if(!self.isHardPaused) {
+						self.startAutoPlay(self.settings.autoPlayDelay);
+					}
 				};
 			}
 		
-			elements.each(function(){
+			frameChildren.each(function(){
 				$(this).data('animationEnded', false); // set the data attribute to indicate that the elements animation has not yet ended
 			});
 	
 			self.currentFrame.bind(self.transitionEnd, function(e){
 				$(e.target).data('animationEnded', true); // this element has finished it's animation
 			
-				// now we'll check if all elements are finished animating
+				// now check if all elements have finished animating
 				var allAnimationsEnded = true;
-					elements.each(function(){
+					frameChildren.each(function(){
 						if($(this).data('animationEnded') === false){
 							allAnimationsEnded = false;
 						}
@@ -967,6 +827,22 @@ Aside from these comments, you may modify and distribute this file as you please
 					onceComplete();
 				}
 			});
+		},
+
+		setHashTag: function() {
+			var self = this;
+			if(self.settings.hashTags){ //if hashTags is enabled...
+			    self.currentHashTag = self.currentFrame.attr(self.getHashTagFrom); //get the hashtag name
+			    self.frameHashIndex = $.inArray(self.currentHashTag, self.frameHashID); //get the index of the frame that matches the hashtag
+			    //if the hashtag matches a Sequence frame ID...
+			    if(self.frameHashIndex !== -1 && (self.settings.hashChangesOnFirstFrame || !self.firstFrame)){
+			        self.nextFrameID = self.frameHashIndex + 1;
+                    document.location.hash = "#"+self.currentHashTag;
+			    }else{
+			        self.nextFrameID = self.settings.startingFrameID;
+			        self.firstFrame = false;
+			    }					    
+			}
 		}
 	}; //END PROTOTYPE
 
@@ -1023,12 +899,12 @@ Aside from these comments, you may modify and distribute this file as you please
 	
 	var defaults = {
 		//General Settings
-		startingFrameID: 1,
-		cycle: true,
-		animateStartingFrameIn: false,
-		transitionThreshold: 1000,
-		reverseAnimationsWhenNavigatingBackwards: true,
-		moveActiveFrameToTop: true,
+		startingFrameID: 1, //The frame (the list item `<li>`) that should first be displayed when Sequence loads
+		cycle: true, //Whether Sequence should navigate to the first frame after the last frame and vice versa
+		animateStartingFrameIn: false, //Whether the first frame should animate in to its active position
+		transitionThreshold: 1000, //Whether there should be a delay between a frame animating out and the next animating in
+		reverseAnimationsWhenNavigatingBackwards: true, //Whether animations should be reversed when a user navigates backwards by clicking a previous button/swiping/pressing the left key
+		moveActiveFrameToTop: true, //Whether a frame should be given a higher `z-index` than other frames whilst it is active, to bring it above the others
 		
 		//Autoplay Settings
 		autoPlay: true,
@@ -1043,10 +919,9 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		//Pause Settings
 		pauseButton: false, //if dev settings are true, the pauseButton will be ".pause"
-		unpauseDelay: 0, //the time to wait before navigating to the next frame when Sequence is unpaused from the pause button
+		unpauseDelay: null, //the time to wait before navigating to the next frame when Sequence is unpaused. Note that if an unpauseDelay is not specified, the default is the same as the autoPlayDelay setting
 		pauseOnHover: true,
 		pauseIcon: false, //this is an indicator to show Sequence is paused
-		pauseOnElementsOutsideContainer: false,
 		
 		//Preloader Settings
 		preloader: true,
@@ -1093,7 +968,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		//hashTags Settings
 		//when using hashTags, please include a reference to Ben Alman's jQuery HashChange plugin above your reference to Sequence.js
 		
-		//info : http://benalman.com/projects/jquery-hashchange-plugin/
+		//info: http://benalman.com/projects/jquery-hashchange-plugin/
 		//plugin: https://raw.github.com/cowboy/jquery-hashchange/v1.3/jquery.ba-hashchange.min.js
 		//GitHub: https://github.com/cowboy/jquery-hashchange
 		hashTags: false, //when a frame is navigated to, change the hashtag to the frames ID

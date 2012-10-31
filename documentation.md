@@ -107,10 +107,10 @@
 
 Place a link to jQuery and the sequence.jquery-min.js file in the `<head>` of your document:
 
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script type="text/javascript" src="scripts/sequence.jquery-min.js"></script>
 
-Currently Sequence supports **jQuery 1.7.2**.
+Currently Sequence supports **jQuery 1.7.1 - 1.8.2**.
 
 ### <a id="initiate-sequence">Initiate Sequence</a>
 
@@ -438,7 +438,7 @@ The frame (the list item `<li>`) that should first be displayed when Sequence lo
 ##### cycle
 *Type: true/false, Default: `true`*
 
-Whether or not Sequence should navigate to the first frame after the last frame and vice versa.
+Whether Sequence should navigate to the first frame after the last frame and vice versa.
 
 - `true`: When a user navigates forward from the last frame, Sequence will go to the first frame. Likewise, when a user navigates backwards from the first frame, Sequence will go to the last frame.
 - `false`: When a user navigates forward from the last frame or backwards from the first frame, Sequence will not go to another frame.
@@ -446,13 +446,15 @@ Whether or not Sequence should navigate to the first frame after the last frame 
 ##### animateStartingFrameIn
 *Type: true/false, Default: `false`*
 
+Whether the first frame should animate in to its active position.
+
 - `true`: The starting frame will begin in its "start" position and move to its "animate-in" position when Sequence loads.
 - `false`: The starting frame will begin in its "animate-in" position when Sequence loads.
 
 ##### transitionThreshold
 *Type: true/false or a number representing milliseconds, Default: `1000`*
 
-Whether or not there should be a delay between a frame animating out and the next animating in.
+Whether there should be a delay between a frame animating out and the next animating in.
 
 - `true`: the next frame will not animate in until the current frame has completely animated out.
 - `false`: the next frame will animate in at the same time as the current frame animating out.
@@ -539,9 +541,9 @@ A CSS selector that, when clicked, causes Sequence to pause the autoPlay feature
 - CSS Selector: Specify a CSS selector to an HTML element you have manually added to the document.
 
 ##### unpauseDelay
-*Type: a number representing time in milliseconds, Default: `0`, Dependencies: `autoPlay: true` and `pauseButton: true` or `pauseButton: "<CSS selector>"`*
+*Type: a number representing time in milliseconds, Default: same value as `autoPlayDelay`, Dependencies: `autoPlay: true` and `pauseButton: true` or `pauseButton: "<CSS selector>"`*
 
-The time Sequence should wait before starting autoPlay again once the user unpauses via the pause button. This only applies for the pause button and not the unpausing that occurs when the cursor is moved outside of the Sequence container.
+The time Sequence should wait before starting autoPlay again once the user unpauses Sequence. The default value is the same as autoPlayDelay.
 
 ##### pauseOnHover
 *Type: true/false, Default: `true`, dependencies: `autoPlay: true`*
