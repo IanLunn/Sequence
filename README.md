@@ -36,6 +36,9 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 [SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2012 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
 
 ##What's New? 
+###v0.7.4.1 01/11/2012
+- Changed the `preloader` option to `false` by default.
+
 ###v0.7.4 31/10/2012
 - Now works with jQuery 1.8.2
 - Rewritten `autoPlay` logic, which is now much simpler and easier to maintain

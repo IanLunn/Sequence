@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.7.4 Beta
+Version: 0.7.4.1 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -129,7 +129,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		self.sequence.children("li").children().removeClass("animate-in"); //remove any instance of "animate-in", which should be used incase JS is disabled
 		
 		function oncePreloaded(){
-		    self.afterLoaded();
+		    self.afterLoaded(); //callback
 		    if(self.settings.hideFramesUntilPreloaded && self.settings.preloader){
 		        self.sequence.children("li").show();
 		    }
@@ -924,7 +924,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		pauseIcon: false, //this is an indicator to show Sequence is paused
 		
 		//Preloader Settings
-		preloader: true,
+		preloader: false,
 		preloadTheseFrames: [1], //all images in these frames will load before Sequence initiates
 		preloadTheseImages: [ //specify particular images to load before Sequence initiates
 		    /* Example usage

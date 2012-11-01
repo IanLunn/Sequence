@@ -567,9 +567,9 @@ Display a pause icon when the user hovers over Sequence.
 #### <a id="preloader-options">Preloader Options</a>
 
 ##### preloader
-*Type: true/false or a CSS selector, Default: `true`*
+*Type: true/false or a CSS selector, Default: `false`*
 
-- `true`: Use the default preloader and styles with the CSS selector (`.sequence-preloader`).
+- `true`: Use the preloader and styles with the CSS selector (`.sequence-preloader`).
 - `false`: don't use a preloader.
 - CSS Selector: Specify a CSS selector to an HTML element you have manually added to the document.
 
