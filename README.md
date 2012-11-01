@@ -37,6 +37,8 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 ###v0.7.4.1 01/11/2012
+
+**Note: If upgrading from an existing Sequence.js version and using a preloader, please add `preloader: true` to your options**
 - Changed the `preloader` option to `false` by default.
 
 ###v0.7.4 31/10/2012
