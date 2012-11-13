@@ -386,6 +386,36 @@ The direction in which Sequence should play.
 
 The speed in milliseconds at which frames should remain on screen before animating to the next.
 
+#### <a>Navigation Skipping Options</a>
+
+#####navigationSkip
+*Type: true/false, Default: `true`*
+
+Whether the user can navigate through frames before each frame has finished animating.
+
+- `true`: the user can navigate to another frame whilst the current one is mid animation
+- `false`: the user is prevented from navigating to another frame whilst the current one is mid animation
+
+#####navigationSkipThreshold
+*Type: a number representing time in milliseconds, Default: `250`, dependencies: `navigationSkip: true`*
+
+Amount of time that must pass before the next frame can be navigated to. Example, if the user hits the next button, a period of 250ms (by default) must pass before they can navigate to another frame.
+
+#####fadeFrameWhenSkipped
+*Type: true/false, Default: `true`, dependencies: `navigationSkip: true`*
+
+If a frame is skipped before it finishes animating, cause it to fade out over a specific period of time (see `fadeFrameTime`).
+
+#####fadeFrameTime
+*Type: a number representing time in milliseconds, Default: `250`, dependencies: `navigationSkip: true` and `fadeFrameWhenSkipped: true`*
+
+How quickly a frame should fade out when skipped (in milliseconds).
+
+#####preventReverseSkipped
+*Type: true/false, Default: `false`, dependencies: `navigationSkip: true`*
+
+Whether the user can change the direction of navigation during frames animating (if navigating forward, the user can only skip forwards when other frames are animating).
+
 #### <a id="next-prev-options">Next/Previous Button Options</a>
 
 ##### nextButton
