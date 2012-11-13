@@ -36,6 +36,13 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 [SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2012 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
 
 ##What's New? 
+
+###v0.7.5 09/11/2012
+- It's now possible to skip frames whilst they are animating. Finally!
+- Added new options relating to navigation skipping: `navigationSkip`, `navigationSkipThreshold`, `fadeFrameWhenSkipped`, `fadeFrameTime`, and `preventReverseSkipping`
+- Removed `transitionThreshold` option. One frame can now only animate in immediately after the other. Nobody seemed to use this option and its presence affected the new navigation skipping options. If you want a time period between one frame animating out and the next frame animating in, use a CSS `transition-delay` instead
+- Removed defunct code and general tidy up
+
 ###v0.7.4.1 01/11/2012
 
 **Note: If upgrading from an existing Sequence.js version and using a preloader, please add `preloader: true` to your options**

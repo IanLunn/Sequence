@@ -14,15 +14,15 @@
 	    document.write(unescape("%3Cscript src=../../scripts/jquery.js type='text/javascript'%3E%3C/script%3E"));
 	}
 	</script>
-	<script type="text/javascript" src="../../scripts/sequence.jquery-min.js"></script>
+	<script type="text/javascript" src="../../scripts/sequence.jquery.js"></script>
 	<script type="text/javascript">	
 		$(document).ready(function(){
 			var options = {
-				autoPlay: false,
 				nextButton: true,
 				prevButton: true,
 				preloader: true,
-				transitionThreshold: 500
+				navigationSkipThreshold: 1000,
+				fadeFrameWhenSkipped: false
 			};
 			var sequence = $("#sequence").sequence(options).data("sequence");
 

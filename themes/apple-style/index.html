@@ -10,22 +10,26 @@
 	<link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Magra:400,700'>
 	
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-	<script type="text/javascript" src="../../scripts/sequence.jquery-min.js"></script>
+	<script type="text/javascript">
+	if (typeof jQuery == 'undefined'){
+	    document.write(unescape("%3Cscript src='../../scripts/jquery.js' type='text/javascript'%3E%3C/script%3E"));
+	}
+	</script>
+	<script type="text/javascript" src="../../scripts/sequence.jquery.js"></script>
 	<script type="text/javascript">	
 		$(document).ready(function(){
 			$status = $(".status");
-			var options = {		
+			var options = {
 				autoPlayDelay: 4000,
+				pauseOnHover: true,
 				hidePreloaderDelay: 500,
 				nextButton: true,
 				prevButton: true,
 				pauseButton: true,
+				preloader: true,
 				hidePreloaderUsingCSS: false,						
 				animateStartingFrameIn: true, 			
-				transitionThreshold: 500,
-				preloader: true,
-				//pauseOnHover: false,
-				pauseOnElementsOutsideContainer: false,
+				navigationSkipThreshold: 750,
 				customKeyEvents: {
 					80: "pause"
 				}
@@ -34,27 +38,23 @@
 			var sequence = $("#sequence").sequence(options).data("sequence");
 
 			sequence.afterNextFrameAnimatesIn = function() {
-				if(sequence.settings.autoPlay && !sequence.hardPaused && !sequence.isPaused){
+				if(sequence.settings.autoPlay && !sequence.hardPaused && !sequence.isPaused) {
 					$status.addClass("active").css("opacity", 1);
 				}
 				$(".prev, .next").css("cursor", "pointer").animate({"opacity": 1}, 500);
 			};
 			sequence.beforeCurrentFrameAnimatesOut = function() {
-				if(sequence.settings.autoPlay && !sequence.hardPaused){
-					$status.animate({"opacity": 0}, 500, function(){
-						$status.removeClass("active");
-					});
+				if(sequence.settings.autoPlay && !sequence.hardPaused) {
+					$status.css({"opacity": 0}, 500).removeClass("active");
 				}
 				$(".prev, .next").css("cursor", "auto").animate({"opacity": .7}, 500);
 			};
 			sequence.paused = function() {
-				$status.animate({"opacity": 0}, 500, function(){
-					$status.removeClass("active").addClass("paused");
-				});
+				$status.css({"opacity": 0}).removeClass("active").addClass("paused");
 			};
-			sequence.unpaused = function(){
+			sequence.unpaused = function() {
 				if(!sequence.hardPaused) {
-					$status.addClass("active").css("opacity", 1).removeClass("paused");
+					$status.removeClass("paused").addClass("active").css("opacity", 1)
 				}				
 			};
 		})	
