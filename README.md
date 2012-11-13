@@ -37,7 +37,10 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
-###v0.7.5 09/11/2012
+###v0.7.5.1 13/11/2012
+- Minor fixes
+
+###v0.7.5 13/11/2012
 - It's now possible to skip frames whilst they are animating. Finally!
 - Added new options relating to navigation skipping: `navigationSkip`, `navigationSkipThreshold`, `fadeFrameWhenSkipped`, `fadeFrameTime`, and `preventReverseSkipping`
 - Removed `transitionThreshold` option. One frame can now only animate in immediately after the other. Nobody seemed to use this option and its presence affected the new navigation skipping options. If you want a time period between one frame animating out and the next frame animating in, use a CSS `transition-delay` instead

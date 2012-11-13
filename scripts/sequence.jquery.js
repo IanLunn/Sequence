@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.7.5 Beta
+Version: 0.7.5.1 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -351,9 +351,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				    mouseleave: function() { //when the mouse leaves the Sequence element...
 				    	self.mouseover = false;
 				        if(!self.isHardPaused) { //if Sequence is not hard paused (via a pause button)...
-				        	if(!self.active) {
-				        		self.unpause(); //unpause autoPlay
-				        	}
+				        	self.unpause(); //unpause autoPlay
 				        }
 				    }
 				});
@@ -621,7 +619,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.direction = direction; //go to the developer defined frame
 				}
 
-				self.currentFrameID = id;
+				
 				self.currentFrame = self.sequence.children(".current-frame"); //find which frame is active //the frame currently being viewed (and about to be animated out)
 				self.nextFrame = self.sequence.children("li:nth-child("+id+")"); //grab the next frame
 								
@@ -692,6 +690,8 @@ Aside from these comments, you may modify and distribute this file as you please
 				        break;
 				    }
 				}
+
+				self.currentFrameID = id;
 			}
 		},
 		
