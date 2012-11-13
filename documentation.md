@@ -411,7 +411,7 @@ If a frame is skipped before it finishes animating, cause it to fade out over a 
 
 How quickly a frame should fade out when skipped (in milliseconds).
 
-#####preventReverseSkipped
+#####preventReverseSkipping
 *Type: true/false, Default: `false`, dependencies: `navigationSkip: true`*
 
 Whether the user can change the direction of navigation during frames animating (if navigating forward, the user can only skip forwards when other frames are animating).
