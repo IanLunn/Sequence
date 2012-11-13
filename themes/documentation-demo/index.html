@@ -26,7 +26,7 @@
 			}
 
 			var sequence = $("#sequence").sequence(options).data("sequence"); //initiate Sequence
-			var sequence2 = $("#sequence2").sequence(options).data("sequence"); //initiate a second Sequence
+			// var sequence2 = $("#sequence2").sequence(options).data("sequence"); //initiate a second Sequence
 
 			sequence.beforeCurrentFrameAnimatesIn = function(){
 				if(sequence.direction === 1){
@@ -73,7 +73,7 @@
 		<div id="sequence" class="sequence">
 			<ul>
 				<li class="1">
-					<div class="info1 animate-in">
+					<div class="info1">
 						<p class="class">.info1</p>
 						<p class="sequence-class">.animate-in</p>
 					</div>
@@ -93,7 +93,7 @@
 			</ul>
 		</div>
 
-		<div id="sequence2" class="sequence">
+		<!-- <div id="sequence2" class="sequence">
 			<p>Second instance of Sequence, just to test multiple instances!</p>
 			<ul>
 				<li>
@@ -115,7 +115,7 @@
 					</div>
 				</li>
 			</ul>
-		</div>
+		</div> -->
 		
 		<div id="main">
 			<div id="content">

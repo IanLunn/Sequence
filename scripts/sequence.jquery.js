@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.7.5.1 Beta
+Version: 0.7.6 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -119,7 +119,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		}
         
         self.modifyElements(self.sequence.children("li").children(), "0s"); //reset transition time to 0s
-		self.sequence.children("li").children().removeClass("animate-in"); //remove any instance of "animate-in", which should be used incase JS is disabled
+		self.sequence.children("li").removeClass("animate-in"); //remove any instance of "animate-in", which should be used incase JS is disabled
 		
 		//functionality to run once Sequence has preloaded
 		function oncePreloaded() {
@@ -217,7 +217,7 @@ Aside from these comments, you may modify and distribute this file as you please
 			}
 
 			self.nextFrameID = self.settings.startingFrameID;
-			self.nextFrame = self.sequence.children("li:nth-child("+self.nextFrameID+")").addClass("current-frame");
+			self.nextFrame = self.sequence.children("li:nth-child("+self.nextFrameID+")");
 						
 			if(self.settings.hashTags) { //if using hashtags...
 			    self.sequence.children("li").each(function() { //for each frame...
@@ -245,7 +245,7 @@ Aside from these comments, you may modify and distribute this file as you please
 
 			if(self.transitionsSupported) { //initiate the full featured Sequence if transitions are supported...
 				if(!self.settings.animateStartingFrameIn) { //start first frame in animated in position
-					self.currentFrame = self.nextFrame.addClass("current-frame");
+					self.currentFrame = self.nextFrame;
 
 					if(self.settings.moveActiveFrameToTop) {
 					    self.currentFrame.css("z-index", self.numberOfFrames);
@@ -253,7 +253,7 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.currentFrameChildren = self.currentFrame.children();
 					self.currentFrameID = self.nextFrameID;
 					self.modifyElements(self.currentFrameChildren, "0s");
-					self.currentFrameChildren.addClass("animate-in");
+					self.currentFrame.addClass("animate-in");
 					if(self.settings.hashChangesOnFirstFrame) {
 					    self.currentHashTag = self.currentFrame.attr(self.getHashTagFrom);
 					    document.location.hash = "#"+self.currentHashTag;
@@ -266,14 +266,14 @@ Aside from these comments, you may modify and distribute this file as you please
 					self.startAutoPlay(self.settings.autoPlayDelay);
 				}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.settings.autoPlayDirection -1 && self.settings.animateStartingFrameIn) { //animate in backwards
 					self.modifyElements(self.nextFrameChildren, "0s");
-					self.nextFrameChildren.addClass("animate-out");
+					self.nextFrame.addClass("animate-out");
 					self.goTo(self.nextFrameID, -1);
 				}else{ //animate in forwards
 					self.goTo(self.nextFrameID, 1);
 				}
 			}else{ //initiate a basic slider for browsers that don't support CSS3 transitions
     			self.container.addClass("sequence-fallback");
-    			self.currentFrame = self.nextFrame.addClass("current-frame");
+    			self.currentFrame = self.nextFrame;
     			self.beforeNextFrameAnimatesIn();
     			self.afterNextFrameAnimatesIn();
     			if(self.settings.hashChangesOnFirstFrame){
@@ -282,7 +282,7 @@ Aside from these comments, you may modify and distribute this file as you please
     			}
     			self.currentFrameChildren = self.currentFrame.children();
     			self.currentFrameID = self.nextFrameID;			    		
-                self.sequence.children("li").children().addClass("animate-in");
+                self.sequence.children("li").addClass("animate-in");
                 self.sequence.children(":not(li:nth-child("+self.nextFrameID+"))").css({"display": "none", "opacity": 0});
                 self.startAutoPlay(self.settings.autoPlayDelay);
 			}
@@ -390,7 +390,7 @@ Aside from these comments, you may modify and distribute this file as you please
 	            			touches[e.originalEvent.type + "X"] = e.originalEvent.touches[0].pageX;
 	            			touches[e.originalEvent.type + "Y"] = e.originalEvent.touches[0].pageY;
 	            			break;
-            			case 'touchend':
+            			case "touchend":
 	            			if(touches.touchmoveX !== -1) {
 	            				//find out which way the user moved their finger the most
 	            				var xAmount = touches.touchmoveX - touches.touchstartX;
@@ -414,8 +414,6 @@ Aside from these comments, you may modify and distribute this file as you please
 	            				};
 	            			}
 	            			break;
-            			default:
-            				break;
             		}
 		        });
 			}
@@ -476,8 +474,8 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		setTransitionProperties: function(frameChildren) {
 			var self = this;
-			self.modifyElements(self.frameChildren, "");
-			self.frameChildren.each(function() {
+			//self.modifyElements(frameChildren, "");
+			frameChildren.each(function() {
 				self.transitionProperties["transition-duration"] = $(this).css(self.prefix + "transition-duration");
 				self.transitionProperties["transition-delay"] = $(this).css(self.prefix + "transition-delay");
 
@@ -620,10 +618,10 @@ Aside from these comments, you may modify and distribute this file as you please
 				}
 
 				
-				self.currentFrame = self.sequence.children(".current-frame"); //find which frame is active //the frame currently being viewed (and about to be animated out)
+				self.currentFrame = self.sequence.children(".animate-in"); //find which frame is active //the frame currently being viewed (and about to be animated out)
 				self.nextFrame = self.sequence.children("li:nth-child("+id+")"); //grab the next frame
-								
-				self.frameChildren = self.currentFrame.children(); //save the child elements of the current frame
+				
+				self.frameChildren = self.currentFrame.children();	
 				self.nextFrameChildren = self.nextFrame.children(); //save the child elements pf the next frame
 				
 				if(self.transitionsSupported) { //if the browser supports CSS3 transitions...								
@@ -651,9 +649,8 @@ Aside from these comments, you may modify and distribute this file as you please
 				            self.sequence.children("li").css({"position": "relative"}); //this allows for fadein/out in IE
 				            self.currentFrame.animate({"opacity": 0}, self.settings.fallback.speed, function() { //hide the current frame
 				            	self.currentFrame.css({"display": "none", "z-index": "1"});
-				            	self.currentFrame.removeClass("current-frame");
 				            	self.beforeNextFrameAnimatesIn();
-				            	self.nextFrame.addClass("current-frame").css({"display": "block", "z-index": self.numberOfFrames}).animate({"opacity": 1}, 500, function() {
+				            	self.nextFrame.css({"display": "block", "z-index": self.numberOfFrames}).animate({"opacity": 1}, 500, function() {
 				            		self.afterNextFrameAnimatesIn();
 				            	}); //make the next frame the current one and show it
 				            	animationComplete();
@@ -681,9 +678,9 @@ Aside from these comments, you may modify and distribute this file as you please
 				            moveIn["left"] = "0%";
 				            moveIn["opacity"] = 1;
 				            
-				            self.currentFrame.removeClass("current-frame").animate(animateOut, self.settings.fallback.speed); //cause the current frame to animate out
+				            self.currentFrame.animate(animateOut, self.settings.fallback.speed); //cause the current frame to animate out
 				            self.beforeNextFrameAnimatesIn(); //callback
-				            self.nextFrame.addClass("current-frame").show().css(animateIn).animate(moveIn, self.settings.fallback.speed, function() { //cause the next frame to animate in
+				            self.nextFrame.show().css(animateIn).animate(moveIn, self.settings.fallback.speed, function() { //cause the next frame to animate in
 				                animationComplete();
 				                self.afterNextFrameAnimatesIn();
 				            });				            
@@ -698,29 +695,24 @@ Aside from these comments, you may modify and distribute this file as you please
 		//cause an active frame to animate out
 		animateOut: function(frame, direction) {
 			var self = this;
-			frameChildren = frame.children();
 
-			if(self.settings.moveActiveFrameToTop) {
-			    frame.css("z-index", 1);
+			if(self.settings.moveActiveFrameToTop) { //if the active frame should move to the top...
+			    frame.css("z-index", 1); //move this frame to the bottom as it is now inactive
 			}
-
-		    frame.removeClass("current-frame");
 
 			if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction === 1) { //if user hit next button...
 				//reset the position of the next frames elements ready for animating in again
 				self.modifyElements(self.nextFrameChildren, "0s");
-				self.nextFrameChildren.removeClass("animate-out");
+				self.nextFrame.removeClass("animate-out");
 				
 				//make the current frames elements animate out
 				self.modifyElements(self.frameChildren, "");				
-				frameChildren.addClass("animate-out").removeClass("animate-in");
-			}
-			
-			if(self.settings.reverseAnimationsWhenNavigatingBackwards && direction === -1) { //if the user hit prev button
+				frame.toggleClass("animate-out animate-in");
+			}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && direction === -1) { //if the user hit prev button
 				self.modifyElements(self.nextFrameChildren, "0s");
-				self.nextFrameChildren.addClass("animate-out");
+				self.nextFrame.addClass("animate-out");
 				self.setTransitionProperties(self.frameChildren);
-				frameChildren.removeClass("animate-in");
+				frame.removeClass("animate-in");
 			}
 		},
 		
@@ -728,39 +720,36 @@ Aside from these comments, you may modify and distribute this file as you please
 		animateIn: function(frame, direction) {
 			var self = this;
 			self.active = true;
-
 			frame.unbind(self.transitionEnd); //remove the animation end event
-			frame.addClass("current-frame"); //the frame is now the current frame			
 
 			if(self.settings.fadeFrameWhenSkipped) {
 				self.nextFrame.show();
 			}
-
-			self.frameChildren = frame.children(); //save the child elements (the ones we'll animate) in an array
 			
 			self.beforeNextFrameAnimatesIn(); //callback
 			if(self.settings.moveActiveFrameToTop) { //if an active frame should be moved to the top...
 			    self.nextFrame.css({"z-index": self.numberOfFrames}); //move to the top of the z-index
 			}
-							
+
 			if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction === 1) { //if user hit next button...
-				setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially (not ideal but no better solution yet)
-					self.modifyElements(self.frameChildren, ""); //remove any inline styles from the elements to be animated so styles via the "animate-in" class can take full effect
-					self.frameChildren.addClass("animate-in"); //add the "animate-in" class
+				//setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially (not ideal but no better solution yet)
+					self.modifyElements(self.nextFrameChildren, ""); //remove any inline styles from the elements to be animated so styles via the "animate-in" class can take full effect
+					frame.addClass("animate-in"); //add the "animate-in" class
 					self.waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in"); //wait for the next frame to animate in
 					if(self.afterCurrentFrameAnimatesOut !== "function () {}") { //if the afterCurrentFrameAnimatesOut is being used...
 						self.waitForAnimationsToComplete(self.currentFrame, self.currentFrame.children(), "out"); //wait for the current frame to animate out as well
 					}
-				}, 50);
+				//}, 50);
 			}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && direction === -1) { //if the user hit prev button
-				setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially (not ideal but no better solution yet)
+				//setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially (not ideal but no better solution yet)
+					self.modifyElements(self.nextFrameChildren, "");
 					self.setTransitionProperties(self.frameChildren);
-					self.frameChildren.addClass("animate-in").removeClass("animate-out"); //add the "animate-in" class and remove the "animate-out" class
+					frame.addClass("animate-in").removeClass("animate-out"); //add the "animate-in" class and remove the "animate-out" class
 					self.waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in"); //wait for the next frame to animate in
 					if(self.afterCurrentFrameAnimatesOut != "function () {}") { //if the afterCurrentFrameAnimatesOut is being used...
 						self.waitForAnimationsToComplete(self.currentFrame, self.currentFrame.children(), "out"); //wait for the current frame to animate out as well
 					}
-				}, 50);
+				//}, 50);
 			}
 		},
 		
@@ -789,7 +778,6 @@ Aside from these comments, you may modify and distribute this file as you please
 						self.afterFirstFrameAnimatesIn(); //callback
 					}
 
-					self.nextFrame.removeClass("next-frame").addClass("current-frame");
 					self.active = false; //Sequence is not animating
 
 					if(!self.isHardPaused && !self.mouseover) { //if Sequence isn't hard paused (via a pause button for example) or being hovered over...
