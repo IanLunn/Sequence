@@ -37,6 +37,28 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.8 18/11/2012
+**Note: Animating elements now works in a slighty different way and as such, this version of Sequence is not compatible with existing themes without an upgrade.** The `animate-in` and `animate-out` classes are now only applied to the frame (`<li>` element), instead of the frames child elements. Because of this, if you are upgrading from a previous version, you will need to update your CSS, so that any rules using the `animate-in` and `animate-out` classses will be changed from this:
+
+`.title.animate-in`
+
+`li .model.animate-out`
+
+to this:
+
+`.animate-in .title`
+
+`li.animate-out .model`
+
+
+And so on. All existing Sequence themes have been upgraded so reference those if necessary or view the [upgrade instructions](https://github.com/IanLunn/Sequence/blob/master/upgradeInstructions.md).
+
+- Performance improvements
+- Preloader now works in IE.
+- Removed the 50ms gap between a frame animating out and the next animating in (doesn't sound exciting but it means you can now have elements or slides moving at exactly the same time, so things like 3D cubes or just traditional sliders are possible without any seams between frames)
+- Included new swiping functionality that works better on iOS and now also on Android devices.
+- `swipeThreshold` now represents the number of pixels a user must swipe before swiping is detected (instead of a percentage of the devices width).
+
 ###v0.7.6 18/11/2012
 - Fixed preloader in IE.
 

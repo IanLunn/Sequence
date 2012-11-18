@@ -117,8 +117,10 @@ small{
 	top: 250px;
 }
 
-.info1.animate-in,.info2.animate-in,.info3.animate-in {
+.animate-in .info1, .animate-in .info2, .animate-in .info3 {
 	left: 165px;
+	display: block;
+	opacity: 1;
 
 	-webkit-transition-duration: 1s;
 	-moz-transition-duration: 1s;
@@ -127,7 +129,7 @@ small{
 	transition-duration: 1s;
 }
 
-.info1.animate-out,.info2.animate-out,.info3.animate-out {
+.animate-out .info1, .animate-out .info2, .animate-out .info3 {
 	left: 500px;
 
 	-webkit-transition-duration: 1s;

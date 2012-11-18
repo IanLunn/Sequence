@@ -185,7 +185,6 @@ h3 {
 	-o-transition-duration: 1s;
 	-ms-transition-duration: 1s;
 	transition-duration: 1s;
-	z-index: 11;
 }
 
 .next:hover,.prev:hover {
@@ -207,7 +206,7 @@ h3 {
 	z-index: 50;
 }
 
-.title.animate-in {
+.animate-in .title {
 	left: 50%;
 	opacity: 1;
 
@@ -218,7 +217,7 @@ h3 {
 	transition-duration: .5s;
 }
 
-.title.animate-out {
+.animate-out .title {
 	left: 35%;
 	opacity: 0;
 
@@ -238,7 +237,7 @@ h3 {
 	top: 101%;
 }
 
-.subtitle.animate-in {
+.animate-in .subtitle {
 	left: 50%;
 	opacity: 1;
 
@@ -249,7 +248,7 @@ h3 {
 	transition-duration: .5s;
 }
 
-.subtitle.animate-out {
+.animate-out .subtitle {
 	left: 65%;
 	opacity: 0;
 
@@ -272,7 +271,7 @@ h3 {
 	max-width: 266px;
 }
 
-.model.animate-in {
+.animate-in .model {
 	left: 15%;
 	opacity: 1;
 
@@ -283,7 +282,7 @@ h3 {
 	transition-duration: 1s;
 }
 
-.model.animate-out {
+.animate-out .model {
 	left: 15%;
 	opacity: 0;
 
@@ -343,12 +342,12 @@ and (max-width : 568px) {
 			width: 40%;	
 	}
 	
-	.model.animate-in {
+	.animate-in .model {
 		left: 50%;
 		margin-left: -20%;
 	}
 	
-	.model.animate-out {
+	.animate-out .model {
 		left: 50%;
 		margin-left: -20%;
 	}
@@ -364,11 +363,11 @@ and (max-width : 568px) {
 		z-index: 10;
 	}
 	
-	.title.animate-in{
+	.animate-in .title {
 		left: 0%;
 	}
 	
-	.title.animate-out{
+	.animate-out .title {
 		left: -100%;	
 	}
 	
@@ -433,11 +432,11 @@ and (max-width : 368px) {
 		width: 45%;
 	}
 	
-	.model.animate-in{
+	.animate-in .model {
 		margin-left: -22.5%;
 	}
 	
-	.model.animate-out{
+	.animate-out .model {
 		margin-left: -22.5%;
 	}
 }
@@ -455,12 +454,12 @@ and (max-width : 368px) {
 			width: 24%;
 		}
 		
-		.model.animate-in{
+		.animate-in .model {
 			left: 17.5%;
 			margin-left: 0;
 		}
 		
-		.model.animate-out{
+		.animate-out .model {
 			left: 17.5%;
 			margin-left: 0;
 		}

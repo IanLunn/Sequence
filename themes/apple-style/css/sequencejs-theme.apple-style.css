@@ -13,7 +13,6 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
 Aside from these comments, you may modify and distribute this file as you please. Have fun!
  */
-
 #header {
 	background: white;
 	height: 600px;
@@ -415,7 +414,7 @@ h3 {
 	transition-duration: 1.5s;
 }
 
-.iphone.animate-in {
+.animate-in .iphone {
 	left: 600px;
 	opacity: 1;
 	top: 50px;
@@ -433,7 +432,7 @@ h3 {
 	transition-duration: 1.5s;
 }
 
-.iphone.animate-out {
+.animate-out .iphone {
 	left: 1100px;
 	opacity: 0;
 	top: -400px;
@@ -464,7 +463,7 @@ h3 {
 	transition-duration: 1.5s;
 }
 
-.iphone-shadow.animate-in {
+.animate-in .iphone-shadow {
 	left: 598px;
 	opacity: 1;
 	top: 520px;
@@ -476,7 +475,7 @@ h3 {
 	transition-duration: 1.5s;
 }
 
-.iphone-shadow.animate-out {
+.animate-out .iphone-shadow {
 	left: 598px;
 	opacity: 0;
 	top: 520px;
@@ -507,7 +506,7 @@ h3 {
 	transition-duration: 1.5s;
 }
 
-.intro.animate-in {
+.animate-in .intro {
 	left: 100px;
 	top: 250px;
 
@@ -524,7 +523,7 @@ h3 {
 	transition-duration: 1.5s;
 }
 
-.intro.animate-out {
+.animate-out .intro {
 	left: 100px;
 	opacity: 0;
 	top: 250px;
@@ -555,7 +554,7 @@ h3 {
 	z-index: 5;
 }
 
-.ipad.animate-in {
+.animate-in .ipad {
 	left: 50px;
 	top: 50px;
 
@@ -572,7 +571,7 @@ h3 {
 	transition-duration: 1s;
 }
 
-.ipad.animate-out {
+.animate-out .ipad {
 	left: -800px;
 	opacity: 0;
 	top: 50px;
@@ -603,7 +602,7 @@ h3 {
 	transition-duration: .5s;
 }
 
-.ipad-shadow.animate-in {
+.animate-in .ipad-shadow {
 	left: 30px;
 	top: 508px;
 	opacity: 1;
@@ -615,7 +614,7 @@ h3 {
 	transition-duration: 1s;
 }
 
-.ipad-shadow.animate-out {
+.animate-out .ipad-shadow {
 	left: -800px;
 	top: 508px;
 	opacity: 0;
@@ -640,7 +639,7 @@ h3 {
 	transform: rotate(20deg);
 }
 
-.slide2.animate-in {
+.animate-in .slide2 {
 	left: 450px;
 	top: 250px;
 
@@ -657,7 +656,7 @@ h3 {
 	transition-duration: 1s;
 }
 
-.slide2.animate-out {
+.animate-out .slide2 {
 	left: 800px;
 	opacity: 0;
 	top: 250px;
@@ -682,7 +681,7 @@ h3 {
 	z-index: 3;
 }
 
-.iphone2.animate-in {
+.animate-in .iphone2 {
 	left: 400px;
 	top: 60px;
 
@@ -699,7 +698,7 @@ h3 {
 	transition-timing-function: ease-in;
 }
 
-.iphone2.animate-out {
+.animate-out .iphone2 {
 	left: 600px;
 	top: 800px;
 
@@ -729,7 +728,7 @@ h3 {
 	transition-duration: 1s;
 }
 
-.iphone2-shadow.animate-in {
+.animate-in .iphone2-shadow {
 	left: 398px;
 	opacity: 1;
 	top: 530px;
@@ -747,7 +746,7 @@ h3 {
 	transition-delay: 1s;
 }
 
-.iphone2-shadow.animate-out {
+.animate-out .iphone2-shadow {
 	left: 398px;
 	opacity: 0;
 	top: 530px;
@@ -778,7 +777,7 @@ h3 {
 	transform: scale(0.9);
 }
 
-.iphone3-shadow.animate-in {
+.animate-in .iphone3-shadow {
 	left: 500px;
 	opacity: 1;
 	top: 507px;
@@ -796,7 +795,7 @@ h3 {
 	transition-delay: .5s;
 }
 
-.iphone3-shadow.animate-out {
+.animate-out .iphone3-shadow {
 	left: 500px;
 	opacity: 0;
 	top: 507px;
@@ -833,7 +832,7 @@ h3 {
 	transform: scale(0.8);
 }
 
-.iphone4-shadow.animate-in {
+.animate-in .iphone4-shadow {
 	left: 575px;
 	opacity: 1;
 	top: 485px;
@@ -845,7 +844,7 @@ h3 {
 	transition-duration: 1s;
 }
 
-.iphone4-shadow.animate-out {
+.animate-out .iphone4-shadow {
 	left: 575px;
 	opacity: 0;
 	top: 485px;
@@ -876,7 +875,7 @@ h3 {
 	z-index: 2;
 }
 
-.iphone3.animate-in {
+.animate-in .iphone3 {
 	left: 500px;
 	top: 60px;
 
@@ -893,7 +892,7 @@ h3 {
 	transition-timing-function: ease-in;
 }
 
-.iphone3.animate-out {
+.animate-out .iphone3 {
 	left: 700px;
 	top: 800px;
 
@@ -923,7 +922,7 @@ h3 {
 	transform: scale(.8);
 }
 
-.iphone4.animate-in {
+.animate-in .iphone4 {
 	left: 575px;
 	top: 60px;
 
@@ -940,7 +939,7 @@ h3 {
 	transition-timing-function: ease-in;
 }
 
-.iphone4.animate-out {
+.animate-out .iphone4 {
 	left: 800px;
 	top: 800px;
 
@@ -965,7 +964,7 @@ h3 {
 	width: 250px;
 }
 
-.slide3.animate-in {
+.animate-in .slide3 {
 	left: 100px;
 	opacity: 1;
 	top: 250px;
@@ -983,7 +982,7 @@ h3 {
 	transition-delay: 1s;
 }
 
-.slide3.animate-out {
+.animate-out .slide3 {
 	left: 900px;
 	opacity: 0;
 	top: 250px;

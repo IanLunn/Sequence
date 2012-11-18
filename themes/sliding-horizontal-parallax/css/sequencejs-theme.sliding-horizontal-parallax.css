@@ -130,7 +130,7 @@ h2 {
 	transition-duration: 4s;
 }
 
-.info.animate-in {
+.animate-in .info {
 	right: 15%;
 
 	-webkit-transition-duration: 4s;
@@ -140,7 +140,7 @@ h2 {
 	transition-duration: 4s;
 }
 
-.info.animate-out {
+.animate-out .info {
 	right: -150%;
 
 	-webkit-transition-duration: 4s;
@@ -163,7 +163,7 @@ h2 {
 	z-index: 6;
 }
 
-.balloon.animate-in {
+.animate-in .balloon {
 	left: 15%;
 	top: 70px;
 
@@ -181,7 +181,7 @@ h2 {
 	z-index: 4;
 }
 
-.balloon.animate-out {
+.animate-out .balloon {
 	left: 140%;
 	top: -30px;
 
@@ -212,7 +212,7 @@ h2 {
 	z-index: 6;
 }
 
-.aeroplane.animate-in {
+.animate-in .aeroplane {
 	left: 10%;
 	top: 100px;
 
@@ -236,7 +236,7 @@ h2 {
 	z-index: 4;
 }
 
-.aeroplane.animate-out {
+.animate-out .aeroplane {
 	left: 70%;
 	top: -900px;
 
@@ -276,7 +276,7 @@ h2 {
 	z-index: 1;
 }
 
-.sky.animate-in {
+.animate-in .sky {
 	left: 0%;
 	opacity: 1;
 	top: 0;
@@ -295,7 +295,7 @@ h2 {
 	z-index: 1;
 }
 
-.sky.animate-out {
+.animate-out .sky {
 	left: 6%;
 	opacity: 0;
 	top: 0;
@@ -334,7 +334,7 @@ h2 {
 	z-index: 6;
 }
 
-.kite.animate-in {
+.animate-in .kite {
 	left: -15%;
 	top: 300px;
 	opacity: 1;
@@ -365,7 +365,7 @@ h2 {
 	z-index: 4;
 }
 
-.kite.animate-out {
+.animate-out .kite {
 	left: -15%;
 	opacity: 0;
 	top: 300px;
@@ -396,7 +396,7 @@ h2 {
 	z-index: 2;
 }
 
-.sequence-fallback .kite.animate-in {
+.sequence-fallback .animate-in .kite {
     left: 20%;
     top: 200px;
 }
