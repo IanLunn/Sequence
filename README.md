@@ -37,6 +37,9 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.7.6 18/11/2012
+- Fixed preloader in IE.
+
 ###v0.7.5.1 13/11/2012
 - Minor fixes
 

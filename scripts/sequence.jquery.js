@@ -1,6 +1,6 @@
 /*
 Sequence.js (www.sequencejs.com)
-Version: 0.7.5.1 Beta
+Version: 0.7.6 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -168,29 +168,104 @@ Aside from these comments, you may modify and distribute this file as you please
             var imagesToPreload = $(frameImagesToPreload.concat(individualImagesToPreload)); //combine frame images and individual images
 			var imagesToPreloadLength = imagesToPreload.length;
 
-			//reliable .load() alternative from here: https://gist.github.com/797120/b7359a8ba0ab5be298875215d07819fe61f87399
-			if(!imagesToPreload.length) { //if there are no images to preload...
-				oncePreloaded();
-			}else{
-				imagesToPreload.bind("load",function() {
-					if(--imagesToPreloadLength <= 0) { 
-					  oncePreloaded();
-					}
-				}).each(function(){
-					// cached images don't fire load sometimes, so we reset src.
-					if(this.complete || this.complete === undefined) {
-					  var src = this.src;				  
-					  this.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="; // webkit hack from http://groups.google.com/group/jquery-dev/browse_thread/thread/eee6ab7b2da50e1f
-					  this.src = src;
-					}  
-				}); 
-			}
+			imagesLoaded(imagesToPreload, oncePreloaded);
     	}else{ //if not using the preloader...
 		    $(window).bind("load", function() { //when the window loads...
 		    	oncePreloaded(); //run the init functionality when the preloader has finished
 		    	$(this).unbind("load"); //unbind the load event as it's no longer needed
 		    });
-		}		
+		}
+
+		//jQuery imagesLoaded plugin v2.1.0 (http://github.com/desandro/imagesloaded)
+		function imagesLoaded(imagesToPreload, callback) {
+			BLANK = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+			var $this = imagesToPreload,
+				deferred = $.isFunction($.Deferred) ? $.Deferred() : 0,
+				hasNotify = $.isFunction(deferred.notify),
+				$images = $this.find('img').add( $this.filter('img') ),
+				loaded = [],
+				proper = [],
+				broken = [];
+
+			//Register deferred callbacks
+			if($.isPlainObject(callback)) {
+				$.each(callback, function(key, value) {
+					if(key === 'callback') {
+						callback = value;
+					}else if(deferred) {
+						deferred[key](value);
+					}
+				});
+			}
+
+			function doneLoading() {
+				var $proper = $(proper),
+					$broken = $(broken);
+
+				if(deferred) {
+					if(broken.length) {
+						deferred.reject($images, $proper, $broken);
+					}else{
+						deferred.resolve($images);
+					}
+				}
+
+				if($.isFunction(callback)) {
+					callback.call($this, $images, $proper, $broken);
+				}
+			}
+
+			function imgLoaded( img, isBroken ) {	
+				if(img.src === BLANK || $.inArray(img, loaded) !== -1) { // don't proceed if BLANK image, or image is already loaded
+					return;
+				}
+				
+				loaded.push(img); // store element in loaded images array
+
+				if(isBroken) { // keep track of broken and properly loaded images
+					broken.push(img);
+				}else{
+					proper.push(img);
+				}
+
+				$.data(img, 'imagesLoaded', {isBroken: isBroken, src: img.src }); // cache image and its state for future calls
+
+				if(hasNotify) { // trigger deferred progress method if present
+					deferred.notifyWith($(img), [isBroken, $images, $(proper), $(broken)]);
+				}
+
+				if($images.length === loaded.length) { // call doneLoading and clean listeners if all images are loaded
+					setTimeout(doneLoading);
+					$images.unbind('.imagesLoaded');
+				}
+			}
+
+			if(!$images.length) { // if no images, trigger immediately
+				doneLoading();
+			}else{
+				$images.bind('load.imagesLoaded error.imagesLoaded', function(event) {
+					imgLoaded(event.target, event.type === 'error'); // trigger imgLoaded
+				}).each(function(i, el) {
+					var src = el.src;
+					var cached = $.data(el, 'imagesLoaded'); // find out if this image has been already checked for status if it was, and src has not changed, call imgLoaded on it
+					if(cached && cached.src === src) {
+						imgLoaded(el, cached.isBroken);
+						return;
+					}
+
+					if(el.complete && el.naturalWidth !== undefined) { // if complete is true and browser supports natural sizes, try to check for image status manually
+						imgLoaded(el, el.naturalWidth === 0 || el.naturalHeight === 0);
+						return;
+					}
+
+					// cached images don't fire load sometimes, so we reset src, but only when dealing with IE, or image is complete (loaded) and failed manual check webkit hack from http://groups.google.com/group/jquery-dev/browse_thread/thread/eee6ab7b2da50e1f
+					if(el.readyState || el.complete) {
+						el.src = BLANK;
+						el.src = src;
+					}
+				});
+			}
+		};		
 		
 		function init() {
 			$(self.settings.preloader).remove(); //remove the preloader element
