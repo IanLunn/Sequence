@@ -24,7 +24,7 @@ Let’s break this down:
 
 Firstly, you have saved an instance of Sequence into a variable (`var`) called `sequence`. The variable name is entirely up to you and, if necessary, will allow you to interact with Sequence via custom JavaScript which is explained in the [Callbacks](#callbacks) section.
 
-After the variable name, you've specify a jQuery selector `$("#sequence")`, which is the element you want to act as the Sequence container. You will create a `<div>` in the HTML shortly with an ID of `sequence`.
+After the variable name, you've specified a jQuery selector `$("#sequence")`, which is the element you want to act as the Sequence container. You will create a `<div>` in the HTML shortly with an ID of `sequence`.
 
 The Sequence function `.sequence()`, will accept many options that allow for modifying how Sequence works. These options are explained in the [Options](#options) section.
 
@@ -37,7 +37,7 @@ It is possible to place multiple instances of Sequence on the same page, like so
         });
     </script>
     
-Finally, jQuery's `.data()` function is used to allow Sequence to save particuraly information about its state as a data attribute. The argument passed to the `.data()` function should always be `"sequence"`, regardless of how many Sequence instances you have on the page.
+Finally, jQuery's `.data()` function is used to allow Sequence to save particular information about its state as a data attribute. The argument passed to the `.data()` function should always be `"sequence"`, regardless of how many Sequence instances you have on the page.
 
 ### <a id="add-html">Add HTML</a>
 
@@ -89,15 +89,15 @@ Here you’ve added a `<div>` to each frame with unique classes. You will shortl
 
 ### <a id="js-fallback">Setup a No-JavaScript Fallback</a>
 
-In a small percentage of browsers, JavaScript may be disabled which is the technology Sequence is built upon. To prevent an empty container from showing, nominate a frame to be displayed by giving each of its content elements a class of `animate-in`:
+In a small percentage of browsers, JavaScript may be disabled which is the technology Sequence is built upon. In this case, to prevent an empty container from showing, nominate a frame to be displayed by giving it a class of `animate-in`:
 
     <div id="sequence">
         <ul>
-            <li>
-                <div class="info1 animate-in">
+            <li class="animate-in">
+                <div class="info1">
                     <p>Frame 1 information</p>
                 </div>
-                <img class="my-image animate-in" src="my-image.jpg" alt="An image of me" />
+                <img class="my-image" src="my-image.jpg" alt="An image of me" />
             </li>
             <li>
                 <div class="info2">
@@ -112,7 +112,7 @@ In a small percentage of browsers, JavaScript may be disabled which is the techn
         </ul>
     </div>
 
-Here you’ve nominated the first frame to be displayed if JavaScript is disabled. The first frame contains an image to demonstrate that each content element within the nominated frame should be given the `animate-in` class.
+Here you’ve nominated the first frame to be displayed if JavaScript is disabled. 
 
 ## <a id="creating-a-theme">Creating an Animated Theme using CSS3</a>
 ### <a id="basic-css">Setting up the Sequence Container and Frames</a>
@@ -133,37 +133,43 @@ Here you’ve given the container some basic dimensional properties and a border
         position: absolute;
     }
 
-This way, when you come to position elements with the Sequence container, a position top of 0 pixels will be the top of the Sequence container, and a position left of 0 pixels will be the left hand side of the Sequence container.
+This way, when you come to position elements with the Sequence container, a position top of 0 will be the top of the Sequence container, and a position left of 0 will be the left hand side of the Sequence container.
 
 ### <a id="how-sequence-works">How Sequence’s Animations Work</a>
 
 Each first level element within a frame will be animated by Sequence, but how that animation happens is entirely your choice and created using [CSS3 transitions](http://www.adobe.com/devnet/html5/articles/using-css3-transitions-a-comprehensive-guide.html).
 
-**Note**: All first level elements with a frame *must* have a CSS3 transition else Sequence will not animate frames.
+**Note**: All first level elements within a frame *must* have a CSS3 transition else Sequence will not animate frames.
 
 By default, Sequence initially displays the first frame’s content, so start by animating the first element from the example above.
 
-In the HTML, you've given the `<div>` a class of `info1` and made sure it will be displayed in the absence of JavaScript by also giving it a class of `animate-in`.
+In the HTML, you've given the `<div>` a class of `info1`:
 
-Should JavaScript be enabled (in almost all cases it will be), Sequence will begin by removing the `animate-in` class. So the HTML will look like this:
+	<li>
+    	<div class="info1">
+     		<p>Frame 1</p>
+   		</div>
+    </li>
 
-    <div class="info1">
-        <p>Frame 1</p>
-    </div>
+This element is in its “start” position. Sequence will automatically add a class of `animate-in` to the frame, which will trigger the CSS3 transitions you will shortly write. The HTML will then look like this:
 
-This element is in its “start” position. Sequence will automatically add a class of `animate-in` to it, which will trigger the CSS3 transitions you will shortly write. The HTML will look like this:
+	<li class="animate-in">
+    	<div class="info1">
+        	<p>Frame 1</p>
+    	</div>
+    </li>
 
-    <div class="info1 animate-in">
-        <p>Frame 1</p>
-    </div>
+When a frame is in its "animate-in" position, eventually it will need to be animated out (when the user presses the next button for example). Sequence will remove the `animate-in` class, and add a class of `animate-out`, which again, you can control via CSS3 transitions. The HTML will then look like this:
 
-When the “animate-in” position is reached, Sequence will then remove the `animate-in` class, and add a class of `animate-out`, which again, you can control via CSS3 transitions. The HTML will look like this:
+	<li class="animate-out">
+    	<div class="info1">
+        	<p>Frame 1</p>
+    	</div>
+    </li>
 
-    <div class="info1 animate-out">
-        <p>Frame 1</p>
-    </div>
+This process is applied to each frame as and when that frame becomes active.
 
-When the “animate-out” position is reached, Sequence will then start automatically applying these transitional phases to the next frames elements. Once the last frame’s elements have reached the “animate-out” position, Sequence will go back to the first frame, remove the `animate-out` class (resetting the element to it’s starting position), and the whole process will continue indefinetly.
+Once the last frame’s elements have reached the “animate-out” position, Sequence will go back to the first frame, remove the `animate-out` class (resetting the element to it’s starting position), and the whole process will continue indefinetly.
 
 **Demo**: For a visual demonstration of how and when Sequence changes states, please see the [documentation theme](http://www.sequencejs.com/themes/documentation-demo/).
 
@@ -171,7 +177,7 @@ When the “animate-out” position is reached, Sequence will then start automat
 
 Sequence contains options that allow for a user to control the animation of frames using next/previous buttons, the keyboard left/right arrow keys or swiping on touch devices. You can also make Sequence play in reverse via the developer options. Sequence will apply the above mentioned transitional phase classes in reverse.
 
-Let’s assume frame 2 has one element that is currently in the “animate-in” position. If a user were to click a “previous” button, Sequence would remove the `animate-in` class, resetting the element to its starting position and the previous frame’s element (frame 1), would be given the class of `animate-out` (resetting it to the “animate-out” position), followed by a class of `animate-in` to then make it transition into its “animate-in” position.
+Let’s assume frame 2 has one element that is currently in the “animate-in” position. If a user were to click a “previous” button, Sequence would remove the `animate-in` class, resetting the element to its starting position and the previous frame (frame 1), would be given the class of `animate-out` (resetting it to the “animate-out” position), followed by a class of `animate-in` to then make it transition into its “animate-in” position.
 
 ### <a id="animating-sequence">Animating Frame Elements using CSS3 Transitions</a>
 
@@ -203,9 +209,9 @@ Remember that an element with no transitional phase class is in its “start” 
 
 **Note #2**: Sequence has been built to work across all modern browsers which means it is necessary to use vendor prefixes for CSS3 attributes such as `transition-duration`.
 
-As you saw in How Sequence’s Animations Work, Sequence will add a class of `animate-in` to any active frame elements to make it transition to its “animate-in” position. So, style the transition between the “start” and “animate-in” positions:
+As you saw in How Sequence’s Animations Work, Sequence will add a class of `animate-in` to any active frame to make its elements transition to their “animate-in” position. So, style the transition between the “start” and “animate-in” positions:
 
-    .info1.animate-in {
+    .animate-in .info1 {
         left: 165px;
         -webkit-transition-duration: 1s;
         -moz-transition-duration: 1s;
@@ -216,7 +222,7 @@ As you saw in How Sequence’s Animations Work, Sequence will add a class of `an
 
 You’ve made it so that the `<div>` with class `info1`, will move from its “start” position of `left: -150px`, to `left: 165px`. You haven’t specified a top position so that will remain the same as the “start” position (`top: 10px`). By adding a `transition-duration`, the time it will take to go between the “start” and “animate-in” positions will be 1 second (`1s`). Again, you’ve used vendor prefixes to make the theme work across all modern browsers.
 
-    .info1.animate-out {
+    .animate-out .info1 {
         left: 500px;
         -webkit-transition-duration: 1s;
         -moz-transition-duration: 1s;
@@ -251,7 +257,7 @@ Here you’ve given start positions to the `<div>` elements within the second an
 
 This CSS overwrites the top positions for each element so one is positioned below the next.
 
-    .info1.animate-in, .info2.animate-in, .info3.animate-in {
+    .animate-in .info1, .animate-in .info2, .animate-in .info3 {
         left: 165px;
         -webkit-transition-duration: 1s;
         -moz-transition-duration: 1s;
@@ -260,7 +266,7 @@ This CSS overwrites the top positions for each element so one is positioned belo
         transition-duration: 1s;
     }
 
-    .info1.animate-out, .info2.animate-out, .info3.animate-out {
+    .animate-out .info1, .animate-out .info2, .animate-out .info3 {
         left: 500px;
         -webkit-transition-duration: 1s;
         -moz-transition-duration: 1s;
@@ -279,7 +285,7 @@ Sequence comes with many options that allow you to easily control its features.
 
 ### <a id="specifying-options">Specifying Options</a>
 
-As explained in Initiate a Sequence Slider, each instance of a Sequence slider can be passed developer defined options that override Sequence’s default settings. Options are stored in an object passed to the `.sequence()` function, like so:
+As explained in Initiate Sequence, each instance of Sequence can be passed developer defined options that override Sequence’s default settings. Options are stored in an object passed to the `.sequence()` function, like so:
 
     <script type="text/javascript"> 
         $(document).ready(function(){
@@ -329,12 +335,12 @@ The following is the complete set of options implemented within Sequence:
 #### <a id="general-options">General Options</a>
 
 ##### startingFrameID 
-*Type: A number, Default: `1`*
+**Type: A number, Default: `1`**
 
 The frame (the list item `<li>`) that should first be displayed when Sequence loads.
 
 ##### cycle
-*Type: true/false, Default: `true`*
+**Type: true/false, Default: `true`**
 
 Whether Sequence should navigate to the first frame after the last frame and vice versa.
 
@@ -342,7 +348,7 @@ Whether Sequence should navigate to the first frame after the last frame and vic
 - `false`: When a user navigates forward from the last frame or backwards from the first frame, Sequence will not go to another frame.
 
 ##### animateStartingFrameIn
-*Type: true/false, Default: `false`*
+**Type: true/false, Default: `false`**
 
 Whether the first frame should animate in to its active position.
 
@@ -350,7 +356,7 @@ Whether the first frame should animate in to its active position.
 - `false`: The starting frame will begin in its "animate-in" position when Sequence loads.
 
 ##### reverseAnimationsWhenNavigatingBackwards	
-*Type: true/false, Default: `true`*
+**Type: true/false, Default: `true`**
 
 Whether animations should be reversed when a user navigates backwards by clicking a previous button/swiping/pressing the left key.
 
@@ -358,38 +364,38 @@ Whether animations should be reversed when a user navigates backwards by clickin
 - `false`: when navigating backwards, Sequence will animate the preceding frame from its "start" position to its "animate-in" position (as it does when navigating forwards).
 
 ##### moveActiveFrameToTop
-*Type: true/false, Default: `true`*
+**Type: true/false, Default: `true`**
 
 Whether a frame should be given a higher `z-index` than other frames whilst it is active, to bring it above the others.
 
-- `true`: an active frame will be given a `z-index` value the same as the number of frames in the Sequence slider (bringing it to the top).
+- `true`: an active frame will be given a `z-index` value the same as the number of frames in the Sequence instance (bringing it to the top).
 - `false`: frames will not have a `z-index` applied to them.
 
 #### <a id="autoplay-options">Autoplay Options</a>
 
 ##### autoPlay
-*Type: true/false, Default: `true`*
+**Type: true/false, Default: `true`**
 
 - `true`: Sequence will automatically animate from frame to frame with a delay between each frame (specified using the `autoPlayDelay` option).
 - `false`: Sequence will display the starting frame until a user chooses to navigate Sequence using next/previous buttons, swiping, etc.
 
 ##### autoPlayDirection	
-*Type: a number (`1` = forward, `-1` = reverse), Default:`1`, dependencies: `autoPlay: true`*
+**Type: a number (`1` = forward, `-1` = reverse), Default:`1`, dependencies: `autoPlay: true`**
 
 The direction in which Sequence should play.
 
-- `1`: Sequence will navigate forwards, from frame to frame whilst autoPlay is `true`.
-- `-1`: Sequence will navigate backwards, from frame to frame whilst autoPlay is `true`.
+- `1`: Sequence will navigate forwards, from frame to frame whilst autoPlay is `true`, providing Sequence is not paused.
+- `-1`: Sequence will navigate backwards, from frame to frame whilst autoPlay is `true`, providing Sequence is not paused.
 
 ##### autoPlayDelay
-*Type: a number representing milliseconds, Default: `5000`, dependencies: `autoPlay: true`*
+**Type: a number representing milliseconds, Default: `5000`, dependencies: `autoPlay: true`**
 
 The speed in milliseconds at which frames should remain on screen before animating to the next.
 
 #### <a>Navigation Skipping Options</a>
 
 #####navigationSkip
-*Type: true/false, Default: `true`*
+**Type: true/false, Default: `true`**
 
 Whether the user can navigate through frames before each frame has finished animating.
 
@@ -397,53 +403,53 @@ Whether the user can navigate through frames before each frame has finished anim
 - `false`: the user is prevented from navigating to another frame whilst the current one is mid animation
 
 #####navigationSkipThreshold
-*Type: a number representing time in milliseconds, Default: `250`, dependencies: `navigationSkip: true`*
+**Type: a number representing time in milliseconds, Default: `150`, dependencies: `navigationSkip: true`**
 
-Amount of time that must pass before the next frame can be navigated to. Example, if the user hits the next button, a period of 250ms (by default) must pass before they can navigate to another frame.
+Amount of time that must pass before the next frame can be navigated to. Example, if the user hits the next button, a period of 150ms (by default) must pass before they can navigate to another frame.
 
 #####fadeFrameWhenSkipped
-*Type: true/false, Default: `true`, dependencies: `navigationSkip: true`*
+**Type: true/false, Default: `true`, dependencies: `navigationSkip: true`**
 
 If a frame is skipped before it finishes animating, cause it to fade out over a specific period of time (see `fadeFrameTime`).
 
 #####fadeFrameTime
-*Type: a number representing time in milliseconds, Default: `250`, dependencies: `navigationSkip: true` and `fadeFrameWhenSkipped: true`*
+**Type: a number representing time in milliseconds, Default: `250`, dependencies: `navigationSkip: true` and `fadeFrameWhenSkipped: true`**
 
 How quickly a frame should fade out when skipped (in milliseconds).
 
 #####preventReverseSkipping
-*Type: true/false, Default: `false`, dependencies: `navigationSkip: true`*
+**Type: true/false, Default: `false`, dependencies: `navigationSkip: true`**
 
 Whether the user can change the direction of navigation during frames animating (if navigating forward, the user can only skip forwards when other frames are animating).
 
 #### <a id="next-prev-options">Next/Previous Button Options</a>
 
 ##### nextButton
-*Type: true/false or a CSS selector, Default: `false`*
+**Type: true/false or a CSS selector, Default: `false`**
 
 Defines a button that when clicked, causes the current frame to animate out and the next to animate in.
 
 - `true`: use a next button with the default CSS selector (`.next`).
-- `false`: don't use a button.
+- `false`: don't use a next button.
 - CSS Selector: Specify a CSS selector to an HTML element you have manually added to the document.
 
 ##### showNextButtonOnInit
-*Type: true/false, Default: `true`, dependencies: `nextButton: true`*
+**Type: true/false, Default: `true`, dependencies: `nextButton: true`**
 
 - `true`: shown the next button as soon as Sequence is initiated.
 - `false`: the next button won't be shown when Sequence is initiated (you may like to hide the button initially to fade the button in using CSS for example).
 
 ##### prevButton
-*Type: true/false or a CSS selector, Default: `false`*
+**Type: true/false or a CSS selector, Default: `false`**
 
 Defines a button that when clicked, causes the current frame to animate out and the previous to animate in.
 
 - `true`: use a previous button with the default CSS selector (`.prev`).
-- `false`: don't use a button.
+- `false`: don't use a previous button.
 - CSS Selector: Specify a CSS selector to an HTML element you have manually added to the document.
 
 ##### showPrevButtonOnInit
-*Type: true/false, Default: `true`, Dependencies: `prevButton: true`*
+**Type: true/false, Default: `true`, Dependencies: `prevButton: true`**
 
 - `true`: shown the previous button as soon as Sequence is initiated.
 - `false`: the previous button won't be shown when Sequence is initiated (you may like to hide the button initially to fade the button in using CSS for example).
@@ -451,7 +457,7 @@ Defines a button that when clicked, causes the current frame to animate out and 
 #### <a id="pause-options">Pause Options</a>
 
 ##### pauseButton
-*Type: true/false or a CSS selector, Default: `false`, Dependencies: `autoPlay: true`*
+**Type: true/false or a CSS selector, Default: `false`, Dependencies: `autoPlay: true`**
 
 A CSS selector that, when clicked, causes Sequence to pause the autoPlay feature.
 
@@ -460,22 +466,17 @@ A CSS selector that, when clicked, causes Sequence to pause the autoPlay feature
 - CSS Selector: Specify a CSS selector to an HTML element you have manually added to the document.
 
 ##### unpauseDelay
-*Type: a number representing time in milliseconds, Default: same value as `autoPlayDelay`, Dependencies: `autoPlay: true` and `pauseButton: true` or `pauseButton: "<CSS selector>"`*
+**Type: a number representing time in milliseconds, Default: same value as `autoPlayDelay`, Dependencies: `autoPlay: true` and `pauseButton: true` or `pauseButton: "<CSS selector>"`**
 
 The time Sequence should wait before starting autoPlay again once the user unpauses Sequence. The default value is the same as autoPlayDelay.
 
 ##### pauseOnHover
-*Type: true/false, Default: `true`, dependencies: `autoPlay: true`*
+**Type: true/false, Default: `true`, dependencies: `autoPlay: true`**
 
 Whether frames should stop auto playing when the user hovers over Sequence. autoPlay will continue again when the user moves their cursor outside of Sequence.
 
-##### pauseOnElementsOutsideContainer
-*Type: true/false, Default: `false`, dependencies: `autoPlay: true`*
-
-Whether or not Sequence should pause when the user hovers over one of its child elements outside of the Sequence container.
-
 ##### pauseIcon
-*Type: true/false or a CSS selector, Default: `false`, Dependencies: `autoPlay: true`*
+**Type: true/false or a CSS selector, Default: `false`, Dependencies: `autoPlay: true`**
 
 Display a pause icon when the user hovers over Sequence.
 
@@ -486,7 +487,7 @@ Display a pause icon when the user hovers over Sequence.
 #### <a id="preloader-options">Preloader Options</a>
 
 ##### preloader
-*Type: true/false or a CSS selector, Default: `false`*
+**Type: true/false or a CSS selector, Default: `false`**
 
 - `true`: Use the preloader and styles with the CSS selector (`.sequence-preloader`).
 - `false`: don't use a preloader.
@@ -570,7 +571,7 @@ CSS:
 **Note:** Vendor prefixes are omitted from the above CSS for brevity but should be used for cross browser compatibility.
 
 ##### preloadTheseFrames	
-*Type: An integer array containing a list of frame numbers, Default: `[1]`, Dependencies: `preloader: true`*
+**Type: An integer array containing a list of frame numbers, Default: `[1]`, Dependencies: `preloader: true`**
 
 Specify which frames should have their images loaded before Sequence initiates. By default, images in the first frame are loaded before Sequence initiates.
 
@@ -579,7 +580,7 @@ The following example will load all images in frames 1 and 2:
 `preloadTheseFrames: [1,2]`
 
 ##### preloadTheseImages	
-*Type: A string array containing a list of image sources, Default: `[]`, Dependencies: `preloader: true`*
+**Type: A string array containing a list of image sources, Default: `[]`, Dependencies: `preloader: true`**
 
 Specify which images should be loaded before Sequence initiates. By default, no individual images are loaded (note that all images in frame 1 load by default, as described in the `preloadTheseFrames` option).
 
@@ -594,7 +595,7 @@ The following example will load all images in frame 1 (via the `preloadTheseFram
 **Note:** Only images on the page are preloaded. As yet, you can't preload a background image applied via CSS.
 
 ##### hideFramesUntilPreloaded
-*Type: true/false, Default: `true`, Dependencies: `preloader: true`*
+**Type: true/false, Default: `true`, Dependencies: `preloader: true`**
 
 Specify whether frames should be hidden during preloading and then shown afterwards.
 
@@ -602,7 +603,7 @@ Specify whether frames should be hidden during preloading and then shown afterwa
 - `false`: don't hide frames during preloading.
 
 ##### hidePreloaderUsingCSS
-*Type: true/false, Default: `true`, Dependencies: `preloader: true`*
+**Type: true/false, Default: `true`, Dependencies: `preloader: true`**
 
 - `true`: Sequence will add a CSS class of `preloading-complete` to the preloader element (`.sequence-preloader` by default, unless you've used your own CSS selector with the `preloader` option), allowing you to hide that preloader using a CSS3 transition. Example:
 
@@ -618,23 +619,23 @@ Specify whether frames should be hidden during preloading and then shown afterwa
 The above CSS will cause the preloader element to fade out over a 1 second duration and then become hidden.
 
 ##### hidePreloaderDelay	
-*Type: a number representing time in milliseconds, Default: `0`, Dependencies: `preloader: true` and `hidePreloaderUsingCSS: true`*
+**Type: a number representing time in milliseconds, Default: `0`, Dependencies: `preloader: true` and `hidePreloaderUsingCSS: true`**
 
 The number of milliseconds to wait after the preloader has been hidden before initiating the first animation.
 
 #### <a id="keyboard-options">Keyboard Options</a>
 ##### keyNavigation
-*Type: true/false, Default: `true`*
+**Type: true/false, Default: `true`**
 
 Whether to allow the user to navigate between frames using the left and right arrow keys.
 
 ##### numericKeysGoToFrames
-*Type: true/false, Default: true*
+**Type: true/false, Default: true**
 
 Whether Sequence should go to a specific frame when the user presses a numeric key. Pressing 1 goes to frame 1 etc.
 
 ##### keyEvents
-*Type: An object or false*
+**Type: An object or false**
 
 The public Sequence method that should occur when the left or right arrow keys are pressed.
 
@@ -654,7 +655,7 @@ In this example, when the left keyboard key is pressed, Sequence's public method
 - `false`: no keyboard events
 
 ##### customKeyEvents
-*Type: An object, Default: no default*
+**Type: An object, Default: no default**
 
 An object containing the keyCodes and public methods that should occur when certain keys are pressed.
 
@@ -663,37 +664,37 @@ Currently, the public methods supported by this option are `prev()`, `next()` an
 Example:
 
     customKeyEvents {
-        65: "prev",	//a
-        68: "next",	//d
-        83: "prev",	//s
-        87: "next"	//w
+        65: "prev", //a
+        68: "next", //d
+        83: "prev", //s
+        87: "next" //w
     }
 
 In this example, when the 'a' and 's' keys are pressed, Sequence will go to the previous frame. When 'd' and 'w' are pressed, Sequence will go to the next frame.
 
 #### <a id="touch-options">Touch Swipe Options</a>
 ##### swipeNavigation
-*Type: true/false, Default: `true`*
+**Type: true/false, Default: `true`**
 
-Whether to allow the user to navigate between frames by swiping left and right on touch enabled devices
+Whether to allow the user to navigate between frames by swiping left and right on touch enabled devices.
 
 ##### swipeThreshold
-*Type: A number representing a percentage, Default: `15`*
+**Type: A number representing pixels, Default: `20`**
 
-The percentage size relative to the Sequence container, that the user's finger must move before a swipe event is triggered
+The number of pixels that the user's finger must move across before a swipe event is triggered.
 
-The default of `15`, means the user must move their finger at least 15% of the Sequence container's width before a swipe event is recognised.
+The default of `20`, means the user must move their finger at least 20 pixels before a swipe event is recognised.
 
 ##### swipePreventsDefault	
-*Type: true/false, Default: `false`*
+**Type: true/false, Default: `false`**
 
 - `true`: when a user swipes their finger over an instance of Sequence, the page will be prevented from scrolling. 
 - `false`: the browser will will continue with it's default behaviour when a swipe occurs.
 
-**Note:** Be careful with this option if `true`, make sure the user can touch an area of the page that still allows them to scroll
+**Note:** Be careful with this option if `true`, make sure the user can touch an area of the page that still allows them to scroll.
 
 ##### swipeEvents	
-*Type: An object or false, Default: `{left: "prev", right: "next", up: false, down: false}`*
+**Type: An object or false, Default: `{left: "prev", right: "next", up: false, down: false}`**
 
 The public Sequence method that should occur when the user swipes in a particular direction.
 
@@ -723,7 +724,7 @@ Please place a reference to the jQuery HashChange plugin above your reference to
     <script type="text/javascript" src="scripts/sequence.jquery-min.js"></script>
 
 ##### hashTags
-*Type: true/false, Default: `false`*
+**Type: true/false, Default: `false`**
 
 - `true`: when a frame is navigated to and becomes active, the hash tag will change to reflect the frames ID. 
 
@@ -743,7 +744,7 @@ In the following example, when the second frame becomes active, the URL will be 
 - `false`: the hash tag will not change.
 
 ##### hashDataAttribute
-*Type: true/false, Default: `false`, Dependencies: `hashTags: true`*
+**Type: true/false, Default: `false`, Dependencies: `hashTags: true`**
 
 - `true`: the hash tag name, will not be taken from the list item's ID attribute but instead a data attribute called data-sequence-hash.
 
@@ -760,7 +761,7 @@ In the following example, when `hashDataAttribute` is true and the first frame b
 - `false`: Use the ID attribute instead of the data attribute.
 
 ##### hashChangesOnFirstFrame
-*Type: true/false, Default: `false`, Dependencies: `hashTags: true`*	
+**Type: true/false, Default: `false`, Dependencies: `hashTags: true`**	
 
 Whether the hash tag should be changed when the first frame becomes active.
 
@@ -790,7 +791,7 @@ Fallback theme options are included in the options of each instance of Sequence,
 #### <a id="fallback-options">Fallback Options</a>
 
 ##### theme
-*Type: `slide` or `fade`, Default: `slide`*
+**Type: `slide` or `fade`, Default: `slide`**
 
 The name of the fallback theme to be used when the browser doesn't support CSS3 transitions.
 
@@ -798,7 +799,7 @@ The name of the fallback theme to be used when the browser doesn't support CSS3 
 - `fade`: Causes a frame to fade out before the next fades in (note: due to poor support for opacity in Internet Explorer 8 and below it's advised to use the "slide" theme instead).
 
 ##### speed	
-*Type: a number representing milliseconds, Default: `500`*
+**Type: a number representing milliseconds, Default: `500`**
 
 The speed at which frames should transition when in a browser that does not support CSS3 transitions.
 
@@ -893,17 +894,26 @@ Examples:
     sequence.goTo(2, -1); //navigate backwards to frame 2
 
 #### pause()	
-*Dependencies: `autoPlay: true`*
+**Dependencies: `autoPlay: true`**
 
 `pause()` will either pause or unpause Sequence's autoPlay feature depending on its current state.
 
 Example:
     
     sequence.pause()
+    
+#### unpause()
+**Dependencies: `autoPlay: true`**
+
+`unpause()` will unpause Sequence's autoPlay feature when paused.
+
+Example:
+    
+    sequence.unpause()
 
 #### next()
 
-Causes Sequence to animate to the next frame
+Causes Sequence to animate to the next frame.
 
 Example:
 
@@ -911,25 +921,23 @@ Example:
 
 #### prev()
 
-Causes Sequence to animate to the previous frame
+Causes Sequence to animate to the previous frame.
 
 Example:
 
     sequence.prev()
 
-#### startAutoPlay(wait, newAutoPlayDelay)	
+#### startAutoPlay(delay)	
 
 Start Sequences auto play feature if not already active.
 
 Arguments:
 
-- `wait` (optional): A number in milliseconds to wait before the autoPlay feature is started. If undefined, the value will be 0.
-
-- `newAutoPlayDelay` (optional): The delay between frames automatically animating in/out. If undefined, the existing `autoPlayDelay` value will be used.
+- `delay` (optional): A number in milliseconds to wait before the autoPlay feature is started. If undefined, the value will be 0.
 
 Example: 
     
-    sequence.startAutoPlay(1000, 3000); //start Sequence's autoPlay feature after 1 second (1000 milliseconds), then continue navigating between frames every 3 seconds (3000 milliseconds).
+    sequence.startAutoPlay(1000); //start Sequence's autoPlay feature after 1 second (1000 milliseconds).
 
 #### stopAutoPlay()
 
@@ -954,9 +962,11 @@ Public variables can be taken from the variable the Sequence object is saved in 
 `container`
 Returns the selector for Sequence's container element.
 
-`currentFrame` Returns the selector for the current frame.
+`currentFrame`
+Returns the selector for the current frame.
 
-`direction` Returns the direction Sequence is currently animating in (`1` = forward/`-1` = reverse).
+`direction`
+Returns the direction Sequence is currently animating in (`1` = forward/`-1` = reverse).
 
 `currentFrameChildren`
 Returns an array containing the selectors for the current frame's child elements.

@@ -119,6 +119,8 @@ small{
 
 .animate-in .info1, .animate-in .info2, .animate-in .info3 {
 	left: 165px;
+	display: block;
+	opacity: 1;
 
 	-webkit-transition-duration: 1s;
 	-moz-transition-duration: 1s;

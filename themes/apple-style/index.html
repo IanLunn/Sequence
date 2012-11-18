@@ -15,7 +15,7 @@
 	    document.write(unescape("%3Cscript src='../../scripts/jquery.js' type='text/javascript'%3E%3C/script%3E"));
 	}
 	</script>
-	<script type="text/javascript" src="../../scripts/sequence.jquery.js"></script>
+	<script type="text/javascript" src="../../scripts/sequence.jquery-min.js"></script>
 	<script type="text/javascript">	
 		$(document).ready(function(){
 			$status = $(".status");
@@ -28,7 +28,7 @@
 				pauseButton: true,
 				preloader: true,
 				hidePreloaderUsingCSS: false,						
-				animateStartingFrameIn: false, 			
+				animateStartingFrameIn: true,		
 				navigationSkipThreshold: 750,
 				customKeyEvents: {
 					80: "pause"
@@ -84,7 +84,7 @@
 		</ul>
 		<div id="sequence">
 			<ul>
-				<li>
+				<li class="animate-in">
 					<div class="intro">
 						<h2>Built using Sequence.js</h2>
 						<h3>The Responsive Slider with Advanced CSS3 Transitions</h3>

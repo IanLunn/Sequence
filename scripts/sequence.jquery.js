@@ -1,15 +1,28 @@
 /*
-Sequence.js (www.sequencejs.com)
-Version: 0.7.6 Beta
+Sequence.js (http://www.sequencejs.com)
+Version: 0.8 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
 
-This is a FREE script and is dual licensed under the following:
-http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
+This is a FREE script and is available under a MIT License:
+http://www.opensource.org/licenses/mit-license.php
 
 Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
-Aside from these comments, you may modify and distribute this file as you please. Have fun!
+
+Sequence also relies on the following open source scripts:
+
+- 	jQuery imagesLoaded 2.1.0 (http://github.com/desandro/imagesloaded)
+	Paul Irish et al 
+	Available under a MIT License: http://www.opensource.org/licenses/mit-license.php
+
+- 	jQuery TouchWipe 1.1.1 (http://www.netcu.de/jquery-touchwipe-iphone-ipad-library)
+	Andreas Waltl, netCU Internetagentur (http://www.netcu.de)
+	Available under a MIT License: http://www.opensource.org/licenses/mit-license.php
+
+- 	Modernizr 2.6.1 Custom Build (http://modernizr.com/)
+	Copyright (c) Faruk Ates, Paul Irish, Alex Sexton
+	Available under the BSD and MIT licenses: www.modernizr.com/license/
 */
 
 (function($) {
@@ -47,6 +60,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		self.transitionEnd = transitions[Modernizr.prefixed('transition')], //work out the JS transitionEnd name for the browser being used (webkitTransitionEnd webkitAnimationEnd for example)
 		self.transitionProperties = {},
 		self.numberOfFrames = self.sequence.children("li").length, //number of frames (<li>) Sequence consists of
+
 		self.transitionsSupported = (self.prefix !== undefined) ? true : false, //determine if transitions are supported
 		self.hasTouch = ("ontouchstart" in window) ? true : false, //determine if this is a touch enabled device
 		self.active, //determines whether Sequence is animating
@@ -118,7 +132,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		    self.transitionsSupported = get.operaTest(); //run a test to see if Opera correctly supports transitions (Opera 11 has bugs relating to transitions)
 		}
         
-        self.modifyElements(self.sequence.children("li").children(), "0s"); //reset transition time to 0s
+        self.modifyElements(self.sequence.children("li"), "0s"); //reset transition time to 0s
 		self.sequence.children("li").removeClass("animate-in"); //remove any instance of "animate-in", which should be used incase JS is disabled
 		
 		//functionality to run once Sequence has preloaded
@@ -133,6 +147,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		    		self.prependPreloadingCompleteTo.addClass("preloading-complete");
 		    		setTimeout(init, self.settings.hidePreloaderDelay);
 		    	}else{
+
 		    		self.settings.preloader.fadeOut(self.settings.hidePreloaderDelay, function() {
 		    			clearInterval(self.defaultPreloader);
 		    			init();
@@ -168,29 +183,104 @@ Aside from these comments, you may modify and distribute this file as you please
             var imagesToPreload = $(frameImagesToPreload.concat(individualImagesToPreload)); //combine frame images and individual images
 			var imagesToPreloadLength = imagesToPreload.length;
 
-			//reliable .load() alternative from here: https://gist.github.com/797120/b7359a8ba0ab5be298875215d07819fe61f87399
-			if(!imagesToPreload.length) { //if there are no images to preload...
-				oncePreloaded();
-			}else{
-				imagesToPreload.bind("load",function() {
-					if(--imagesToPreloadLength <= 0) { 
-					  oncePreloaded();
-					}
-				}).each(function(){
-					// cached images don't fire load sometimes, so we reset src.
-					if(this.complete || this.complete === undefined) {
-					  var src = this.src;				  
-					  this.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="; // webkit hack from http://groups.google.com/group/jquery-dev/browse_thread/thread/eee6ab7b2da50e1f
-					  this.src = src;
-					}  
-				}); 
-			}
+			imagesLoaded(imagesToPreload, oncePreloaded);
     	}else{ //if not using the preloader...
 		    $(window).bind("load", function() { //when the window loads...
 		    	oncePreloaded(); //run the init functionality when the preloader has finished
 		    	$(this).unbind("load"); //unbind the load event as it's no longer needed
 		    });
-		}		
+		}
+
+		//jQuery imagesLoaded plugin v2.1.0 (http://github.com/desandro/imagesloaded)
+		function imagesLoaded(imagesToPreload, callback) {
+			BLANK = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+			var $this = imagesToPreload,
+				deferred = $.isFunction($.Deferred) ? $.Deferred() : 0,
+				hasNotify = $.isFunction(deferred.notify),
+				$images = $this.find('img').add( $this.filter('img') ),
+				loaded = [],
+				proper = [],
+				broken = [];
+
+			//Register deferred callbacks
+			if($.isPlainObject(callback)) {
+				$.each(callback, function(key, value) {
+					if(key === 'callback') {
+						callback = value;
+					}else if(deferred) {
+						deferred[key](value);
+					}
+				});
+			}
+
+			function doneLoading() {
+				var $proper = $(proper),
+					$broken = $(broken);
+
+				if(deferred) {
+					if(broken.length) {
+						deferred.reject($images, $proper, $broken);
+					}else{
+						deferred.resolve($images);
+					}
+				}
+
+				if($.isFunction(callback)) {
+					callback.call($this, $images, $proper, $broken);
+				}
+			}
+
+			function imgLoaded( img, isBroken ) {	
+				if(img.src === BLANK || $.inArray(img, loaded) !== -1) { // don't proceed if BLANK image, or image is already loaded
+					return;
+				}
+				
+				loaded.push(img); // store element in loaded images array
+
+				if(isBroken) { // keep track of broken and properly loaded images
+					broken.push(img);
+				}else{
+					proper.push(img);
+				}
+
+				$.data(img, 'imagesLoaded', {isBroken: isBroken, src: img.src }); // cache image and its state for future calls
+
+				if(hasNotify) { // trigger deferred progress method if present
+					deferred.notifyWith($(img), [isBroken, $images, $(proper), $(broken)]);
+				}
+
+				if($images.length === loaded.length) { // call doneLoading and clean listeners if all images are loaded
+					setTimeout(doneLoading);
+					$images.unbind('.imagesLoaded');
+				}
+			}
+
+			if(!$images.length) { // if no images, trigger immediately
+				doneLoading();
+			}else{
+				$images.bind('load.imagesLoaded error.imagesLoaded', function(event) {
+					imgLoaded(event.target, event.type === 'error'); // trigger imgLoaded
+				}).each(function(i, el) {
+					var src = el.src;
+					var cached = $.data(el, 'imagesLoaded'); // find out if this image has been already checked for status if it was, and src has not changed, call imgLoaded on it
+					if(cached && cached.src === src) {
+						imgLoaded(el, cached.isBroken);
+						return;
+					}
+
+					if(el.complete && el.naturalWidth !== undefined) { // if complete is true and browser supports natural sizes, try to check for image status manually
+						imgLoaded(el, el.naturalWidth === 0 || el.naturalHeight === 0);
+						return;
+					}
+
+					// cached images don't fire load sometimes, so we reset src, but only when dealing with IE, or image is complete (loaded) and failed manual check webkit hack from http://groups.google.com/group/jquery-dev/browse_thread/thread/eee6ab7b2da50e1f
+					if(el.readyState || el.complete) {
+						el.src = BLANK;
+						el.src = src;
+					}
+				});
+			}
+		};	
 		
 		function init() {
 			$(self.settings.preloader).remove(); //remove the preloader element
@@ -211,13 +301,8 @@ Aside from these comments, you may modify and distribute this file as you please
 			}else{
 			    self.pauseIcon = undefined;
 			}
-						
-			if(self.hasTouch) { //if the device has touch capabilities...
-				self.settings.calculatedSwipeThreshold = self.container.width() * (self.settings.swipeThreshold / 100); //calculate the swipe threshold based on the width of the container
-			}
 
 			self.nextFrameID = self.settings.startingFrameID;
-			self.nextFrame = self.sequence.children("li:nth-child("+self.nextFrameID+")");
 						
 			if(self.settings.hashTags) { //if using hashtags...
 			    self.sequence.children("li").each(function() { //for each frame...
@@ -245,22 +330,20 @@ Aside from these comments, you may modify and distribute this file as you please
 
 			if(self.transitionsSupported) { //initiate the full featured Sequence if transitions are supported...
 				if(!self.settings.animateStartingFrameIn) { //start first frame in animated in position
-					self.currentFrame = self.nextFrame;
+					self.currentFrameID = self.nextFrameID;
 
 					if(self.settings.moveActiveFrameToTop) {
-					    self.currentFrame.css("z-index", self.numberOfFrames);
+					    self.nextFrame.css("z-index", self.numberOfFrames);
 					}
-					self.currentFrameChildren = self.currentFrame.children();
-					self.currentFrameID = self.nextFrameID;
-					self.modifyElements(self.currentFrameChildren, "0s");
-					self.currentFrame.addClass("animate-in");
+					self.modifyElements(self.nextFrameChildren, "0s");
+					self.nextFrame.addClass("animate-in");
 					if(self.settings.hashChangesOnFirstFrame) {
-					    self.currentHashTag = self.currentFrame.attr(self.getHashTagFrom);
+					    self.currentHashTag = self.nextFrame.attr(self.getHashTagFrom);
 					    document.location.hash = "#"+self.currentHashTag;
 					}
 					
 					setTimeout(function() {
-						self.modifyElements(self.currentFrameChildren, "");
+						self.modifyElements(self.nextFrameChildren, "");
 					}, 100);
 					
 					self.startAutoPlay(self.settings.autoPlayDelay);
@@ -273,14 +356,12 @@ Aside from these comments, you may modify and distribute this file as you please
 				}
 			}else{ //initiate a basic slider for browsers that don't support CSS3 transitions
     			self.container.addClass("sequence-fallback");
-    			self.currentFrame = self.nextFrame;
     			self.beforeNextFrameAnimatesIn();
     			self.afterNextFrameAnimatesIn();
     			if(self.settings.hashChangesOnFirstFrame){
-    			    self.currentHashTag = self.currentFrame.attr(self.getHashTagFrom);
+    			    self.currentHashTag = self.nextFrame.attr(self.getHashTagFrom);
     			    document.location.hash = "#"+self.currentHashTag;
     			}
-    			self.currentFrameChildren = self.currentFrame.children();
     			self.currentFrameID = self.nextFrameID;			    		
                 self.sequence.children("li").addClass("animate-in");
                 self.sequence.children(":not(li:nth-child("+self.nextFrameID+"))").css({"display": "none", "opacity": 0});
@@ -371,56 +452,57 @@ Aside from these comments, you may modify and distribute this file as you please
     			    }
     			});
 			}
-			
-			if(self.settings.swipeNavigation) { //if using swipeNavigation and the device has touch capabilities...
-        		var touches = {
-        		"touchstartX": -1,
-        		"touchstartY": -1,
-        		"touchmoveX": -1,
-        		"touchmoveY": -1
-        		};
-		
-        		self.sequence.on("touchstart touchmove touchend", function(e) {
-            		if(self.settings.swipePreventsDefault) {
-            			e.preventDefault();
-            		}
-            		switch(e.originalEvent.type) {
-            			case "touchmove":
-            			case "touchstart":
-	            			touches[e.originalEvent.type + "X"] = e.originalEvent.touches[0].pageX;
-	            			touches[e.originalEvent.type + "Y"] = e.originalEvent.touches[0].pageY;
-	            			break;
-            			case "touchend":
-	            			if(touches.touchmoveX !== -1) {
-	            				//find out which way the user moved their finger the most
-	            				var xAmount = touches.touchmoveX - touches.touchstartX;
-	            				var yAmount = touches.touchmoveY - touches.touchstartY;
-	            				self.stopAutoPlay();
-	            				if(Math.abs(xAmount) > Math.abs(yAmount) && (xAmount > self.settings.calculatedSwipeThreshold)) { //if the user swiped right
-	            					self.initCustomKeyEvent(self.settings.swipeEvents.right);
-	            				}else if(Math.abs(xAmount) > Math.abs(yAmount) && (Math.abs(xAmount) > self.settings.calculatedSwipeThreshold)) { //if the user swiped left
-	            					self.initCustomKeyEvent(self.settings.swipeEvents.left);
-	            				}else if(Math.abs(yAmount) > Math.abs(xAmount) && (yAmount > self.settings.calculatedSwipeThreshold)) { //if the user swiped down
-	            					self.initCustomKeyEvent(self.settings.swipeEvents.down);
-	            				}else if(Math.abs(yAmount) > Math.abs(xAmount) && (Math.abs(yAmount) > self.settings.calculatedSwipeThreshold)) { //if the user swiped up
-	            					self.initCustomKeyEvent(self.settings.swipeEvents.up);
-	            				}
-	            		
-	            				touches = {
-	            					"touchstartX": -1,
-	            					"touchstartY": -1,
-	            					"touchmoveX": -1,
-	            					"touchmoveY": -1
-	            				};
-	            			}
-	            			break;
-            		}
-		        });
+
+			if(self.settings.swipeNavigation && self.hasTouch) { //if using swipeNavigation and the device has touch capabilities...
+				//jQuery TouchWipe v1.1.1 (http://www.netcu.de/jquery-touchwipe-iphone-ipad-library)
+				var startX;
+				var startY;
+				var isMoving = false;
+
+				function cancelTouch() {
+					self.sequence.on("touchmove", onTouchMove);
+					startX = null;
+					isMoving = false;
+				}	
+
+				function onTouchMove(e) {
+					if(self.settings.swipePreventsDefault) {
+						e.preventDefault();
+					}
+					if(isMoving) {
+						var x = e.originalEvent.touches[0].pageX;
+						var y = e.originalEvent.touches[0].pageY;
+						var dx = startX - x;
+						var dy = startY - y;
+						if(Math.abs(dx) >= self.settings.swipeThreshold) {
+							cancelTouch();
+							if(dx > 0) {
+								self.initCustomKeyEvent(self.settings.swipeEvents.left);
+							}else{
+								self.initCustomKeyEvent(self.settings.swipeEvents.right);
+							}
+					 	}else if(Math.abs(dy) >= self.settings.swipeThreshold) {
+							cancelTouch();
+							if(dy > 0) {
+								self.initCustomKeyEvent(self.settings.swipeEvents.down);
+							}else{
+								self.initCustomKeyEvent(self.settings.swipeEvents.up);
+							}
+						}
+					}
+				}
+
+				function onTouchStart(e) {
+					if(e.originalEvent.touches.length == 1) {
+						startX = e.originalEvent.touches[0].pageX;
+						startY = e.originalEvent.touches[0].pageY;
+						isMoving = true;
+						self.sequence.on("touchmove", onTouchMove);
+					}
+				}
+
+				self.sequence.on("touchstart", onTouchStart);
 			}
-			
-			$(window).resize(function() { //if the window is resized...
-				self.settings.calculatedSwipeThreshold = self.container.width() * (self.settings.swipeThreshold / 100); //recalculate the swipe threshold
-			});
 			//END EVENTS
 		}
 	} //END CONSTRUCTOR
@@ -474,7 +556,6 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		setTransitionProperties: function(frameChildren) {
 			var self = this;
-			//self.modifyElements(frameChildren, "");
 			frameChildren.each(function() {
 				self.transitionProperties["transition-duration"] = $(this).css(self.prefix + "transition-duration");
 				self.transitionProperties["transition-delay"] = $(this).css(self.prefix + "transition-delay");
@@ -554,7 +635,6 @@ Aside from these comments, you may modify and distribute this file as you please
 			}else{
 				self.delayUnpause = true; //Sequence is animating so delay the unpause event until the animation completes
 			}
-			
 		},
 		
 		//Go to the frame ahead of the current one
@@ -579,20 +659,20 @@ Aside from these comments, you may modify and distribute this file as you please
 		*/
 		goTo: function(id, direction) {	
 			var self = this;
-			id = parseFloat(id); //convert the id to a number just in case
+			var id = parseFloat(id); //convert the id to a number just in case
 
 			if((id === self.currentFrameID) //if the id of the frame the user is trying to go to is the same as the currently active one...
-			|| (!self.settings.cycle && direction === 1 && self.currentFrameID === self.numberOfFrames) //or cycling is disabled, the user is navigating forward and this is the last frame...
-			|| (!self.settings.cycle && direction === -1 && self.currentFrameID === 1) //or cycling is disabled, the user is navigating backwards and this is the first frame...
-			|| (self.settings.preventReverseSkipping && self.direction !== direction && self.active) //or Sequence is animating and the user is trying to change the direction of navigation...
 			|| (self.settings.navigationSkip && self.navigationSkipThresholdActive) //or navigationSkip is enabled and the navigationSkipThreshold is active (which prevents frame from being navigated too fast)...
 			|| (!self.settings.navigationSkip && self.active) //or navigationSkip is disbaled but Sequence is animating...
-			|| (!self.transitionsSupported && self.active)) { //or Sequence is in fallback mode and Sequence is animating...
+			|| (!self.transitionsSupported && self.active) //or Sequence is in fallback mode and Sequence is animating...
+			|| (!self.settings.cycle && direction === 1 && self.currentFrameID === self.numberOfFrames) //or cycling is disabled, the user is navigating forward and this is the last frame...
+			|| (!self.settings.cycle && direction === -1 && self.currentFrameID === 1) //or cycling is disabled, the user is navigating backwards and this is the first frame...
+			|| (self.settings.preventReverseSkipping && self.direction !== direction && self.active)) { //or Sequence is animating and the user is trying to change the direction of navigation...
 				return false; //don't go to another frame
 			}else if(self.settings.navigationSkip && self.active) { //if navigationSkip is enabled and Sequence is animating (a frame is being skipped before it has finished animating)...
 				self.navigationSkipThresholdActive = true; //the navigationSkipThreshold is now active
 				if(self.settings.fadeFrameWhenSkipped) { //if a frame should fade when skipped...
-					self.nextFrame.fadeOut(self.settings.fadeFrameTime); //fade 
+					self.nextFrame.stop().animate({"opacity": 0}, self.settings.fadeFrameTime); //fade
 				}
 
 				navigationSkipThresholdTimer = setTimeout(function() { //start the navigationSkipThreshold timer to prevent being able to navigate too quickly
@@ -602,7 +682,6 @@ Aside from these comments, you may modify and distribute this file as you please
 
 			if(!self.active || self.settings.navigationSkip) { //if there are no animations running or navigationSkip is enabled...
 				self.active = true; //Sequence is now animating
-
 				self.stopAutoPlay(); //stop any autoPlay timer that may be running
 			
 				if(id === self.numberOfFrames) { //if navigating to the last frame...
@@ -616,24 +695,76 @@ Aside from these comments, you may modify and distribute this file as you please
 				}else{
 					self.direction = direction; //go to the developer defined frame
 				}
-
 				
-				self.currentFrame = self.sequence.children(".animate-in"); //find which frame is active //the frame currently being viewed (and about to be animated out)
+				self.currentFrame = self.sequence.children(".animate-in"); //find which frame is active -- the frame currently being viewed (and about to be animated out)
 				self.nextFrame = self.sequence.children("li:nth-child("+id+")"); //grab the next frame
+				self.frameChildren = self.currentFrame.children();	//save the child elements of the current frame
+				self.nextFrameChildren = self.nextFrame.children(); //save the child elements of the next frame
 				
-				self.frameChildren = self.currentFrame.children();	
-				self.nextFrameChildren = self.nextFrame.children(); //save the child elements pf the next frame
-				
-				if(self.transitionsSupported) { //if the browser supports CSS3 transitions...								
+				if(self.transitionsSupported) { //if the browser supports CSS3 transitions...							
 					if(!self.firstFrame) { //if this isn't the first frame to be shown...
-						if(self.currentFrame.length !== 0) { //if there is a current frame (one that is in it's animate-in position)...
+						if(self.currentFrame.length !== undefined) { //if there is a current frame (one that is in it's animate-in position)...
 							self.beforeCurrentFrameAnimatesOut(); //callback
-							self.animateOut(self.currentFrame, self.direction); //cause the current frame to animate out
+							if(self.settings.moveActiveFrameToTop) { //if the active frame should move to the top...
+							    self.currentFrame.css("z-index", 1); //move this frame to the bottom as it is now inactive
+							}
+							self.modifyElements(self.nextFrameChildren, "0s"); //give the next frame elements a transition-duration and transition-delay of 0s so they don't transition to their reset position
+							if(!self.settings.reverseAnimationsWhenNavigatingBackwards || self.direction === 1) { //if user hit next button...
+								self.nextFrame.removeClass("animate-out"); //reset the next frame back to its starting position
+								self.modifyElements(self.frameChildren, "");  //remove any inline styles from the elements to be animated so styles via the "animate-out" class can take full effect		
+							}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.direction === -1) { //if the user hit prev button
+								self.nextFrame.addClass("animate-out"); //reset the next frame back to its animate-out position
+								self.setTransitionProperties(self.frameChildren);
+							}
 						}
-						self.animateIn(self.nextFrame, self.direction); //cause the next frame to animate in
 					}else{ //if this is the first frame to be shown...
-						self.animateIn(self.currentFrame, self.direction); //cause the first frame to animate in
 						self.firstFrame = false; //no longer the first frame
+					}
+
+					self.active = true; //Sequence is now animating
+					self.currentFrame.unbind(self.transitionEnd); //remove the animation end event
+					self.nextFrame.unbind(self.transitionEnd); //remove the animation end event
+
+					if(self.settings.fadeFrameWhenSkipped) { //if a frame may have faded out when it was previously skipped...
+						self.nextFrame.css("opacity", 1); //show it again
+					}
+					
+					self.beforeNextFrameAnimatesIn(); //callback
+					if(self.settings.moveActiveFrameToTop) { //if an active frame should be moved to the top...
+					    self.nextFrame.css({"z-index": self.numberOfFrames}); //move to the top of the z-index
+					}
+
+					//modifications to the current and next frame's elements to get them ready to animate
+					if(!self.settings.reverseAnimationsWhenNavigatingBackwards || self.direction === 1) { //if user hit next button...
+						setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially
+							self.modifyElements(self.nextFrameChildren, ""); //remove any inline styles from the elements to be animated so styles via the "animate-in" class can take full effect
+							self.waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in"); //wait for the next frame to animate in
+							if(self.afterCurrentFrameAnimatesOut !== "function () {}") { //if the afterCurrentFrameAnimatesOut is being used...
+								self.waitForAnimationsToComplete(self.currentFrame, self.frameChildren, "out"); //wait for the current frame to animate out as well
+							}
+						}, 50);
+					}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.direction === -1) { //if the user hit prev button
+						setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially
+							self.modifyElements(self.nextFrameChildren, ""); //remove any inline styles from the elements to be animated so styles via the "animate-in" class can take full effect
+							self.setTransitionProperties(self.frameChildren);
+							self.waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in"); //wait for the next frame to animate in
+							if(self.afterCurrentFrameAnimatesOut != "function () {}") { //if the afterCurrentFrameAnimatesOut is being used...
+								self.waitForAnimationsToComplete(self.currentFrame, self.frameChildren, "out"); //wait for the current frame to animate out as well
+							}
+						}, 50);
+					}
+
+					//final class changes to make animations happen
+					if(!self.settings.reverseAnimationsWhenNavigatingBackwards || self.direction === 1) { //if user hit next button...			
+						setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially
+							self.currentFrame.toggleClass("animate-out animate-in");
+							self.nextFrame.addClass("animate-in"); //add the "animate-in" class
+						}, 50);
+					}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.direction === -1) { //if the user hit prev button
+						setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially
+							self.nextFrame.toggleClass("animate-out animate-in"); //add the "animate-in" class and remove the "animate-out" class
+							self.currentFrame.removeClass("animate-in");
+						}, 50);
 					}
 				}else{ //if the browser doesn't support CSS3 transitions...
 					function animationComplete() {
@@ -665,91 +796,33 @@ Aside from these comments, you may modify and distribute this file as you please
 				            var animateOut = {};
 				            var animateIn = {};
 				            var moveIn = {};
-				            				            
+
 				            //construct the .css() and .animation() objects
-				            if(self.direction === 1){
+				            if(self.direction === 1) {
 				                animateOut["left"] = "-100%";
 				                animateIn["left"] = "100%";
 				            }else{
 				                animateOut["left"] = "100%";
 				                animateIn["left"] = "-100%";
 				            }
-				            
-				            moveIn["left"] = "0%";
+
+				            moveIn["left"] = "0";
 				            moveIn["opacity"] = 1;
-				            
+
+				            self.currentFrame = self.sequence.children("li:nth-child("+self.currentFrameID+")");
 				            self.currentFrame.animate(animateOut, self.settings.fallback.speed); //cause the current frame to animate out
 				            self.beforeNextFrameAnimatesIn(); //callback
-				            self.nextFrame.show().css(animateIn).animate(moveIn, self.settings.fallback.speed, function() { //cause the next frame to animate in
-				                animationComplete();
-				                self.afterNextFrameAnimatesIn();
-				            });				            
+				            self.nextFrame.show().css(animateIn);
+				            setTimeout(function(){
+				            	self.nextFrame.animate(moveIn, self.settings.fallback.speed, function() { //cause the next frame to animate in
+				                	animationComplete();
+				                	self.afterNextFrameAnimatesIn(); //callback
+				            	});
+				            }, 50);		            
 				        break;
 				    }
 				}
-
-				self.currentFrameID = id;
-			}
-		},
-		
-		//cause an active frame to animate out
-		animateOut: function(frame, direction) {
-			var self = this;
-
-			if(self.settings.moveActiveFrameToTop) { //if the active frame should move to the top...
-			    frame.css("z-index", 1); //move this frame to the bottom as it is now inactive
-			}
-
-			if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction === 1) { //if user hit next button...
-				//reset the position of the next frames elements ready for animating in again
-				self.modifyElements(self.nextFrameChildren, "0s");
-				self.nextFrame.removeClass("animate-out");
-				
-				//make the current frames elements animate out
-				self.modifyElements(self.frameChildren, "");				
-				frame.toggleClass("animate-out animate-in");
-			}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && direction === -1) { //if the user hit prev button
-				self.modifyElements(self.nextFrameChildren, "0s");
-				self.nextFrame.addClass("animate-out");
-				self.setTransitionProperties(self.frameChildren);
-				frame.removeClass("animate-in");
-			}
-		},
-		
-		//cause the next frame to animate in
-		animateIn: function(frame, direction) {
-			var self = this;
-			self.active = true;
-			frame.unbind(self.transitionEnd); //remove the animation end event
-
-			if(self.settings.fadeFrameWhenSkipped) {
-				self.nextFrame.show();
-			}
-			
-			self.beforeNextFrameAnimatesIn(); //callback
-			if(self.settings.moveActiveFrameToTop) { //if an active frame should be moved to the top...
-			    self.nextFrame.css({"z-index": self.numberOfFrames}); //move to the top of the z-index
-			}
-
-			if(!self.settings.reverseAnimationsWhenNavigatingBackwards || direction === 1) { //if user hit next button...
-				//setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially (not ideal but no better solution yet)
-					self.modifyElements(self.nextFrameChildren, ""); //remove any inline styles from the elements to be animated so styles via the "animate-in" class can take full effect
-					frame.addClass("animate-in"); //add the "animate-in" class
-					self.waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in"); //wait for the next frame to animate in
-					if(self.afterCurrentFrameAnimatesOut !== "function () {}") { //if the afterCurrentFrameAnimatesOut is being used...
-						self.waitForAnimationsToComplete(self.currentFrame, self.currentFrame.children(), "out"); //wait for the current frame to animate out as well
-					}
-				//}, 50);
-			}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && direction === -1) { //if the user hit prev button
-				//setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially (not ideal but no better solution yet)
-					self.modifyElements(self.nextFrameChildren, "");
-					self.setTransitionProperties(self.frameChildren);
-					frame.addClass("animate-in").removeClass("animate-out"); //add the "animate-in" class and remove the "animate-out" class
-					self.waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in"); //wait for the next frame to animate in
-					if(self.afterCurrentFrameAnimatesOut != "function () {}") { //if the afterCurrentFrameAnimatesOut is being used...
-						self.waitForAnimationsToComplete(self.currentFrame, self.currentFrame.children(), "out"); //wait for the current frame to animate out as well
-					}
-				//}, 50);
+				self.currentFrameID = id; //make the currentFrameID the same as the one that is to animate in				
 			}
 		},
 		
@@ -758,7 +831,7 @@ Aside from these comments, you may modify and distribute this file as you please
 
 			frame: the frame <li> which is animating
 			frameChildren: the animated direct child elements of the frame
-			direction: whether the elements are animating in to an active position or out of an active position
+			direction: whether the elements are animating "in" to an active position or "out" of an active position
 		*/
 		waitForAnimationsToComplete: function(frame, frameChildren, direction) {
 			var self = this;
@@ -791,10 +864,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				};
 			}
 
-			frameChildren.each(function() { //for each element being animated within a frame...
-				$(this).data('animationEnded', false); // set the data attribute to indicate that the elements animation has not yet ended
-			});
-
+			frameChildren.data('animationEnded', false); // set the data attribute of each animated element to indicate that the animation has not yet ended
 			frame.bind(self.transitionEnd, function(e) { //when an element finishes animating...
 				$(e.target).data('animationEnded', true); // set the data attrbiute to indicate that the element has finished it's animation
 			
@@ -803,6 +873,7 @@ Aside from these comments, you may modify and distribute this file as you please
 				frameChildren.each(function() { //for each element being animated within a frame...
 					if($(this).data('animationEnded') === false) { //if the animation hasn't ended...
 						allAnimationsEnded = false; //not all animations have ended yet
+						return false; //break out of the animationEnded check early
 					}
 				});
 			
@@ -898,7 +969,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		navigationSkip: true, //Whether the user can navigate through frames before each frame has finished animating
 		navigationSkipThreshold: 250, //Amount of time that must pass before the next frame can be navigated to
 		fadeFrameWhenSkipped: true, //If a frame is skipped before it finishes animating, it will quickly fade out
-		fadeFrameTime: 250, //If fadeFrameWhenSkipped is true, how quickly a frame should fade out when skipped (in milliseconds)
+		fadeFrameTime: 150, //If fadeFrameWhenSkipped is true, how quickly a frame should fade out when skipped (in milliseconds)
 		preventReverseSkipping: false, //Whether the user can change the direction of navigation during frames animating (if navigating forward, the user can only skip forwards when other frames are animating).
 
 		//Next/Prev Button Settings
@@ -946,7 +1017,7 @@ Aside from these comments, you may modify and distribute this file as you please
 		
 		//Touch Swipe Settings
 		swipeNavigation: true,
-		swipeThreshold: 15,
+		swipeThreshold: 20,
 		swipePreventsDefault: false, //be careful if setting this to true
 		swipeEvents: {
 			left: "prev",
