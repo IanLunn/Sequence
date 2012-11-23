@@ -580,6 +580,7 @@ Sequence also relies on the following open source scripts:
 		//stop causing Sequence to automatically change frame every x amount of seconds
 		stopAutoPlay: function() {
 			var self = this;
+			self.settings.autoPlay = false; //stop sequence from autoPlaying during future frame changes
 			clearTimeout(self.autoPlayTimer); //stop the autoPlay timer
 		},
 
