@@ -570,7 +570,7 @@ Sequence also relies on the following open source scripts:
 		startAutoPlay: function(delay) {
 			var self = this;
 			if(self.settings.autoPlay && !self.isPaused) { //if using autoPlay and Sequence isn't paused...
-				self.stopAutoPlay(); //stop autoPlay before starting it again
+				self.stopAutoPlayTimer(); //stop autoPlay before starting it again
 				self.autoPlayTimer = setTimeout(function() { //start a new autoPlay timer and...
 					self.settings.autoPlayDirection === 1 ? self.next(): self.prev(); //go to either the next or previous frame
 				}, delay); //after a specified delay
@@ -581,8 +581,14 @@ Sequence also relies on the following open source scripts:
 		stopAutoPlay: function() {
 			var self = this;
 			self.settings.autoPlay = false; //stop sequence from autoPlaying during future frame changes
-			clearTimeout(self.autoPlayTimer); //stop the autoPlay timer
+			self.stopAutoPlayTimer(); //stop the autoPlay timer
 		},
+
+	        //clear current autoPlay timeout if one exists canceling next auto frame change
+	        stopAutoPlayTimer: function () {
+	            var self = this;
+	            clearTimeout(self.autoPlayTimer); //stop the autoPlay timer
+	        },
 
 		/*
 		Toggle startAutoPlay (unpausing autoPlay) and stopAutoPlay (pausing autoPlay)
@@ -605,7 +611,7 @@ Sequence also relies on the following open source scripts:
 				self.paused(); //callback when Sequence is paused
 				self.isPaused = true;
 				self.isHardPaused = (hardPause) ? true : false; //if hardPausing, set hardPause to true
-				self.stopAutoPlay();
+				self.stopAutoPlayTimer();
 			}else{ //if unpausing Sequence...
 				self.unpause();
 			}
@@ -683,7 +689,7 @@ Sequence also relies on the following open source scripts:
 
 			if(!self.active || self.settings.navigationSkip) { //if there are no animations running or navigationSkip is enabled...
 				self.active = true; //Sequence is now animating
-				self.stopAutoPlay(); //stop any autoPlay timer that may be running
+				self.stopAutoPlayTimer(); //stop any autoPlay timer that may be running
 			
 				if(id === self.numberOfFrames) { //if navigating to the last frame...
 					self.beforeLastFrameAnimatesIn(); //callback
