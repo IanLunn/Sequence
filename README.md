@@ -37,6 +37,14 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.8.1 8/12/2012
+
+- Hash tags are associated with the correct frame again
+- `startAutoPlay` and `stopAutoPlay` now work indefinetly
+- Frames are now given `z-index: 1` on initiation so that they stack correctly and links remain in their respective frames
+- Minor updates to documentation with a couple of fixes
+- Tested with latest jQuery version 1.8.3
+
 ###v0.8 18/11/2012
 **Note: Animating elements now works in a slighty different way and as such, this version of Sequence is not compatible with existing themes without an upgrade.** The `animate-in` and `animate-out` classes are now only applied to the frame (`<li>` element), instead of the frames child elements. Because of this, if you are upgrading from a previous version, you will need to update your CSS, so that any rules using the `animate-in` and `animate-out` classses will be changed from this:
 

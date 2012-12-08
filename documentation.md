@@ -5,10 +5,10 @@
 
 Place a link to jQuery and the sequence.jquery-min.js file in the `<head>` of your document:
 
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    <script type="text/javascript" src="scripts/sequence.jquery-min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="scripts/sequence.jquery-min.js"></script>
 
-Currently Sequence supports **jQuery 1.7.1 - 1.8.2**.
+Currently Sequence supports **jQuery 1.7.1 - 1.8.3**.
 
 ### <a id="initiate-sequence">Initiate Sequence</a>
 
@@ -819,9 +819,9 @@ By using the variable that the Sequence object is stored in, you can add custom 
             }
             var sequence = $("#sequence").sequence(options).data("sequence");
 
-            sequence.beforeCurrentFrameAnimatesIn = function(){
+            sequence.beforeCurrentFrameAnimatesOut = function(){
                 //add code to execute here, such as:
-                alert("Do something before the CURRENT frame animates in");
+                alert("Do something before the CURRENT frame animates out");
             };
 
             sequence.beforeNextFrameAnimatesIn = function(){
@@ -831,7 +831,7 @@ By using the variable that the Sequence object is stored in, you can add custom 
         });
     </script>
 
-### <a id="all-callbacks">Compete List of Callbacks</a>
+### <a id="all-callbacks">Complete List of Callbacks</a>
 
 The following is the complete set of callbacks implemented within Sequence:
 
@@ -933,7 +933,7 @@ Start Sequences auto play feature if not already active.
 
 Arguments:
 
-- `delay` (optional): A number in milliseconds to wait before the autoPlay feature is started. If undefined, the value will be 0.
+- `delay` (optional): A number in milliseconds to wait before the autoPlay feature is started. If undefined, the delay will be the same as `autoPlayDelay`.
 
 Example: 
     

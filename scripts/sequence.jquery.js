@@ -1,6 +1,6 @@
 /*
 Sequence.js (http://www.sequencejs.com)
-Version: 0.8 Beta
+Version: 0.8.1 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -326,7 +326,7 @@ Sequence also relies on the following open source scripts:
 			self.nextFrameChildren = self.nextFrame.children();
 			
 			self.sequence.css({"width": "100%", "height": "100%", "position": "relative"}); //set the sequence list to 100% width/height just incase it hasn't been specified in the CSS
-			self.sequence.children("li").css({"width": "100%", "height": "100%", "position": "absolute"}); //do the same for the frames and make them absolute
+			self.sequence.children("li").css({"width": "100%", "height": "100%", "position": "absolute", "z-index": 1}); //do the same for the frames and make them absolute
 
 			if(self.transitionsSupported) { //initiate the full featured Sequence if transitions are supported...
 				if(!self.settings.animateStartingFrameIn) { //start first frame in animated in position
@@ -337,7 +337,7 @@ Sequence also relies on the following open source scripts:
 					}
 					self.modifyElements(self.nextFrameChildren, "0s");
 					self.nextFrame.addClass("animate-in");
-					if(self.settings.hashChangesOnFirstFrame) {
+					if(self.settings.hashTags && self.settings.hashChangesOnFirstFrame) {
 					    self.currentHashTag = self.nextFrame.attr(self.getHashTagFrom);
 					    document.location.hash = "#"+self.currentHashTag;
 					}
@@ -346,7 +346,7 @@ Sequence also relies on the following open source scripts:
 						self.modifyElements(self.nextFrameChildren, "");
 					}, 100);
 					
-					self.startAutoPlay(self.settings.autoPlayDelay);
+					self.resetAutoPlay(true, self.settings.autoPlayDelay);
 				}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.settings.autoPlayDirection -1 && self.settings.animateStartingFrameIn) { //animate in backwards
 					self.modifyElements(self.nextFrameChildren, "0s");
 					self.nextFrame.addClass("animate-out");
@@ -358,14 +358,14 @@ Sequence also relies on the following open source scripts:
     			self.container.addClass("sequence-fallback");
     			self.beforeNextFrameAnimatesIn();
     			self.afterNextFrameAnimatesIn();
-    			if(self.settings.hashChangesOnFirstFrame){
+    			if(self.settings.hashTags && self.settings.hashChangesOnFirstFrame){
     			    self.currentHashTag = self.nextFrame.attr(self.getHashTagFrom);
     			    document.location.hash = "#"+self.currentHashTag;
     			}
     			self.currentFrameID = self.nextFrameID;			    		
                 self.sequence.children("li").addClass("animate-in");
                 self.sequence.children(":not(li:nth-child("+self.nextFrameID+"))").css({"display": "none", "opacity": 0});
-                self.startAutoPlay(self.settings.autoPlayDelay);
+                self.resetAutoPlay(true, self.settings.autoPlayDelay);
 			}
 			//END INIT
 			//EVENTS
@@ -566,21 +566,46 @@ Sequence also relies on the following open source scripts:
 			});
 		},
 
-		//start autoPlay after a specified delay
+		/*
+		start autoPlay -- causing Sequence to automatically change frame every x amount of milliseconds
+		
+		delay: a time in ms before starting the autoPlay feature (if unspecified, the default will be used)
+		*/
 		startAutoPlay: function(delay) {
 			var self = this;
-			if(self.settings.autoPlay && !self.isPaused) { //if using autoPlay and Sequence isn't paused...
-				self.stopAutoPlay(); //stop autoPlay before starting it again
-				self.autoPlayTimer = setTimeout(function() { //start a new autoPlay timer and...
-					self.settings.autoPlayDirection === 1 ? self.next(): self.prev(); //go to either the next or previous frame
-				}, delay); //after a specified delay
-			}
+			var delay = (delay === undefined) ? self.settings.autoPlayDelay : delay; //if a delay isn't specified, use the default
+			self.unpause();
+
+			self.resetAutoPlay(); //stop autoPlay before starting it again
+			self.autoPlayTimer = setTimeout(function() { //start a new autoPlay timer and...
+				self.settings.autoPlayDirection === 1 ? self.next(): self.prev(); //go to either the next or previous frame
+			}, delay); //after a specified delay
 		},
 		
 		//stop causing Sequence to automatically change frame every x amount of seconds
 		stopAutoPlay: function() {
 			var self = this;
+			self.pause(true);
 			clearTimeout(self.autoPlayTimer); //stop the autoPlay timer
+		},
+
+		/*
+		internal function used to start and stop autoPlay
+		start: if true, autoPlay will be started, else it'll be stopped
+		delay: a time in ms before starting the autoPlay feature (if unspecified, the default will be used)
+		*/
+		resetAutoPlay: function(start, delay) {
+			var self = this;
+			if(start === true) { //if starting autoPlay
+				if(self.settings.autoPlay && !self.isPaused) { //if using autoPlay and Sequence isn't paused...
+					clearTimeout(self.autoPlayTimer); //stop the autoPlay timer
+					self.autoPlayTimer = setTimeout(function() { //start a new autoPlay timer and...
+						self.settings.autoPlayDirection === 1 ? self.next(): self.prev(); //go to either the next or previous frame
+					}, delay); //after a specified delay
+				}
+			}else{ //if stopping autoPlay
+				clearTimeout(self.autoPlayTimer); //stop the autoPlay timer
+			}
 		},
 
 		/*
@@ -604,7 +629,7 @@ Sequence also relies on the following open source scripts:
 				self.paused(); //callback when Sequence is paused
 				self.isPaused = true;
 				self.isHardPaused = (hardPause) ? true : false; //if hardPausing, set hardPause to true
-				self.stopAutoPlay();
+				self.resetAutoPlay(); //stop autoPlay
 			}else{ //if unpausing Sequence...
 				self.unpause();
 			}
@@ -631,7 +656,7 @@ Sequence also relies on the following open source scripts:
 				if(callback !== false) {
 					self.unpaused(); //callback when Sequence is unpaused
 				}
-				self.startAutoPlay(self.settings.unpauseDelay); //start autoPlay after a delay specified via the unpauseDelay setting
+				self.resetAutoPlay(true, self.settings.unpauseDelay); //start autoPlay after a delay specified via the unpauseDelay setting
 			}else{
 				self.delayUnpause = true; //Sequence is animating so delay the unpause event until the animation completes
 			}
@@ -682,7 +707,7 @@ Sequence also relies on the following open source scripts:
 
 			if(!self.active || self.settings.navigationSkip) { //if there are no animations running or navigationSkip is enabled...
 				self.active = true; //Sequence is now animating
-				self.stopAutoPlay(); //stop any autoPlay timer that may be running
+				self.resetAutoPlay(); //stop any autoPlay timer that may be running
 			
 				if(id === self.numberOfFrames) { //if navigating to the last frame...
 					self.beforeLastFrameAnimatesIn(); //callback
@@ -702,22 +727,20 @@ Sequence also relies on the following open source scripts:
 				self.nextFrameChildren = self.nextFrame.children(); //save the child elements of the next frame
 				
 				if(self.transitionsSupported) { //if the browser supports CSS3 transitions...							
-					if(!self.firstFrame) { //if this isn't the first frame to be shown...
-						if(self.currentFrame.length !== undefined) { //if there is a current frame (one that is in it's animate-in position)...
-							self.beforeCurrentFrameAnimatesOut(); //callback
-							if(self.settings.moveActiveFrameToTop) { //if the active frame should move to the top...
-							    self.currentFrame.css("z-index", 1); //move this frame to the bottom as it is now inactive
-							}
-							self.modifyElements(self.nextFrameChildren, "0s"); //give the next frame elements a transition-duration and transition-delay of 0s so they don't transition to their reset position
-							if(!self.settings.reverseAnimationsWhenNavigatingBackwards || self.direction === 1) { //if user hit next button...
-								self.nextFrame.removeClass("animate-out"); //reset the next frame back to its starting position
-								self.modifyElements(self.frameChildren, "");  //remove any inline styles from the elements to be animated so styles via the "animate-out" class can take full effect		
-							}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.direction === -1) { //if the user hit prev button
-								self.nextFrame.addClass("animate-out"); //reset the next frame back to its animate-out position
-								self.setTransitionProperties(self.frameChildren);
-							}
+					if(self.currentFrame.length !== undefined) { //if there is a current frame (one that is in it's animate-in position)...
+						self.beforeCurrentFrameAnimatesOut(); //callback
+						if(self.settings.moveActiveFrameToTop) { //if the active frame should move to the top...
+						    self.currentFrame.css("z-index", 1); //move this frame to the bottom as it is now inactive
 						}
-					}else{ //if this is the first frame to be shown...
+						self.modifyElements(self.nextFrameChildren, "0s"); //give the next frame elements a transition-duration and transition-delay of 0s so they don't transition to their reset position
+						if(!self.settings.reverseAnimationsWhenNavigatingBackwards || self.direction === 1) { //if user hit next button...
+							self.nextFrame.removeClass("animate-out"); //reset the next frame back to its starting position
+							self.modifyElements(self.frameChildren, "");  //remove any inline styles from the elements to be animated so styles via the "animate-out" class can take full effect		
+						}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.direction === -1) { //if the user hit prev button
+							self.nextFrame.addClass("animate-out"); //reset the next frame back to its animate-out position
+							self.setTransitionProperties(self.frameChildren);
+						}
+					}else{
 						self.firstFrame = false; //no longer the first frame
 					}
 
@@ -770,7 +793,7 @@ Sequence also relies on the following open source scripts:
 					function animationComplete() {
 			            self.setHashTag();	                
 			            self.active = false;
-			            self.startAutoPlay(self.settings.autoPlayDelay);
+			            self.resetAutoPlay(true, self.settings.autoPlayDelay);
 				    }
 
 				    self.beforeCurrentFrameAnimatesOut(); //callback	
@@ -887,10 +910,9 @@ Sequence also relies on the following open source scripts:
 		setHashTag: function() {
 			var self = this;
 			if(self.settings.hashTags) { //if hashTags is enabled...
-			    self.currentHashTag = self.currentFrame.attr(self.getHashTagFrom); //get the hashtag name
+			    self.currentHashTag = self.nextFrame.attr(self.getHashTagFrom); //get the hashtag name
 			    self.frameHashIndex = $.inArray(self.currentHashTag, self.frameHashID); //get the index of the frame that matches the hashtag
-			    
-			    if(self.frameHashIndex !== -1 && (self.settings.hashChangesOnFirstFrame || !self.firstFrame)) { //if the hashtag matches a Sequence frame ID...
+			    if(self.frameHashIndex !== -1 && (self.settings.hashChangesOnFirstFrame || (!self.firstFrame || !self.transitionsSupported))) { //if the hashtag matches a Sequence frame ID...
 			        self.nextFrameID = self.frameHashIndex + 1;
                     document.location.hash = "#"+self.currentHashTag;
 			    }else{
@@ -915,8 +937,7 @@ Sequence also relies on the following open source scripts:
 		 * Build: http://modernizr.com/download/#-svg-prefixed-testprop-testallprops-domprefixes
 		 */
 		modernizr: function() {
-		
-		;window.Modernizr=function(a,b,c){function x(a){i.cssText=a}function y(a,b){return x(prefixes.join(a+";")+(b||""))}function z(a,b){return typeof a===b}function A(a,b){return!!~(""+a).indexOf(b)}function B(a,b){for(var d in a){var e=a[d];if(!A(e,"-")&&i[e]!==c)return b=="pfx"?e:!0}return!1}function C(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:z(f,"function")?f.bind(d||b):f}return!1}function D(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+m.join(d+" ")+d).split(" ");return z(b,"string")||z(b,"undefined")?B(e,b):(e=(a+" "+n.join(d+" ")+d).split(" "),C(e,b,c))}var d="2.6.1",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l="Webkit Moz O ms",m=l.split(" "),n=l.toLowerCase().split(" "),o={svg:"http://www.w3.org/2000/svg"},p={},q={},r={},s=[],t=s.slice,u,v={}.hasOwnProperty,w;!z(v,"undefined")&&!z(v.call,"undefined")?w=function(a,b){return v.call(a,b)}:w=function(a,b){return b in a&&z(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=self;if(typeof c!="function")throw new TypeError;var d=t.call(arguments,1),e=function(){if(self instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(t.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(t.call(arguments)))};return e}),p.svg=function(){return!!b.createElementNS&&!!b.createElementNS(o.svg,"svg").createSVGRect};for(var E in p)w(p,E)&&(u=E.toLowerCase(),e[u]=p[E](),s.push((e[u]?"":"no-")+u));return e.addTest=function(a,b){if(typeof a=="object")for(var d in a)w(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,enableClasses&&(f.className+=" "+(b?"":"no-")+a),e[a]=b}return e},x(""),h=j=null,e._version=d,e._domPrefixes=n,e._cssomPrefixes=m,e.testProp=function(a){return B([a])},e.testAllProps=D,e.prefixed=function(a,b,c){return b?D(a,b,c):D(a,"pfx")},e}(self,self.document);
+			;window.Modernizr=function(a,b,c){function x(a){i.cssText=a}function y(a,b){return x(prefixes.join(a+";")+(b||""))}function z(a,b){return typeof a===b}function A(a,b){return!!~(""+a).indexOf(b)}function B(a,b){for(var d in a){var e=a[d];if(!A(e,"-")&&i[e]!==c)return b=="pfx"?e:!0}return!1}function C(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:z(f,"function")?f.bind(d||b):f}return!1}function D(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+m.join(d+" ")+d).split(" ");return z(b,"string")||z(b,"undefined")?B(e,b):(e=(a+" "+n.join(d+" ")+d).split(" "),C(e,b,c))}var d="2.6.1",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l="Webkit Moz O ms",m=l.split(" "),n=l.toLowerCase().split(" "),o={svg:"http://www.w3.org/2000/svg"},p={},q={},r={},s=[],t=s.slice,u,v={}.hasOwnProperty,w;!z(v,"undefined")&&!z(v.call,"undefined")?w=function(a,b){return v.call(a,b)}:w=function(a,b){return b in a&&z(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=self;if(typeof c!="function")throw new TypeError;var d=t.call(arguments,1),e=function(){if(self instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(t.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(t.call(arguments)))};return e}),p.svg=function(){return!!b.createElementNS&&!!b.createElementNS(o.svg,"svg").createSVGRect};for(var E in p)w(p,E)&&(u=E.toLowerCase(),e[u]=p[E](),s.push((e[u]?"":"no-")+u));return e.addTest=function(a,b){if(typeof a=="object")for(var d in a)w(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,enableClasses&&(f.className+=" "+(b?"":"no-")+a),e[a]=b}return e},x(""),h=j=null,e._version=d,e._domPrefixes=n,e._cssomPrefixes=m,e.testProp=function(a){return B([a])},e.testAllProps=D,e.prefixed=function(a,b,c){return b?D(a,b,c):D(a,"pfx")},e}(self,self.document);
 		},
 		
 		defaultPreloader: function(prependTo, transitions, prefix) {

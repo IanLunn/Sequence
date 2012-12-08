@@ -27,12 +27,18 @@
 		
 		$(document).ready(function(){
 			var options = {
-			    hashTags: true,
+				hashTags: true,
 				nextButton: true,
 				prevButton: true,
-				preloader: true,
 				animateStartingFrameIn: true,
-				transitionThreshold: 250
+				autoPlayDelay: 3000,
+				preloader: true,
+				preloadTheseFrames: [1],
+				preloadTheseImages: [
+					"images/tn-model1.png",
+					"images/tn-model2.png",
+					"images/tn-model3.png"
+				]
 			};
 
 			var sequence = $("#sequence").sequence(options).data("sequence");
