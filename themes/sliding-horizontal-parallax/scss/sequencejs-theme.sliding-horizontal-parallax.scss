@@ -1,8 +1,8 @@
 /*
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
-Theme: Sliding Horizontal Parallax (Responsive)
-Version: 0.4 Beta
+Theme: Sliding Horizontal Parallax
+Version: 1.0
 Theme Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Theme URL: http://www.sequencejs.com/themes/sliding-horizontal-parallax/
@@ -11,7 +11,6 @@ This is a FREE theme and is available under a MIT License:
 http://www.opensource.org/licenses/mit-license.php
 
 Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
-Aside from these comments, you may modify and distribute this file as you please.
 */
 
 //Selector Variables
@@ -37,6 +36,7 @@ $prevButton: ".prev";
 	position: relative;
 	margin: 0 auto;
 	overflow: hidden;
+	-webkit-backface-visibility: hidden; /* prevent graphical glitches in WebKit browsers when using transitions */
 
 	#{$nextButton},
 	#{$prevButton} {

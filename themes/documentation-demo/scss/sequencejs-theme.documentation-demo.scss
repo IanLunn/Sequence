@@ -2,7 +2,7 @@
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
 Theme: Documentation Demo (Responsive)
-Version: 1 Beta
+Version: 1.0
 Theme Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Theme URL: http://www.sequencejs.com/themes/documentation-demo/
@@ -11,7 +11,6 @@ This is a FREE theme and is available under a MIT License:
 http://www.opensource.org/licenses/mit-license.php
 
 Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
-Aside from these comments, you may modify and distribute this file as you please.
 */
 
 //Selector Variables
@@ -30,6 +29,7 @@ $animateOut: ".animate-out";
 	margin: 10px auto;
 	position: relative;
 	width: 450px;
+	-webkit-backface-visibility: hidden; /* prevent graphical glitches in WebKit browsers when using transitions */
 
 	#sequence-preloader {
 		background: white;

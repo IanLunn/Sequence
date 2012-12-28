@@ -1,0 +1,58 @@
+/*
+Theme created for use with Sequence.js (http://www.sequencejs.com/)
+
+Theme: Theme Name
+Version: 1.0
+Theme Author: Ian Lunn @IanLunn
+Author URL: http://www.ianlunn.co.uk/
+Theme URL: http://www.sequencejs.com/themes/theme-name/
+
+This is a FREE theme and is available under a MIT License:
+http://www.opensource.org/licenses/mit-license.php
+
+This is a PREMIUM theme and is available under the following license:
+http://sequencejs.com/developers/license-information/#premium
+
+Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
+*/
+
+//Selector Variables
+$sequenceContainer: "#sequence-theme";
+$sequenceElement: "#sequence";
+$animateIn: ".animate-in";
+$animateOut: ".animate-out";
+$nav: ".nav";
+$nextButton: ".next";
+$prevButton: ".prev";
+$pauseButton: ".pause";
+$whenPaused: ".paused";
+
+@import "partials/reset"; //import Eric Meyer's CSS Reset. Remove this if you have a reset in your main stylesheet
+@import "partials/mixins"; //vendor prefixing mixins
+
+/* THEME STYLES */
+#{$sequenceContainer} {
+	width: 100%;
+	height: 600px;
+	position: relative;
+	overflow: hidden;
+	-webkit-backface-visibility: hidden; /* prevent graphical glitches in WebKit browsers when using transitions */
+
+	#{$sequenceElement} {
+		position: relative;
+		height: 100%;
+		width: 100%;
+		max-width: 1280px;
+		margin: 0 auto;
+
+		li {
+			z-index: 1;
+		}
+
+		li > * { /* make all animated elements position absolute so their left/right/top/bottom can be manipulated */
+			position: absolute;
+		}
+	}
+
+
+}

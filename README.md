@@ -37,6 +37,12 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+### 28/12/2012
+
+- Added SCSS file for each theme
+- Added template with basic CSS/HTML for starting themes quicker
+- Modified existing themes ready for SequenceJS.com relaunch (themes are now just the elements that make up the theme and nothing more -- no branding etc)
+
 ###v0.8.1 8/12/2012
 
 - Hash tags are associated with the correct frame again

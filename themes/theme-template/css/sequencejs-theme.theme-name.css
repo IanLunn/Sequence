@@ -1,14 +1,17 @@
 /*
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
-Theme: Documentation Demo (Responsive)
+Theme: Theme Name
 Version: 1.0
 Theme Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
-Theme URL: http://www.sequencejs.com/themes/documentation-demo/
+Theme URL: http://www.sequencejs.com/themes/theme-name/
 
 This is a FREE theme and is available under a MIT License:
 http://www.opensource.org/licenses/mit-license.php
+
+This is a PREMIUM theme and is available under the following license:
+http://sequencejs.com/developers/license-information/#premium
 
 Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
 */
@@ -66,59 +69,25 @@ table {
 /* !CSS RESET */
 /* prefix declarations */
 /* THEME STYLES */
-.sequence {
-  border: black solid 3px;
-  font-family: Tahoma;
-  height: 370px;
-  margin: 10px auto;
+#sequence-theme {
+  width: 100%;
+  height: 600px;
   position: relative;
-  width: 450px;
+  overflow: hidden;
   -webkit-backface-visibility: hidden;
   /* prevent graphical glitches in WebKit browsers when using transitions */
-  /* Frame Animations */
-  /* !Frame Animations */
 }
-.sequence #sequence-preloader {
-  background: white;
+#sequence-theme #sequence {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
 }
-.sequence .class-name, .sequence .sequence-class {
-  font-size: 0.8em;
+#sequence-theme #sequence li {
+  z-index: 1;
 }
-.sequence .info1, .sequence .info2, .sequence .info3 {
-  background: #3f7ad6;
-  color: white;
-  height: 95px;
-  padding: 5px;
+#sequence-theme #sequence li > * {
+  /* make all animated elements position absolute so their left/right/top/bottom can be manipulated */
   position: absolute;
-  width: 95px;
-}
-.sequence .info1 {
-  left: -150px;
-  top: 10px;
-}
-.sequence .info2 {
-  left: -150px;
-  top: 130px;
-}
-.sequence .info3 {
-  left: -150px;
-  top: 250px;
-}
-.sequence .animate-in .info1, .sequence .animate-in .info2, .sequence .animate-in .info3 {
-  left: 165px;
-  display: block;
-  opacity: 1;
-  -webkit-transition-duration: 1s;
-  -moz-transition-duration: 1s;
-  -o-transition-duration: 1s;
-  -ms-transition-duration: 1s;
-  transition-duration: 1s;
-}
-.sequence .animate-out .info1, .sequence .animate-out .info2, .sequence .animate-out .info3 {
-  left: 500px;
-  -webkit-transition-duration: 1s;
-  -moz-transition-duration: 1s;
-  -o-transition-duration: 1s;
-  -ms-transition-duration: 1s;
-  transition-duration: 1s;
 }
