@@ -37,6 +37,10 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.8.2 5/1/2013
+
+- Removed the 50ms gap inbetween frame transitions when in the "slide" fallback theme
+
 ### 28/12/2012
 
 - Added SCSS file for each theme
