@@ -1,6 +1,6 @@
 # Documentation
 
-## <a id="basic-setup">Basic Set Up</a>
+## <a id="basic-set-up">Basic Set Up</a>
 ### <a id="add-files">Add Files</a>
 
 Place a link to jQuery and the sequence.jquery-min.js file in the `<head>` of your document:
@@ -87,7 +87,7 @@ Here you’ve added a `<div>` to each frame with unique classes. You will shortl
 
 **Note:** Each frame can contain as many elements as necessary but only first level elements will be animated by Sequence.
 
-### <a id="js-fallback">Setup a No-JavaScript Fallback</a>
+### <a id="setup-a-no-javascript-fallback">Setup a No-JavaScript Fallback</a>
 
 In a small percentage of browsers, JavaScript may be disabled which is the technology Sequence is built upon. In this case, to prevent an empty container from showing, nominate a frame to be displayed by giving it a class of `animate-in`:
 
@@ -114,8 +114,8 @@ In a small percentage of browsers, JavaScript may be disabled which is the techn
 
 Here you’ve nominated the first frame to be displayed if JavaScript is disabled. 
 
-## <a id="creating-a-theme">Creating an Animated Theme using CSS3</a>
-### <a id="basic-css">Setting up the Sequence Container and Frames</a>
+## <a id="creating-an-animated-theme-using-css3">Creating an Animated Theme using CSS3</a>
+### <a id="setting-up-the-sequence-container-and-frames">Setting up the Sequence Container and Frames</a>
 
 Start by styling the Sequence container:
 
@@ -135,7 +135,7 @@ Here you’ve given the container some basic dimensional properties and a border
 
 This way, when you come to position elements with the Sequence container, a position top of 0 will be the top of the Sequence container, and a position left of 0 will be the left hand side of the Sequence container.
 
-### <a id="how-sequence-works">How Sequence’s Animations Work</a>
+### <a id="how-sequences-animations-work">How Sequence’s Animations Work</a>
 
 Each first level element within a frame will be animated by Sequence, but how that animation happens is entirely your choice and created using [CSS3 transitions](http://www.adobe.com/devnet/html5/articles/using-css3-transitions-a-comprehensive-guide.html).
 
@@ -179,7 +179,7 @@ Sequence contains options that allow for a user to control the animation of fram
 
 Let’s assume frame 2 has one element that is currently in the “animate-in” position. If a user were to click a “previous” button, Sequence would remove the `animate-in` class, resetting the element to its starting position and the previous frame (frame 1), would be given the class of `animate-out` (resetting it to the “animate-out” position), followed by a class of `animate-in` to then make it transition into its “animate-in” position.
 
-### <a id="animating-sequence">Animating Frame Elements using CSS3 Transitions</a>
+### <a id="animating-frame-elements-using-css3-transitions">Animating Frame Elements using CSS3 Transitions</a>
 
 Now you know how Sequence works, you can manipulate the transition of frame elements using CSS3 transitions. Just before you begin adding transitional properties, style the `<div>` within each frame:
 
@@ -328,7 +328,7 @@ Or differing options:
         });
     </script>
 
-### <a id="all-options">List of Options</a>
+### <a id="list-of-options">List of Options</a>
 
 The following is the complete set of options implemented within Sequence:
 
@@ -392,7 +392,7 @@ The direction in which Sequence should play.
 
 The speed in milliseconds at which frames should remain on screen before animating to the next.
 
-#### <a>Navigation Skipping Options</a>
+#### <a id="navigation-skipping-options">Navigation Skipping Options</a>
 
 #####navigationSkip
 **Type: true/false, Default: `true`**
@@ -422,7 +422,7 @@ How quickly a frame should fade out when skipped (in milliseconds).
 
 Whether the user can change the direction of navigation during frames animating (if navigating forward, the user can only skip forwards when other frames are animating).
 
-#### <a id="next-prev-options">Next/Previous Button Options</a>
+#### <a id="nextprevious-button-options">Next/Previous Button Options</a>
 
 ##### nextButton
 **Type: true/false or a CSS selector, Default: `false`**
@@ -672,7 +672,7 @@ Example:
 
 In this example, when the 'a' and 's' keys are pressed, Sequence will go to the previous frame. When 'd' and 'w' are pressed, Sequence will go to the next frame.
 
-#### <a id="touch-options">Touch Swipe Options</a>
+#### <a id="touch-swipe-options">Touch Swipe Options</a>
 ##### swipeNavigation
 **Type: true/false, Default: `true`**
 
@@ -768,11 +768,11 @@ Whether the hash tag should be changed when the first frame becomes active.
  - `true`: The hash tag will change as soon as the first frame reaches its "animate-in" position.
 - `false`: The hash tag will not change when the first frame becomes active but will change for every other frame after that.
 
-### <a id="fallback-theme">Fallback Theme for Legacy Browsers</a>
+### <a id="fallback-theme-for-legacy-browsers">Fallback Theme for Legacy Browsers</a>
 
 The fallback theme options control Sequence when it is being viewed in browsers that do not support CSS3 transitions. Please see [caniuse.com for CSS3 transition browser compatibility](http://caniuse.com/#search=transitions).
 
-#### <a id="specifying-fallback-theme">Specifying Fallback Theme Options</a>
+#### <a id="specifying-fallback-theme-options">Specifying Fallback Theme Options</a>
 
 Fallback theme options are included in the options of each instance of Sequence, like so:
 
@@ -831,7 +831,7 @@ By using the variable that the Sequence object is stored in, you can add custom 
         });
     </script>
 
-### <a id="all-callbacks">Complete List of Callbacks</a>
+### <a id="complete-list-of-callbacks">Complete List of Callbacks</a>
 
 The following is the complete set of callbacks implemented within Sequence:
 
@@ -869,7 +869,7 @@ Executes after the last frame has finished animating in
 Executes after Sequence has loaded
 
 
-## <a id="public-functions-variables">Public Functions and Variables</a>
+## <a id="public-functions-and-variables">Public Functions and Variables</a>
 
 Public methods are the functions and options that Sequence utilises, made available for developers to extend and enhance their particular implementation.
 
@@ -957,7 +957,7 @@ Public variables can be taken from the variable the Sequence object is saved in 
 
     alert(sequence.currentFrameID);
 
-#### <a id="all=public-variables">List of Public Variables</a>
+#### <a id="list-of-public-variables">List of Public Variables</a>
 
 `container`
 Returns the selector for Sequence's container element.
