@@ -1,6 +1,6 @@
 /*
 Sequence.js (http://www.sequencejs.com)
-Version: 0.8.2 Beta
+Version: 0.8.2.1 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -356,16 +356,17 @@ Sequence also relies on the following open source scripts:
 				}
 			}else{ //initiate a basic slider for browsers that don't support CSS3 transitions
     			self.container.addClass("sequence-fallback");
+    			self.currentFrameID = self.nextFrameID;
     			self.beforeNextFrameAnimatesIn();
     			self.afterNextFrameAnimatesIn();
     			if(self.settings.hashTags && self.settings.hashChangesOnFirstFrame){
     			    self.currentHashTag = self.nextFrame.attr(self.getHashTagFrom);
     			    document.location.hash = "#"+self.currentHashTag;
     			}
-    			self.currentFrameID = self.nextFrameID;			    		
-                self.sequence.children("li").addClass("animate-in");
-                self.sequence.children(":not(li:nth-child("+self.nextFrameID+"))").css({"display": "none", "opacity": 0});
-                self.resetAutoPlay(true, self.settings.autoPlayDelay);
+
+          self.sequence.children("li").addClass("animate-in");
+          self.sequence.children(":not(li:nth-child("+self.nextFrameID+"))").css({"display": "none", "opacity": 0});
+          self.resetAutoPlay(true, self.settings.autoPlayDelay);
 			}
 			//END INIT
 			//EVENTS
