@@ -746,13 +746,13 @@ In the following example, when the second frame becomes active, the URL will be 
 ##### hashDataAttribute
 **Type: true/false, Default: `false`, Dependencies: `hashTags: true`**
 
-- `true`: the hash tag name, will not be taken from the list item's ID attribute but instead a data attribute called data-sequence-hash.
+- `true`: the hash tag name, will not be taken from the list item's ID attribute but instead a data attribute called data-sequence-hashtag.
 
 In the following example, when `hashDataAttribute` is true and the first frame becomes active, the URL will be changed to end with the hash tag #superAwesome.
 
     <div id="sequence">
         <ul>
-        	<li id="intro" data-sequence-hash="superAwesome">
+        	<li id="intro" data-sequence-hashtag="superAwesome">
         		<h2 class="title animate-in">Built using Sequence.js</h2>
         	</li>
         </ul>
