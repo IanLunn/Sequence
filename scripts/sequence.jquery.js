@@ -411,9 +411,9 @@ Sequence also relies on the following open source scripts:
 					}
 				
 				$(document).keydown(function(e) { //when a key is pressed...					
-					var char = String.fromCharCode(e.keyCode);
-					if((char > 0 && char <= self.numberOfFrames) && (self.settings.numericKeysGoToFrames)) {
-						self.nextFrameID = char;
+					var keyCodeChar = String.fromCharCode(e.keyCode);
+					if((keyCodeChar > 0 && keyCodeChar <= self.numberOfFrames) && (self.settings.numericKeysGoToFrames)) {
+						self.nextFrameID = keyCodeChar;
 						self.goTo(self.nextFrameID); //go to specified frame
 					}
 					
