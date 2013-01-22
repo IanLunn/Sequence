@@ -37,6 +37,12 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.8.3 22/1/2013
+
+- Renamed 'char' variable to 'keyCodeChar'
+- All callbacks now work in both fallback themes
+- Removed `beforeFirstFrameAnimatesIn()` and related callbacks (they're rarely used and can be achieved using normal callbacks and public variables), see upgradeInstructions.md if you'd like an alternative for this functionality
+
 ###v0.8.2.1 17/1/2013
 
 - Bug fix for IE. currentFrameID will now return when Sequence is first initiated

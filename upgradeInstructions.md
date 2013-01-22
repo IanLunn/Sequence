@@ -2,6 +2,26 @@
 
 During the beta period of Sequence (versions prior to v1.0), backwards compatibility is not a priority. Some newer versions of the Sequence beta may not be compatible with existing implementations. Should you want to upgrade to the latest version, please follow the below instructions to upgrade for each subsequent release.
 
+##Upgrading to v0.8.3 
+The following callbacks were removed:
+
+- `beforeFirstFrameAnimatesIn()`
+- `afterFirstFrameAnimatesIn()`
+- `beforeLastFrameAnimatesIn()`
+- `afterLastFrameAnimatesIn()`
+
+This functionality can still be used with existing callbacks and public variables. Use this code as an example:
+
+	sequence.beforeNextFrameAnimatesIn = function() {
+    	if(sequence.nextFrameID == 1) {
+    	    //do something before the first frame animates in
+    	}
+
+    	if(sequence.nextFrameID == sequence.numberOfFrames) {
+    	    //do something before the last frame animates in
+    	}
+	}
+
 ##Upgrading to v0.8 (Required)
 0.8 changed the way in which Sequence applies the `animate-in` and `animate-out` classes to elements. Prior to this version, Sequence gave each element to be animated these class names, instead, they are now given to the frame (the `<li>` element) instead.
 

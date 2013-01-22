@@ -853,18 +853,6 @@ Executes before the current frame begins to animate out
 `afterCurrentFrameAnimatesOut()`
 Executes after the current frame has animated out
 
-`beforeFirstFrameAnimatesIn()`
-Executes before the first frame animates in
-
-`afterFirstFrameAnimatesIn()`
-Executes after the first frame has finished animating in
-
-`beforeLastFrameAnimatesIn()`
-Executes before the last frame animates in
-
-`afterLastFrameAnimatesIn()`
-Executes after the last frame has finished animating in
-
 `afterLoaded()`
 Executes after Sequence has loaded
 

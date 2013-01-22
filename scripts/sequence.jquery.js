@@ -1,6 +1,6 @@
 /*
 Sequence.js (http://www.sequencejs.com)
-Version: 0.8.2.1 Beta
+Version: 0.8.3 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -106,11 +106,6 @@ Sequence also relies on the following open source scripts:
 		self.afterNextFrameAnimatesIn = function() {},		//executes after the next frame animates in
 		self.beforeCurrentFrameAnimatesOut = function() {},	//executes before the current frame animates out
 		self.afterCurrentFrameAnimatesOut = function() {},	//executes after the current frame animates out
-		
-		self.beforeFirstFrameAnimatesIn = function() {},	//executes before the first frame animates in
-		self.afterFirstFrameAnimatesIn = function() {},		//executes after the first frame animates in
-		self.beforeLastFrameAnimatesIn = function() {},		//executes before the last frame animates in
-		self.afterLastFrameAnimatesIn = function() {},		//executes after the last frame animates in
 
 		self.afterLoaded = function() {};					//executes after Sequence is initiated
 		
@@ -357,8 +352,6 @@ Sequence also relies on the following open source scripts:
 			}else{ //initiate a basic slider for browsers that don't support CSS3 transitions
     			self.container.addClass("sequence-fallback");
     			self.currentFrameID = self.nextFrameID;
-    			self.beforeNextFrameAnimatesIn();
-    			self.afterNextFrameAnimatesIn();
     			if(self.settings.hashTags && self.settings.hashChangesOnFirstFrame){
     			    self.currentHashTag = self.nextFrame.attr(self.getHashTagFrom);
     			    document.location.hash = "#"+self.currentHashTag;
@@ -709,12 +702,6 @@ Sequence also relies on the following open source scripts:
 			if(!self.active || self.settings.navigationSkip) { //if there are no animations running or navigationSkip is enabled...
 				self.active = true; //Sequence is now animating
 				self.resetAutoPlay(); //stop any autoPlay timer that may be running
-			
-				if(id === self.numberOfFrames) { //if navigating to the last frame...
-					self.beforeLastFrameAnimatesIn(); //callback
-				}else if(id === 1) { //if navigating to the first frame...
-					self.beforeFirstFrameAnimatesIn(); //callback
-				}
 
 				if(direction === undefined) { //if no direction to navigate was defined...
 					self.direction = (id > self.currentFrameID) ? 1 : -1; //work out which way to go based on what frame is currently active
@@ -797,13 +784,14 @@ Sequence also relies on the following open source scripts:
 			            self.resetAutoPlay(true, self.settings.autoPlayDelay);
 				    }
 
-				    self.beforeCurrentFrameAnimatesOut(); //callback	
-
 				    switch(self.settings.fallback.theme) {
 				    	case "fade": //if using the fade fallback theme...
 				            self.sequence.children("li").css({"position": "relative"}); //this allows for fadein/out in IE
+				            self.beforeCurrentFrameAnimatesOut();
+				            self.currentFrame = self.sequence.children("li:nth-child("+self.currentFrameID+")");
 				            self.currentFrame.animate({"opacity": 0}, self.settings.fallback.speed, function() { //hide the current frame
 				            	self.currentFrame.css({"display": "none", "z-index": "1"});
+				            	self.afterCurrentFrameAnimatesOut();
 				            	self.beforeNextFrameAnimatesIn();
 				            	self.nextFrame.css({"display": "block", "z-index": self.numberOfFrames}).animate({"opacity": 1}, 500, function() {
 				            		self.afterNextFrameAnimatesIn();
@@ -816,7 +804,7 @@ Sequence also relies on the following open source scripts:
 
 				        case "slide": //if using the slide fallback theme...
 				        default:
-                            //create objects which will save the .css() and .animation() objects
+                    //create objects which will save the .css() and .animation() objects
 				            var animateOut = {};
 				            var animateIn = {};
 				            var moveIn = {};
@@ -833,8 +821,12 @@ Sequence also relies on the following open source scripts:
 				            moveIn["left"] = "0";
 				            moveIn["opacity"] = 1;
 
+
 				            self.currentFrame = self.sequence.children("li:nth-child("+self.currentFrameID+")");
-				            self.currentFrame.animate(animateOut, self.settings.fallback.speed); //cause the current frame to animate out
+				            self.beforeCurrentFrameAnimatesOut();
+				            self.currentFrame.animate(animateOut, self.settings.fallback.speed, function() {
+				            	self.afterCurrentFrameAnimatesOut();
+				            }); //cause the current frame to animate out
 				            self.beforeNextFrameAnimatesIn(); //callback
 				            self.nextFrame.show().css(animateIn);
 			            	self.nextFrame.animate(moveIn, self.settings.fallback.speed, function() { //cause the next frame to animate in
@@ -866,12 +858,6 @@ Sequence also relies on the following open source scripts:
 				var onceComplete = function() {
 					self.afterNextFrameAnimatesIn(); //callback
 					self.setHashTag(); //set the hashtag to represent the newly active frame
-					
-					if(self.currentFrameID === self.numberOfFrames) { 
-						self.afterLastFrameAnimatesIn(); //callback
-					}else if(self.currentFrameID === 1) {
-						self.afterFirstFrameAnimatesIn(); //callback
-					}
 
 					self.active = false; //Sequence is not animating
 
