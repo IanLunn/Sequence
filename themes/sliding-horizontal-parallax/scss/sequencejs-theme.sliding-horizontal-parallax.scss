@@ -2,7 +2,7 @@
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
 Theme: Sliding Horizontal Parallax
-Version: 1.0
+Version: 1.1
 Theme Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Theme URL: http://www.sequencejs.com/themes/sliding-horizontal-parallax/
@@ -73,6 +73,7 @@ $prevButton: ".prev";
 
 	#{$sequenceElement} li > * {
 		position: absolute;
+		@include prefixed(transition-timing-function, ease-in-out);
 	}
 
 	#{$sequenceElement} {

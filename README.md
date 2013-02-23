@@ -37,6 +37,13 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.8.4 23/2/2013
+
+- Added the `transitionThreshold` option again, now with a default of `false`
+- When navigating backwards, Sequence will now create a perfect reverse animation
+- Added the option `preventDelayWhenReversingAnimations` which is `false` by default. Now Sequence reverses animations perfectly, if the overall animation duration (`transition-duration` + `transition-delay`) of frame 2 for example, is greater than that of frame 1, when navigating from frame 2 to frame 1, frame1 will be given a delay to create a perfect reversal of animation. This isn't particularly great for user experience as the moment the user tries to navigate to another frame they will be presented with a delay. By setting `preventDelayWhenReversingAnimations` to true, the delay won't be applied to frame 1
+- Updated themes for better compatibility with the new handling of reversed animations
+
 ###v0.8.3 22/1/2013
 
 - Renamed 'char' variable to 'keyCodeChar'

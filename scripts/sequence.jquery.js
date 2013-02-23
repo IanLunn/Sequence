@@ -1,6 +1,6 @@
 /*
 Sequence.js (http://www.sequencejs.com)
-Version: 0.8.3 Beta
+Version: 0.8.4 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -75,6 +75,7 @@ Sequence also relies on the following open source scripts:
 		self.pauseButton,
 		self.pauseIcon,
 		self.delayUnpause,
+		self.transitionThresholdTimer,
 		self.init = {
 			/*functionality to initiate the preloader, next/previous buttons and so on
 			
@@ -118,7 +119,7 @@ Sequence also relies on the following open source scripts:
 		self.getHashTagFrom = (self.settings.hashDataAttribute) ? "data-sequence-hashtag": "id"; //get the hashtag from the ID or data attribute?  
 		self.frameHashID = []; //array that matches frames with has IDs
 		self.direction = self.settings.autoPlayDirection;
-		
+
 		if(self.settings.hideFramesUntilPreloaded && self.settings.preloader) { //if using a preloader and hiding frames until preloading has completed...
 		    self.sequence.children("li").hide(); //hide Sequence's frames
 		}
@@ -127,7 +128,7 @@ Sequence also relies on the following open source scripts:
 		    self.transitionsSupported = get.operaTest(); //run a test to see if Opera correctly supports transitions (Opera 11 has bugs relating to transitions)
 		}
         
-        self.modifyElements(self.sequence.children("li"), "0s"); //reset transition time to 0s
+    self.resetElements(self.sequence.children("li"), "0s"); //reset transition time to 0s
 		self.sequence.children("li").removeClass("animate-in"); //remove any instance of "animate-in", which should be used incase JS is disabled
 		
 		//functionality to run once Sequence has preloaded
@@ -330,7 +331,7 @@ Sequence also relies on the following open source scripts:
 					if(self.settings.moveActiveFrameToTop) {
 					    self.nextFrame.css("z-index", self.numberOfFrames);
 					}
-					self.modifyElements(self.nextFrameChildren, "0s");
+					self.resetElements(self.nextFrameChildren, "0s");
 					self.nextFrame.addClass("animate-in");
 					if(self.settings.hashTags && self.settings.hashChangesOnFirstFrame) {
 					    self.currentHashTag = self.nextFrame.attr(self.getHashTagFrom);
@@ -338,16 +339,16 @@ Sequence also relies on the following open source scripts:
 					}
 					
 					setTimeout(function() {
-						self.modifyElements(self.nextFrameChildren, "");
+						self.resetElements(self.nextFrameChildren, "");
 					}, 100);
 					
 					self.resetAutoPlay(true, self.settings.autoPlayDelay);
 				}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.settings.autoPlayDirection -1 && self.settings.animateStartingFrameIn) { //animate in backwards
-					self.modifyElements(self.nextFrameChildren, "0s");
+					self.resetElements(self.nextFrameChildren, "0s");
 					self.nextFrame.addClass("animate-out");
-					self.goTo(self.nextFrameID, -1);
+					self.goTo(self.nextFrameID, -1, true);
 				}else{ //animate in forwards
-					self.goTo(self.nextFrameID, 1);
+					self.goTo(self.nextFrameID, 1, true);
 				}
 			}else{ //initiate a basic slider for browsers that don't support CSS3 transitions
     			self.container.addClass("sequence-fallback");
@@ -433,18 +434,18 @@ Sequence also relies on the following open source scripts:
 			}
 			
 			if(self.settings.hashTags) { //if hashchange is enabled in the settings...
-    			$(window).hashchange(function() { //when the hashtag changes...
-    			    newTag = location.hash.replace("#", ""); //grab the new hashtag
-    			    
-    			    if(self.currentHashTag !== newTag) { //if the last hashtag is not the same as the current one...
-    			        self.currentHashTag = newTag; //save the new tag
-    			        self.frameHashIndex = $.inArray(self.currentHashTag, self.frameHashID); //get the index of the frame that matches the hashtag
-    			        if(self.frameHashIndex !== -1) { //if the hashtag matches a Sequence frame ID...
-    			            self.nextFrameID = self.frameHashIndex + 1; //set that frame as the next one
-                            self.goTo(self.nextFrameID); //go to the next frame
-    			        }
-    			    }
-    			});
+  			$(window).hashchange(function() { //when the hashtag changes...
+			    newTag = location.hash.replace("#", ""); //grab the new hashtag
+			    
+			    if(self.currentHashTag !== newTag) { //if the last hashtag is not the same as the current one...
+		        self.currentHashTag = newTag; //save the new tag
+		        self.frameHashIndex = $.inArray(self.currentHashTag, self.frameHashID); //get the index of the frame that matches the hashtag
+		        if(self.frameHashIndex !== -1) { //if the hashtag matches a Sequence frame ID...
+	            self.nextFrameID = self.frameHashIndex + 1; //set that frame as the next one
+                self.goTo(self.nextFrameID); //go to the next frame
+		        }
+			    }
+  			});
 			}
 
 			if(self.settings.swipeNavigation && self.hasTouch) { //if using swipeNavigation and the device has touch capabilities...
@@ -519,19 +520,96 @@ Sequence also relies on the following open source scripts:
 		},
 		
 		/*
-		modify the transition-duration and transition-delay properties of an element
+		reset the transition-duration and transition-delay properties of an element
 		
-		elementToReset = the element that is to have it's properties modified
+		elementToReset = the element that is to have it's properties reset
 		cssValue = the value to be given to the transition-duration and transition-delay properties
 		*/
-		modifyElements: function(elementToReset, cssValue) {
+		resetElements: function(elementToReset, cssValue) {
 			var self = this;
 				elementToReset.css(
 				self.prefixCSS(self.prefix, {
 					"transition-duration": cssValue,
-					"transition-delay": cssValue
+					"transition-delay": cssValue,
+					"transition-timing-function": ""
 				})
 			);
+		},
+
+		/*
+		when navigating backwards and reverseAnimationsWhenNavigatingBackwards is true, take the transition properties for forward animation and manipulate the animated elements to create a perfect reversal
+		*/
+		reverseTransitionProperties: function() {
+			var self = this;
+
+			var currentFrameChildrenDurations = []; //saves the duration for each of the current frame's element
+			var nextFrameChildrenDurations = []; //saves the duration for each of the next frame's element
+
+			self.frameChildren.each(function() { //get the overall duration (including delay) for each animated element in the current frame
+				currentFrameChildrenDurations.push(parseFloat($(this).css(self.prefix+'transition-duration').replace('s', '')) + parseFloat($(this).css(self.prefix+'transition-delay').replace('s', '')));
+			});
+
+			self.nextFrameChildren.each(function() { //get the overall duration (including delay) for each animated element in the current frame
+				nextFrameChildrenDurations.push(parseFloat($(this).css(self.prefix+'transition-duration').replace('s', '')) + parseFloat($(this).css(self.prefix+'transition-delay').replace('s', '')));
+			});
+
+			maximumCurrentFrameDuration = Math.max.apply(Math, currentFrameChildrenDurations); //find which transition duration is the longest
+			maximumNextFrameDuration = Math.max.apply(Math, nextFrameChildrenDurations); //find which transition duration is the longest
+
+			transitionDifference = maximumCurrentFrameDuration - maximumNextFrameDuration; //get the overal transition difference between the current and next frame
+
+			if(transitionDifference === 0) { //if the duration difference is the same, neither frame need be given a delay
+				currentDelay = 0;
+				nextDelay = 0;
+			}else if(transitionDifference < 0) { //if the current frame has a greater duration than the next frame...
+				/* note: because the current frame will take longer to animate out than the next to animate in, when this animation is reversed, the current frame will have a delay applied before it animates out. By default, Sequence will aim to avoid this (via the preventDelayWhenReversingAnimations option) because a delay on the current frame may confuse the user. The delay is removed, which means the reversal of animation is slightly out of sync */
+				if(self.settings.preventDelayWhenReversingAnimations) { 
+					currentDelay = 0;
+					nextDelay = 0;
+				}else{
+					currentDelay = Math.abs(transitionDifference); 
+					nextDelay = 0;
+				}
+			}else if(transitionDifference > 0) { //if the next frame has a greater duration than the current frame, add the difference on as a delay
+				nextDelay = Math.abs(transitionDifference);
+				currentDelay = 0;
+			}
+
+			function reverseEachProperty(frameChildren, maximumFrameDuration, frameDelay) {
+				frameChildren.each(function() {
+					duration = parseFloat($(this).css(self.prefix+'transition-duration').replace('s', '')); //get the elements transition-duration
+					delay = parseFloat($(this).css(self.prefix+'transition-delay').replace('s', '')); //get the elements transition-delay
+					transitionFunction = $(this).css(self.prefix+'transition-timing-function'); //get the elements transiion-timing-function
+					if(transitionFunction.indexOf("cubic-bezier") >= 0) { //if the transition is a cubic-bezier...
+						cubicBezier = transitionFunction.replace('cubic-bezier(', '').replace(')', '').split(','); //remove the CSS function and just get the array
+						$.each(cubicBezier, function(index, value) { //for each point that makes up the cubic bezier...
+							cubicBezier[index] = parseFloat(value); //turn the point into a number (rather than text)
+						})
+
+						//reverse the cubic bezier
+						reversedCubicBezier = [
+					    1 - cubicBezier[2],
+					    1 - cubicBezier[3],
+					    1 - cubicBezier[0],
+					    1 - cubicBezier[1]
+					  ];
+					  transitionFunction = 'cubic-bezier('+reversedCubicBezier+')'; //add the reversed cubic bezier back into a CSS function
+					}else{ //if the function isn't a cubic-bezier (WebKit returns "linear" as a text string rather than a cubic-bezier)
+						transitionFunction = 'linear'; //use a linear transition function
+					}
+					frameDuration = duration + delay; //get the overall duration of the element
+
+					self.transitionProperties["transition-duration"] = duration + 's'; //reapply the element's transition-duration (to override any inline styles)
+					self.transitionProperties["transition-delay"] = (maximumFrameDuration - frameDuration + frameDelay) + 's'; //add a delay if required
+					self.transitionProperties["transition-timing-function"] = transitionFunction; //reapply the reversed transition function
+					$(this).css(
+						self.prefixCSS(self.prefix, self.transitionProperties) //set the new transition properties
+					);
+				});
+			}
+
+			reverseEachProperty(self.frameChildren, maximumCurrentFrameDuration, currentDelay); //reverse properties for each of the current frame's elements
+			reverseEachProperty(self.nextFrameChildren, maximumNextFrameDuration, nextDelay); //reverse properties for each of the next frame's elements
 		},
 		
 		/*
@@ -546,18 +624,6 @@ Sequence also relies on the following open source scripts:
 				css[prefix + property] = properties[property]; //add the prefix to the property name
 			}
 			return css; //return the prefixed CSS
-		},
-		
-		setTransitionProperties: function(frameChildren) {
-			var self = this;
-			frameChildren.each(function() {
-				self.transitionProperties["transition-duration"] = $(this).css(self.prefix + "transition-duration");
-				self.transitionProperties["transition-delay"] = $(this).css(self.prefix + "transition-delay");
-
-				$(this).css(
-					self.prefixCSS(self.prefix, self.transitionProperties)
-				);
-			});
 		},
 
 		/*
@@ -675,10 +741,12 @@ Sequence also relies on the following open source scripts:
 		
 		id: number of the frame to go to
 		direction: direction to get to that frame (1 = forward, -1 = reverse)
+		ignoreTransitionThreshold: if true, ignore the transitionThreshold setting and immediately go to the specified frame
 		*/
-		goTo: function(id, direction) {	
+		goTo: function(id, direction, ignoreTransitionThreshold) {
 			var self = this;
 			var id = parseFloat(id); //convert the id to a number just in case
+			var transitionThreshold = (ignoreTransitionThreshold === true) ? 0 : self.settings.transitionThreshold; //if transitionThreshold is to be ignored, set it to zero
 
 			if((id === self.currentFrameID) //if the id of the frame the user is trying to go to is the same as the currently active one...
 			|| (self.settings.navigationSkip && self.navigationSkipThresholdActive) //or navigationSkip is enabled and the navigationSkipThreshold is active (which prevents frame from being navigated too fast)...
@@ -693,6 +761,8 @@ Sequence also relies on the following open source scripts:
 				if(self.settings.fadeFrameWhenSkipped) { //if a frame should fade when skipped...
 					self.nextFrame.stop().animate({"opacity": 0}, self.settings.fadeFrameTime); //fade
 				}
+
+				clearTimeout(self.transitionThresholdTimer);
 
 				navigationSkipThresholdTimer = setTimeout(function() { //start the navigationSkipThreshold timer to prevent being able to navigate too quickly
 					self.navigationSkipThresholdActive = false; //once the timer is complete, navigationSkip can occur again
@@ -720,13 +790,13 @@ Sequence also relies on the following open source scripts:
 						if(self.settings.moveActiveFrameToTop) { //if the active frame should move to the top...
 						    self.currentFrame.css("z-index", 1); //move this frame to the bottom as it is now inactive
 						}
-						self.modifyElements(self.nextFrameChildren, "0s"); //give the next frame elements a transition-duration and transition-delay of 0s so they don't transition to their reset position
+						self.resetElements(self.nextFrameChildren, "0s"); //give the next frame elements a transition-duration and transition-delay of 0s so they don't transition to their reset position
 						if(!self.settings.reverseAnimationsWhenNavigatingBackwards || self.direction === 1) { //if user hit next button...
 							self.nextFrame.removeClass("animate-out"); //reset the next frame back to its starting position
-							self.modifyElements(self.frameChildren, "");  //remove any inline styles from the elements to be animated so styles via the "animate-out" class can take full effect		
+							self.resetElements(self.frameChildren, "");  //remove any inline styles from the elements to be animated so styles via the "animate-out" class can take full effect		
 						}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.direction === -1) { //if the user hit prev button
 							self.nextFrame.addClass("animate-out"); //reset the next frame back to its animate-out position
-							self.setTransitionProperties(self.frameChildren);
+							self.reverseTransitionProperties(); //reverse the transition-duration, transition-delay and transition-timing-function
 						}
 					}else{
 						self.firstFrame = false; //no longer the first frame
@@ -748,33 +818,45 @@ Sequence also relies on the following open source scripts:
 					//modifications to the current and next frame's elements to get them ready to animate
 					if(!self.settings.reverseAnimationsWhenNavigatingBackwards || self.direction === 1) { //if user hit next button...
 						setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially
-							self.modifyElements(self.nextFrameChildren, ""); //remove any inline styles from the elements to be animated so styles via the "animate-in" class can take full effect
+							self.resetElements(self.nextFrameChildren, ""); //remove any inline styles from the elements to be animated so styles via the "animate-in" class can take full effect
 							self.waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in"); //wait for the next frame to animate in
-							if(self.afterCurrentFrameAnimatesOut !== "function () {}") { //if the afterCurrentFrameAnimatesOut is being used...
-								self.waitForAnimationsToComplete(self.currentFrame, self.frameChildren, "out"); //wait for the current frame to animate out as well
+							if(self.afterCurrentFrameAnimatesOut !== "function () {}" || (self.settings.transitionThreshold === true && ignoreTransitionThreshold !== true)) { //if the afterCurrentFrameAnimatesOut is being used...
+								self.waitForAnimationsToComplete(self.currentFrame, self.frameChildren, "out", true, 1); //wait for the current frame to animate out as well
 							}
 						}, 50);
-					}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.direction === -1) { //if the user hit prev button
-						setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially
-							self.modifyElements(self.nextFrameChildren, ""); //remove any inline styles from the elements to be animated so styles via the "animate-in" class can take full effect
-							self.setTransitionProperties(self.frameChildren);
-							self.waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in"); //wait for the next frame to animate in
-							if(self.afterCurrentFrameAnimatesOut != "function () {}") { //if the afterCurrentFrameAnimatesOut is being used...
-								self.waitForAnimationsToComplete(self.currentFrame, self.frameChildren, "out"); //wait for the current frame to animate out as well
-							}
-						}, 50);
-					}
 
-					//final class changes to make animations happen
-					if(!self.settings.reverseAnimationsWhenNavigatingBackwards || self.direction === 1) { //if user hit next button...			
+						//final class changes to make animations happen
 						setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially
 							self.currentFrame.toggleClass("animate-out animate-in");
-							self.nextFrame.addClass("animate-in"); //add the "animate-in" class
+
+							if(self.settings.transitionThreshold !== true || ignoreTransitionThreshold === true) { //if there's no transitionThreshold or the dev specified a transitionThreshold in milliseconds
+								self.transitionThresholdTimer = setTimeout(function() { //cause the next frame to animate in after a certain period
+									self.nextFrame.addClass("animate-in"); //add the "animate-in" class
+								}, transitionThreshold);
+							}
 						}, 50);
 					}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.direction === -1) { //if the user hit prev button
 						setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially
-							self.nextFrame.toggleClass("animate-out animate-in"); //add the "animate-in" class and remove the "animate-out" class
+							//remove any inline styles from the elements so styles via the "animate-in" and "animate-out" class can take full effect
+							self.resetElements(self.frameChildren, "");
+							self.resetElements(self.nextFrameChildren, "");
+							self.reverseTransitionProperties(); //reverse the transition-duration, transition-delay and transition-timing-function
+
+							self.waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in"); //wait for the next frame to animate in
+							if(self.afterCurrentFrameAnimatesOut != "function () {}" || (self.settings.transitionThreshold === true && ignoreTransitionThreshold !== true)) { //if the afterCurrentFrameAnimatesOut is being used...
+								self.waitForAnimationsToComplete(self.currentFrame, self.frameChildren, "out", true, -1); //wait for the current frame to animate out as well
+							}
+						}, 50);
+
+						//final class changes to make animations happen
+						setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially
 							self.currentFrame.removeClass("animate-in");
+
+							if(self.settings.transitionThreshold !== true || ignoreTransitionThreshold === true) { //if there's no transitionThreshold or the dev specified a transitionThreshold in milliseconds
+								self.transitionThresholdTimer = setTimeout(function() { //cause the next frame to animate in after a certain period
+									self.nextFrame.toggleClass("animate-out animate-in"); //add the "animate-in" class and remove the "animate-out" class
+								}, transitionThreshold);
+							}			
 						}, 50);
 					}
 				}else{ //if the browser doesn't support CSS3 transitions...
@@ -845,16 +927,24 @@ Sequence also relies on the following open source scripts:
 
 			frame: the frame <li> which is animating
 			frameChildren: the animated direct child elements of the frame
-			direction: whether the elements are animating "in" to an active position or "out" of an active position
+			transitionPhase: whether the elements are animating "in" to an active position or "out" of an active position
 		*/
-		waitForAnimationsToComplete: function(frame, frameChildren, direction) {
+		waitForAnimationsToComplete: function(frame, frameChildren, transitionPhase, inAfterwards, direction) {
 			var self = this;
 
-			if(direction === "out") { //if waiting on a frame's element to animate out...
+			if(transitionPhase === "out") { //if waiting on a frame's element to animate out...
 				var onceComplete = function() {
 					self.afterCurrentFrameAnimatesOut(); //callback
+
+					if(self.settings.transitionThreshold === true) {
+						if(direction === 1) {
+							self.nextFrame.addClass("animate-in"); //add the "animate-in" class
+						}else if(direction === -1) {
+							self.nextFrame.toggleClass("animate-out animate-in");
+						}
+					}
 				};
-			}else if(direction === "in") { //if waiting on a frame's element to animate in...
+			}else if(transitionPhase === "in") { //if waiting on a frame's element to animate in...
 				var onceComplete = function() {
 					self.afterNextFrameAnimatesIn(); //callback
 					self.setHashTag(); //set the hashtag to represent the newly active frame
@@ -963,7 +1053,9 @@ Sequence also relies on the following open source scripts:
 		startingFrameID: 1, //The frame (the list item `<li>`) that should first be displayed when Sequence loads
 		cycle: true, //Whether Sequence should navigate to the first frame after the last frame and vice versa
 		animateStartingFrameIn: false, //Whether the first frame should animate in to its active position
+		transitionThreshold: false, //The delay between a frame animating out and the next animating in (false = no delay, true = the next frame will animate in only once the current frame has animated out)
 		reverseAnimationsWhenNavigatingBackwards: true, //Whether animations should be reversed when a user navigates backwards by clicking a previous button/swiping/pressing the left key
+		preventDelayWhenReversingAnimations: false, //Whether a delay should be removed when animations are reversed. This delay is removed by default to prevent user confusion
 		moveActiveFrameToTop: true, //Whether a frame should be given a higher `z-index` than other frames whilst it is active, to bring it above the others
 
 		//Autoplay Settings

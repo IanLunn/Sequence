@@ -11,6 +11,7 @@ $(document).ready(function(){
         hidePreloaderUsingCSS: false,                   
         animateStartingFrameIn: true,    
         navigationSkipThreshold: 750,
+        preventDelayWhenReversingAnimations: true,
         customKeyEvents: {
             80: "pause"
         }

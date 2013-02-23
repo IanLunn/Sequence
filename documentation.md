@@ -355,13 +355,27 @@ Whether the first frame should animate in to its active position.
 - `true`: The starting frame will begin in its "start" position and move to its "animate-in" position when Sequence loads.
 - `false`: The starting frame will begin in its "animate-in" position when Sequence loads.
 
-##### reverseAnimationsWhenNavigatingBackwards	
+##### transitionThreshold
+*Type: true/false or a number representing milliseconds, Default: `false`*
+
+Whether there should be a delay between a frame animating out and the next animating in.
+
+- `true`: the next frame will not animate in until the current frame has completely animated out.
+- `false`: the next frame will animate in at the same time as the current frame animating out.
+- A number: The amount of milliseconds to wait after animating the current frame out, before the next frame is animated in.
+
+##### reverseAnimationsWhenNavigatingBackwards
 **Type: true/false, Default: `true`**
 
 Whether animations should be reversed when a user navigates backwards by clicking a previous button/swiping/pressing the left key.
 
 - `true`: when navigating backwards, Sequence will animate the preceding frame from its "animate-out" position to its "animate-in" position (creating a reversed animation).
 - `false`: when navigating backwards, Sequence will animate the preceding frame from its "start" position to its "animate-in" position (as it does when navigating forwards).
+
+##### preventDelayWhenReversingAnimations
+**Type: true/false, Default: `false`, Dependencies: `reverseAnimationsWhenNavigatingBackwards: true`**
+
+Assuming the total duration (the greatest `transition-duration` plus the greatest `transition-delay`) for an animation to complete in frame 2 is 1 second greater than frame 1, when the user navigates from frame 2 to frame 1 and `reverseAnimationsWhenNavigatingBackwards` is `true`, Sequence will apply that 1 second difference to frame 1 as a `transition-delay`. By doing this, Sequence creates a perfect reversal of animation. However, this delay may be bad for user experience because the users action won't immediately create an on-screen event. To avoid this, set `preventDelayWhenReversingAnimations` to `true`.
 
 ##### moveActiveFrameToTop
 **Type: true/false, Default: `true`**
@@ -863,14 +877,15 @@ Public methods are the functions and options that Sequence utilises, made availa
 
 ### <a id="public-functions">Public Functions</a>
 
-#### goTo(id, direction)
+#### goTo(id, direction, ignoreTransitionThreshold)
 
 Causes Sequence to animate to a specific frame.
 
 Arguments:
 
 - `id` (required): a number corresponding to a frame (the first frame has an id of 1). 
-- `direction` (optional): whether the frame being animated to should be considered as being ahead or behind the current frame. 
+- `direction` (optional): whether the frame being animated to should be considered as being ahead or behind the current frame.
+- 'ignoreTransitionThreshold' (optional): if true, ignore the transitionThreshold setting and immediately go to the specified frame.
 
 Specifying a direction value of `1` will change the current frame from the "animate-in" position, to "animate-out", and the next frame will be changed from "start" to "animate-in". A value of `-1` will change the current frame from "animate-in" to the "start" position and the next frame will be changed from "animate-out" to "animate-in".
 
