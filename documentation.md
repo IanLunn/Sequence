@@ -1,14 +1,13 @@
 # Documentation
-
 ## <a id="basic-set-up">Basic Set Up</a>
 ### <a id="add-files">Add Files</a>
 
 Place a link to jQuery and the sequence.jquery-min.js file in the `<head>` of your document:
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9/jquery.min.js"></script>
     <script src="scripts/sequence.jquery-min.js"></script>
 
-Currently Sequence supports **jQuery 1.7.1 - 1.8.3**.
+Currently Sequence supports **jQuery 1.7.1 - 1.9**.
 
 ### <a id="initiate-sequence">Initiate Sequence</a>
 
@@ -122,18 +121,29 @@ Start by styling the Sequence container:
     #sequence {
         border: black solid 3px;
         height: 370px;
-        margin: 40px auto;
-        position: relative;
+        margin: 10px auto;
+        position: relative; /* required */
         width: 450px;
     }
 
-Here you’ve given the container some basic dimensional properties and a border. You’ve also given the container a relative position. This is an important declaration as all of the content elements with a Sequence slider will be given an absolute position, like so:
+Here you’ve given the container some basic dimensional properties and a border. You’ve also given the container a relative position. This is a required declaration as all of the content elements with a Sequence slider will be given an absolute position, like so:
 
-    #sequence li > * {
-        position: absolute;
+    #sequence > ul li > * {
+        position: absolute; /* required */
     }
 
 This way, when you come to position elements with the Sequence container, a position top of 0 will be the top of the Sequence container, and a position left of 0 will be the left hand side of the Sequence container.
+
+Finally, add some declarations to each frame:
+
+    #sequence > ul > li {
+        position: absolute; /* required */
+        width: 100%; /* required */
+        height: 100%;
+        z-index: 1; /* required */
+    }
+
+By making sure each frame has a `z-index` of `1`, frames will stack on top of each other correctly -- the active frame will be placed on top of the other frames for example. This is particularly important when your slider has interactive elements such as links and buttons.
 
 ### <a id="how-sequences-animations-work">How Sequence’s Animations Work</a>
 
@@ -183,7 +193,9 @@ Let’s assume frame 2 has one element that is currently in the “animate-in”
 
 Now you know how Sequence works, you can manipulate the transition of frame elements using CSS3 transitions. Just before you begin adding transitional properties, style the `<div>` within each frame:
 
-    .info1, .info2, .info3 {
+    .info1,
+    .info2,
+    .info3 {
         background: #3f7ad6;
         color: white;
         height: 95px;
@@ -235,7 +247,9 @@ Once all of the frame’s elements have finished animating in, Sequence will the
 
 From here on, you can apply transition durations to the remaining elements within the second and third frame. For the purpose of this demo and the sake of simplicity, you can modify the CSS you’ve just written to apply the same transition durations to the other frame elements, like so:
 
-    .info1, .info2, .info3 {
+    .info1,
+    .info2,
+    .info3 {
         left: -150px;
         top: 10px;
         -webkit-transition-duration: 1s;
@@ -257,7 +271,9 @@ Here you’ve given start positions to the `<div>` elements within the second an
 
 This CSS overwrites the top positions for each element so one is positioned below the next.
 
-    .animate-in .info1, .animate-in .info2, .animate-in .info3 {
+    .animate-in .info1,
+    .animate-in .info2,
+    .animate-in .info3 {
         left: 165px;
         -webkit-transition-duration: 1s;
         -moz-transition-duration: 1s;
@@ -266,7 +282,9 @@ This CSS overwrites the top positions for each element so one is positioned belo
         transition-duration: 1s;
     }
 
-    .animate-out .info1, .animate-out .info2, .animate-out .info3 {
+    .animate-out .info1,
+    .animate-out .info2,
+    .animate-out .info3 {
         left: 500px;
         -webkit-transition-duration: 1s;
         -moz-transition-duration: 1s;

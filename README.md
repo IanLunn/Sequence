@@ -37,6 +37,12 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.8.5 05/3/2013
+
+**Note: This version of Sequence may not be compatible with existing themes without an upgrade. Please see the [upgrade instructions](https://github.com/IanLunn/Sequence/blob/master/upgradeInstructions.md).**
+- Removed CSS setup from sequence.jquery.js - some CSS is required for Sequence to work which the developer MUST include in their CSS. By having the developer do this rather than Sequence, the DOM is cleaner and Sequence can initiate a little faster.
+- Updated Theme Template and Documentation Demo themes to work with v0.8.5, all other themes should be good to go.
+
 ###v0.8.4 23/2/2013
 
 - Added the `transitionThreshold` option again, now with a default of `false`

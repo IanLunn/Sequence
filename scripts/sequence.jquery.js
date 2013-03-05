@@ -1,6 +1,6 @@
 /*
 Sequence.js (http://www.sequencejs.com)
-Version: 0.8.4 Beta
+Version: 0.8.5 Beta
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -321,9 +321,6 @@ Sequence also relies on the following open source scripts:
 			self.nextFrame = self.sequence.children("li:nth-child("+self.nextFrameID+")");
 			self.nextFrameChildren = self.nextFrame.children();
 			
-			self.sequence.css({"width": "100%", "height": "100%", "position": "relative"}); //set the sequence list to 100% width/height just incase it hasn't been specified in the CSS
-			self.sequence.children("li").css({"width": "100%", "height": "100%", "position": "absolute", "z-index": 1}); //do the same for the frames and make them absolute
-
 			if(self.transitionsSupported) { //initiate the full featured Sequence if transitions are supported...
 				if(!self.settings.animateStartingFrameIn) { //start first frame in animated in position
 					self.currentFrameID = self.nextFrameID;

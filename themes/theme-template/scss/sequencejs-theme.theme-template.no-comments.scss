@@ -1,0 +1,78 @@
+/*
+Theme created for use with Sequence.js (http://www.sequencejs.com/)
+
+Theme: Theme Template
+Version: 1.1
+Theme Author: Ian Lunn @IanLunn
+Author URL: http://www.ianlunn.co.uk/
+Theme URL: http://www.sequencejs.com/developers/theme-template/
+
+This is a FREE theme and is available under a MIT License:
+http://www.opensource.org/licenses/mit-license.php
+
+Sequence.js and its dependencies are (c) Ian Lunn Design 2013 unless otherwise stated.
+*/
+
+//Selector Variables
+$sequenceContainer: "#sequence-theme"; //the container for Sequence (not essential but useful for elements such as navigation)
+$sequenceElement: "#sequence"; //the element that contains Sequence's frames
+$animateIn: ".animate-in"; //the animate-in class (can be changed in future versions of Sequence)
+$animateOut: ".animate-out"; //the animate-out class (can be changed in future versions of Sequence)
+$nav: ".nav"; //the navigation element used for pagination
+$nextButton: ".next"; //next frame button
+$prevButton: ".prev"; //previous frame button
+$pauseButton: ".pause"; //pause button
+$whenPaused: ".paused"; //pause indicator
+
+@import "partials/reset"; //import Eric Meyer's CSS Reset. Remove this if you have a reset in your main stylesheet
+@import "partials/mixins"; //vendor prefixing mixins
+
+/* THEME STYLES */
+#{$sequenceContainer} {
+	width: 100%;
+	height: 600px;
+	overflow: hidden;
+	-webkit-backface-visibility: hidden;
+
+	#{$sequenceElement} {
+		position: relative;
+		height: 100%; 
+		width: 100%;
+		max-width: 960px;
+		margin: 0 auto;
+		border: black solid 1px;
+
+		> ul > li {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
+		}
+
+		> ul li > * {
+			position: absolute;
+		}
+		
+		.example-animation {
+			height: 100px;
+			width: 100px;
+			background: blue;
+			color: white;
+			left: -100px;
+			top: 10px;
+		}
+
+		#{$animateIn} .example-animation {
+			left: 50%;
+			top: 100px;
+			@include prefixed(transform, rotate(360deg));
+			@include prefixed(transition-duration, 1s);
+		}
+
+		#{$animateOut} .example-animation {
+			left: 100%;
+			@include prefixed(transform, rotate(360deg));
+			@include prefixed(transition-duration, 1s);
+		}
+	}
+}

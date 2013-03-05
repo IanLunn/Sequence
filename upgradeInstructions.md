@@ -2,6 +2,32 @@
 
 During the beta period of Sequence (versions prior to v1.0), backwards compatibility is not a priority. Some newer versions of the Sequence beta may not be compatible with existing implementations. Should you want to upgrade to the latest version, please follow the below instructions to upgrade for each subsequent release.
 
+##Upgrading to v0.8.5
+In v0.8.5, the following two lines were removed from sequence.jquery.js:
+
+	self.sequence.css({"width": "100%", "height": "100%", "position": "relative"}); //set the sequence list to 100% width/height just incase it hasn't been specified in the CSS
+	self.sequence.children("li").css({"width": "100%", "height": "100%", "position": "absolute", "z-index": 1}); //do the same for the frames and make them absolute
+
+These were removed to clean up the DOM (so there's not as many inline styles making your code look messy). If they aren't already in your CSS and you'd like to update existing Sequence themes to use sequence.jquery.js v0.8.5, the following CSS should be added:
+
+	#sequence {
+		position: relative;
+		height: 100%; 
+		width: 100%;
+	}
+
+	#sequence > ul > li {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		z-index: 1;
+	}
+
+	#sequence > ul li > * {
+		position: absolute;
+	}
+
+
 ##Upgrading to v0.8.3 
 The following callbacks were removed:
 

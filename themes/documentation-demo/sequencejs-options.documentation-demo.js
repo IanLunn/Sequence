@@ -8,7 +8,6 @@ $(document).ready(function(){
     }
 
     var sequence = $("#sequence").sequence(options).data("sequence"); //initiate Sequence
-    var sequence2 = $("#sequence2").sequence(options).data("sequence"); //initiate a second Sequence
 
     sequence.beforeCurrentFrameAnimatesIn = function(){
         if(sequence.direction === 1){

@@ -1,8 +1,8 @@
 /*
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
-Theme: Documentation Demo (Responsive)
-Version: 1.0
+Theme: Documentation Demo
+Version: 1.1
 Theme Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Theme URL: http://www.sequencejs.com/themes/documentation-demo/
@@ -10,7 +10,7 @@ Theme URL: http://www.sequencejs.com/themes/documentation-demo/
 This is a FREE theme and is available under a MIT License:
 http://www.opensource.org/licenses/mit-license.php
 
-Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
+Sequence.js and its dependencies are (c) Ian Lunn Design 2013 unless otherwise stated.
 */
 
 //Selector Variables
@@ -27,25 +27,38 @@ $animateOut: ".animate-out";
 	font-family: Tahoma;
 	height: 370px;
 	margin: 10px auto;
-	position: relative;
+	position: relative; /* required */
 	width: 450px;
 	-webkit-backface-visibility: hidden; /* prevent graphical glitches in WebKit browsers when using transitions */
+
+	> ul li > * {
+     position: absolute; /* required */
+  }
+
+  > ul > li {
+    position: absolute; /* required */
+    width: 100%; /* required */
+    height: 100%;
+    z-index: 1; /* required */
+  }
 
 	#sequence-preloader {
 		background: white;
 	}
 
-	.class-name,.sequence-class {
+	.class-name,
+	.sequence-class {
 		font-size: 0.8em;
 	}
 
 	/* Frame Animations */
-	.info1,.info2,.info3 {
+	.info1,
+	.info2,
+	.info3 {
 		background: #3f7ad6;
 		color: white;
 		height: 95px;
 		padding: 5px;
-		position: absolute;
 		width: 95px;
 	}
 
@@ -64,26 +77,24 @@ $animateOut: ".animate-out";
 		top: 250px;
 	}
 
-	#{$animateIn} .info1, #{$animateIn} .info2, #{$animateIn} .info3 {
-		left: 165px;
-		display: block;
-		opacity: 1;
-
-		-webkit-transition-duration: 1s;
-		-moz-transition-duration: 1s;
-		-o-transition-duration: 1s;
-		-ms-transition-duration: 1s;
-		transition-duration: 1s;
+	#{$animateIn} {
+			.info1,
+			.info2,
+			.info3 {
+				left: 165px;
+				display: block;
+				opacity: 1;
+				@include prefixed(transition-duration, 1s);
+			}
 	}
 
-	#{$animateOut} .info1, #{$animateOut} .info2, #{$animateOut} .info3 {
-		left: 500px;
-
-		-webkit-transition-duration: 1s;
-		-moz-transition-duration: 1s;
-		-o-transition-duration: 1s;
-		-ms-transition-duration: 1s;
-		transition-duration: 1s;
+	#{$animateOut} {
+		.info1,
+		.info2,
+		.info3 {
+			left: 500px;
+			@include prefixed(transition-duration, 1s);
+		}
 	}
 	/* !Frame Animations */
 }
