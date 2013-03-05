@@ -18,7 +18,8 @@ Sequence provides the complete functionality for a website slider without forcin
 - [Modern Slide In (with hashTags enabled)](http://www.sequencejs.com/themes/modern-slide-in-hashtags/)
 - [Sliding Horizontal Parallax](http://www.sequencejs.com/themes/sliding-horizontal-parallax/)
 - [Apple Style](http://www.sequencejs.com/themes/apple-style/)
-- [Documentation Demo](http://www.sequencejs.com/themes/documentation-demo/)
+- [Documentation Demo](http://www.sequencejs.com/themes/documentation-demo/) (the theme built using the documentation)
+- [Theme Template](http://www.sequencejs.com/themes/documentation-demo/) (the best theme to use to get started quickly)
 
 ##Documentation
 Documentation can be found here: [SequenceJS Demo](https://github.com/IanLunn/Sequence/blob/master/documentation.md).
