@@ -2,7 +2,7 @@
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
 Theme: Sliding Horizontal Parallax
-Version: 1.1
+Version: 1.2
 Theme Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Theme URL: http://www.sequencejs.com/themes/sliding-horizontal-parallax/
@@ -10,16 +10,20 @@ Theme URL: http://www.sequencejs.com/themes/sliding-horizontal-parallax/
 This is a FREE theme and is available under a MIT License:
 http://www.opensource.org/licenses/mit-license.php
 
-Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
+Sequence.js and its dependencies are (c) Ian Lunn Design 2013 unless otherwise stated.
 */
 
 //Selector Variables
-$sequenceContainer: "#sequence-theme";
-$sequenceElement: "#sequence";
+$sequenceContainer: "#sequence";
+$sequenceCanvas: ".sequence-canvas";
 $animateIn: ".animate-in";
 $animateOut: ".animate-out";
-$nextButton: ".next";
-$prevButton: ".prev";
+$nextButton: ".sequence-next";
+$prevButton: ".sequence-prev";
+$pauseButton: ".sequence-pause";
+$pagination: ".sequence-pagination";
+$whenPaused: ".sequence-paused";
+$sequencePreloader: ".sequence-preloader";
 
 @import "partials/reset"; //import Eric Meyer's CSS Reset. Remove this if you have a reset in your main stylesheet
 @import "partials/mixins"; //vendor prefixing mixins
@@ -27,16 +31,33 @@ $prevButton: ".prev";
 /* THEME STYLES */
 
 #{$sequenceContainer} {
+	position: relative;
+	min-height: 600px;
+	max-width: 1400px;
+	min-width: 960px;
+	margin: 0 auto;
+	overflow: hidden;
+
 	background: url(../images/bg-sky.png) repeat-x #65B7F1;
 	color: white;
 	font-family: 'Play', sans-serif;
-	max-width: 2560px;
-	margin: 0 auto;
-	min-width: 960px;
-	position: relative;
-	margin: 0 auto;
-	overflow: hidden;
-	-webkit-backface-visibility: hidden; /* prevent graphical glitches in WebKit browsers when using transitions */
+
+	> #{$sequenceCanvas} {
+		height: 100%;
+		width: 100%;
+
+		 > li {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
+		}
+
+		li > * {
+			position: absolute;
+			@include prefixed(transition-timing-function, ease-in-out);
+		}
+	}
 
 	#{$nextButton},
 	#{$prevButton} {
@@ -56,11 +77,9 @@ $prevButton: ".prev";
 
 	#{$prevButton} {
 		left: 40px;
-		position: absolute;
 	}
 
 	#{$nextButton} {
-		position: absolute;
 		right: 40px;
 	}
 
@@ -69,18 +88,6 @@ $prevButton: ".prev";
 		opacity: 1;
 		@include prefixed(transform, scale(1.2));
 		@include prefixed(transition-duration, .4s);
-	}
-
-	#{$sequenceElement} li > * {
-		position: absolute;
-		@include prefixed(transition-timing-function, ease-in-out);
-	}
-
-	#{$sequenceElement} {
-		min-height: 600px;
-		margin: 0 auto;
-		position: relative;
-		max-width: 1400px;
 	}
 
 	h2 {
@@ -98,6 +105,8 @@ $prevButton: ".prev";
 		z-index: 10;
 		vertical-align: middle;
 		@include prefixed(transition-duration, 4s);
+		$transitionProperties: right;
+		@include prefixed(transition-property, #{$transitionProperties});
 	}
 
 	#{$animateIn} .info {
@@ -115,14 +124,14 @@ $prevButton: ".prev";
 		top: 200px;
 		max-width: 40%;
 		z-index: 6;
-		@include prefixed(transition-property, left top);
+		$transitionProperties: left top;
+		@include prefixed(transition-property, #{$transitionProperties});
 	}
 
 	#{$animateIn} .balloon {
 		left: 15%;
 		top: 70px;
 		@include prefixed(transition-duration, 4s);
-		@include prefixed(transition-property, left top);
 		z-index: 4;
 	}
 
@@ -131,7 +140,6 @@ $prevButton: ".prev";
 		top: -30px;
 		z-index: 2;
 		@include prefixed(transition-duration, 4s);
-		@include prefixed(transition-property, left top);
 	}
 
 	.aeroplane {
@@ -139,7 +147,11 @@ $prevButton: ".prev";
 		max-width: 40%;
 		top: 800px;
 		z-index: 6;
-		@include prefixed(transition-property, left top);
+		-webkit-transition-property: left top -webkit-transform;
+		-moz-transition-property: left top -moz-transform;
+		-o-transition-property: left top -o-transform;
+		-ms-transition-property: left top -ms-transform;
+		transition-property: left top transform;
 	}
 
 	#{$animateIn} .aeroplane {
@@ -147,11 +159,7 @@ $prevButton: ".prev";
 		top: 100px;
 		@include prefixed(transition-duration, 4s);
 		@include prefixed(transform, rotate(20deg));
-		-webkit-transition-property: left top -webkit-transform;
-		-moz-transition-property: left top -moz-transform;
-		-o-transition-property: left top -o-transform;
-		-ms-transition-property: left top -ms-transform;
-		transition-property: left top transform;
+		
 		z-index: 4;
 	}
 
@@ -160,23 +168,19 @@ $prevButton: ".prev";
 		top: -900px;
 		@include prefixed(transition-duration, 4s);
 		@include prefixed(transform, rotate(40deg));
-		-webkit-transition-property: left top -webkit-transform;
-		-moz-transition-property: left top -moz-transform;
-		-o-transition-property: left top -o-transform;
-		-ms-transition-property: left top -ms-transform;
-		transition-property: left top transform;
 		z-index: 2;
 	}
 
 	.sky {
-	    height: auto;
-	    width: 100%;
+	  height: auto;
+	  width: 100%;
 		left: -6%;
 		opacity: 0;
 		top: 0;
 		vertical-align: middle;
 		z-index: 1;
-		@include prefixed(transition-property, left top);
+		$transitionProperties: left top;
+		@include prefixed(transition-property, #{$transitionProperties});
 	}
 
 	#{$animateIn} .sky {
@@ -185,7 +189,6 @@ $prevButton: ".prev";
 		top: 0;
 		z-index: 1;
 		@include prefixed(transition-duration, 4s);
-		@include prefixed(transition-property, left top);
 	}
 
 	#{$animateOut} .sky {
@@ -194,7 +197,6 @@ $prevButton: ".prev";
 		top: 0;
 		z-index: 1;
 		@include prefixed(transition-duration, 4s);
-		@include prefixed(transition-property, left top);
 	}
 
 	.kite {
@@ -204,7 +206,11 @@ $prevButton: ".prev";
 		top: 300px;
 		z-index: 6;
 		@include prefixed(transform-origin, 100%);
-		@include prefixed(transition-property, left top);
+		-webkit-transition-property: left top -webkit-transform;
+		-moz-transition-property: left top -moz-transform;
+		-o-transition-property: left top -o-transform;
+		-ms-transition-property: left top -ms-transform;
+		transition-property: left top transform;
 	}
 
 	#{$animateIn} .kite {
@@ -212,11 +218,6 @@ $prevButton: ".prev";
 		top: 300px;
 		opacity: 1;
 		z-index: 4;
-		-webkit-transition-property: left top -webkit-transform;
-		-moz-transition-property: left top -moz-transform;
-		-o-transition-property: left top -o-transform;
-		-ms-transition-property: left top -ms-transform;
-		transition-property: left top transform;
 		@include prefixed(transform-origin, 100%);
 		@include prefixed(transform, rotate(80deg));
 		@include prefixed(transition-duration, 4s);
@@ -227,11 +228,6 @@ $prevButton: ".prev";
 		opacity: 0;
 		top: 300px;
 		z-index: 2;
-		-webkit-transition-property: left top -webkit-transform;
-		-moz-transition-property: left top -moz-transform;
-		-o-transition-property: left top -o-transform;
-		-ms-transition-property: left top -ms-transform;
-		transition-property: left top transform;
 		@include prefixed(transform-origin, 100%);
 		@include prefixed(transform, rotate(200deg));
 		@include prefixed(transition-duration, 3s);

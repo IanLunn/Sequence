@@ -2,7 +2,7 @@
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
 Theme: Sliding Horizontal Parallax
-Version: 1.1
+Version: 1.2
 Theme Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Theme URL: http://www.sequencejs.com/themes/sliding-horizontal-parallax/
@@ -10,7 +10,7 @@ Theme URL: http://www.sequencejs.com/themes/sliding-horizontal-parallax/
 This is a FREE theme and is available under a MIT License:
 http://www.opensource.org/licenses/mit-license.php
 
-Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
+Sequence.js and its dependencies are (c) Ian Lunn Design 2013 unless otherwise stated.
 */
 /* CSS RESET - http://meyerweb.com/eric/tools/css/reset/ v2.0 | 20110126 */
 html, body, div, span, applet, object, iframe,
@@ -59,20 +59,33 @@ table {
 /* !CSS RESET */
 /* prefix declarations */
 /* THEME STYLES */
-#sequence-theme {
-  background: url(../images/bg-sky.png) repeat-x #65b7f1;
-  color: white;
-  font-family: "Play", sans-serif;
-  max-width: 2560px;
-  margin: 0 auto;
-  min-width: 960px;
+#sequence {
   position: relative;
+  min-height: 600px;
+  max-width: 1400px;
+  min-width: 960px;
   margin: 0 auto;
   overflow: hidden;
-  -webkit-backface-visibility: hidden;
-  /* prevent graphical glitches in WebKit browsers when using transitions */ }
-  #sequence-theme .next,
-  #sequence-theme .prev {
+  background: url(../images/bg-sky.png) repeat-x #65b7f1;
+  color: white;
+  font-family: "Play", sans-serif; }
+  #sequence > .sequence-canvas {
+    height: 100%;
+    width: 100%; }
+    #sequence > .sequence-canvas > li {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1; }
+    #sequence > .sequence-canvas li > * {
+      position: absolute;
+      -webkit-transition-timing-function: ease-in-out;
+      -moz-transition-timing-function: ease-in-out;
+      -ms-transition-timing-function: ease-in-out;
+      -o-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out; }
+  #sequence .sequence-next,
+  #sequence .sequence-prev {
     color: white;
     cursor: pointer;
     display: none;
@@ -89,14 +102,12 @@ table {
     -ms-transition-duration: 0.4s;
     -o-transition-duration: 0.4s;
     transition-duration: 0.4s; }
-  #sequence-theme .prev {
-    left: 40px;
-    position: absolute; }
-  #sequence-theme .next {
-    position: absolute;
+  #sequence .sequence-prev {
+    left: 40px; }
+  #sequence .sequence-next {
     right: 40px; }
-  #sequence-theme .next:hover,
-  #sequence-theme .prev:hover {
+  #sequence .sequence-next:hover,
+  #sequence .sequence-prev:hover {
     opacity: 1;
     -webkit-transform: scale(1.2);
     -moz-transform: scale(1.2);
@@ -108,22 +119,10 @@ table {
     -ms-transition-duration: 0.4s;
     -o-transition-duration: 0.4s;
     transition-duration: 0.4s; }
-  #sequence-theme #sequence li > * {
-    position: absolute;
-    -webkit-transition-timing-function: ease-in-out;
-    -moz-transition-timing-function: ease-in-out;
-    -ms-transition-timing-function: ease-in-out;
-    -o-transition-timing-function: ease-in-out;
-    transition-timing-function: ease-in-out; }
-  #sequence-theme #sequence {
-    min-height: 600px;
-    margin: 0 auto;
-    position: relative;
-    max-width: 1400px; }
-  #sequence-theme h2 {
+  #sequence h2 {
     font-size: 1.5em;
     line-height: 1.2em; }
-  #sequence-theme .info {
+  #sequence .info {
     color: black;
     font-size: 1em;
     right: 150%;
@@ -136,22 +135,27 @@ table {
     -moz-transition-duration: 4s;
     -ms-transition-duration: 4s;
     -o-transition-duration: 4s;
-    transition-duration: 4s; }
-  #sequence-theme .animate-in .info {
+    transition-duration: 4s;
+    -webkit-transition-property: right;
+    -moz-transition-property: right;
+    -ms-transition-property: right;
+    -o-transition-property: right;
+    transition-property: right; }
+  #sequence .animate-in .info {
     right: 15%;
     -webkit-transition-duration: 4s;
     -moz-transition-duration: 4s;
     -ms-transition-duration: 4s;
     -o-transition-duration: 4s;
     transition-duration: 4s; }
-  #sequence-theme .animate-out .info {
+  #sequence .animate-out .info {
     right: -150%;
     -webkit-transition-duration: 4s;
     -moz-transition-duration: 4s;
     -ms-transition-duration: 4s;
     -o-transition-duration: 4s;
     transition-duration: 4s; }
-  #sequence-theme .balloon {
+  #sequence .balloon {
     left: -140%;
     top: 200px;
     max-width: 40%;
@@ -161,7 +165,7 @@ table {
     -ms-transition-property: left top;
     -o-transition-property: left top;
     transition-property: left top; }
-  #sequence-theme .animate-in .balloon {
+  #sequence .animate-in .balloon {
     left: 15%;
     top: 70px;
     -webkit-transition-duration: 4s;
@@ -169,13 +173,8 @@ table {
     -ms-transition-duration: 4s;
     -o-transition-duration: 4s;
     transition-duration: 4s;
-    -webkit-transition-property: left top;
-    -moz-transition-property: left top;
-    -ms-transition-property: left top;
-    -o-transition-property: left top;
-    transition-property: left top;
     z-index: 4; }
-  #sequence-theme .animate-out .balloon {
+  #sequence .animate-out .balloon {
     left: 140%;
     top: -30px;
     z-index: 2;
@@ -183,23 +182,18 @@ table {
     -moz-transition-duration: 4s;
     -ms-transition-duration: 4s;
     -o-transition-duration: 4s;
-    transition-duration: 4s;
-    -webkit-transition-property: left top;
-    -moz-transition-property: left top;
-    -ms-transition-property: left top;
-    -o-transition-property: left top;
-    transition-property: left top; }
-  #sequence-theme .aeroplane {
+    transition-duration: 4s; }
+  #sequence .aeroplane {
     left: -50%;
     max-width: 40%;
     top: 800px;
     z-index: 6;
-    -webkit-transition-property: left top;
-    -moz-transition-property: left top;
-    -ms-transition-property: left top;
-    -o-transition-property: left top;
-    transition-property: left top; }
-  #sequence-theme .animate-in .aeroplane {
+    -webkit-transition-property: left top -webkit-transform;
+    -moz-transition-property: left top -moz-transform;
+    -o-transition-property: left top -o-transform;
+    -ms-transition-property: left top -ms-transform;
+    transition-property: left top transform; }
+  #sequence .animate-in .aeroplane {
     left: 10%;
     top: 100px;
     -webkit-transition-duration: 4s;
@@ -212,13 +206,8 @@ table {
     -ms-transform: rotate(20deg);
     -o-transform: rotate(20deg);
     transform: rotate(20deg);
-    -webkit-transition-property: left top -webkit-transform;
-    -moz-transition-property: left top -moz-transform;
-    -o-transition-property: left top -o-transform;
-    -ms-transition-property: left top -ms-transform;
-    transition-property: left top transform;
     z-index: 4; }
-  #sequence-theme .animate-out .aeroplane {
+  #sequence .animate-out .aeroplane {
     left: 70%;
     top: -900px;
     -webkit-transition-duration: 4s;
@@ -231,13 +220,8 @@ table {
     -ms-transform: rotate(40deg);
     -o-transform: rotate(40deg);
     transform: rotate(40deg);
-    -webkit-transition-property: left top -webkit-transform;
-    -moz-transition-property: left top -moz-transform;
-    -o-transition-property: left top -o-transform;
-    -ms-transition-property: left top -ms-transform;
-    transition-property: left top transform;
     z-index: 2; }
-  #sequence-theme .sky {
+  #sequence .sky {
     height: auto;
     width: 100%;
     left: -6%;
@@ -250,7 +234,7 @@ table {
     -ms-transition-property: left top;
     -o-transition-property: left top;
     transition-property: left top; }
-  #sequence-theme .animate-in .sky {
+  #sequence .animate-in .sky {
     left: 0%;
     opacity: 1;
     top: 0;
@@ -259,13 +243,8 @@ table {
     -moz-transition-duration: 4s;
     -ms-transition-duration: 4s;
     -o-transition-duration: 4s;
-    transition-duration: 4s;
-    -webkit-transition-property: left top;
-    -moz-transition-property: left top;
-    -ms-transition-property: left top;
-    -o-transition-property: left top;
-    transition-property: left top; }
-  #sequence-theme .animate-out .sky {
+    transition-duration: 4s; }
+  #sequence .animate-out .sky {
     left: 6%;
     opacity: 0;
     top: 0;
@@ -274,13 +253,8 @@ table {
     -moz-transition-duration: 4s;
     -ms-transition-duration: 4s;
     -o-transition-duration: 4s;
-    transition-duration: 4s;
-    -webkit-transition-property: left top;
-    -moz-transition-property: left top;
-    -ms-transition-property: left top;
-    -o-transition-property: left top;
-    transition-property: left top; }
-  #sequence-theme .kite {
+    transition-duration: 4s; }
+  #sequence .kite {
     left: -30%;
     opacity: 0;
     max-width: 40%;
@@ -291,21 +265,16 @@ table {
     -ms-transform-origin: 100%;
     -o-transform-origin: 100%;
     transform-origin: 100%;
-    -webkit-transition-property: left top;
-    -moz-transition-property: left top;
-    -ms-transition-property: left top;
-    -o-transition-property: left top;
-    transition-property: left top; }
-  #sequence-theme .animate-in .kite {
-    left: -15%;
-    top: 300px;
-    opacity: 1;
-    z-index: 4;
     -webkit-transition-property: left top -webkit-transform;
     -moz-transition-property: left top -moz-transform;
     -o-transition-property: left top -o-transform;
     -ms-transition-property: left top -ms-transform;
-    transition-property: left top transform;
+    transition-property: left top transform; }
+  #sequence .animate-in .kite {
+    left: -15%;
+    top: 300px;
+    opacity: 1;
+    z-index: 4;
     -webkit-transform-origin: 100%;
     -moz-transform-origin: 100%;
     -ms-transform-origin: 100%;
@@ -321,16 +290,11 @@ table {
     -ms-transition-duration: 4s;
     -o-transition-duration: 4s;
     transition-duration: 4s; }
-  #sequence-theme .animate-out .kite {
+  #sequence .animate-out .kite {
     left: -15%;
     opacity: 0;
     top: 300px;
     z-index: 2;
-    -webkit-transition-property: left top -webkit-transform;
-    -moz-transition-property: left top -moz-transform;
-    -o-transition-property: left top -o-transform;
-    -ms-transition-property: left top -ms-transform;
-    transition-property: left top transform;
     -webkit-transform-origin: 100%;
     -moz-transform-origin: 100%;
     -ms-transform-origin: 100%;
@@ -346,6 +310,6 @@ table {
     -ms-transition-duration: 3s;
     -o-transition-duration: 3s;
     transition-duration: 3s; }
-  #sequence-theme .sequence-fallback .animate-in .kite {
+  #sequence .sequence-fallback .animate-in .kite {
     left: 20%;
     top: 200px; }

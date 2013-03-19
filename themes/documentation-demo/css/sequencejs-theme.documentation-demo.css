@@ -2,7 +2,7 @@
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
 Theme: Documentation Demo
-Version: 1.1
+Version: 1.3
 Theme Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Theme URL: http://www.sequencejs.com/themes/documentation-demo/
@@ -65,9 +65,14 @@ table {
 
 /* !CSS RESET */
 /* prefix declarations */
+/* when in fallback mode (for browsers that don't support transitions) hide anything outside of the Sequence container */
+/* line 32, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
+#sequence.sequence-fallback {
+  overflow: hidden; }
+
 /* THEME STYLES */
-/* line 25, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
-.sequence {
+/* line 37, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
+#sequence {
   border: black solid 3px;
   font-family: Tahoma;
   height: 370px;
@@ -75,67 +80,74 @@ table {
   position: relative;
   /* required */
   width: 450px;
-  -webkit-backface-visibility: hidden;
-  /* prevent graphical glitches in WebKit browsers when using transitions */
   /* Frame Animations */
   /* !Frame Animations */ }
-  /* line 34, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence > ul li > * {
-    position: absolute;
-    /* required */ }
-  /* line 38, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence > ul > li {
-    position: absolute;
-    /* required */
-    width: 100%;
-    /* required */
-    height: 100%;
-    z-index: 1;
-    /* required */ }
   /* line 45, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence #sequence-preloader {
+  #sequence > .sequence-canvas {
+    height: 100%;
+    width: 100%; }
+    /* line 49, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
+    #sequence > .sequence-canvas > li {
+      position: absolute;
+      /* required */
+      width: 100%;
+      /* required */
+      height: 100%;
+      z-index: 1;
+      /* required */ }
+    /* line 56, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
+    #sequence > .sequence-canvas li > * {
+      position: absolute;
+      /* required */ }
+  /* line 61, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
+  #sequence #sequence-preloader {
     background: white; }
-  /* line 50, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence .class-name,
-  .sequence .sequence-class {
+  /* line 66, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
+  #sequence .class-name,
+  #sequence .sequence-class {
     font-size: 0.8em; }
-  /* line 57, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence .info1,
-  .sequence .info2,
-  .sequence .info3 {
+  /* line 73, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
+  #sequence .info1,
+  #sequence .info2,
+  #sequence .info3 {
     background: #3f7ad6;
+    display: block;
     color: white;
     height: 95px;
     padding: 5px;
-    width: 95px; }
-  /* line 65, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence .info1 {
+    width: 95px;
+    -webkit-transition-property: left;
+    -moz-transition-property: left;
+    -ms-transition-property: left;
+    -o-transition-property: left;
+    transition-property: left; }
+  /* line 83, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
+  #sequence .info1 {
     left: -150px;
     top: 10px; }
-  /* line 70, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence .info2 {
+  /* line 88, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
+  #sequence .info2 {
     left: -150px;
     top: 130px; }
-  /* line 75, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence .info3 {
+  /* line 93, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
+  #sequence .info3 {
     left: -150px;
     top: 250px; }
-  /* line 83, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence .animate-in .info1,
-  .sequence .animate-in .info2,
-  .sequence .animate-in .info3 {
+  /* line 101, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
+  #sequence .animate-in .info1,
+  #sequence .animate-in .info2,
+  #sequence .animate-in .info3 {
     left: 165px;
-    display: block;
     opacity: 1;
     -webkit-transition-duration: 1s;
     -moz-transition-duration: 1s;
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  /* line 94, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence .animate-out .info1,
-  .sequence .animate-out .info2,
-  .sequence .animate-out .info3 {
+  /* line 111, /Users/Ian/Sites/SequenceJS/Sequence/themes/documentation-demo/scss/sequencejs-theme.documentation-demo.scss */
+  #sequence .animate-out .info1,
+  #sequence .animate-out .info2,
+  #sequence .animate-out .info3 {
     left: 500px;
     -webkit-transition-duration: 1s;
     -moz-transition-duration: 1s;

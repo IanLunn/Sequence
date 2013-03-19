@@ -7,7 +7,7 @@
 		<link rel="stylesheet" media="screen" href="css/sequencejs-theme.apple-style.css" />
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Magra:400,700" />
 		
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 		<script>
 		 if (typeof jQuery == 'undefined'){
 		    document.write(unescape('%3Cscript src="../../scripts/jquery-min.js" %3E%3C/script%3E'));
@@ -18,14 +18,16 @@
 	</head>
 	<body>
 		<div id="sequence-theme">
-			<ul class="controls">
-				<li class="status"></li>
-				<li class="prev"></li>
-				<li class="pause"></li>
-				<li class="next"></li>
-			</ul>
 			<div id="sequence">
-				<ul>
+
+				<ul class="controls">
+					<li class="status"></li>
+					<li class="sequence-prev"></li>
+					<li class="sequence-pause"></li>
+					<li class="sequence-next"></li>
+				</ul>
+
+				<ul class="sequence-canvas">
 					<li class="animate-in">
 						<div class="intro">
 							<h2>Built using Sequence.js</h2>
@@ -55,8 +57,10 @@
 						<img class="iphone4-shadow" src="images/iphone-shadow.png" />
 					</li>
 				</ul>
+
 			</div>
 		</div>
+		<p>Tip: press "P" to pause/unpause</p>
 	</body>
 </html>
 

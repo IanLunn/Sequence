@@ -2,7 +2,7 @@
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
 Theme: Apple Style
-Version: 1.1
+Version: 1.3
 Theme Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Theme URL: http://www.sequencejs.com/themes/apple-style/
@@ -10,18 +10,20 @@ Theme URL: http://www.sequencejs.com/themes/apple-style/
 This is a FREE theme and is available under a MIT License:
 http://www.opensource.org/licenses/mit-license.php
 
-Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
+Sequence.js and its dependencies are (c) Ian Lunn Design 2013 unless otherwise stated.
 */
 
 //Selector Variables
-$sequenceContainer: "#sequence-theme";
-$sequenceElement: "#sequence";
+$sequenceContainer: "#sequence";
+$sequenceCanvas: ".sequence-canvas";
 $animateIn: ".animate-in";
 $animateOut: ".animate-out";
-$sequencePreloader: "#sequence-preloader";
-$nextButton: ".next";
-$prevButton: ".prev";
-$pauseButton: ".pause";
+$nextButton: ".sequence-next";
+$prevButton: ".sequence-prev";
+$pauseButton: ".sequence-pause";
+$pagination: ".sequence-pagination";
+$whenPaused: ".sequence-paused";
+$sequencePreloader: ".sequence-preloader";
 
 @import "partials/reset"; //import Eric Meyer's CSS Reset. Remove this if you have a reset in your main stylesheet
 @import "partials/mixins"; //vendor prefixing mixins
@@ -60,25 +62,40 @@ $pauseButton: ".pause";
 }
 /* !Keyframes */
 
-#{$sequenceContainer} {
-	background: white;
+#sequence-theme {
+	width: 100%;
 	height: 600px;
 	overflow: hidden;
+}
+
+/* when in fallback mode (for browsers that don't support transitions) hide anything outside of the Sequence container */
+#{$sequenceContainer}.sequence-fallback {
+    overflow: hidden;
+}
+
+#{$sequenceContainer} {
 	position: relative;
+	height: 600px;
 	width: 100%;
-	-webkit-backface-visibility: hidden; /* prevent graphical glitches in WebKit browsers when using transitions */
+	max-width: 960px;
+	margin: 0 auto;
+	
+	background: white;
 
-	#{$sequenceElement} {
-		height: 600px;
-		margin: 0 auto;
-		position: relative;
-		top: -30px;
-		width: 960px;
-	}
+	> #{$sequenceCanvas} {
+		height: 100%;
+		width: 100%;
 
-	/*when in fallback mode (for browsers that don't support transitions) hide anything outside of the Sequence container*/
-	#{$sequenceElement}.sequence-fallback {
-	    overflow: hidden;
+		> li {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			z-index: 1;
+		}
+
+		li > * {
+			position: absolute;
+		}
 	}
 
 	h2 {
@@ -227,7 +244,7 @@ $pauseButton: ".pause";
 		left: -450px;
 		opacity: 1;
 		position: absolute;
-		top: -550px;
+		top: -520px;
 		@include prefixed(transform, rotate(-40deg));
 		@include prefixed(transition-duration, 1.5s);
 	}
@@ -235,7 +252,7 @@ $pauseButton: ".pause";
 	#{$animateIn} .iphone {
 		left: 600px;
 		opacity: 1;
-		top: 50px;
+		top: 20px;
 		@include prefixed(transform, rotate(0deg));
 		@include prefixed(transition-duration, 1.5s);
 	}
@@ -243,7 +260,7 @@ $pauseButton: ".pause";
 	#{$animateOut} .iphone {
 		left: 1100px;
 		opacity: 0;
-		top: -400px;
+		top: -370px;
 		@include prefixed(transform, rotate(20deg));
 		@include prefixed(transition-duration, 1s);
 	}
@@ -251,7 +268,7 @@ $pauseButton: ".pause";
 	.iphone-shadow {
 		left: 598px;
 		opacity: 0;
-		top: 520px;
+		top: 490px;
 		position: absolute;
 		@include prefixed(transition-duration, 1.5s);
 	}
@@ -259,21 +276,19 @@ $pauseButton: ".pause";
 	#{$animateIn} .iphone-shadow {
 		left: 598px;
 		opacity: 1;
-		top: 520px;
 		@include prefixed(transition-duration, 1.5s);
 	}
 
 	#{$animateOut} .iphone-shadow {
 		left: 598px;
 		opacity: 0;
-		top: 520px;
 		@include prefixed(transition-duration, 2s);
 	}
 
 	.intro {
 		position: absolute;
 		left: -450px;
-		top: -400px;
+		top: -370px;
 		width: 400px;
 		@include prefixed(transform, rotate(-40deg));
 		@include prefixed(transition-duration, 1.5s);
@@ -281,7 +296,7 @@ $pauseButton: ".pause";
 
 	#{$animateIn} .intro {
 		left: 100px;
-		top: 250px;
+		top: 220px;
 		@include prefixed(transform, rotate(0deg));
 		@include prefixed(transition-duration, 1.5s);
 	}
@@ -289,7 +304,7 @@ $pauseButton: ".pause";
 	#{$animateOut} .intro {
 		left: 100px;
 		opacity: 0;
-		top: 250px;
+		top: 220px;
 		@include prefixed(transform, rotate(0deg));
 		@include prefixed(transition-duration, 1s);
 	}
@@ -297,7 +312,7 @@ $pauseButton: ".pause";
 	.ipad {
 		left: -450px;
 		position: absolute;
-		top: 800px;
+		top: 770px;
 		@include prefixed(transform, rotate(-20deg));
 		z-index: 5;
 		
@@ -305,7 +320,7 @@ $pauseButton: ".pause";
 
 	#{$animateIn} .ipad {
 		left: 50px;
-		top: 50px;
+		top: 20px;
 		@include prefixed(transform, rotate(0deg));
 		@include prefixed(transition-duration, 1s);
 	}
@@ -313,14 +328,14 @@ $pauseButton: ".pause";
 	#{$animateOut} .ipad {
 		left: -800px;
 		opacity: 0;
-		top: 50px;
+		top: 20px;
 		@include prefixed(transform, rotate(0deg));
 		@include prefixed(transition-duration, 1s);
 	}
 
 	.ipad-shadow {
 		left: 30px;
-		top: 508px;
+		top: 478px;
 		opacity: 0;
 		position: absolute;
 		@include prefixed(transition-duration, .5s);
@@ -328,14 +343,12 @@ $pauseButton: ".pause";
 
 	#{$animateIn} .ipad-shadow {
 		left: 30px;
-		top: 508px;
 		opacity: 1;
 		@include prefixed(transition-duration, 1s);
 	}
 
 	#{$animateOut} .ipad-shadow {
 		left: -800px;
-		top: 508px;
 		opacity: 0;
 		@include prefixed(transition-duration, 1s);
 	}
@@ -343,14 +356,14 @@ $pauseButton: ".pause";
 	.slide2 {
 		left: 950px;
 		position: absolute;
-		top: 700px;
+		top: 670px;
 		width: 400px;
 		@include prefixed(transform, rotate(20deg));
 	}
 
 	#{$animateIn} .slide2 {
 		left: 450px;
-		top: 250px;
+		top: 220px;
 		@include prefixed(transform, rotate(0deg));
 		@include prefixed(transition-duration, 1s);
 	}
@@ -358,7 +371,7 @@ $pauseButton: ".pause";
 	#{$animateOut} .slide2 {
 		left: 800px;
 		opacity: 0;
-		top: 250px;
+		top: 220px;
 		@include prefixed(transform, rotate(0deg));
 		@include prefixed(transition-duration, 1s);
 	}
@@ -366,20 +379,20 @@ $pauseButton: ".pause";
 	.iphone2 {
 		left: 400px;
 		position: absolute;
-		top: -600px;
+		top: -570px;
 		z-index: 3;
 	}
 
 	#{$animateIn} .iphone2 {
 		left: 400px;
-		top: 60px;
+		top: 30px;
 		@include prefixed(transition-duration, 2.5s);
 		@include prefixed(transition-timing-function, ease-in);
 	}
 
 	#{$animateOut} .iphone2 {
 		left: 600px;
-		top: 800px;
+		top: 770px;
 		@include prefixed(transform, rotate(100deg));
 		@include prefixed(transition-duration, 2.5s);
 	}
@@ -388,14 +401,13 @@ $pauseButton: ".pause";
 		position: absolute;
 		left: 398px;
 		opacity: 0;
-		top: 530px;
+		top: 500px;
 		@include prefixed(transition-duration, 1s);
 	}
 
 	#{$animateIn} .iphone2-shadow {
 		left: 398px;
 		opacity: 1;
-		top: 530px;
 		@include prefixed(transition-duration, 1s);
 		@include prefixed(transition-delay, 1s);
 	}
@@ -403,7 +415,6 @@ $pauseButton: ".pause";
 	#{$animateOut} .iphone2-shadow {
 		left: 398px;
 		opacity: 0;
-		top: 530px;
 		@include prefixed(transition-duration, 1s);
 	}
 
@@ -411,7 +422,7 @@ $pauseButton: ".pause";
 		position: absolute;
 		left: 500px;
 		opacity: 0;
-		top: 507px;
+		top: 477px;
 		@include prefixed(transform, scale(0.9));
 		@include prefixed(transition-duration, 1s);
 	}
@@ -419,7 +430,6 @@ $pauseButton: ".pause";
 	#{$animateIn} .iphone3-shadow {
 		left: 500px;
 		opacity: 1;
-		top: 507px;
 		@include prefixed(transition-duration, 1s);
 		@include prefixed(transition-delay, .5s);
 	}
@@ -427,7 +437,6 @@ $pauseButton: ".pause";
 	#{$animateOut} .iphone3-shadow {
 		left: 500px;
 		opacity: 0;
-		top: 507px;
 		@include prefixed(transform, scale(0.9));
 		@include prefixed(transition-duration, 1s);
 	}
@@ -436,29 +445,25 @@ $pauseButton: ".pause";
 		position: absolute;
 		left: 575px;
 		opacity: 0;
-		top: 485px;
+		top: 455px;
 		@include prefixed(transform, scale(0.8));
 		@include prefixed(transition-duration, 1s);
 	}
 
 	#{$animateIn} .iphone4-shadow {
-		left: 575px;
 		opacity: 1;
-		top: 485px;
 		@include prefixed(transition-duration, 1s);
 	}
 
 	#{$animateOut} .iphone4-shadow {
-		left: 575px;
 		opacity: 0;
-		top: 485px;
 		@include prefixed(transform, scale(0.8));
 		@include prefixed(transition-duration, 1s);
 	}
 
 	.iphone3 {
 		left: 500px;
-		top: -600px;
+		top: -570px;
 		position: absolute;
 		z-index: 2;
 		@include prefixed(transform, scale(0.9));
@@ -466,21 +471,21 @@ $pauseButton: ".pause";
 
 	#{$animateIn} .iphone3 {
 		left: 500px;
-		top: 60px;
+		top: 30px;
 		@include prefixed(transition-duration, 2s);
 		@include prefixed(transition-timing-function, ease-in);
 	}
 
 	#{$animateOut} .iphone3 {
 		left: 700px;
-		top: 800px;
+		top: 770px;
 		@include prefixed(transform, rotate(100deg));
 		@include prefixed(transition-duration, 2s);
 	}
 
 	.iphone4 {
 		left: 575px;
-		top: -600px;
+		top: -570px;
 		position: absolute;
 		z-index: 1;
 		@include prefixed(transform, scale(0.8));
@@ -488,14 +493,14 @@ $pauseButton: ".pause";
 
 	#{$animateIn} .iphone4 {
 		left: 575px;
-		top: 60px;
+		top: 30px;
 		@include prefixed(transition-duration, 1.5s);
 		@include prefixed(transition-timing-function, ease-in);
 	}
 
 	#{$animateOut} .iphone4 {
 		left: 800px;
-		top: 800px;
+		top: 770px;
 		@include prefixed(transform, rotate(100deg));
 		@include prefixed(transition-duration, 1.5s);
 	}
@@ -504,14 +509,13 @@ $pauseButton: ".pause";
 		position: absolute;
 		left: -800px;
 		opacity: 0;
-		top: 250px;
+		top: 220px;
 		width: 250px;
 	}
 
 	#{$animateIn} .slide3 {
 		left: 100px;
 		opacity: 1;
-		top: 250px;
 		@include prefixed(transition-delay, 1s);
 		@include prefixed(transition-duration, 1s);
 	}
@@ -519,7 +523,6 @@ $pauseButton: ".pause";
 	#{$animateOut} .slide3 {
 		left: 900px;
 		opacity: 0;
-		top: 250px;
 		@include prefixed(transition-duration, 1s);
 	}
 	/* !Frame Animations */

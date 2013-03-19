@@ -1,6 +1,7 @@
 $(document).ready(function(){
     $status = $(".status");
     var options = {
+        autoPlay: true,
         autoPlayDelay: 4000,
         pauseOnHover: false,
         hidePreloaderDelay: 500,

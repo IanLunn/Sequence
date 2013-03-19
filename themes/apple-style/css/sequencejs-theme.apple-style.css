@@ -2,7 +2,7 @@
 Theme created for use with Sequence.js (http://www.sequencejs.com/)
 
 Theme: Apple Style
-Version: 1.1
+Version: 1.3
 Theme Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Theme URL: http://www.sequencejs.com/themes/apple-style/
@@ -10,7 +10,7 @@ Theme URL: http://www.sequencejs.com/themes/apple-style/
 This is a FREE theme and is available under a MIT License:
 http://www.opensource.org/licenses/mit-license.php
 
-Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
+Sequence.js and its dependencies are (c) Ian Lunn Design 2013 unless otherwise stated.
 */
 /* CSS RESET - http://meyerweb.com/eric/tools/css/reset/ v2.0 | 20110126 */
 html, body, div, span, applet, object, iframe,
@@ -206,35 +206,44 @@ table {
 
 /* !Keyframes */
 #sequence-theme {
-  background: white;
-  height: 600px;
-  overflow: hidden;
-  position: relative;
   width: 100%;
-  -webkit-backface-visibility: hidden;
-  /* prevent graphical glitches in WebKit browsers when using transitions */
-  /*when in fallback mode (for browsers that don't support transitions) hide anything outside of the Sequence container*/
+  height: 600px;
+  overflow: hidden; }
+
+/* when in fallback mode (for browsers that don't support transitions) hide anything outside of the Sequence container */
+#sequence.sequence-fallback {
+  overflow: hidden; }
+
+#sequence {
+  position: relative;
+  height: 600px;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  background: white;
   /* Preloader */
   /* !Preloader */
   /* Frame Animations */
   /* !Frame Animations */ }
-  #sequence-theme #sequence {
-    height: 600px;
-    margin: 0 auto;
-    position: relative;
-    top: -30px;
-    width: 960px; }
-  #sequence-theme #sequence.sequence-fallback {
-    overflow: hidden; }
-  #sequence-theme h2 {
+  #sequence > .sequence-canvas {
+    height: 100%;
+    width: 100%; }
+    #sequence > .sequence-canvas > li {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1; }
+    #sequence > .sequence-canvas li > * {
+      position: absolute; }
+  #sequence h2 {
     font-family: "Magra", sans-serif;
     font-size: 30px;
     font-weight: bold;
     margin: 0 0 10px 0; }
-  #sequence-theme h3 {
+  #sequence h3 {
     font-family: "Magra", sans-serif;
     font-size: 20px; }
-  #sequence-theme .controls {
+  #sequence .controls {
     background: url("../images/bg-controls.png") no-repeat;
     height: 49px;
     margin: 0 auto;
@@ -242,43 +251,43 @@ table {
     top: 0;
     width: 198px;
     z-index: 9999; }
-  #sequence-theme .prev,
-  #sequence-theme .next {
+  #sequence .sequence-prev,
+  #sequence .sequence-next {
     opacity: 0.7; }
-  #sequence-theme .next,
-  #sequence-theme .prev,
-  #sequence-theme .pause {
+  #sequence .sequence-next,
+  #sequence .sequence-prev,
+  #sequence .sequence-pause {
     position: absolute;
     z-index: 10000;
     top: 10px; }
-  #sequence-theme .next {
+  #sequence .sequence-next {
     background: url("../images/bt-next.png") 50% 4px no-repeat;
     height: 34px;
     left: 128px;
     width: 41px; }
-  #sequence-theme .next:hover,
-  #sequence-theme .prev:hover,
-  #sequence-theme .pause:hover {
+  #sequence .sequence-next:hover,
+  #sequence .sequence-prev:hover,
+  #sequence .sequence-pause:hover {
     background-position: 50% -26px; }
-  #sequence-theme .prev {
+  #sequence .sequence-prev {
     left: 28px;
     background: url("../images/bt-prev.png") 50% 4px no-repeat;
     height: 34px;
     width: 41px; }
-  #sequence-theme .pause {
+  #sequence .sequence-pause {
     background: url("../images/bt-pause.png") 50% 4px no-repeat;
     cursor: pointer;
     height: 33px;
     left: 78px;
     width: 42px; }
-  #sequence-theme .pause.paused {
+  #sequence .sequence-pause.paused {
     background: url("../images/bt-play.png") 50% 4px no-repeat;
     height: 33px;
     left: 78px;
     width: 42px; }
-  #sequence-theme .pause.paused:hover {
+  #sequence .sequence-pause.paused:hover {
     background-position: 50% -25px; }
-  #sequence-theme .status {
+  #sequence .status {
     background: url("../images/status-bar.png") -119px 0 repeat-y;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
@@ -290,28 +299,28 @@ table {
     position: relative;
     top: 4px;
     width: 118px; }
-  #sequence-theme .status.paused {
+  #sequence .status.paused {
     -webkit-animation: paused 1s linear alternate infinite;
     -moz-animation: paused 1s linear alternate infinite;
     -ms-animation: paused 1s linear alternate infinite;
     -o-animation: paused 1s linear alternate infinite;
     animation: paused 1s linear alternate infinite; }
-  #sequence-theme .status.active {
+  #sequence .status.active {
     -webkit-animation: status-bar 4s linear;
     -moz-animation: status-bar 4s linear;
     -ms-animation: status-bar 4s linear;
     -o-animation: status-bar 4s linear;
     animation: status-bar 4s linear; }
-  #sequence-theme .pause-icon {
+  #sequence .pause-icon {
     right: 20px;
     position: absolute;
     bottom: 20px; }
-  #sequence-theme #sequence-preloader {
+  #sequence .sequence-preloader {
     height: 100%;
     position: absolute;
     width: 100%;
     z-index: 999999; }
-    #sequence-theme #sequence-preloader img {
+    #sequence .sequence-preloader img {
       background: #ff9933;
       -webkit-border-radius: 6px;
       -moz-border-radius: 6px;
@@ -329,25 +338,25 @@ table {
       -ms-animation: preload 1s infinite;
       -o-animation: preload 1s infinite;
       animation: preload 1s infinite; }
-    #sequence-theme #sequence-preloader .preloading {
+    #sequence .sequence-preloader .preloading {
       height: 12px;
       margin: 0 auto;
       top: 50%;
       position: relative;
       width: 48px; }
-    #sequence-theme #sequence-preloader img:nth-child(2) {
+    #sequence .sequence-preloader img:nth-child(2) {
       -webkit-animation-delay: 0.15s;
       -moz-animation-delay: 0.15s;
       -ms-animation-delay: 0.15s;
       -o-animation-delay: 0.15s;
       animation-delay: 0.15s; }
-    #sequence-theme #sequence-preloader img:nth-child(3) {
+    #sequence .sequence-preloader img:nth-child(3) {
       -webkit-animation-delay: 0.3s;
       -moz-animation-delay: 0.3s;
       -ms-animation-delay: 0.3s;
       -o-animation-delay: 0.3s;
       animation-delay: 0.3s; }
-    #sequence-theme #sequence-preloader .preloading-complete {
+    #sequence .sequence-preloader .preloading-complete {
       opacity: 0;
       visibility: hidden;
       -webkit-transition-duration: 1s;
@@ -355,11 +364,11 @@ table {
       -ms-transition-duration: 1s;
       -o-transition-duration: 1s;
       transition-duration: 1s; }
-  #sequence-theme .iphone {
+  #sequence .iphone {
     left: -450px;
     opacity: 1;
     position: absolute;
-    top: -550px;
+    top: -520px;
     -webkit-transform: rotate(-40deg);
     -moz-transform: rotate(-40deg);
     -ms-transform: rotate(-40deg);
@@ -370,10 +379,10 @@ table {
     -ms-transition-duration: 1.5s;
     -o-transition-duration: 1.5s;
     transition-duration: 1.5s; }
-  #sequence-theme .animate-in .iphone {
+  #sequence .animate-in .iphone {
     left: 600px;
     opacity: 1;
-    top: 50px;
+    top: 20px;
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
     -ms-transform: rotate(0deg);
@@ -384,10 +393,10 @@ table {
     -ms-transition-duration: 1.5s;
     -o-transition-duration: 1.5s;
     transition-duration: 1.5s; }
-  #sequence-theme .animate-out .iphone {
+  #sequence .animate-out .iphone {
     left: 1100px;
     opacity: 0;
-    top: -400px;
+    top: -370px;
     -webkit-transform: rotate(20deg);
     -moz-transform: rotate(20deg);
     -ms-transform: rotate(20deg);
@@ -398,38 +407,36 @@ table {
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .iphone-shadow {
+  #sequence .iphone-shadow {
     left: 598px;
     opacity: 0;
-    top: 520px;
+    top: 490px;
     position: absolute;
     -webkit-transition-duration: 1.5s;
     -moz-transition-duration: 1.5s;
     -ms-transition-duration: 1.5s;
     -o-transition-duration: 1.5s;
     transition-duration: 1.5s; }
-  #sequence-theme .animate-in .iphone-shadow {
+  #sequence .animate-in .iphone-shadow {
     left: 598px;
     opacity: 1;
-    top: 520px;
     -webkit-transition-duration: 1.5s;
     -moz-transition-duration: 1.5s;
     -ms-transition-duration: 1.5s;
     -o-transition-duration: 1.5s;
     transition-duration: 1.5s; }
-  #sequence-theme .animate-out .iphone-shadow {
+  #sequence .animate-out .iphone-shadow {
     left: 598px;
     opacity: 0;
-    top: 520px;
     -webkit-transition-duration: 2s;
     -moz-transition-duration: 2s;
     -ms-transition-duration: 2s;
     -o-transition-duration: 2s;
     transition-duration: 2s; }
-  #sequence-theme .intro {
+  #sequence .intro {
     position: absolute;
     left: -450px;
-    top: -400px;
+    top: -370px;
     width: 400px;
     -webkit-transform: rotate(-40deg);
     -moz-transform: rotate(-40deg);
@@ -441,9 +448,9 @@ table {
     -ms-transition-duration: 1.5s;
     -o-transition-duration: 1.5s;
     transition-duration: 1.5s; }
-  #sequence-theme .animate-in .intro {
+  #sequence .animate-in .intro {
     left: 100px;
-    top: 250px;
+    top: 220px;
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
     -ms-transform: rotate(0deg);
@@ -454,10 +461,10 @@ table {
     -ms-transition-duration: 1.5s;
     -o-transition-duration: 1.5s;
     transition-duration: 1.5s; }
-  #sequence-theme .animate-out .intro {
+  #sequence .animate-out .intro {
     left: 100px;
     opacity: 0;
-    top: 250px;
+    top: 220px;
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
     -ms-transform: rotate(0deg);
@@ -468,19 +475,19 @@ table {
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .ipad {
+  #sequence .ipad {
     left: -450px;
     position: absolute;
-    top: 800px;
+    top: 770px;
     -webkit-transform: rotate(-20deg);
     -moz-transform: rotate(-20deg);
     -ms-transform: rotate(-20deg);
     -o-transform: rotate(-20deg);
     transform: rotate(-20deg);
     z-index: 5; }
-  #sequence-theme .animate-in .ipad {
+  #sequence .animate-in .ipad {
     left: 50px;
-    top: 50px;
+    top: 20px;
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
     -ms-transform: rotate(0deg);
@@ -491,10 +498,10 @@ table {
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .animate-out .ipad {
+  #sequence .animate-out .ipad {
     left: -800px;
     opacity: 0;
-    top: 50px;
+    top: 20px;
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
     -ms-transform: rotate(0deg);
@@ -505,9 +512,9 @@ table {
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .ipad-shadow {
+  #sequence .ipad-shadow {
     left: 30px;
-    top: 508px;
+    top: 478px;
     opacity: 0;
     position: absolute;
     -webkit-transition-duration: 0.5s;
@@ -515,37 +522,35 @@ table {
     -ms-transition-duration: 0.5s;
     -o-transition-duration: 0.5s;
     transition-duration: 0.5s; }
-  #sequence-theme .animate-in .ipad-shadow {
+  #sequence .animate-in .ipad-shadow {
     left: 30px;
-    top: 508px;
     opacity: 1;
     -webkit-transition-duration: 1s;
     -moz-transition-duration: 1s;
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .animate-out .ipad-shadow {
+  #sequence .animate-out .ipad-shadow {
     left: -800px;
-    top: 508px;
     opacity: 0;
     -webkit-transition-duration: 1s;
     -moz-transition-duration: 1s;
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .slide2 {
+  #sequence .slide2 {
     left: 950px;
     position: absolute;
-    top: 700px;
+    top: 670px;
     width: 400px;
     -webkit-transform: rotate(20deg);
     -moz-transform: rotate(20deg);
     -ms-transform: rotate(20deg);
     -o-transform: rotate(20deg);
     transform: rotate(20deg); }
-  #sequence-theme .animate-in .slide2 {
+  #sequence .animate-in .slide2 {
     left: 450px;
-    top: 250px;
+    top: 220px;
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
     -ms-transform: rotate(0deg);
@@ -556,10 +561,10 @@ table {
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .animate-out .slide2 {
+  #sequence .animate-out .slide2 {
     left: 800px;
     opacity: 0;
-    top: 250px;
+    top: 220px;
     -webkit-transform: rotate(0deg);
     -moz-transform: rotate(0deg);
     -ms-transform: rotate(0deg);
@@ -570,14 +575,14 @@ table {
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .iphone2 {
+  #sequence .iphone2 {
     left: 400px;
     position: absolute;
-    top: -600px;
+    top: -570px;
     z-index: 3; }
-  #sequence-theme .animate-in .iphone2 {
+  #sequence .animate-in .iphone2 {
     left: 400px;
-    top: 60px;
+    top: 30px;
     -webkit-transition-duration: 2.5s;
     -moz-transition-duration: 2.5s;
     -ms-transition-duration: 2.5s;
@@ -588,9 +593,9 @@ table {
     -ms-transition-timing-function: ease-in;
     -o-transition-timing-function: ease-in;
     transition-timing-function: ease-in; }
-  #sequence-theme .animate-out .iphone2 {
+  #sequence .animate-out .iphone2 {
     left: 600px;
-    top: 800px;
+    top: 770px;
     -webkit-transform: rotate(100deg);
     -moz-transform: rotate(100deg);
     -ms-transform: rotate(100deg);
@@ -601,20 +606,19 @@ table {
     -ms-transition-duration: 2.5s;
     -o-transition-duration: 2.5s;
     transition-duration: 2.5s; }
-  #sequence-theme .iphone2-shadow {
+  #sequence .iphone2-shadow {
     position: absolute;
     left: 398px;
     opacity: 0;
-    top: 530px;
+    top: 500px;
     -webkit-transition-duration: 1s;
     -moz-transition-duration: 1s;
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .animate-in .iphone2-shadow {
+  #sequence .animate-in .iphone2-shadow {
     left: 398px;
     opacity: 1;
-    top: 530px;
     -webkit-transition-duration: 1s;
     -moz-transition-duration: 1s;
     -ms-transition-duration: 1s;
@@ -625,20 +629,19 @@ table {
     -ms-transition-delay: 1s;
     -o-transition-delay: 1s;
     transition-delay: 1s; }
-  #sequence-theme .animate-out .iphone2-shadow {
+  #sequence .animate-out .iphone2-shadow {
     left: 398px;
     opacity: 0;
-    top: 530px;
     -webkit-transition-duration: 1s;
     -moz-transition-duration: 1s;
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .iphone3-shadow {
+  #sequence .iphone3-shadow {
     position: absolute;
     left: 500px;
     opacity: 0;
-    top: 507px;
+    top: 477px;
     -webkit-transform: scale(0.9);
     -moz-transform: scale(0.9);
     -ms-transform: scale(0.9);
@@ -649,10 +652,9 @@ table {
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .animate-in .iphone3-shadow {
+  #sequence .animate-in .iphone3-shadow {
     left: 500px;
     opacity: 1;
-    top: 507px;
     -webkit-transition-duration: 1s;
     -moz-transition-duration: 1s;
     -ms-transition-duration: 1s;
@@ -663,10 +665,9 @@ table {
     -ms-transition-delay: 0.5s;
     -o-transition-delay: 0.5s;
     transition-delay: 0.5s; }
-  #sequence-theme .animate-out .iphone3-shadow {
+  #sequence .animate-out .iphone3-shadow {
     left: 500px;
     opacity: 0;
-    top: 507px;
     -webkit-transform: scale(0.9);
     -moz-transform: scale(0.9);
     -ms-transform: scale(0.9);
@@ -677,11 +678,11 @@ table {
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .iphone4-shadow {
+  #sequence .iphone4-shadow {
     position: absolute;
     left: 575px;
     opacity: 0;
-    top: 485px;
+    top: 455px;
     -webkit-transform: scale(0.8);
     -moz-transform: scale(0.8);
     -ms-transform: scale(0.8);
@@ -692,19 +693,15 @@ table {
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .animate-in .iphone4-shadow {
-    left: 575px;
+  #sequence .animate-in .iphone4-shadow {
     opacity: 1;
-    top: 485px;
     -webkit-transition-duration: 1s;
     -moz-transition-duration: 1s;
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .animate-out .iphone4-shadow {
-    left: 575px;
+  #sequence .animate-out .iphone4-shadow {
     opacity: 0;
-    top: 485px;
     -webkit-transform: scale(0.8);
     -moz-transform: scale(0.8);
     -ms-transform: scale(0.8);
@@ -715,9 +712,9 @@ table {
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .iphone3 {
+  #sequence .iphone3 {
     left: 500px;
-    top: -600px;
+    top: -570px;
     position: absolute;
     z-index: 2;
     -webkit-transform: scale(0.9);
@@ -725,9 +722,9 @@ table {
     -ms-transform: scale(0.9);
     -o-transform: scale(0.9);
     transform: scale(0.9); }
-  #sequence-theme .animate-in .iphone3 {
+  #sequence .animate-in .iphone3 {
     left: 500px;
-    top: 60px;
+    top: 30px;
     -webkit-transition-duration: 2s;
     -moz-transition-duration: 2s;
     -ms-transition-duration: 2s;
@@ -738,9 +735,9 @@ table {
     -ms-transition-timing-function: ease-in;
     -o-transition-timing-function: ease-in;
     transition-timing-function: ease-in; }
-  #sequence-theme .animate-out .iphone3 {
+  #sequence .animate-out .iphone3 {
     left: 700px;
-    top: 800px;
+    top: 770px;
     -webkit-transform: rotate(100deg);
     -moz-transform: rotate(100deg);
     -ms-transform: rotate(100deg);
@@ -751,9 +748,9 @@ table {
     -ms-transition-duration: 2s;
     -o-transition-duration: 2s;
     transition-duration: 2s; }
-  #sequence-theme .iphone4 {
+  #sequence .iphone4 {
     left: 575px;
-    top: -600px;
+    top: -570px;
     position: absolute;
     z-index: 1;
     -webkit-transform: scale(0.8);
@@ -761,9 +758,9 @@ table {
     -ms-transform: scale(0.8);
     -o-transform: scale(0.8);
     transform: scale(0.8); }
-  #sequence-theme .animate-in .iphone4 {
+  #sequence .animate-in .iphone4 {
     left: 575px;
-    top: 60px;
+    top: 30px;
     -webkit-transition-duration: 1.5s;
     -moz-transition-duration: 1.5s;
     -ms-transition-duration: 1.5s;
@@ -774,9 +771,9 @@ table {
     -ms-transition-timing-function: ease-in;
     -o-transition-timing-function: ease-in;
     transition-timing-function: ease-in; }
-  #sequence-theme .animate-out .iphone4 {
+  #sequence .animate-out .iphone4 {
     left: 800px;
-    top: 800px;
+    top: 770px;
     -webkit-transform: rotate(100deg);
     -moz-transform: rotate(100deg);
     -ms-transform: rotate(100deg);
@@ -787,16 +784,15 @@ table {
     -ms-transition-duration: 1.5s;
     -o-transition-duration: 1.5s;
     transition-duration: 1.5s; }
-  #sequence-theme .slide3 {
+  #sequence .slide3 {
     position: absolute;
     left: -800px;
     opacity: 0;
-    top: 250px;
+    top: 220px;
     width: 250px; }
-  #sequence-theme .animate-in .slide3 {
+  #sequence .animate-in .slide3 {
     left: 100px;
     opacity: 1;
-    top: 250px;
     -webkit-transition-delay: 1s;
     -moz-transition-delay: 1s;
     -ms-transition-delay: 1s;
@@ -807,10 +803,9 @@ table {
     -ms-transition-duration: 1s;
     -o-transition-duration: 1s;
     transition-duration: 1s; }
-  #sequence-theme .animate-out .slide3 {
+  #sequence .animate-out .slide3 {
     left: 900px;
     opacity: 0;
-    top: 250px;
     -webkit-transition-duration: 1s;
     -moz-transition-duration: 1s;
     -ms-transition-duration: 1s;

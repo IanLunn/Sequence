@@ -37,9 +37,27 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.9 19/3/2013
+
+**Note: This version of Sequence is not compatible with existing themes without an upgrade. Please see the [upgrade instructions](https://github.com/IanLunn/Sequence/blob/master/upgradeInstructions.md).**
+
+- Lots of little changes to make JSHint happier (although haven't gone overkill on this)
+- Namespaced events with a class of `sequence`, so `click` is now `click.sequence` and so on
+- Updated CSS of most themes (`pauseOnHover` wasn't working due to no height/width specified on the top level `<ul>`)
+- `self.sequence` renamed to `self.canvas`. The top level `<ul>` will now be referred to as the canvas, and the `<li>` elements frames. Fancy! The top level `<ul>` MUST now be given the class `.sequence-canvas` for Sequence to work
+- Updated documentation with latest public variables, and functionality examples
+- Added a `destroy(callback)` function which will remove a Sequence instance entirely from the page
+- Added a `sequence.destroyed()` callback for parity with the rest of the callbacks (it does the same as passing the callback into the `.destroy(callback)` function - your choice as to which you use)
+- Added "example functionality" directory where you can find demonstrations of various Sequence functionality such as destroy/initiate, hashtags and multiple instances (will drop more in here as time goes on, let me know if there's particular functionality you'd like to see demonstrated)
+- Pagination is now in-built!
+- Lots of class names are now prefixed with `sequence-`. If you're using any of the following class names with Sequence, you'll need to follow the [upgrade instructions](https://github.com/IanLunn/Sequence/blob/master/upgradeInstructions.md): `.next`, `.prev`, `.pause`, `.paused`, `.pause-icon`, `.pagination`, `.destroyed`, `.preloader`
+- Updated included jquery.js and jquery-min.js to 1.9.1
+- Added `showPaginationOnInit` and `showPauseButtonOnInit` options
+
 ###v0.8.5 05/3/2013
 
 **Note: This version of Sequence may not be compatible with existing themes without an upgrade. Please see the [upgrade instructions](https://github.com/IanLunn/Sequence/blob/master/upgradeInstructions.md).**
+
 - Removed CSS setup from sequence.jquery.js - some CSS is required for Sequence to work which the developer MUST include in their CSS. By having the developer do this rather than Sequence, the DOM is cleaner and Sequence can initiate a little faster.
 - Updated Theme Template and Documentation Demo themes to work with v0.8.5, all other themes should be good to go.
 

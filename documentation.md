@@ -1,13 +1,15 @@
 # Documentation
 ## <a id="basic-set-up">Basic Set Up</a>
+
+
 ### <a id="add-files">Add Files</a>
 
 Place a link to jQuery and the sequence.jquery-min.js file in the `<head>` of your document:
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="scripts/sequence.jquery-min.js"></script>
 
-Currently Sequence supports **jQuery 1.7.1 - 1.9**.
+Currently Sequence supports **jQuery 1.7.1 - 1.9.1**. Other versions of jQuery have not been/are yet to be tested.
 
 ### <a id="initiate-sequence">Initiate Sequence</a>
 
@@ -43,7 +45,7 @@ Finally, jQuery's `.data()` function is used to allow Sequence to save particula
 Add Sequence’s simple HTML structure like so:
 
     <div id="sequence">
-        <ul>
+        <ul class="sequence-canvas">
             <li>
                 <!--Frame 1 content here-->
             </li>
@@ -56,14 +58,14 @@ Add Sequence’s simple HTML structure like so:
         </ul>
     </div>
 
-Sequence consists of a container (a `<div>` with a unique ID) and an unordered list. Sequence refers to each list item within that unordered list as a *frame*. Frames hold the content of your Sequence slider.
+Sequence consists of a containing element with a unique ID of your choosing, and an unordered list `<ul>` with a **required** class of  `.sequence-canvas`. The unordered list -- referred to as the canvas -- contains `<li>` elements -- referred to as frames. Frames hold the content of your Sequence instance. More on the canvas and frames shortly.
 
 ### <a id="add-content">Add Content</a>
 
 To add content to a frame, simply put HTML within each list item:
 
     <div id="sequence">
-        <ul>
+        <ul class="sequence-canvas">
             <li>
                 <div class="info1">
                     <p>Frame 1</p>
@@ -84,14 +86,14 @@ To add content to a frame, simply put HTML within each list item:
 
 Here you’ve added a `<div>` to each frame with unique classes. You will shortly write some CSS that will allow each `<div>` to animate in and out of the Sequence container.
 
-**Note:** Each frame can contain as many elements as necessary but only first level elements will be animated by Sequence.
+**Note:** Each frame can contain as many elements as necessary. However, Sequence expects all top level elements to transition and may not function correctly if that is not the case.
 
 ### <a id="setup-a-no-javascript-fallback">Setup a No-JavaScript Fallback</a>
 
 In a small percentage of browsers, JavaScript may be disabled which is the technology Sequence is built upon. In this case, to prevent an empty container from showing, nominate a frame to be displayed by giving it a class of `animate-in`:
 
     <div id="sequence">
-        <ul>
+        <ul class="sequence-canvas">
             <li class="animate-in">
                 <div class="info1">
                     <p>Frame 1 information</p>
@@ -113,6 +115,19 @@ In a small percentage of browsers, JavaScript may be disabled which is the techn
 
 Here you’ve nominated the first frame to be displayed if JavaScript is disabled. 
 
+##Sequence's Canvas and Frames
+The basic structure of Sequence is a container element, an unordered list `<ul class="sequence-canvas">` (the canvas) and list items `<li>` (the frames), as shown below.
+
+<img src="http://sequencejs.com/images/sequence-structure.jpg" alt="Sequence's HTML structure" />
+
+The container is used to define a width and height of your Sequence instance and is also used to append additional elements such as navigation and pagination.
+
+When you come to style this basic structure in a [moment](#setting-up-the-sequence-container-and-frames), the canvas and frames will all be the same size as the container. The canvas holds your frames, of which, each sit on top of each other. When a frame is active, it will be given a higher `z-index` than the rest, so the active frame is always on top.
+
+The frames will then hold your content. Sequence will expect any top level element within a frame to have a transition applied to it, which you'll see shortly.
+
+Note that any top level element within a frame is expected to transition (change at least one of its properties over a period of time). Sequence may not function correctly if this is not the case.
+
 ## <a id="creating-an-animated-theme-using-css3">Creating an Animated Theme using CSS3</a>
 ### <a id="setting-up-the-sequence-container-and-frames">Setting up the Sequence Container and Frames</a>
 
@@ -126,30 +141,37 @@ Start by styling the Sequence container:
         width: 450px;
     }
 
-Here you’ve given the container some basic dimensional properties and a border. You’ve also given the container a relative position. This is a required declaration as all of the content elements with a Sequence slider will be given an absolute position, like so:
+Here you’ve given the container some basic dimensional properties and a border. You’ve also given the container a relative position. This is a required declaration as all of the top level content elements within a frame will be given an absolute position, like so:
 
-    #sequence > ul li > * {
-        position: absolute; /* required */
+    #sequence > .sequence-canvas li > * {  /* required */
+        position: absolute;
     }
 
-This way, when you come to position elements with the Sequence container, a position top of 0 will be the top of the Sequence container, and a position left of 0 will be the left hand side of the Sequence container.
+This way, when you come to position elements within the container, `top: 0` will be the top of the container, and `left: 0` will be the left hand side of the container.
+
+To make the canvas the same size as the container, add the following:
+
+	#sequence > .sequence-canvas { /* required */
+		height: 100%; 
+		width: 100%;
+	}
 
 Finally, add some declarations to each frame:
 
-    #sequence > ul > li {
-        position: absolute; /* required */
-        width: 100%; /* required */
+    #sequence > .sequence-canvas > li { /* required */
+        position: absolute;
+        width: 100%;
         height: 100%;
-        z-index: 1; /* required */
+        z-index: 1;
     }
 
-By making sure each frame has a `z-index` of `1`, frames will stack on top of each other correctly -- the active frame will be placed on top of the other frames for example. This is particularly important when your slider has interactive elements such as links and buttons.
+By making sure each frame has a `z-index` of `1`, frames will stack on top of each other correctly. When a frame becomes active, Sequence will stack it on top of the rest by changing the `z-index`. This is particularly important when your slider has interactive elements such as links and buttons because it ensures those elements can be clicked/hovered over correctly.
 
 ### <a id="how-sequences-animations-work">How Sequence’s Animations Work</a>
 
-Each first level element within a frame will be animated by Sequence, but how that animation happens is entirely your choice and created using [CSS3 transitions](http://www.adobe.com/devnet/html5/articles/using-css3-transitions-a-comprehensive-guide.html).
+Each top level element within a frame will be animated by Sequence, but how that animation happens is entirely your choice and created using [CSS3 transitions](http://www.adobe.com/devnet/html5/articles/using-css3-transitions-a-comprehensive-guide.html).
 
-**Note**: All first level elements within a frame *must* have a CSS3 transition else Sequence will not animate frames.
+**Note**: All first level elements within a frame *must* have a CSS3 transition else Sequence may not function correctly.
 
 By default, Sequence initially displays the first frame’s content, so start by animating the first element from the example above.
 
@@ -181,7 +203,7 @@ This process is applied to each frame as and when that frame becomes active.
 
 Once the last frame’s elements have reached the “animate-out” position, Sequence will go back to the first frame, remove the `animate-out` class (resetting the element to it’s starting position), and the whole process will continue indefinetly.
 
-**Demo**: For a visual demonstration of how and when Sequence changes states, please see the [documentation theme](http://www.sequencejs.com/themes/documentation-demo/).
+**Demo**: For a visual demonstration of how and when Sequence changes states, please see the [documentation theme](http://www.sequencejs.com/themes/documentation-demo/) (which is the completed version of what you're creating now).
 
 ### <a id="animating-backwards">Animating Backwards</a>
 
@@ -408,13 +430,15 @@ Whether a frame should be given a higher `z-index` than other frames whilst it i
 ##### autoPlay
 **Type: true/false, Default: `true`**
 
+Cause Sequence to automatically change between frames over a period of time, as defined in `autoPlayDelay`.
+
 - `true`: Sequence will automatically animate from frame to frame with a delay between each frame (specified using the `autoPlayDelay` option).
 - `false`: Sequence will display the starting frame until a user chooses to navigate Sequence using next/previous buttons, swiping, etc.
 
 ##### autoPlayDirection	
 **Type: a number (`1` = forward, `-1` = reverse), Default:`1`, dependencies: `autoPlay: true`**
 
-The direction in which Sequence should play.
+The direction in which Sequence should auto play.
 
 - `1`: Sequence will navigate forwards, from frame to frame whilst autoPlay is `true`, providing Sequence is not paused.
 - `-1`: Sequence will navigate backwards, from frame to frame whilst autoPlay is `true`, providing Sequence is not paused.
@@ -422,7 +446,7 @@ The direction in which Sequence should play.
 ##### autoPlayDelay
 **Type: a number representing milliseconds, Default: `5000`, dependencies: `autoPlay: true`**
 
-The speed in milliseconds at which frames should remain on screen before animating to the next.
+The duration in milliseconds at which frames should remain on screen before animating to the next.
 
 #### <a id="navigation-skipping-options">Navigation Skipping Options</a>
 
@@ -515,6 +539,55 @@ Display a pause icon when the user hovers over Sequence.
 - `true`: use a pause icon with the default CSS selector (`.pause-icon`).
 - `false`: don't display a pause icon.
 - CSS Selector: Specify a CSS selector to an HTML element you have manually added to the document.
+
+##### showPauseButtonOnInit
+**Type: true/false, Default: `true`, dependencies: `pauseButton: true`**
+
+- `true`: shown the pause button as soon as Sequence is initiated.
+- `false`: the pause button won't be shown when Sequence is initiated (you may like to hide the button initially to fade the button in using CSS for example).
+
+#### <a id="pagination-options">Pagination Options</a>
+
+#####pagination
+**Type: true/false or a CSS selector, Default: `false`**
+
+Pagination associates child elements within the pagination selector (`.pagination` by default) to each frame of Sequence. When a child element is clicked, Sequence will navigate to the frame that is associated with that child element. If `pagination` is `true`, the following HTML can be included in your document to act as pagination:
+
+    <ul class="pagination">
+        <li>Frame 1</li>
+        <li>Frame 2</li>
+        <li>Frame 3</li>
+    </ul>
+
+When the first `<li>` element is clicked, Sequence will navigate to its first frame. When the second is clicked, Sequence will navigate to its second frame, and so on.
+
+The pagination and pagination children can consist of any element. So, if you'd prefer, you could use `<div>` elements instead of `<ul>` and `<li>` elements.
+
+When a Sequence frame is navigated to (via any navigation method, such as clicking pagination links, pressing a keyboard key etc), the associated pagination link will be given a class of `current`, so you can style the current pagination link as you wish:
+
+HTML:
+
+    <ul class="pagination">
+        <li>Frame 1</li>
+        <li class="current">Frame 2</li>
+        <li>Frame 3</li>
+    </ul>
+
+CSS: 
+    
+    .pagination .current {
+        font-weight: bold;
+    }
+
+- `true`: Use pagination with the default CSS selector (`.pagination`).
+- `false`: don't use pagination.
+- CSS Selector: Specify a CSS selector to an HTML element you have manually added to the document.
+
+##### showPaginationOnInit
+**Type: true/false, Default: `true`, dependencies: `pagination: true`**
+
+- `true`: shown pagination as soon as Sequence is initiated.
+- `false`: the pagination won't be shown when Sequence is initiated (you may like to hide pagination initially to fade it in using CSS for example).
 
 #### <a id="preloader-options">Preloader Options</a>
 
@@ -888,12 +961,15 @@ Executes after the current frame has animated out
 `afterLoaded()`
 Executes after Sequence has loaded
 
+`destroyed()`
+Executes once Sequence has finished being destroyed via the `.destroy()` function
+
 
 ## <a id="public-functions-and-variables">Public Functions and Variables</a>
 
 Public methods are the functions and options that Sequence utilises, made available for developers to extend and enhance their particular implementation.
 
-### <a id="public-functions">Public Functions</a>
+### <a id="public-functions">Public Methods</a>
 
 #### goTo(id, direction, ignoreTransitionThreshold)
 
@@ -968,6 +1044,15 @@ Example:
     
     sequence.stopAutoPlay()
 
+#### destroy(navigation, callback)
+
+Remove Sequence from the element it is hooked on to, along with events and other related elements such asnavigation.
+
+Arguments:
+
+- `navigation` (optional): if false, Sequence won't remove navigation elements such as next and previous button. Navigation elements will be removed by default.
+- `callback` (optional): a callback to execute after the `.destroy()` function has finished. You can also use the public callback `.destroyed()`.
+
 ### <a id="public-variables">Public Variables</a>
 
 Public variables can be used to get certain information about the state of Sequence, for example, the ID of the current frame.
@@ -980,35 +1065,109 @@ Public variables can be taken from the variable the Sequence object is saved in 
 
 #### <a id="list-of-public-variables">List of Public Variables</a>
 
+`active`
+**Type: true/false**
+Returns whether Sequence is currently animating
+
+`canvas`
+**Type: Object**
+Returns the object for Sequence's canvas element, the `<ul>`.
+
 `container`
-Returns the selector for Sequence's container element.
+**Type: Object**
+Returns the object for Sequence's container element.
 
 `currentFrame`
-Returns the selector for the current frame.
-
-`direction`
-Returns the direction Sequence is currently animating in (`1` = forward/`-1` = reverse).
-
-`currentFrameChildren`
-Returns an array containing the selectors for the current frame's child elements.
+**Type: Object**
+Returns the current frame object.
 
 `currentFrameID`
+**Type: Number**
 Returns a number representing the current frames position in relation to all frames. `1` is the first frame.
 
-`nextFrameID`
-Returns a number representing the nextframes position in relation to all frames. `1` is the first frame.
+`direction`
+**Type: Number**
+Returns the direction Sequence is currently animating in (`1` = forward/`-1` = reverse).
+
+`frames`
+**Type: Object**
+Returns each of Sequence's frames, the top level `<li>` elements.
 
 `hasTouch`
+**Type: true/false**
 Returns `true` or `false` depending on whether the device has touch capabilities.
 
+`isBeingHoveredOver`
+**Type: true/false**
+Returns `true` or `false` depending on whether the Sequence canvas is currently being hovered over.
+
+`isPaused`
+**Type: true/false**
+Returns `true` or `false` depending on whether Sequence is paused (the `autoPlay` function is not active)
+
+`nextButton`
+**Type: Object**
+Returns the next button object
+
+`nextFrame`
+**Type: Object**
+Returns the next frame object (the next `<li>`)
+
+`nextFrameID`
+**Type: Number**
+Returns a number representing the nextframes position in relation to all frames. `1` is the first frame.
+
 `numberOfFrames`
+**Type: Number**
 Returns how many frames are in the Sequence container.
 
+`pauseButton`
+**Type: Object**
+Returns the pause button object
+
+`pauseIcon`
+**Type: Object**
+Returns the pause icon object
+
 `prefix`
-Returns the vendor prefix for the browser the user is viewing Sequence in, such as `-webkit-`.
+**Type: Text**
+Returns the vendor prefix for the `transition` property of the browser Sequence is being viewed in, such as `"-webkit-"` or `""` when the browser no longer requires a prefix for `transition`.
+
+`prevButton`
+**Type: Object**
+Returns the previous button object
 
 `settings`
-Returns an object containing Sequence's settings.
+**Type: Object**
+Returns an object containing Sequence's settings - the developer's options merged with the defaults (note that the developer's options take precedence over the defaults).
 
 `transitionsSupported`
+**Type: true/false**
 Returns `true` or `false` depending on whether the browser supports CSS3 transitions.
+
+##Advanced Examples
+The following are examples of advanced functionality you might like to use.
+
+###Initiating and Destroying Sequence (v0.9 onwards)
+You may want to initiate and destroy Sequence as you require. For example, you may have several Sequence sliders on the same page but only want one to be active initially, then when the user clicks a button, destroy that first instance and initiate another. The following code allows you to do just that:
+    
+    var options = {};           //your Sequence options, change as desired
+    var mySequence = undefined; //setup a public variable to contain your Sequence instances
+
+    function initSequence() { 
+        mySequence = $("#sequence").sequence(options).data("sequence"); //initiate Sequence
+
+        mySequence.afterLoaded = function() {
+            /* an example callback applied to the new instance of Sequence */
+        }
+    }
+
+    $("#destroy").on('click', function() {  //when <div id="destroy"> is clicked...
+        mySequence.destroy();               //destroy Sequence
+        mySequence = undefined;             //clear the mySequence variable
+    });
+
+    $('#create').on('click', function() {   //when <div id="create"> is clicked...
+        initSequence();                     //initiate a new instance of Sequence
+    });
+
