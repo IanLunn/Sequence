@@ -485,7 +485,7 @@ Whether the user can change the direction of navigation during frames animating 
 
 Defines a button that when clicked, causes the current frame to animate out and the next to animate in.
 
-- `true`: use a next button with the default CSS selector (`.next`).
+- `true`: use a next button with the default CSS selector (`.sequence-next`).
 - `false`: don't use a next button.
 - CSS Selector: Specify a CSS selector to an HTML element you have manually added to the document.
 
@@ -500,7 +500,7 @@ Defines a button that when clicked, causes the current frame to animate out and 
 
 Defines a button that when clicked, causes the current frame to animate out and the previous to animate in.
 
-- `true`: use a previous button with the default CSS selector (`.prev`).
+- `true`: use a previous button with the default CSS selector (`.sequence-prev`).
 - `false`: don't use a previous button.
 - CSS Selector: Specify a CSS selector to an HTML element you have manually added to the document.
 
@@ -517,7 +517,7 @@ Defines a button that when clicked, causes the current frame to animate out and 
 
 A CSS selector that, when clicked, causes Sequence to pause the autoPlay feature.
 
-- `true`: use a pause button with the default CSS selector (`.pause`).
+- `true`: use a pause button with the default CSS selector (`.sequence-pause`).
 - `false`: don't use a pause button.
 - CSS Selector: Specify a CSS selector to an HTML element you have manually added to the document.
 
@@ -536,7 +536,7 @@ Whether frames should stop auto playing when the user hovers over Sequence. auto
 
 Display a pause icon when the user hovers over Sequence.
 
-- `true`: use a pause icon with the default CSS selector (`.pause-icon`).
+- `true`: use a pause icon with the default CSS selector (`.sequence-pause-icon`).
 - `false`: don't display a pause icon.
 - CSS Selector: Specify a CSS selector to an HTML element you have manually added to the document.
 
@@ -551,7 +551,7 @@ Display a pause icon when the user hovers over Sequence.
 #####pagination
 **Type: true/false or a CSS selector, Default: `false`**
 
-Pagination associates child elements within the pagination selector (`.pagination` by default) to each frame of Sequence. When a child element is clicked, Sequence will navigate to the frame that is associated with that child element. If `pagination` is `true`, the following HTML can be included in your document to act as pagination:
+Pagination associates child elements within the pagination selector (`.sequence-pagination` by default) to each frame of Sequence. When a child element is clicked, Sequence will navigate to the frame that is associated with that child element. If `pagination` is `true`, the following HTML can be included in your document to act as pagination:
 
     <ul class="pagination">
         <li>Frame 1</li>
@@ -567,7 +567,7 @@ When a Sequence frame is navigated to (via any navigation method, such as clicki
 
 HTML:
 
-    <ul class="pagination">
+    <ul class="sequence-pagination">
         <li>Frame 1</li>
         <li class="current">Frame 2</li>
         <li>Frame 3</li>
@@ -575,7 +575,7 @@ HTML:
 
 CSS: 
     
-    .pagination .current {
+    .sequence-pagination .current {
         font-weight: bold;
     }
 
