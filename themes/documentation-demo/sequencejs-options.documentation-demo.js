@@ -7,7 +7,8 @@ $(document).ready(function(){
     }
 
     var options = {
-        //Sequence options go here. This theme doesn't use any but if you'd like to add your own, see here: http://www.sequencejs.com/documentation.html#developers
+        autoPlay: true //use Sequence's autoPlay feature
+        //Sequence options go here. See here: http://www.sequencejs.com/documentation.html#developers
     }
 
     var sequence = $(".sequence").sequence(options).data("sequence"); //initiate Sequence

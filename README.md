@@ -37,6 +37,13 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+###v0.9.1 23/3/2013
+
+**Note: This version of Sequence may not be compatible with existing themes without an upgrade. Please see the [upgrade instructions](https://github.com/IanLunn/Sequence/blob/master/upgradeInstructions.md).**
+
+- `autoPlay` is now `false` by default. If you're upgrading existing themes to v0.9.1 and they use the autoPlay feature, you will need to include `autoPlay: true` in your theme options.
+- The code that deals with the `transitionThreshold` option is now a little faster when `transitionThreshold` is `false` or `0`. Prior to this upgrade, if elements were animated at the same time and their edges touched (such as in the basic-slide theme), there would be a small gap/tear between the two. This is now resolved.
+
 ###v0.9 19/3/2013
 
 **Note: This version of Sequence is not compatible with existing themes without an upgrade. Please see the [upgrade instructions](https://github.com/IanLunn/Sequence/blob/master/upgradeInstructions.md).**

@@ -428,7 +428,7 @@ Whether a frame should be given a higher `z-index` than other frames whilst it i
 #### <a id="autoplay-options">Autoplay Options</a>
 
 ##### autoPlay
-**Type: true/false, Default: `true`**
+**Type: true/false, Default: `false`**
 
 Cause Sequence to automatically change between frames over a period of time, as defined in `autoPlayDelay`.
 

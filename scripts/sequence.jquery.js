@@ -1,6 +1,6 @@
 /*
 Sequence.js (http://www.sequencejs.com)
-Version: 0.9 Release Candidate
+Version: 0.9.1 Release Candidate
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -586,14 +586,22 @@ Sequence also relies on the following open source scripts:
 		next: function() {
 			var self = this;
 			self.nextFrameID = (self.currentFrameID !== self.numberOfFrames) ? self.currentFrameID + 1 : 1; //work out the next frame
-			self.goTo(self.nextFrameID, 1); //go to the next frame
+			if(self.active === false || self.active === undefined) { //if Sequence isn't currently animating...
+				self.goTo(self.nextFrameID, 1); //go to the next frame
+			}else{ //if Sequence is currently animating...
+				self.goTo(self.nextFrameID, 1, true); //go immediately to the next frame (ignoring the transition threshold)
+			}
 		},
 
 		//Go to the frame prior to the current one
 		prev: function() {
 			var self = this;
 			self.nextFrameID = (self.currentFrameID === 1) ? self.numberOfFrames : self.currentFrameID - 1; //work out the prev frame
-			self.goTo(self.nextFrameID, -1); //go to the prev frame
+			if(self.active === false || self.active === undefined) { //if Sequence isn't currently animating...
+				self.goTo(self.nextFrameID, -1); //go to the prev frame
+			}else{ //if Sequence is currently animating...
+				self.goTo(self.nextFrameID, -1, true); //go immediately to the prev frame (ignoring the transition threshold)
+			}
 		},
 
 		/*
@@ -671,7 +679,7 @@ Sequence also relies on the following open source scripts:
 					self.currentFrame.unbind(self.transitionEnd); //remove the animation end event
 					self.nextFrame.unbind(self.transitionEnd); //remove the animation end event
 
-					if(self.settings.fadeFrameWhenSkipped) { //if a frame may have faded out when it was previously skipped...
+					if(self.settings.fadeFrameWhenSkipped && self.settings.navigationSkip) { //if a frame may have faded out when it was previously skipped...
 						self.nextFrame.css("opacity", 1); //show it again
 					}
 
@@ -692,14 +700,18 @@ Sequence also relies on the following open source scripts:
 
 						//final class changes to make animations happen
 						setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially
-							self.currentFrame.toggleClass("animate-out animate-in");
-
-							if(self.settings.transitionThreshold !== true || ignoreTransitionThreshold === true) { //if there's no transitionThreshold or the dev specified a transitionThreshold in milliseconds
-								self.transitionThresholdTimer = setTimeout(function() { //cause the next frame to animate in after a certain period
-									self.nextFrame.addClass("animate-in"); //add the "animate-in" class
-								}, transitionThreshold);
-						}
-					}, 50);
+							if(self.settings.transitionThreshold === false || self.settings.transitionThreshold === 0 || ignoreTransitionThreshold === true) { //if not using a transitionThreshold...
+								self.currentFrame.toggleClass("animate-out animate-in"); //remove the "animate-in" class and add the "animate-out" class to the current frame
+								self.nextFrame.addClass("animate-in"); //add the "animate-in" class
+							}else { //if using a transitionThreshold...
+								self.currentFrame.toggleClass("animate-out animate-in"); //remove the "animate-in" class and add the "animate-out" class to the current frame
+								if(self.settings.transitionThreshold !== true) { //if there's no transitionThreshold or the dev specified a transitionThreshold in milliseconds
+									self.transitionThresholdTimer = setTimeout(function() { //cause the next frame to animate in after a certain period
+										self.nextFrame.addClass("animate-in"); //add the "animate-in" class
+									}, transitionThreshold);
+								}
+							}
+						}, 50);
 					}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.direction === -1) { //if the user hit prev button
 						setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially
 							//remove any inline styles from the elements so styles via the "animate-in" and "animate-out" class can take full effect
@@ -715,12 +727,16 @@ Sequence also relies on the following open source scripts:
 
 						//final class changes to make animations happen
 						setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially
-							self.currentFrame.removeClass("animate-in");
-
-							if(self.settings.transitionThreshold !== true || ignoreTransitionThreshold === true) { //if there's no transitionThreshold or the dev specified a transitionThreshold in milliseconds
-								self.transitionThresholdTimer = setTimeout(function() { //cause the next frame to animate in after a certain period
-									self.nextFrame.toggleClass("animate-out animate-in"); //add the "animate-in" class and remove the "animate-out" class
-								}, transitionThreshold);
+							if(self.settings.transitionThreshold === false || self.settings.transitionThreshold === 0 || ignoreTransitionThreshold === true) { //if not using a transitionThreshold...
+								self.currentFrame.removeClass("animate-in"); //remove the "animate-in" class from the current frame
+								self.nextFrame.toggleClass("animate-out animate-in"); //add the "animate-out" class and remove the "animate-in" class from the next frame
+							}else{ //if using a transitionThreshold...
+								self.currentFrame.removeClass("animate-in");
+								if(self.settings.transitionThreshold !== true) { //if there's no transitionThreshold or the dev specified a transitionThreshold in milliseconds
+									self.transitionThresholdTimer = setTimeout(function() { //cause the next frame to animate in after a certain period
+										self.nextFrame.toggleClass("animate-out animate-in"); //add the "animate-in" class and remove the "animate-out" class
+									}, transitionThreshold);
+								}
 							}
 						}, 50);
 					}
@@ -1138,7 +1154,7 @@ Sequence also relies on the following open source scripts:
 		moveActiveFrameToTop: true, //Whether a frame should be given a higher `z-index` than other frames whilst it is active, to bring it above the others
 
 		//Autoplay Settings
-		autoPlay: true, //Cause Sequence to automatically change between frames over a period of time, as defined in autoPlayDelay
+		autoPlay: false, //Cause Sequence to automatically change between frames over a period of time, as defined in autoPlayDelay
 		autoPlayDirection: 1, //The direction in which Sequence should auto play
 		autoPlayDelay: 5000, //The duration in milliseconds at which frames should remain on screen before animating to the next
 
