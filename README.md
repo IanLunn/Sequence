@@ -33,11 +33,25 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 Theme files, their HTML, CSS, JavaScript/jQuery and images are licensed under the following unless otherwise stated:
 http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
 
-[SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2012 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
+[SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2013 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
+
+##Please Consider Supporting Future Sequence.js Development
+
+Sequence.js has been in development for over 18 months. Whilst we think it's great already, we have many plans for the future. Aside from improving Sequence.js and making many more themes available, we're also working on a WordPress plugin and a visual theme editor. As Sequence.js and many of its themes are completely free, we can't commit as much time to these awesome ideas as we'd like because we're busy with paid client work. With your support, we can donate more time to turning these ideas into reality at a much quicker rate -- and get rid of clients for good! Live the dream!
+
+###Show Your Support
+
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=IanLunn&url=https://github.com/IanLunn/Sequence&title=Sequence&language=&tags=github&category=software)
+
+If you'd like to support Sequence.js, please consider purchasing a [premium theme from SequenceJS.com](http://www.sequencejs.com/themes/category/premium/). Whether you need the theme or not, we thank you for your genoristy! We're open about our premium licenses so if you think a friend, colleague or client could make use of the theme instead, feel free to pass it on.
+
+Why purchase a premium theme and not just make a donation? We'd like to give you something a little extra to say thanks! A payment of support is made through PayPal (don't worry, you don't need a PayPal account), so it keeps them and our accountants happy too -- because they're not keen on "donations".
+
+If you'd rather not give up your hard-earned money but still want to show your support, we like to receive your feedback, ideas and opinions too.
 
 ##What's New? 
 
-25/3/2013
+###25/3/2013
 
 Added two new themes - Basic Slide & Basic Crossfade
 
