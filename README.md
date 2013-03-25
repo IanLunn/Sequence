@@ -37,6 +37,10 @@ http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses
 
 ##What's New? 
 
+25/3/2013
+
+Added two new themes - Basic Slide & Basic Crossfade
+
 ###v0.9.1 23/3/2013
 
 **Note: This version of Sequence may not be compatible with existing themes without an upgrade. Please see the [upgrade instructions](https://github.com/IanLunn/Sequence/blob/master/upgradeInstructions.md).**
