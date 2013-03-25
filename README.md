@@ -18,6 +18,8 @@ Sequence provides the complete functionality for a website slider without forcin
 - [Modern Slide In (with hashTags enabled)](http://www.sequencejs.com/themes/modern-slide-in-hashtags/)
 - [Sliding Horizontal Parallax](http://www.sequencejs.com/themes/sliding-horizontal-parallax/)
 - [Apple Style](http://www.sequencejs.com/themes/apple-style/)
+- [Basic Slide](http://ianlunn.github.com/Sequence/themes/basic-slide)
+- [Basic Crossfade](http://ianlunn.github.com/Sequence/themes/basic-crossfade)
 - [Documentation Demo](http://www.sequencejs.com/themes/documentation-demo/) (the theme built using the documentation)
 
 ##Documentation
@@ -53,7 +55,7 @@ If you'd rather not give up your hard-earned money but still want to show your s
 
 ###25/3/2013
 
-Added two new themes - Basic Slide & Basic Crossfade
+Added two new themes - [Basic Slide](http://ianlunn.github.com/Sequence/themes/basic-slide) & [Basic Crossfade](http://ianlunn.github.com/Sequence/themes/basic-crossfade)
 
 ###v0.9.1 23/3/2013
 
