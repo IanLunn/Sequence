@@ -29,13 +29,15 @@ Documentation can be found here: [SequenceJS Demo](https://github.com/IanLunn/Se
 [@Ian Lunn](http://twitter.com/#!/IanLunn)
 
 ##License
-sequence.js is a FREE script and is dual licensed under the following:
-http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
+sequence.js is a FREE script and is licensed under the following:
+http://www.opensource.org/licenses/mit-license.php
 
 Theme files, their HTML, CSS, JavaScript/jQuery and images are licensed under the following unless otherwise stated:
-http://www.opensource.org/licenses/mit-license.php | http://www.gnu.org/licenses/gpl.html
+http://www.opensource.org/licenses/mit-license.php
 
 [SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2013 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
+
+Full [license information can be found on the SequenceJS.com website](http://www.sequencejs.com/developers/license-information/).
 
 ##Please Consider Supporting Future Sequence.js Development
 
@@ -53,9 +55,13 @@ If you'd rather not give up your hard-earned money but still want to show your s
 
 ##What's New? 
 
+###v0.9.2 12/4/2013
+
+- Minor fix to the Slide fallback theme to hide frames when they are inactive
+
 ###25/3/2013
 
-Added two new themes - [Basic Slide](http://ianlunn.github.com/Sequence/themes/basic-slide) & [Basic Crossfade](http://ianlunn.github.com/Sequence/themes/basic-crossfade)
+- Added two new themes - [Basic Slide](http://ianlunn.github.com/Sequence/themes/basic-slide) & [Basic Crossfade](http://ianlunn.github.com/Sequence/themes/basic-crossfade)
 
 ###v0.9.1 23/3/2013
 

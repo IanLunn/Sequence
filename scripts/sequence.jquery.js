@@ -1,6 +1,6 @@
 /*
 Sequence.js (http://www.sequencejs.com)
-Version: 0.9.1 Release Candidate
+Version: 0.9.2 Release Candidate
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -787,11 +787,12 @@ Sequence also relies on the following open source scripts:
 							self.currentFrame = self.frames.eq(self.currentFrameID-1);
 							self.beforeCurrentFrameAnimatesOut();
 							self.currentFrame.animate(animateOut, self.settings.fallback.speed, function() {
+								self.currentFrame.css({"display": "none", "z-index": "1"});
 								self.afterCurrentFrameAnimatesOut();
 							}); //cause the current frame to animate out
 							self.beforeNextFrameAnimatesIn(); //callback
 							self.nextFrame.show().css(animateIn);
-							self.nextFrame.animate(moveIn, self.settings.fallback.speed, function() { //cause the next frame to animate in
+							self.nextFrame.css({"display": "block", "z-index": self.numberOfFrames}).animate(moveIn, self.settings.fallback.speed, function() { //cause the next frame to animate in
 								animationComplete();
 								self.afterNextFrameAnimatesIn(); //callback
 							});
