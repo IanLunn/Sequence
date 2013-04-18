@@ -35,7 +35,7 @@ http://www.opensource.org/licenses/mit-license.php
 Theme files, their HTML, CSS, JavaScript/jQuery and images are licensed under the following unless otherwise stated:
 http://www.opensource.org/licenses/mit-license.php
 
-[SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2013 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
+[SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2012 - 2013 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
 
 Full [license information can be found on the SequenceJS.com website](http://www.sequencejs.com/developers/license-information/).
 
@@ -54,6 +54,10 @@ Why purchase a premium theme and not just make a donation? We'd like to give you
 If you'd rather not give up your hard-earned money but still want to show your support, we like to receive your feedback, ideas and opinions too.
 
 ##What's New? 
+
+###v1.0 18/4/2013
+
+- Renamed sequence.jquery.js to jquery.sequence.js
 
 ###v0.9.2 12/4/2013
 

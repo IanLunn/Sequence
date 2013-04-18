@@ -190,8 +190,18 @@ hr {
 	padding: 20px 0;
 }
 
-h3,h4 {
-	margin: 40px 0 10px 0;
+p {
+	max-width: 720px;
+}
+
+.group {
+	padding-bottom: 40px;
+	margin-bottom: 40px;
+	border-bottom: dotted black 1px;
+}
+
+h3, h4 {
+	margin: 10px 0;
 }
 
 h1 + h2 {
@@ -223,6 +233,8 @@ h2 + h3 {
 
 #nav li,#social li {
 	display: inline-block;
+	*display: inline;
+	zoom: 1;
 	vertical-align: middle;
 }
 
@@ -257,7 +269,7 @@ tr:nth-child(even),thead {
 }
 
 .main {
-	margin: 0 0 40px 0;
+	margin: 40px 0;
 	overflow: hidden;
 }
 
@@ -285,13 +297,13 @@ h2 {
 
 .themes {
 	clear: both;
-	margin: 0 0 60px 0;
 }
 
 .themes li {
 	background: white;
 	display: inline-block;
-	margin: 0 0 3% 0;
+	*display: inline;
+	zoom: 1;
 	padding: 1% 1% 0 1%;
 	position: relative;
 	width: 28%;
@@ -340,6 +352,8 @@ h2 {
 	text-decoration: none;
 	vertical-align: middle;
 	display: inline-block;
+	*display: inline;
+	zoom: 1;
 }
 
 .theme-tags li.on,.theme-type li.on {
@@ -396,6 +410,8 @@ h2 {
 
 #footer li {
 	display: inline-block;
+	*display: inline;
+	zoom: 1;
 }
 
 .twitter-follow-button {

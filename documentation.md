@@ -4,10 +4,10 @@
 
 ### <a id="add-files">Add Files</a>
 
-Place a link to jQuery and the sequence.jquery-min.js file in the `<head>` of your document:
+Place a link to jQuery and the jquery.sequence-min.js file in the `<head>` of your document:
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="scripts/sequence.jquery-min.js"></script>
+    <script src="scripts/jquery.sequence-min.js"></script>
 
 Currently Sequence supports **jQuery 1.7.1 - 1.9.1**. Other versions of jQuery have not been/are yet to be tested.
 
@@ -826,7 +826,7 @@ Please place a reference to the jQuery HashChange plugin above your reference to
 
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script type="text/javascript" src="scripts/jquery.ba-hashchange.min.js"></script>
-    <script type="text/javascript" src="scripts/sequence.jquery-min.js"></script>
+    <script type="text/javascript" src="scripts/jquery.sequence-min.js"></script>
 
 ##### hashTags
 **Type: true/false, Default: `false`**

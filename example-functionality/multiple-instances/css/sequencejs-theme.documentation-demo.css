@@ -10,10 +10,9 @@ Theme URL: http://www.sequencejs.com/themes/documentation-demo/
 This is a FREE theme and is available under a MIT License:
 http://www.opensource.org/licenses/mit-license.php
 
-Sequence.js and its dependencies are (c) Ian Lunn Design 2013 unless otherwise stated.
+Sequence.js and its dependencies are (c) Ian Lunn Design 2012 - 2013 unless otherwise stated.
 */
 /* CSS RESET - http://meyerweb.com/eric/tools/css/reset/ v2.0 | 20110126 */
-/* line 14, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/partials/reset.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -32,46 +31,46 @@ time, mark, audio, video {
   border: 0;
   font-size: 100%;
   font: inherit;
-  vertical-align: baseline; }
+  vertical-align: baseline;
+}
 
 /* HTML5 display-role reset for older browsers */
-/* line 24, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/partials/reset.scss */
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
-  display: block; }
+  display: block;
+}
 
-/* line 27, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/partials/reset.scss */
 body {
-  line-height: 1; }
+  line-height: 1;
+}
 
-/* line 30, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/partials/reset.scss */
 ol, ul {
-  list-style: none; }
+  list-style: none;
+}
 
-/* line 33, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/partials/reset.scss */
 blockquote, q {
-  quotes: none; }
+  quotes: none;
+}
 
-/* line 37, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/partials/reset.scss */
 blockquote:before, blockquote:after,
 q:before, q:after {
   content: '';
-  content: none; }
+  content: none;
+}
 
-/* line 41, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/partials/reset.scss */
 table {
   border-collapse: collapse;
-  border-spacing: 0; }
+  border-spacing: 0;
+}
 
 /* !CSS RESET */
 /* prefix declarations */
 /* when in fallback mode (for browsers that don't support transitions) hide anything outside of the Sequence container */
-/* line 32, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/sequencejs-theme.documentation-demo.scss */
 .sequence.sequence-fallback {
-  overflow: hidden; }
+  overflow: hidden;
+}
 
 /* THEME STYLES */
-/* line 37, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/sequencejs-theme.documentation-demo.scss */
 .sequence {
   border: black solid 3px;
   font-family: Tahoma;
@@ -81,76 +80,77 @@ table {
   /* required */
   width: 450px;
   /* Frame Animations */
-  /* !Frame Animations */ }
-  /* line 45, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence > .sequence-canvas {
-    height: 100%;
-    width: 100%; }
-    /* line 49, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/sequencejs-theme.documentation-demo.scss */
-    .sequence > .sequence-canvas > li {
-      position: absolute;
-      /* required */
-      width: 100%;
-      /* required */
-      height: 100%;
-      z-index: 1;
-      /* required */ }
-    /* line 56, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/sequencejs-theme.documentation-demo.scss */
-    .sequence > .sequence-canvas li > * {
-      position: absolute;
-      /* required */ }
-  /* line 61, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence #sequence-preloader {
-    background: white; }
-  /* line 66, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence .class-name,
-  .sequence .sequence-class {
-    font-size: 0.8em; }
-  /* line 73, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence .info1,
-  .sequence .info2,
-  .sequence .info3 {
-    background: #3f7ad6;
-    display: block;
-    color: white;
-    height: 95px;
-    padding: 5px;
-    width: 95px;
-    -webkit-transition-property: left;
-    -moz-transition-property: left;
-    -ms-transition-property: left;
-    -o-transition-property: left;
-    transition-property: left; }
-  /* line 83, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence .info1 {
-    left: -150px;
-    top: 10px; }
-  /* line 88, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence .info2 {
-    left: -150px;
-    top: 130px; }
-  /* line 93, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence .info3 {
-    left: -150px;
-    top: 250px; }
-  /* line 101, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence .animate-in .info1,
-  .sequence .animate-in .info2,
-  .sequence .animate-in .info3 {
-    left: 165px;
-    opacity: 1;
-    -webkit-transition-duration: 1s;
-    -moz-transition-duration: 1s;
-    -ms-transition-duration: 1s;
-    -o-transition-duration: 1s;
-    transition-duration: 1s; }
-  /* line 111, /Users/Ian/Sites/SequenceJS/Sequence/example-functionality/multiple-instances/scss/sequencejs-theme.documentation-demo.scss */
-  .sequence .animate-out .info1,
-  .sequence .animate-out .info2,
-  .sequence .animate-out .info3 {
-    left: 500px;
-    -webkit-transition-duration: 1s;
-    -moz-transition-duration: 1s;
-    -ms-transition-duration: 1s;
-    -o-transition-duration: 1s;
-    transition-duration: 1s; }
+  /* !Frame Animations */
+}
+.sequence > .sequence-canvas {
+  height: 100%;
+  width: 100%;
+}
+.sequence > .sequence-canvas > li {
+  position: absolute;
+  /* required */
+  width: 100%;
+  /* required */
+  height: 100%;
+  z-index: 1;
+  /* required */
+}
+.sequence > .sequence-canvas li > * {
+  position: absolute;
+  /* required */
+}
+.sequence #sequence-preloader {
+  background: white;
+}
+.sequence .class-name,
+.sequence .sequence-class {
+  font-size: 0.8em;
+}
+.sequence .info1,
+.sequence .info2,
+.sequence .info3 {
+  background: #3f7ad6;
+  display: block;
+  color: white;
+  height: 95px;
+  padding: 5px;
+  width: 95px;
+  -webkit-transition-property: left;
+  -moz-transition-property: left;
+  -ms-transition-property: left;
+  -o-transition-property: left;
+  transition-property: left;
+}
+.sequence .info1 {
+  left: -150px;
+  top: 10px;
+}
+.sequence .info2 {
+  left: -150px;
+  top: 130px;
+}
+.sequence .info3 {
+  left: -150px;
+  top: 250px;
+}
+.sequence .animate-in .info1,
+.sequence .animate-in .info2,
+.sequence .animate-in .info3 {
+  left: 165px;
+  opacity: 1;
+  -webkit-transition-duration: 1s;
+  -moz-transition-duration: 1s;
+  -ms-transition-duration: 1s;
+  -o-transition-duration: 1s;
+  transition-duration: 1s;
+}
+.sequence .animate-out .info1,
+.sequence .animate-out .info2,
+.sequence .animate-out .info3 {
+  left: 500px;
+  -webkit-transition-duration: 1s;
+  -moz-transition-duration: 1s;
+  -ms-transition-duration: 1s;
+  -o-transition-duration: 1s;
+  transition-duration: 1s;
+}
