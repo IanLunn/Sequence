@@ -5,21 +5,23 @@
 ### <a id="add-files">Add Files</a>
 
 Place a link to jQuery and the jquery.sequence-min.js file in the `<head>` of your document:
-
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="scripts/jquery.sequence-min.js"></script>
+```html
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="scripts/jquery.sequence-min.js"></script>
+```
 
 Currently Sequence supports **jQuery 1.7.1 - 1.9.1**. Other versions of jQuery have not been/are yet to be tested.
 
 ### <a id="initiate-sequence">Initiate Sequence</a>
 
 Once you’ve added the necessary files for Sequence, within the `<head>` of your document, inititate an instance of Sequence like so:
-
-    <script type="text/javascript"> 
-        $(document).ready(function(){
-            var sequence = $("#sequence").sequence().data("sequence");
-        });
-    </script>
+```html
+<script type="text/javascript"> 
+    $(document).ready(function(){
+        var sequence = $("#sequence").sequence().data("sequence");
+    });
+</script>
+```
 
 Let’s break this down:
 
@@ -30,59 +32,62 @@ After the variable name, you've specified a jQuery selector `$("#sequence")`, wh
 The Sequence function `.sequence()`, will accept many options that allow for modifying how Sequence works. These options are explained in the [Options](#options) section.
 
 It is possible to place multiple instances of Sequence on the same page, like so:
+```html
+<script type="text/javascript"> 
+    $(document).ready(function(){
+        var sequence = $("#sequence").sequence().data("sequence");
+        var sequence2 = $("#sequence2").sequence().data("sequence");
+    });
+</script>
+```
 
-    <script type="text/javascript"> 
-        $(document).ready(function(){
-            var sequence = $("#sequence").sequence().data("sequence");
-            var sequence2 = $("#sequence2").sequence().data("sequence");
-        });
-    </script>
-    
 Finally, jQuery's `.data()` function is used to allow Sequence to save particular information about its state as a data attribute. The argument passed to the `.data()` function should always be `"sequence"`, regardless of how many Sequence instances you have on the page.
 
 ### <a id="add-html">Add HTML</a>
 
 Add Sequence’s simple HTML structure like so:
-
-    <div id="sequence">
-        <ul class="sequence-canvas">
-            <li>
-                <!--Frame 1 content here-->
-            </li>
-            <li>
-                <!--Frame 2 content here-->
-            </li>
-            <li>
-                <!--Frame 3 content here-->
-            </li>
-        </ul>
-    </div>
+```html
+<div id="sequence">
+    <ul class="sequence-canvas">
+        <li>
+            <!--Frame 1 content here-->
+        </li>
+        <li>
+            <!--Frame 2 content here-->
+        </li>
+        <li>
+            <!--Frame 3 content here-->
+        </li>
+    </ul>
+</div>
+```
 
 Sequence consists of a containing element with a unique ID of your choosing, and an unordered list `<ul>` with a **required** class of  `.sequence-canvas`. The unordered list -- referred to as the canvas -- contains `<li>` elements -- referred to as frames. Frames hold the content of your Sequence instance. More on the canvas and frames shortly.
 
 ### <a id="add-content">Add Content</a>
 
 To add content to a frame, simply put HTML within each list item:
-
-    <div id="sequence">
-        <ul class="sequence-canvas">
-            <li>
-                <div class="info1">
-                    <p>Frame 1</p>
-                </div>
-            </li>
-            <li>
-                <div class="info2">
-                    <p>Frame 2</p>
-                </div>
-            </li>
-            <li>
-                <div class="info3">
-                    <p>Frame 3</p>
-                </div>
-            </li>
-        </ul>
-    </div>
+```html
+<div id="sequence">
+    <ul class="sequence-canvas">
+        <li>
+            <div class="info1">
+                <p>Frame 1</p>
+            </div>
+        </li>
+        <li>
+            <div class="info2">
+                <p>Frame 2</p>
+            </div>
+        </li>
+        <li>
+            <div class="info3">
+                <p>Frame 3</p>
+            </div>
+        </li>
+    </ul>
+</div>
+```
 
 Here you’ve added a `<div>` to each frame with unique classes. You will shortly write some CSS that will allow each `<div>` to animate in and out of the Sequence container.
 
@@ -91,27 +96,28 @@ Here you’ve added a `<div>` to each frame with unique classes. You will shortl
 ### <a id="setup-a-no-javascript-fallback">Setup a No-JavaScript Fallback</a>
 
 In a small percentage of browsers, JavaScript may be disabled which is the technology Sequence is built upon. In this case, to prevent an empty container from showing, nominate a frame to be displayed by giving it a class of `animate-in`:
-
-    <div id="sequence">
-        <ul class="sequence-canvas">
-            <li class="animate-in">
-                <div class="info1">
-                    <p>Frame 1 information</p>
-                </div>
-                <img class="my-image" src="my-image.jpg" alt="An image of me" />
-            </li>
-            <li>
-                <div class="info2">
-                    <p>Frame 2 information</p>
-                </div>
-            </li>
-            <li>
-                <div class="info3">
-                    <p>Frame 3 information</p>
-                </div>
-            </li>
-        </ul>
-    </div>
+```html
+<div id="sequence">
+    <ul class="sequence-canvas">
+        <li class="animate-in">
+            <div class="info1">
+                <p>Frame 1 information</p>
+            </div>
+            <img class="my-image" src="my-image.jpg" alt="An image of me" />
+        </li>
+        <li>
+            <div class="info2">
+                <p>Frame 2 information</p>
+            </div>
+        </li>
+        <li>
+            <div class="info3">
+                <p>Frame 3 information</p>
+            </div>
+        </li>
+    </ul>
+</div>
+```
 
 Here you’ve nominated the first frame to be displayed if JavaScript is disabled. 
 
@@ -132,38 +138,42 @@ Note that any top level element within a frame is expected to transition (change
 ### <a id="setting-up-the-sequence-container-and-frames">Setting up the Sequence Container and Frames</a>
 
 Start by styling the Sequence container:
-
-    #sequence {
-        border: black solid 3px;
-        height: 370px;
-        margin: 10px auto;
-        position: relative; /* required */
-        width: 450px;
-    }
+```css
+#sequence {
+    border: black solid 3px;
+    height: 370px;
+    margin: 10px auto;
+    position: relative; /* required */
+    width: 450px;
+}
+```
 
 Here you’ve given the container some basic dimensional properties and a border. You’ve also given the container a relative position. This is a required declaration as all of the top level content elements within a frame will be given an absolute position, like so:
-
-    #sequence > .sequence-canvas li > * {  /* required */
-        position: absolute;
-    }
+```css
+#sequence > .sequence-canvas li > * {  /* required */
+    position: absolute;
+}
+```
 
 This way, when you come to position elements within the container, `top: 0` will be the top of the container, and `left: 0` will be the left hand side of the container.
 
 To make the canvas the same size as the container, add the following:
-
-	#sequence > .sequence-canvas { /* required */
-		height: 100%; 
-		width: 100%;
-	}
+```css
+#sequence > .sequence-canvas { /* required */
+    height: 100%; 
+    width: 100%;
+}
+```
 
 Finally, add some declarations to each frame:
-
-    #sequence > .sequence-canvas > li { /* required */
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-    }
+```css
+#sequence > .sequence-canvas > li { /* required */
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+```
 
 By making sure each frame has a `z-index` of `1`, frames will stack on top of each other correctly. When a frame becomes active, Sequence will stack it on top of the rest by changing the `z-index`. This is particularly important when your slider has interactive elements such as links and buttons because it ensures those elements can be clicked/hovered over correctly.
 
@@ -176,28 +186,31 @@ Each top level element within a frame will be animated by Sequence, but how that
 By default, Sequence initially displays the first frame’s content, so start by animating the first element from the example above.
 
 In the HTML, you've given the `<div>` a class of `info1`:
-
-	<li>
-    	<div class="info1">
-     		<p>Frame 1</p>
-   		</div>
-    </li>
+```html
+<li>
+    <div class="info1">
+        <p>Frame 1</p>
+    </div>
+</li>
+```
 
 This element is in its “start” position. Sequence will automatically add a class of `animate-in` to the frame, which will trigger the CSS3 transitions you will shortly write. The HTML will then look like this:
-
-	<li class="animate-in">
-    	<div class="info1">
-        	<p>Frame 1</p>
-    	</div>
-    </li>
+```html
+<li class="animate-in">
+    <div class="info1">
+        <p>Frame 1</p>
+    </div>
+</li>
+```
 
 When a frame is in its "animate-in" position, eventually it will need to be animated out (when the user presses the next button for example). Sequence will remove the `animate-in` class, and add a class of `animate-out`, which again, you can control via CSS3 transitions. The HTML will then look like this:
-
-	<li class="animate-out">
-    	<div class="info1">
-        	<p>Frame 1</p>
-    	</div>
-    </li>
+```html
+<li class="animate-out">
+    <div class="info1">
+        <p>Frame 1</p>
+    </div>
+</li>
+```
 
 This process is applied to each frame as and when that frame becomes active.
 
@@ -214,28 +227,30 @@ Let’s assume frame 2 has one element that is currently in the “animate-in”
 ### <a id="animating-frame-elements-using-css3-transitions">Animating Frame Elements using CSS3 Transitions</a>
 
 Now you know how Sequence works, you can manipulate the transition of frame elements using CSS3 transitions. Just before you begin adding transitional properties, style the `<div>` within each frame:
-
-    .info1,
-    .info2,
-    .info3 {
-        background: #3f7ad6;
-        color: white;
-        height: 95px;
-        padding: 5px;
-        width: 95px;
-    }
+```css
+.info1,
+.info2,
+.info3 {
+    background: #3f7ad6;
+    color: white;
+    height: 95px;
+    padding: 5px;
+    width: 95px;
+}
+```
 
 Here you’ve made each `<div>` `95px` wide and tall and given them a background colour. Now, begin applying transitional properties:
-
-    .info1 {
-        left: -150px;
-        top: 10px;
-        -webkit-transition-duration: 1s;
-        -moz-transition-duration: 1s;
-        -o-transition-duration: 1s;
-        -ms-transition-duration: 1s;
-        transition-duration: 1s;
-    }
+```css
+.info1 {
+    left: -150px;
+    top: 10px;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    -ms-transition-duration: 1s;
+    transition-duration: 1s;
+}
+```
 
 Remember that an element with no transitional phase class is in its “start” position. You’ve started this element `150px` outside of the Sequence container (to the left), and `10px` from the top.
 
@@ -244,76 +259,81 @@ Remember that an element with no transitional phase class is in its “start” 
 **Note #2**: Sequence has been built to work across all modern browsers which means it is necessary to use vendor prefixes for CSS3 attributes such as `transition-duration`.
 
 As you saw in How Sequence’s Animations Work, Sequence will add a class of `animate-in` to any active frame to make its elements transition to their “animate-in” position. So, style the transition between the “start” and “animate-in” positions:
-
-    .animate-in .info1 {
-        left: 165px;
-        -webkit-transition-duration: 1s;
-        -moz-transition-duration: 1s;
-        -o-transition-duration: 1s;
-        -ms-transition-duration: 1s;
-        transition-duration: 1s;
-    }
+```css
+.animate-in .info1 {
+    left: 165px;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    -ms-transition-duration: 1s;
+    transition-duration: 1s;
+}
+```
 
 You’ve made it so that the `<div>` with class `info1`, will move from its “start” position of `left: -150px`, to `left: 165px`. You haven’t specified a top position so that will remain the same as the “start” position (`top: 10px`). By adding a `transition-duration`, the time it will take to go between the “start” and “animate-in” positions will be 1 second (`1s`). Again, you’ve used vendor prefixes to make the theme work across all modern browsers.
-
-    .animate-out .info1 {
-        left: 500px;
-        -webkit-transition-duration: 1s;
-        -moz-transition-duration: 1s;
-        -o-transition-duration: 1s;
-        -ms-transition-duration: 1s;
-        transition-duration: 1s;
-    }
+```css
+.animate-out .info1 {
+    left: 500px;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    -ms-transition-duration: 1s;
+    transition-duration: 1s;
+}
+```
 
 Once all of the frame’s elements have finished animating in, Sequence will then change the `animate-in` class to `animate-out`. As you did with the “animate-in” transition, you’ve changed the `left` value to make the element move outside of the Sequence container and specified a 1 second (`1s`) transition duration.
 
 From here on, you can apply transition durations to the remaining elements within the second and third frame. For the purpose of this demo and the sake of simplicity, you can modify the CSS you’ve just written to apply the same transition durations to the other frame elements, like so:
-
-    .info1,
-    .info2,
-    .info3 {
-        left: -150px;
-        top: 10px;
-        -webkit-transition-duration: 1s;
-        -moz-transition-duration: 1s;
-        -o-transition-duration: 1s;
-        -ms-transition-duration: 1s;
-        transition-duration: 1s;
-    }
+```css
+.info1,
+.info2,
+.info3 {
+    left: -150px;
+    top: 10px;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    -ms-transition-duration: 1s;
+    transition-duration: 1s;
+}
+```
 
 Here you’ve given start positions to the `<div>` elements within the second and third frames.
+```css
+.info2 {
+    top: 130px;
+}
 
-    .info2 {
-        top: 130px;
-    }
-
-    .info3 {
-        top: 250px;
-    }
+.info3 {
+    top: 250px;
+}
+```
 
 This CSS overwrites the top positions for each element so one is positioned below the next.
+```css
+.animate-in .info1,
+.animate-in .info2,
+.animate-in .info3 {
+    left: 165px;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    -ms-transition-duration: 1s;
+    transition-duration: 1s;
+}
 
-    .animate-in .info1,
-    .animate-in .info2,
-    .animate-in .info3 {
-        left: 165px;
-        -webkit-transition-duration: 1s;
-        -moz-transition-duration: 1s;
-        -o-transition-duration: 1s;
-        -ms-transition-duration: 1s;
-        transition-duration: 1s;
-    }
-
-    .animate-out .info1,
-    .animate-out .info2,
-    .animate-out .info3 {
-        left: 500px;
-        -webkit-transition-duration: 1s;
-        -moz-transition-duration: 1s;
-        -o-transition-duration: 1s;
-        -ms-transition-duration: 1s;
-        transition-duration: 1s;
-    }   
+.animate-out .info1,
+.animate-out .info2,
+.animate-out .info3 {
+    left: 500px;
+    -webkit-transition-duration: 1s;
+    -moz-transition-duration: 1s;
+    -o-transition-duration: 1s;
+    -ms-transition-duration: 1s;
+    transition-duration: 1s;
+}   
+```
 
 And finally you’ve included the second and third `<div>` elements in your “animate-in” and “animate-out” transitional positions.
 
@@ -326,47 +346,50 @@ Sequence comes with many options that allow you to easily control its features.
 ### <a id="specifying-options">Specifying Options</a>
 
 As explained in Initiate Sequence, each instance of Sequence can be passed developer defined options that override Sequence’s default settings. Options are stored in an object passed to the `.sequence()` function, like so:
-
-    <script type="text/javascript"> 
-        $(document).ready(function(){
-            var options = {
-                autoPlay: true,
-                autoPlayDelay: 3000
-            }
-            var sequence = $("#sequence").sequence(options).data("sequence");
-        });
-    </script>
+```html
+<script type="text/javascript"> 
+    $(document).ready(function(){
+        var options = {
+            autoPlay: true,
+            autoPlayDelay: 3000
+        }
+        var sequence = $("#sequence").sequence(options).data("sequence");
+    });
+</script>
+```
 
 Multiple instances of Sequence can be passed the same options:
-
-    <script type="text/javascript"> 
-        $(document).ready(function(){
-            var options = {
-                autoPlay: true,
-                autoPlayDelay: 3000
-            }
-            var sequence = $("#sequence").sequence(options).data("sequence");
-            var sequence2 = $("#sequence2").sequence(options).data("sequence");
-        });
-    </script>
+```html
+<script type="text/javascript"> 
+    $(document).ready(function(){
+        var options = {
+            autoPlay: true,
+            autoPlayDelay: 3000
+        }
+        var sequence = $("#sequence").sequence(options).data("sequence");
+        var sequence2 = $("#sequence2").sequence(options).data("sequence");
+    });
+</script>
+```
 
 Or differing options:
+```html
+<script type="text/javascript"> 
+    $(document).ready(function(){
+        var options = {
+            autoPlay: true,
+            autoPlayDelay: 3000
+        }
 
-    <script type="text/javascript"> 
-        $(document).ready(function(){
-            var options = {
-                autoPlay: true,
-                autoPlayDelay: 3000
-            }
-
-            var options2 = {
-                autoPlay: false,
-                autoPlayDelay: 5000
-            }
-            var sequence = $("#sequence").sequence(options).data("sequence");
-            var sequence2 = $("#sequence2").sequence(options2).data("sequence");
-        });
-    </script>
+        var options2 = {
+            autoPlay: false,
+            autoPlayDelay: 5000
+        }
+        var sequence = $("#sequence").sequence(options).data("sequence");
+        var sequence2 = $("#sequence2").sequence(options2).data("sequence");
+    });
+</script>
+```
 
 ### <a id="list-of-options">List of Options</a>
 
@@ -552,12 +575,13 @@ Display a pause icon when the user hovers over Sequence.
 **Type: true/false or a CSS selector, Default: `false`**
 
 Pagination associates child elements within the pagination selector (`.sequence-pagination` by default) to each frame of Sequence. When a child element is clicked, Sequence will navigate to the frame that is associated with that child element. If `pagination` is `true`, the following HTML can be included in your document to act as pagination:
-
-    <ul class="pagination">
-        <li>Frame 1</li>
-        <li>Frame 2</li>
-        <li>Frame 3</li>
-    </ul>
+```html
+<ul class="pagination">
+    <li>Frame 1</li>
+    <li>Frame 2</li>
+    <li>Frame 3</li>
+</ul>
+```
 
 When the first `<li>` element is clicked, Sequence will navigate to its first frame. When the second is clicked, Sequence will navigate to its second frame, and so on.
 
@@ -566,18 +590,20 @@ The pagination and pagination children can consist of any element. So, if you'd 
 When a Sequence frame is navigated to (via any navigation method, such as clicking pagination links, pressing a keyboard key etc), the associated pagination link will be given a class of `current`, so you can style the current pagination link as you wish:
 
 HTML:
-
-    <ul class="sequence-pagination">
-        <li>Frame 1</li>
-        <li class="current">Frame 2</li>
-        <li>Frame 3</li>
-    </ul>
+```html
+<ul class="sequence-pagination">
+    <li>Frame 1</li>
+    <li class="current">Frame 2</li>
+    <li>Frame 3</li>
+</ul>
+```
 
 CSS: 
-    
-    .sequence-pagination .current {
-        font-weight: bold;
-    }
+```css    
+.sequence-pagination .current {
+    font-weight: bold;
+}
+```
 
 - `true`: Use pagination with the default CSS selector (`.pagination`).
 - `false`: don't use pagination.
@@ -601,77 +627,79 @@ CSS:
 If using `preloader: true`, the following default preloading HTML and CSS will be applied to the document: 
 
 HTML:
-
-    <div class="sequence-preloader">
-        <svg class="preloading" xmlns="http://www.w3.org/2000/svg">
-            <circle class="circle" cx="6" cy="6" r="6" />
-            <circle class="circle" cx="22" cy="6" r="6" />
-            <circle class="circle" cx="38" cy="6" r="6" />
-        </svg>
-    </div>
+```html
+<div class="sequence-preloader">
+    <svg class="preloading" xmlns="http://www.w3.org/2000/svg">
+        <circle class="circle" cx="6" cy="6" r="6" />
+        <circle class="circle" cx="22" cy="6" r="6" />
+        <circle class="circle" cx="38" cy="6" r="6" />
+    </svg>
+</div>
+```
 
 CSS:
+```css
+.sequence-preloader {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    z-index: 999999;
+}
 
-    .sequence-preloader {
-        height: 100%;
-        position: absolute;
-        width: 100%;
-        z-index: 999999;
+@keyframes preload {
+    0%{
+        opacity: 1;
     }
 
-    @keyframes preload {
-        0%{
-            opacity: 1;
-        }
-
-        50%{
-            opacity: 0;
-        }
-
-        100%{
-            opacity: 1;
-        }
-    }
-
-    .sequence-preloader .preloading .circle {
-        fill: #ff9442;
-        display: inline-block;
-        height: 12px;
-        position: relative;
-        top: -50%;
-        width: 12px;
-        animation: preload 1s infinite;
-    }
-
-    .preloading {
-        display: block;
-        height: 12px;
-        margin: 0 auto;
-        top: 50%;
-        margin-top: -6px;
-        position: relative;
-        width: 48px;
-    }
-
-    .sequence-preloader .preloading .circle:nth-child(2) {
-        animation-delay: .15s;
-    }
-
-    .sequence-preloader .preloading .circle:nth-child(3) {
-        animation-delay: .3s;
-    }
-
-    .preloading-complete {
+    50%{
         opacity: 0;
-        visibility: hidden;
-        transition-duration: 1s;
     }
 
-    div.inline{
-        background-color: #ff9442;
-        margin-right: 4px;
-        float: left;
+    100%{
+        opacity: 1;
     }
+}
+
+.sequence-preloader .preloading .circle {
+    fill: #ff9442;
+    display: inline-block;
+    height: 12px;
+    position: relative;
+    top: -50%;
+    width: 12px;
+    animation: preload 1s infinite;
+}
+
+.preloading {
+    display: block;
+    height: 12px;
+    margin: 0 auto;
+    top: 50%;
+    margin-top: -6px;
+    position: relative;
+    width: 48px;
+}
+
+.sequence-preloader .preloading .circle:nth-child(2) {
+    animation-delay: .15s;
+}
+
+.sequence-preloader .preloading .circle:nth-child(3) {
+    animation-delay: .3s;
+}
+
+.preloading-complete {
+    opacity: 0;
+    visibility: hidden;
+    transition-duration: 1s;
+}
+
+div.inline{
+    background-color: #ff9442;
+    margin-right: 4px;
+    float: left;
+}
+```
 
 **Note:** Vendor prefixes are omitted from the above CSS for brevity but should be used for cross browser compatibility.
 
@@ -711,13 +739,14 @@ Specify whether frames should be hidden during preloading and then shown afterwa
 **Type: true/false, Default: `true`, Dependencies: `preloader: true`**
 
 - `true`: Sequence will add a CSS class of `preloading-complete` to the preloader element (`.sequence-preloader` by default, unless you've used your own CSS selector with the `preloader` option), allowing you to hide that preloader using a CSS3 transition. Example:
-
-    .preloading-complete {
-    	display: none;
-    	opacity: 0;
-    	visibility: hidden;
-    	transition-duration: 1s;
-    }
+```css
+.preloading-complete {
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+    transition-duration: 1s;
+}
+```
 
 **Note:** Vendor prefixes are omitted from the above CSS for brevity but should be used for cross browser compatibility.
 
@@ -749,11 +778,12 @@ Currently, the public methods supported by this option are `prev()`, `next()` an
 - An object: 
 
 Example:
-
-	keyEvents {
-        left: "prev", 
-        right: "next"
-    }
+```css
+keyEvents {
+    left: "prev", 
+    right: "next"
+}
+```
 
 In this example, when the left keyboard key is pressed, Sequence's public method `prev()` will be initiated. When the right keyboard key is pressed, the `next()` public method will be initiated.
 
@@ -767,13 +797,14 @@ An object containing the keyCodes and public methods that should occur when cert
 Currently, the public methods supported by this option are `prev()`, `next()` and `pause()`.
 
 Example:
-
-    customKeyEvents {
-        65: "prev", //a
-        68: "next", //d
-        83: "prev", //s
-        87: "next" //w
-    }
+```javascript
+customKeyEvents {
+    65: "prev", //a
+    68: "next", //d
+    83: "prev", //s
+    87: "next" //w
+}
+```
 
 In this example, when the 'a' and 's' keys are pressed, Sequence will go to the previous frame. When 'd' and 'w' are pressed, Sequence will go to the next frame.
 
@@ -806,13 +837,14 @@ The public Sequence method that should occur when the user swipes in a particula
 Currently, the public methods supported by this option are `prev()`, `next()` and `pause()`.
 
 Default object:
-
-    swipeEvents {
-        left: "prev",
-        right: "next",
-        up: false,
-        down: false
-    }
+```js
+swipeEvents {
+    left: "prev",
+    right: "next",
+    up: false,
+    down: false
+}
+```
 
 In this example, when the user swipes left, Sequence's public method `prev()` will be initiated. When the user swipes right, the `next()` public method will be initiated. No event will occur when the user swipes up or down.
 
@@ -823,10 +855,11 @@ In this example, when the user swipes left, Sequence's public method `prev()` wi
 The hash tag options are to be used with [Ben Alman's jQuery HashChange plugin](http://benalman.com/projects/jquery-hashchange-plugin/).
 
 Please place a reference to the jQuery HashChange plugin above your reference to the Sequence plugin, like so:
-
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" src="scripts/jquery.ba-hashchange.min.js"></script>
-    <script type="text/javascript" src="scripts/jquery.sequence-min.js"></script>
+```html
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript" src="scripts/jquery.ba-hashchange.min.js"></script>
+<script type="text/javascript" src="scripts/jquery.sequence-min.js"></script>
+```
 
 ##### hashTags
 **Type: true/false, Default: `false`**
@@ -834,17 +867,18 @@ Please place a reference to the jQuery HashChange plugin above your reference to
 - `true`: when a frame is navigated to and becomes active, the hash tag will change to reflect the frames ID. 
 
 In the following example, when the second frame becomes active, the URL will be changed to end with the hashTag `#second-frame`. The name "second-frame" is taken from the list item's ID attribute.
-
-    <div id="sequence">
-    	<ul>
-    		<li id="intro">
-    			<h2 class="title">Built using Sequence.js</h2>
-    		</li>
-            <li id="second-frame">
-                <h2 class="title animate-in">Super awesome!</h2>
-            </li>
-    	</ul>
-    </div>
+```html
+<div id="sequence">
+    <ul>
+        <li id="intro">
+            <h2 class="title">Built using Sequence.js</h2>
+        </li>
+        <li id="second-frame">
+            <h2 class="title animate-in">Super awesome!</h2>
+        </li>
+    </ul>
+</div>
+```
 
 - `false`: the hash tag will not change.
 
@@ -854,14 +888,15 @@ In the following example, when the second frame becomes active, the URL will be 
 - `true`: the hash tag name, will not be taken from the list item's ID attribute but instead a data attribute called data-sequence-hashtag.
 
 In the following example, when `hashDataAttribute` is true and the first frame becomes active, the URL will be changed to end with the hash tag #superAwesome.
-
-    <div id="sequence">
-        <ul>
-        	<li id="intro" data-sequence-hashtag="superAwesome">
-        		<h2 class="title animate-in">Built using Sequence.js</h2>
-        	</li>
-        </ul>
-    </div>
+```html
+<div id="sequence">
+    <ul>
+        <li id="intro" data-sequence-hashtag="superAwesome">
+            <h2 class="title animate-in">Built using Sequence.js</h2>
+        </li>
+    </ul>
+</div>
+```
 
 - `false`: Use the ID attribute instead of the data attribute.
 
@@ -880,18 +915,19 @@ The fallback theme options control Sequence when it is being viewed in browsers 
 #### <a id="specifying-fallback-theme-options">Specifying Fallback Theme Options</a>
 
 Fallback theme options are included in the options of each instance of Sequence, like so:
-
-    <script type="text/javascript"> 
-        $(document).ready(function(){
-            var options = {
-                fallback: {
-                    theme: "slide",
-                    speed: 500
-                }
+```html
+<script type="text/javascript"> 
+    $(document).ready(function(){
+        var options = {
+            fallback: {
+                theme: "slide",
+                speed: 500
             }
-            var sequence = $("#sequence").sequence(options).data("sequence");
-        });
-    </script>
+        }
+        var sequence = $("#sequence").sequence(options).data("sequence");
+    });
+</script>
+```
 
 #### <a id="fallback-options">Fallback Options</a>
 
@@ -915,26 +951,27 @@ Callbacks allow you to execute custom JavaScript functions at specific key point
 ### <a id="specifying-callbacks">Specifying Callbacks</a>
 
 By using the variable that the Sequence object is stored in, you can add custom code to Sequence's callbacks, like so:
+```html
+<script type="text/javascript"> 
+    $(document).ready(function(){
+        var options = {
+            autoPlay: true,
+            autoPlayDelay: 3000
+        }
+        var sequence = $("#sequence").sequence(options).data("sequence");
 
-    <script type="text/javascript"> 
-        $(document).ready(function(){
-            var options = {
-                autoPlay: true,
-                autoPlayDelay: 3000
-            }
-            var sequence = $("#sequence").sequence(options).data("sequence");
+        sequence.beforeCurrentFrameAnimatesOut = function(){
+            //add code to execute here, such as:
+            alert("Do something before the CURRENT frame animates out");
+        };
 
-            sequence.beforeCurrentFrameAnimatesOut = function(){
-                //add code to execute here, such as:
-                alert("Do something before the CURRENT frame animates out");
-            };
-
-            sequence.beforeNextFrameAnimatesIn = function(){
-                //add code to execute here, such as:
-                alert("Do something before the NEXT frame animates in");
-            };
-        });
-    </script>
+        sequence.beforeNextFrameAnimatesIn = function(){
+            //add code to execute here, such as:
+            alert("Do something before the NEXT frame animates in");
+        };
+    });
+</script>
+```
 
 ### <a id="complete-list-of-callbacks">Complete List of Callbacks</a>
 
@@ -1150,24 +1187,24 @@ The following are examples of advanced functionality you might like to use.
 
 ###Initiating and Destroying Sequence (v0.9 onwards)
 You may want to initiate and destroy Sequence as you require. For example, you may have several Sequence sliders on the same page but only want one to be active initially, then when the user clicks a button, destroy that first instance and initiate another. The following code allows you to do just that:
-    
-    var options = {};           //your Sequence options, change as desired
-    var mySequence = undefined; //setup a public variable to contain your Sequence instances
+```js 
+var options = {};           //your Sequence options, change as desired
+var mySequence = undefined; //setup a public variable to contain your Sequence instances
 
-    function initSequence() { 
-        mySequence = $("#sequence").sequence(options).data("sequence"); //initiate Sequence
+function initSequence() { 
+    mySequence = $("#sequence").sequence(options).data("sequence"); //initiate Sequence
 
-        mySequence.afterLoaded = function() {
-            /* an example callback applied to the new instance of Sequence */
-        }
+    mySequence.afterLoaded = function() {
+        /* an example callback applied to the new instance of Sequence */
     }
+}
 
-    $("#destroy").on('click', function() {  //when <div id="destroy"> is clicked...
-        mySequence.destroy();               //destroy Sequence
-        mySequence = undefined;             //clear the mySequence variable
-    });
+$("#destroy").on('click', function() {  //when <div id="destroy"> is clicked...
+    mySequence.destroy();               //destroy Sequence
+    mySequence = undefined;             //clear the mySequence variable
+});
 
-    $('#create').on('click', function() {   //when <div id="create"> is clicked...
-        initSequence();                     //initiate a new instance of Sequence
-    });
-
+$('#create').on('click', function() {   //when <div id="create"> is clicked...
+    initSequence();                     //initiate a new instance of Sequence
+});
+```
