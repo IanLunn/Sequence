@@ -1,6 +1,6 @@
 /*
 Sequence.js (http://www.sequencejs.com)
-Version: 1.0
+Version: 1.0.1
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -20,7 +20,7 @@ Sequence also relies on the following open source scripts:
 	Andreas Waltl, netCU Internetagentur (http://www.netcu.de)
 	Available under a MIT License: http://www.opensource.org/licenses/mit-license.php
 
-- Modernizr 2.6.1 Custom Build (http://modernizr.com/)
+- Modernizr 2.6.1 Custom Build (http://modernizr.com/) (Named Modernizr for Sequence to prevent conflicts)
 	Copyright (c) Faruk Ates, Paul Irish, Alex Sexton
 	Available under the BSD and MIT licenses: www.modernizr.com/license/
 	*/
@@ -37,37 +37,42 @@ Sequence also relies on the following open source scripts:
 		self.canvas = self.container.children('.sequence-canvas'); //the Sequence canvas which holds Sequence's frames (<li> elements)
 		self.frames = self.canvas.children('li'); //the Sequence frames (top level <li> elements within the Sequence canvas)
 
-		try { //is Modernizr.prefixed installed?
-			Modernizr.prefixed;
-			if(Modernizr.prefixed === undefined){
-				throw "undefined";
-			}
-		}
-		catch(err) { //if not...get the custom build necessary for Sequence
-			get.modernizr();
-		}
+		self._modernizrForSequence(); //get the custom build necessary for Sequence
 
-		var prefixes = { //convert JS transition names to CSS names
+		var prefixes = { //convert JS transition/animation names to CSS names
 			'WebkitTransition' : '-webkit-',
+			'WebkitAnimation'  : '-webkit-',
 			'MozTransition'    : '-moz-',
+			'MozAnimation '    : '-moz-',
 			'OTransition'      : '-o-',
+			'OAnimation'       : '-o-',
 			'msTransition'     : '-ms-',
-			'transition'       : ''
-		},
-		transitions = { //convert JS transition names to JS transition end and animation end event names (also apply a classname of .sequence to the event)
-			'WebkitTransition' : 'webkitTransitionEnd.sequence webkitAnimationEnd.sequence',
-			'MozTransition'    : 'transitionend.sequence animationend.sequence',
-			'OTransition'      : 'otransitionend.sequence oanimationend.sequence',
-			'msTransition'     : 'MSTransitionEnd.sequence MSAnimationEnd.sequence',
-			'transition'       : 'transitionend.sequence animationend.sequence'
+			'msAnimation'      : '-ms-',
+			'transition'       : '',
+			'animation'        : ''
+		};
+		
+		var transitionsAndAnimations = { //convert JS transition names to JS transition end and animation end event names (also apply a classname of .sequence to the event)
+			'WebkitTransition' : 'webkitTransitionEnd.sequence',
+			'WebkitAnimation'  : 'webkitAnimationEnd.sequence',
+			'MozTransition'    : 'transitionend.sequence',
+			'MozAnimation'     : 'animationend.sequence',
+			'OTransition'      : 'otransitionend.sequence',
+			'OAnimation'       : 'oanimationend.sequence',
+			'msTransition'     : 'MSTransitionEnd.sequence',
+			'msAnimation'      : 'MSAnimationEnd.sequence',
+			'transition'       : 'transitionend.sequence',
+			'animation'        : 'animationend.sequence'
 		};
 
-		self.prefix = prefixes[Modernizr.prefixed('transition')], //work out the CSS prefix for the browser being used (-webkit- for example)
+		self.transitionPrefix = prefixes[ModernizrForSequence.prefixed('transition')], //work out the CSS transition prefix for the browser being used (-webkit- for example)
+		self.animationPrefix = prefixes[ModernizrForSequence.prefixed('animation')], //work out the CSS animation prefix for the browser being used
+
 		self.transitionProperties = {},
-		self.transitionEnd = transitions[Modernizr.prefixed('transition')], //work out the JS transitionEnd name for the browser being used (webkitTransitionEnd webkitAnimationEnd for example)
+		self.transitionEnd = transitionsAndAnimations[ModernizrForSequence.prefixed('transition')] + ' ' + transitionsAndAnimations[ModernizrForSequence.prefixed('animation')], //work out the JS transitionEnd name for the browser being used (webkitTransitionEnd webkitAnimationEnd for example)
 		self.numberOfFrames = self.frames.length, //number of frames (<li>) Sequence consists of
 
-		self.transitionsSupported = (self.prefix !== undefined) ? true : false, //determine if transitions are supported
+		self.transitionsSupported = (self.transitionPrefix !== undefined) ? true : false, //determine if transitions are supported
 		self.hasTouch = ("ontouchstart" in window) ? true : false, //determine if this is a touch enabled device
 		self.isPaused = false, //whether Sequence is paused
 		self.isBeingHoveredOver = false, //whether the Sequence canvas is currently being hovered over
@@ -88,7 +93,7 @@ Sequence also relies on the following open source scripts:
 
 		//INIT
 		self.settings = $.extend({}, defaults, options); //combine default options with developer defined ones
-		self.settings.preloader = renderUiElements(self, self.settings.preloader, '.sequence-preloader'); //set up the preloader and save it
+		self.settings.preloader = self._renderUiElements(self.settings.preloader, '.sequence-preloader'); //set up the preloader and save it
 		self.isStartingFrame = (self.settings.animateStartingFrameIn) ? true : false; //determine if the first frame should animate in
 		self.settings.unpauseDelay = (self.settings.unpauseDelay === null) ? self.settings.autoPlayDelay : self.settings.unpauseDelay; //if the unpauseDelay is not specified, make it the same as the autoPlayDelay speed
 		self.getHashTagFrom = (self.settings.hashDataAttribute) ? "data-sequence-hashtag": "id"; //get the hashtag from the ID or data attribute?
@@ -99,8 +104,8 @@ Sequence also relies on the following open source scripts:
 			self.frames.hide(); //hide Sequence's frames
 		}
 
-		if(self.prefix === "-o-") { //if Opera prefixes are required...
-			self.transitionsSupported = get.operaTest(); //run a test to see if Opera correctly supports transitions (Opera 11 has bugs relating to transitions)
+		if(self.transitionPrefix === "-o-") { //if Opera prefixes are required...
+			self.transitionsSupported = self._operaTest(); //run a test to see if Opera correctly supports transitions (Opera 11 has bugs relating to transitions)
 		}
 
 		self.frames.removeClass("animate-in"); //remove any instance of "animate-in", which should be used incase JS is disabled
@@ -258,17 +263,17 @@ Sequence also relies on the following open source scripts:
 		function init() {
 			$(self.settings.preloader).remove(); //remove the preloader element
 
-			self.nextButton = renderUiElements(self, self.settings.nextButton, ".sequence-next"); //set up the next button
-			self.prevButton = renderUiElements(self, self.settings.prevButton, ".sequence-prev"); //set up the previous button
-			self.pauseButton = renderUiElements(self, self.settings.pauseButton, ".sequence-pause"); //set up the pause button
-			self.pagination = renderUiElements(self, self.settings.pagination, ".sequence-pagination"); //set up the pagination
+			self.nextButton = self._renderUiElements(self.settings.nextButton, ".sequence-next"); //set up the next button
+			self.prevButton = self._renderUiElements(self.settings.prevButton, ".sequence-prev"); //set up the previous button
+			self.pauseButton = self._renderUiElements(self.settings.pauseButton, ".sequence-pause"); //set up the pause button
+			self.pagination = self._renderUiElements(self.settings.pagination, ".sequence-pagination"); //set up the pagination
 
 			if((self.nextButton !== undefined && self.nextButton !== false) && self.settings.showNextButtonOnInit === true){self.nextButton.show();} //if using a next button, show it
 			if((self.prevButton !== undefined && self.prevButton !== false) && self.settings.showPrevButtonOnInit === true){self.prevButton.show();} //if using a previous button, show it
 			if((self.pauseButton !== undefined && self.pauseButton !== false) && self.settings.showPauseButtonOnInit === true){self.pauseButton.show();} //if using a pause button, show it
 
 			if(self.settings.pauseIcon !== false) {
-				self.pauseIcon = renderUiElements(self, self.settings.pauseIcon, ".sequence-pause-icon");
+				self.pauseIcon = self._renderUiElements(self.settings.pauseIcon, ".sequence-pause-icon");
 				if(self.pauseIcon !== undefined) {
 					self.pauseIcon.hide();
 				}
@@ -324,7 +329,7 @@ Sequence also relies on the following open source scripts:
 						self.nextFrame.css('z-index', self.numberOfFrames);
 					}
 
-					resetElements(self.prefix, self.nextFrameChildren, "0s");
+					self._resetElements(self.transitionPrefix, self.nextFrameChildren, "0s");
 					self.nextFrame.addClass("animate-in");
 					if(self.settings.hashTags && self.settings.hashChangesOnFirstFrame) {
 						self.currentHashTag = self.nextFrame.prop(self.getHashTagFrom);
@@ -332,12 +337,12 @@ Sequence also relies on the following open source scripts:
 					}
 
 					setTimeout(function() {
-						resetElements(self.prefix, self.nextFrameChildren, "");
+						self._resetElements(self.transitionPrefix, self.nextFrameChildren, "");
 					}, 100);
 
-					resetAutoPlay(self, true, self.settings.autoPlayDelay);
+					self._resetAutoPlay(true, self.settings.autoPlayDelay);
 				}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.settings.autoPlayDirection -1 && self.settings.animateStartingFrameIn) { //animate in backwards
-					resetElements(self.prefix, self.nextFrameChildren, "0s");
+					self._resetElements(self.transitionPrefix, self.nextFrameChildren, "0s");
 					self.nextFrame.addClass("animate-out");
 					self.goTo(self.nextFrameID, -1, true);
 				}else{ //animate in forwards
@@ -353,7 +358,7 @@ Sequence also relies on the following open source scripts:
 
 				self.frames.addClass("animate-in"); //move each frame into its animate-in position
 				self.frames.not(':eq('+(self.nextFrameID-1)+')').css({"display": "none", "opacity": 0}); //set all frames (except the next one) to display: none, opacity: 0
-				resetAutoPlay(self, true, self.settings.autoPlayDelay);
+				self._resetAutoPlay(true, self.settings.autoPlayDelay);
 			}
 			//END INIT
 			//EVENTS
@@ -387,7 +392,7 @@ Sequence also relies on the following open source scripts:
 					}
 
 					if(keyPressed === parseFloat(keyCode)) { //if the key pressed is associated with a function...
-						initCustomKeyEvent(self, keyDirections[keyCodes]); //initiate the function
+						self._initCustomKeyEvent(keyDirections[keyCodes]); //initiate the function
 					}
 				}
 			}
@@ -409,23 +414,25 @@ Sequence also relies on the following open source scripts:
 					keyEvents(e.keyCode, self.settings.customKeyEvents); //run custom keyevents
 				});
 			}
-
-			if(self.settings.pauseOnHover && self.settings.autoPlay && !self.hasTouch) { //if using pauseOnHover and autoPlay on non touch devices
-				self.canvas.on({
-					'mouseenter.sequence': function() { //when the mouse enter the Sequence element...
+			
+			self.canvas.on({
+				'mouseenter.sequence': function() { //when the mouse enter the Sequence element...
+					if(self.settings.pauseOnHover && self.settings.autoPlay && !self.hasTouch) { //if using pauseOnHover and autoPlay on non touch devices
 						self.isBeingHoveredOver = true;
 						if(!self.isHardPaused) { //if Sequence is hard paused (via a pause button)...
 							self.pause(); //pause autoPlay
 						}
-					},
-					'mouseleave.sequence': function() { //when the mouse leaves the Sequence element...
+					}
+				},
+				'mouseleave.sequence': function() { //when the mouse leaves the Sequence element...
+					if(self.settings.pauseOnHover && self.settings.autoPlay && !self.hasTouch) { //if using pauseOnHover and autoPlay on non touch devices
 						self.isBeingHoveredOver = false;
 						if(!self.isHardPaused) { //if Sequence is not hard paused (via a pause button)...
 							self.unpause(); //unpause autoPlay
 						}
 					}
-				});
-			}
+				}
+			});
 
 			if(self.settings.hashTags) { //if hashchange is enabled in the settings...
 				$(window).bind('hashchange.sequence', function() { //when the hashtag changes...
@@ -460,16 +467,16 @@ Sequence also relies on the following open source scripts:
 					if(Math.abs(dx) >= self.settings.swipeThreshold) {
 						cancelTouch();
 						if(dx > 0) {
-							initCustomKeyEvent(self, self.settings.swipeEvents.left);
+							self._initCustomKeyEvent(self.settings.swipeEvents.left);
 						}else{
-							initCustomKeyEvent(self, self.settings.swipeEvents.right);
+							self._initCustomKeyEvent(self.settings.swipeEvents.right);
 						}
 					}else if(Math.abs(dy) >= self.settings.swipeThreshold) {
 						cancelTouch();
 						if(dy > 0) {
-							initCustomKeyEvent(self, self.settings.swipeEvents.down);
+							self._initCustomKeyEvent(self.settings.swipeEvents.down);
 						}else{
-							initCustomKeyEvent(self, self.settings.swipeEvents.up);
+							self._initCustomKeyEvent(self.settings.swipeEvents.up);
 						}
 					}
 				}
@@ -509,7 +516,7 @@ Sequence also relies on the following open source scripts:
 			delay = (delay === undefined) ? self.settings.autoPlayDelay : delay; //if a delay isn't specified, use the default
 			self.unpause();
 
-			resetAutoPlay(self); //stop autoPlay before starting it again
+			self._resetAutoPlay(); //stop autoPlay before starting it again
 			self.autoPlayTimer = setTimeout(function() { //start a new autoPlay timer and...
 				if(self.settings.autoPlayDirection === 1) { //go to either the next or previous frame
 					self.next();
@@ -548,7 +555,7 @@ Sequence also relies on the following open source scripts:
 				self.isSoftPaused = true;
 				self.isHardPaused = (hardPause) ? true : false; //if hardPausing, set hardPause to true
 				self.isPaused = true;
-				resetAutoPlay(self); //stop autoPlay
+				self._resetAutoPlay(); //stop autoPlay
 			}else{ //if unpausing Sequence...
 				self.unpause();
 			}
@@ -576,7 +583,7 @@ Sequence also relies on the following open source scripts:
 				if(callback !== false) {
 					self.unpaused(); //callback when Sequence is unpaused
 				}
-				resetAutoPlay(self, true, self.settings.unpauseDelay); //start autoPlay after a delay specified via the unpauseDelay setting
+				self._resetAutoPlay(true, self.settings.unpauseDelay); //start autoPlay after a delay specified via the unpauseDelay setting
 			}else{
 				self.delayUnpause = true; //Sequence is animating so delay the unpause event until the animation completes
 			}
@@ -639,7 +646,7 @@ Sequence also relies on the following open source scripts:
 
 			if(!self.active || self.settings.navigationSkip) { //if there are no animations running or navigationSkip is enabled...
 				self.active = true; //Sequence is now animating
-				resetAutoPlay(self); //stop any autoPlay timer that may be running
+				self._resetAutoPlay(); //stop any autoPlay timer that may be running
 
 				if(direction === undefined) { //if no direction to navigate was defined...
 					self.direction = (id > self.currentFrameID) ? 1 : -1; //work out which way to go based on what frame is currently active
@@ -663,13 +670,13 @@ Sequence also relies on the following open source scripts:
 						if(self.settings.moveActiveFrameToTop) { //if the active frame should move to the top...
 							self.currentFrame.css("z-index", 1); //move this frame to the bottom as it is now inactive
 						}
-						resetElements(self.prefix, self.nextFrameChildren, "0s"); //give the next frame elements a transition-duration and transition-delay of 0s so they don't transition to their reset position
+						self._resetElements(self.transitionPrefix, self.nextFrameChildren, "0s"); //give the next frame elements a transition-duration and transition-delay of 0s so they don't transition to their reset position
 						if(!self.settings.reverseAnimationsWhenNavigatingBackwards || self.direction === 1) { //if user hit next button...
 							self.nextFrame.removeClass("animate-out"); //reset the next frame back to its starting position
-							resetElements(self.prefix, self.currentFrameChildren, "");  //remove any inline styles from the elements to be animated so styles via the "animate-out" class can take full effect
+							self._resetElements(self.transitionPrefix, self.currentFrameChildren, "");  //remove any inline styles from the elements to be animated so styles via the "animate-out" class can take full effect
 						}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.direction === -1) { //if the user hit prev button
 							self.nextFrame.addClass("animate-out"); //reset the next frame back to its animate-out position
-							reverseTransitionProperties(self); //reverse the transition-duration, transition-delay and transition-timing-function
+							self._reverseTransitionProperties(); //reverse the transition-duration, transition-delay and transition-timing-function
 						}
 					}else{
 						self.isStartingFrame = false; //no longer the first frame
@@ -691,10 +698,10 @@ Sequence also relies on the following open source scripts:
 					//modifications to the current and next frame's elements to get them ready to animate
 					if(!self.settings.reverseAnimationsWhenNavigatingBackwards || self.direction === 1) { //if user hit next button...
 						setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially
-							resetElements(self.prefix, self.nextFrameChildren, ""); //remove any inline styles from the elements to be animated so styles via the "animate-in" class can take full effect
-							waitForAnimationsToComplete(self, self.nextFrame, self.nextFrameChildren, "in"); //wait for the next frame to animate in
+							self._resetElements(self.transitionPrefix, self.nextFrameChildren, ""); //remove any inline styles from the elements to be animated so styles via the "animate-in" class can take full effect
+							self._waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in"); //wait for the next frame to animate in
 							if(self.afterCurrentFrameAnimatesOut !== "function () {}" || (self.settings.transitionThreshold === true && ignoreTransitionThreshold !== true)) { //if the afterCurrentFrameAnimatesOut is being used...
-								waitForAnimationsToComplete(self, self.currentFrame, self.currentFrameChildren, "out", true, 1); //wait for the current frame to animate out as well
+								self._waitForAnimationsToComplete(self.currentFrame, self.currentFrameChildren, "out", true, 1); //wait for the current frame to animate out as well
 							}
 						}, 50);
 
@@ -715,13 +722,13 @@ Sequence also relies on the following open source scripts:
 					}else if(self.settings.reverseAnimationsWhenNavigatingBackwards && self.direction === -1) { //if the user hit prev button
 						setTimeout(function() { //50ms timeout to give the browser a chance to modify the DOM sequentially
 							//remove any inline styles from the elements so styles via the "animate-in" and "animate-out" class can take full effect
-							resetElements(self.prefix, self.currentFrameChildren, "");
-							resetElements(self.prefix, self.nextFrameChildren, "");
-							reverseTransitionProperties(self); //reverse the transition-duration, transition-delay and transition-timing-function
+							self._resetElements(self.transitionPrefix, self.currentFrameChildren, "");
+							self._resetElements(self.transitionPrefix, self.nextFrameChildren, "");
+							self._reverseTransitionProperties(); //reverse the transition-duration, transition-delay and transition-timing-function
 
-							waitForAnimationsToComplete(self, self.nextFrame, self.nextFrameChildren, "in"); //wait for the next frame to animate in
+							self._waitForAnimationsToComplete(self.nextFrame, self.nextFrameChildren, "in"); //wait for the next frame to animate in
 							if(self.afterCurrentFrameAnimatesOut !== "function () {}" || (self.settings.transitionThreshold === true && ignoreTransitionThreshold !== true)) { //if the afterCurrentFrameAnimatesOut is being used...
-								waitForAnimationsToComplete(self, self.currentFrame, self.currentFrameChildren, "out", true, -1); //wait for the current frame to animate out as well
+								self._waitForAnimationsToComplete(self.currentFrame, self.currentFrameChildren, "out", true, -1); //wait for the current frame to animate out as well
 							}
 						}, 50);
 
@@ -742,9 +749,9 @@ Sequence also relies on the following open source scripts:
 					}
 				}else{ //if the browser doesn't support CSS3 transitions...
 					function animationComplete() {
-						setHashTag(self);
+						self._setHashTag();
 						self.active = false;
-						resetAutoPlay(self, true, self.settings.autoPlayDelay);
+						self._resetAutoPlay(true, self.settings.autoPlayDelay);
 					}
 
 					switch(self.settings.fallback.theme) {
@@ -866,77 +873,107 @@ Sequence also relies on the following open source scripts:
 
 			self.destroyed(); //callback
 			self.container.removeData(); //remove data
-		}
+		},
 		//END PUBLIC METHODS
-	}; //END PROTOTYPE
 
-	//PRIVATE METHODS
+		//PRIVATE METHODS
 
-	//trigger keyEvents, customKeyEvents and swipeEvents
-	var initCustomKeyEvent = function(sequence, event) {
-		switch(event) {
-			case "next":
-			sequence.next();
-			break;
-			case "prev":
-			sequence.prev();
-			break;
-			case "pause":
-			sequence.pause(true);
-			break;
-		}
-	};
+		//trigger keyEvents, customKeyEvents and swipeEvents
+		_initCustomKeyEvent: function(event) {
+			var self = this;
 
-	/*
-	reset the transition-duration and transition-delay properties of an element
-	
-	elementToReset = the element that is to have it's properties reset
-	cssValue = the value to be given to the transition-duration and transition-delay properties
-	*/
-	var resetElements = function(prefix, elementToReset, cssValue) {
-		elementToReset.css(
-			prefixCSS(prefix, {
-				"transition-duration": cssValue,
-				"transition-delay": cssValue,
-				"transition-timing-function": ""
-			})
+			switch(event) {
+				case "next":
+				self.next();
+				break;
+				case "prev":
+				self.prev();
+				break;
+				case "pause":
+				self.pause(true);
+				break;
+			}
+		},
+
+		/*
+		reset the transition-duration and transition-delay properties of an element
+		
+		elementToReset = the element that is to have it's properties reset
+		cssValue = the value to be given to the transition-duration and transition-delay properties
+		*/
+		_resetElements: function(prefix, elementToReset, cssValue) {
+			var self = this;
+
+			elementToReset.css(
+				self._prefixCSS(prefix, {
+					"transition-duration": cssValue,
+					"transition-delay": cssValue,
+					"transition-timing-function": ""
+				})
 			);
-	};
+		},
 
-	/*
-	when navigating backwards and reverseAnimationsWhenNavigatingBackwards is true, take the transition properties for forward animation and manipulate the animated elements to create a perfect reversal
-	*/
-	var reverseTransitionProperties = function(sequence) {
-		var currentFrameChildrenDurations = []; //saves the duration for each of the current frame's element
-		var nextFrameChildrenDurations = []; //saves the duration for each of the next frame's element
+		/*
+		when navigating backwards and reverseAnimationsWhenNavigatingBackwards is true, take the transition properties for forward animation and manipulate the animated elements to create a perfect reversal
+		*/
+		_reverseTransitionProperties: function() {
+			var self = this;
 
-		sequence.currentFrameChildren.each(function() { //get the overall duration (including delay) for each animated element in the current frame
-			currentFrameChildrenDurations.push(parseFloat($(this).css(sequence.prefix+'transition-duration').replace('s', '')) + parseFloat($(this).css(sequence.prefix+'transition-delay').replace('s', '')));
-		});
+			var currentFrameChildrenDurations = []; //saves the duration for each of the current frame's element
+			var nextFrameChildrenDurations = []; //saves the duration for each of the next frame's element
 
-		sequence.nextFrameChildren.each(function() { //get the overall duration (including delay) for each animated element in the current frame
-			nextFrameChildrenDurations.push(parseFloat($(this).css(sequence.prefix+'transition-duration').replace('s', '')) + parseFloat($(this).css(sequence.prefix+'transition-delay').replace('s', '')));
-		});
+			self.currentFrameChildren.each(function() { //get the overall duration (including delay) for each animated element in the current frame
+				currentFrameChildrenDurations.push(parseFloat($(this).css(self.transitionPrefix+'transition-duration').replace('s', '')) + parseFloat($(this).css(self.transitionPrefix+'transition-delay').replace('s', '')));
+			});
 
-		var maximumCurrentFrameDuration = Math.max.apply(Math, currentFrameChildrenDurations); //find which transition duration is the longest
-		var maximumNextFrameDuration = Math.max.apply(Math, nextFrameChildrenDurations); //find which transition duration is the longest
-		var transitionDifference = maximumCurrentFrameDuration - maximumNextFrameDuration; //get the overal transition difference between the current and next frame
-		var currentDelay = 0;
-		var nextDelay = 0;
+			self.nextFrameChildren.each(function() { //get the overall duration (including delay) for each animated element in the current frame
+				nextFrameChildrenDurations.push(parseFloat($(this).css(self.transitionPrefix+'transition-duration').replace('s', '')) + parseFloat($(this).css(self.transitionPrefix+'transition-delay').replace('s', '')));
+			});
 
-		if(transitionDifference < 0 && !sequence.settings.preventDelayWhenReversingAnimations) { //if the current frame has a greater duration than the next frame...
-			/* note: because the current frame will take longer to animate out than the next to animate in, when this animation is reversed, the current frame will have a delay applied before it animates out. By default, Sequence will aim to avoid this (via the preventDelayWhenReversingAnimations option) because a delay on the current frame may confuse the user. The delay is removed, which means the reversal of animation is slightly out of sync */
-			currentDelay = Math.abs(transitionDifference);
-		}else if(transitionDifference > 0) { //if the next frame has a greater duration than the current frame, add the difference on as a delay
-			nextDelay = Math.abs(transitionDifference);
-		}
+			var maximumCurrentFrameDuration = Math.max.apply(Math, currentFrameChildrenDurations); //find which transition duration is the longest
+			var maximumNextFrameDuration = Math.max.apply(Math, nextFrameChildrenDurations); //find which transition duration is the longest
+			var transitionDifference = maximumCurrentFrameDuration - maximumNextFrameDuration; //get the overal transition difference between the current and next frame
+			var currentDelay = 0;
+			var nextDelay = 0;
 
-		var reverseEachProperty = function(transitionProperties, currentFrameChildren, maximumFrameDuration, frameDelay) {
-			currentFrameChildren.each(function() {
-				var duration = parseFloat($(this).css(sequence.prefix+'transition-duration').replace('s', '')); //get the elements transition-duration
-				var delay = parseFloat($(this).css(sequence.prefix+'transition-delay').replace('s', '')); //get the elements transition-delay
-				var transitionFunction = $(this).css(sequence.prefix+'transition-timing-function'); //get the elements transiion-timing-function
-				if(transitionFunction.indexOf("cubic-bezier") >= 0) { //if the transition is a cubic-bezier...
+			if(transitionDifference < 0 && !self.settings.preventDelayWhenReversingAnimations) { //if the current frame has a greater duration than the next frame...
+				/* note: because the current frame will take longer to animate out than the next to animate in, when this animation is reversed, the current frame will have a delay applied before it animates out. By default, Sequence will aim to avoid this (via the preventDelayWhenReversingAnimations option) because a delay on the current frame may confuse the user. The delay is removed, which means the reversal of animation is slightly out of sync */
+				currentDelay = Math.abs(transitionDifference);
+			}else if(transitionDifference > 0) { //if the next frame has a greater duration than the current frame, add the difference on as a delay
+				nextDelay = Math.abs(transitionDifference);
+			}
+
+			var reverseEachProperty = function(transitionProperties, currentFrameChildren, maximumFrameDuration, frameDelay) {
+
+				function convertTimingFunctionToCubicBezier(timingFunction) {
+
+					timingFunction = timingFunction.split(',')[0]; //only use one timing function
+
+					var timingFunctionToCubicBezier = {
+					    "linear" : "cubic-bezier(0.0,0.0,1.0,1.0)",
+					    "ease"   : "cubic-bezier(0.25, 0.1, 0.25, 1.0)",
+					    "ease-in": "cubic-bezier(0.42, 0.0, 1.0, 1.0)",
+					    "ease-in-out": "cubic-bezier(0.42, 0.0, 0.58, 1.0)",
+					    "ease-out": "cubic-bezier(0.0, 0.0, 0.58, 1.0)"
+					};
+
+					if(timingFunction.indexOf("cubic-bezier") < 0) { //if the timing-function returned isn't a cubic-bezier()
+					  timingFunction = timingFunctionToCubicBezier[timingFunction]; //convert it to one
+					}
+
+					return timingFunction; //return a cubic-bezier()
+				}
+
+				currentFrameChildren.each(function() {
+
+					var duration = parseFloat($(this).css(self.transitionPrefix+'transition-duration').replace('s', '')); //get the elements transition-duration
+					var delay = parseFloat($(this).css(self.transitionPrefix+'transition-delay').replace('s', '')); //get the elements transition-delay
+					var transitionFunction = $(this).css(self.transitionPrefix+'transition-timing-function'); //get the elements transiion-timing-function
+					
+					if(transitionFunction.indexOf('cubic') === -1) { //if the function isn't a cubic-bezier (the Blink engine returns keywords instead)...
+						var transitionFunction = convertTimingFunctionToCubicBezier(transitionFunction); //convert the keyword to cubic-bezier()
+					}
+
 					var cubicBezier = transitionFunction.replace('cubic-bezier(', '').replace(')', '').split(','); //remove the CSS function and just get the array
 					$.each(cubicBezier, function(index, value) { //for each point that makes up the cubic bezier...
 						cubicBezier[index] = parseFloat(value); //turn the point into a number (rather than text)
@@ -950,170 +987,181 @@ Sequence also relies on the following open source scripts:
 					1 - cubicBezier[1]
 					];
 					transitionFunction = 'cubic-bezier('+reversedCubicBezier+')'; //add the reversed cubic bezier back into a CSS function
-				}else{ //if the function isn't a cubic-bezier (WebKit returns "linear" as a text string rather than a cubic-bezier)
-					transitionFunction = 'linear'; //use a linear transition function
-				}
-				var frameDuration = duration + delay; //get the overall duration of the element
 
-				transitionProperties["transition-duration"] = duration + 's'; //reapply the element's transition-duration (to override any inline styles)
-				transitionProperties["transition-delay"] = (maximumFrameDuration - frameDuration + frameDelay) + 's'; //add a delay if required
-				transitionProperties["transition-timing-function"] = transitionFunction; //reapply the reversed transition function
-				$(this).css(
-					prefixCSS(sequence.prefix, transitionProperties) //set the new transition properties
-					);
-			});
-		};
+					var frameDuration = duration + delay; //get the overall duration of the element
 
-		reverseEachProperty(sequence.transitionProperties, sequence.currentFrameChildren, maximumCurrentFrameDuration, currentDelay); //reverse properties for each of the current frame's elements
-		reverseEachProperty(sequence.transitionProperties, sequence.nextFrameChildren, maximumNextFrameDuration, nextDelay); //reverse properties for each of the next frame's elements
-	};
-
-	/*
-	adds the browser vendors prefix onto multiple CSS properties
-	
-	prefix = the prefix for the browser Sequence is being viewed in (-webkit- for example)
-	properties = the properties to be prefixed (transition-duration for example)
-	*/
-	var prefixCSS = function(prefix, properties) {
-		var css = {};
-		for(var property in properties) { //for each property to be modified...
-			css[prefix + property] = properties[property]; //add the prefix to the property name
-		}
-		return css; //return the prefixed CSS
-	};
-
-	/*
-	internal function used to start and stop autoPlay
-	start: if true, autoPlay will be started, else it'll be stopped
-	delay: a time in ms before starting the autoPlay feature (if unspecified, the default will be used)
-	*/
-	var resetAutoPlay = function(sequence, start, delay) {
-		if(start === true) { //if starting autoPlay
-			if(sequence.settings.autoPlay && !sequence.isSoftPaused) { //if using autoPlay and Sequence isn't paused...
-				clearTimeout(sequence.autoPlayTimer); //stop the autoPlay timer
-				sequence.autoPlayTimer = setTimeout(function() { //start a new autoPlay timer and...
-					if(sequence.settings.autoPlayDirection === 1) { //go to either the next or previous frame
-						sequence.next();
-					}else{
-						sequence.prev();
-					}
-				}, delay); //after a specified delay
-			}
-		}else{ //if stopping autoPlay
-			clearTimeout(sequence.autoPlayTimer); //stop the autoPlay timer
-		}
-	};
-
-	/*functionality to initiate the preloader, next/previous buttons and so on
-	
-	devOption: true = the developer wants to use the default selector. false = don't use a uiElement. string = the developer defined selector to use for the UI element
-	defaultOption: the default selector to use for the UI element, when the developer specifies false for devOption
-	*/
-	var renderUiElements = function(sequence, devOption, defaultOption) {
-		switch(devOption) {
-			case false: //don't set up a uiElement
-			return undefined;
-
-			case true: //use the default uiElement
-				if(defaultOption === ".sequence-preloader") { //if setting up the preloader...
-					get.defaultPreloader(sequence.container, sequence.transitionsSupported, sequence.prefix); //get the default preloader
-				}
-				return $(defaultOption); //return the default element
-
-			default: //if using a developer defined selector...
-				return $(devOption); //return the developer defined element
-		}
-	};
-
-	/*
-	prevents the next frame from animating until the current frame has finished animating
-
-	frame: the frame <li> which is animating
-	self.currentFrameChildren: the animated direct child elements of the frame
-	transitionPhase: whether the elements are animating "in" to an active position or "out" of an active position
-	inAfterwards: whether the next frame should animate in afterwards
-	direction: the direction of animation
-	*/
-	var waitForAnimationsToComplete = function(sequence, frame, currentFrameChildren, transitionPhase, inAfterwards, direction) {
-
-		if(transitionPhase === "out") { //if waiting on a frame's element to animate out...
-			var onceComplete = function() {
-				sequence.afterCurrentFrameAnimatesOut(); //callback
-
-				if(sequence.settings.transitionThreshold === true) {
-					if(direction === 1) {
-						sequence.nextFrame.addClass("animate-in"); //add the "animate-in" class
-					}else if(direction === -1) {
-						sequence.nextFrame.toggleClass("animate-out animate-in");
-					}
-				}
+					transitionProperties["transition-duration"] = duration + 's'; //reapply the element's transition-duration (to override any inline styles)
+					transitionProperties["transition-delay"] = (maximumFrameDuration - frameDuration + frameDelay) + 's'; //add a delay if required
+					transitionProperties["transition-timing-function"] = transitionFunction; //reapply the reversed transition function
+					$(this).css(
+						self._prefixCSS(self.transitionPrefix, transitionProperties) //set the new transition properties
+						);
+				});
 			};
-		}else if(transitionPhase === "in") { //if waiting on a frame's element to animate in...
-			var onceComplete = function() {
-				sequence.afterNextFrameAnimatesIn(); //callback
-				setHashTag(sequence); //set the hashtag to represent the newly active frame
 
-				sequence.active = false; //Sequence is not animating
+			reverseEachProperty(self.transitionProperties, self.currentFrameChildren, maximumCurrentFrameDuration, currentDelay); //reverse properties for each of the current frame's elements
+			reverseEachProperty(self.transitionProperties, self.nextFrameChildren, maximumNextFrameDuration, nextDelay); //reverse properties for each of the next frame's elements
+		},
 
-				if(!sequence.isHardPaused && !sequence.isBeingHoveredOver) { //if Sequence isn't hard paused (via a pause button for example) or being hovered over...
-					if(!sequence.delayUnpause) { //if unpausing isn't delayed (Sequence wasn't animating when unpause was invoked)...
-						sequence.unpause(false); //unpause Sequence but don't run the unpause callback
-					}else{ //if unpausing was delay because Sequence was animating when unpause was invoked...
-						sequence.delayUnpause = false;
-						sequence.unpause(); //unpause Sequence
-					}
+		/*
+		adds the browser vendors prefix onto multiple CSS properties
+		
+		prefix = the prefix for the browser Sequence is being viewed in (-webkit- for example)
+		properties = the properties to be prefixed (transition-duration for example)
+		*/
+		_prefixCSS: function(prefix, properties) {
+			var self = this;
+
+			var css = {};
+			for(var property in properties) { //for each property to be modified...
+				css[prefix + property] = properties[property]; //add the prefix to the property name
+			}
+			return css; //return the prefixed CSS
+		},
+
+		/*
+		internal function used to start and stop autoPlay
+		start: if true, autoPlay will be started, else it'll be stopped
+		delay: a time in ms before starting the autoPlay feature (if unspecified, the default will be used)
+		*/
+		_resetAutoPlay: function(start, delay) {
+			var self = this;
+
+			if(start === true) { //if starting autoPlay
+				if(self.settings.autoPlay && !self.isSoftPaused) { //if using autoPlay and Sequence isn't paused...
+					clearTimeout(self.autoPlayTimer); //stop the autoPlay timer
+					self.autoPlayTimer = setTimeout(function() { //start a new autoPlay timer and...
+						if(self.settings.autoPlayDirection === 1) { //go to either the next or previous frame
+							self.next();
+						}else{
+							self.prev();
+						}
+					}, delay); //after a specified delay
 				}
-			};
-		}
+			}else{ //if stopping autoPlay
+				clearTimeout(self.autoPlayTimer); //stop the autoPlay timer
+			}
+		},
 
-		currentFrameChildren.data('animationEnded', false); // set the data attribute of each animated element to indicate that the animation has not yet ended
-		frame.bind(sequence.transitionEnd, function(e) { //when an element finishes animating...
-			$(e.target).data('animationEnded', true); // set the data attrbiute to indicate that the element has finished it's animation
+		/*functionality to initiate the preloader, next/previous buttons and so on
+	
+		devOption: true = the developer wants to use the default selector. false = don't use a uiElement. string = the developer defined selector to use for the UI element
+		defaultOption: the default selector to use for the UI element, when the developer specifies false for devOption
+		*/
+		_renderUiElements: function(devOption, defaultOption) {
+			var self = this;
 
-			// now check if all elements have finished animating
-			var allAnimationsEnded = true;
-			currentFrameChildren.each(function() { //for each element being animated within a frame...
-				if($(this).data('animationEnded') === false) { //if the animation hasn't ended...
-					allAnimationsEnded = false; //not all animations have ended yet
-					return false; //break out of the animationEnded check early
+			switch(devOption) {
+				case false: //don't set up a uiElement
+				return undefined;
+
+				case true: //use the default uiElement
+					if(defaultOption === ".sequence-preloader") { //if setting up the preloader...
+						self._defaultPreloader(self.container, self.transitionsSupported, self.animationPrefix); //get the default preloader
+					}
+					return $(defaultOption); //return the default element
+
+				default: //if using a developer defined selector...
+					return $(devOption); //return the developer defined element
+			}
+		},
+
+		/*
+		prevents the next frame from animating until the current frame has finished animating
+
+		frame: the frame <li> which is animating
+		self.currentFrameChildren: the animated direct child elements of the frame
+		transitionPhase: whether the elements are animating "in" to an active position or "out" of an active position
+		inAfterwards: whether the next frame should animate in afterwards
+		direction: the direction of animation
+		*/
+		_waitForAnimationsToComplete: function(frame, currentFrameChildren, transitionPhase, inAfterwards, direction) {
+			var self = this;
+
+			if(transitionPhase === "out") { //if waiting on a frame's element to animate out...
+				var onceComplete = function() {
+					self.afterCurrentFrameAnimatesOut(); //callback
+
+					if(self.settings.transitionThreshold === true) {
+						if(direction === 1) {
+							self.nextFrame.addClass("animate-in"); //add the "animate-in" class
+						}else if(direction === -1) {
+							self.nextFrame.toggleClass("animate-out animate-in");
+						}
+					}
+				};
+			}else if(transitionPhase === "in") { //if waiting on a frame's element to animate in...
+				var onceComplete = function() {
+					self.afterNextFrameAnimatesIn(); //callback
+					self._setHashTag(); //set the hashtag to represent the newly active frame
+
+					self.active = false; //Sequence is not animating
+
+					if(!self.isHardPaused && !self.isBeingHoveredOver) { //if Sequence isn't hard paused (via a pause button for example) or being hovered over...
+						if(!self.delayUnpause) { //if unpausing isn't delayed (Sequence wasn't animating when unpause was invoked)...
+							self.unpause(false); //unpause Sequence but don't run the unpause callback
+						}else{ //if unpausing was delay because Sequence was animating when unpause was invoked...
+							self.delayUnpause = false;
+							self.unpause(); //unpause Sequence
+						}
+					}
+				};
+			}
+
+			currentFrameChildren.data('animationEnded', false); // set the data attribute of each animated element to indicate that the animation has not yet ended
+			frame.bind(self.transitionEnd, function(e) { //when an element finishes animating...
+				$(e.target).data('animationEnded', true); // set the data attrbiute to indicate that the element has finished it's animation
+
+				// now check if all elements have finished animating
+				var allAnimationsEnded = true;
+				currentFrameChildren.each(function() { //for each element being animated within a frame...
+					if($(this).data('animationEnded') === false) { //if the animation hasn't ended...
+						allAnimationsEnded = false; //not all animations have ended yet
+						return false; //break out of the animationEnded check early
+					}
+				});
+
+				if(allAnimationsEnded) { //if all animations have ended...
+					frame.unbind(self.transitionEnd); //stop waiting for animations to end
+					onceComplete();
 				}
 			});
+		},
 
-			if(allAnimationsEnded) { //if all animations have ended...
-				frame.unbind(sequence.transitionEnd); //stop waiting for animations to end
-				onceComplete();
+		_setHashTag: function() {
+			var self = this;
+
+			if(self.settings.hashTags) { //if hashTags is enabled...
+				self.currentHashTag = self.nextFrame.prop(self.getHashTagFrom); //get the hashtag name
+				self.frameHashIndex = $.inArray(self.currentHashTag, self.frameHashID); //get the index of the frame that matches the hashtag
+				if(self.frameHashIndex !== -1 && (self.settings.hashChangesOnFirstFrame || (!self.isStartingFrame || !self.transitionsSupported))) { //if the hashtag matches a Sequence frame ID...
+					self.nextFrameID = self.frameHashIndex + 1;
+					document.location.hash = "#"+self.currentHashTag;
+				}else{
+					self.nextFrameID = self.settings.startingFrameID;
+					self.isStartingFrame = false;
+				}
 			}
-		});
-	};
+		},
 
-	var setHashTag = function(sequence) {
-		if(sequence.settings.hashTags) { //if hashTags is enabled...
-			sequence.currentHashTag = sequence.nextFrame.prop(sequence.getHashTagFrom); //get the hashtag name
-			sequence.frameHashIndex = $.inArray(sequence.currentHashTag, sequence.frameHashID); //get the index of the frame that matches the hashtag
-			if(sequence.frameHashIndex !== -1 && (sequence.settings.hashChangesOnFirstFrame || (!sequence.isStartingFrame || !sequence.transitionsSupported))) { //if the hashtag matches a Sequence frame ID...
-				sequence.nextFrameID = sequence.frameHashIndex + 1;
-				document.location.hash = "#"+sequence.currentHashTag;
-			}else{
-				sequence.nextFrameID = sequence.settings.startingFrameID;
-				sequence.isStartingFrame = false;
-			}
-		}
-	};
-
-	var get = {
 		/* Modernizr 2.6.1 (Custom Build) | MIT & BSD
 		 * Build: http://modernizr.com/download/#-svg-prefixed-testprop-testallprops-domprefixes
 		 */
-		modernizr: function() {
-			;window.Modernizr=function(a,b,c){function x(a){i.cssText=a}function y(a,b){return x(prefixes.join(a+";")+(b||""))}function z(a,b){return typeof a===b}function A(a,b){return!!~(""+a).indexOf(b)}function B(a,b){for(var d in a){var e=a[d];if(!A(e,"-")&&i[e]!==c)return b=="pfx"?e:!0}return!1}function C(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:z(f,"function")?f.bind(d||b):f}return!1}function D(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+m.join(d+" ")+d).split(" ");return z(b,"string")||z(b,"undefined")?B(e,b):(e=(a+" "+n.join(d+" ")+d).split(" "),C(e,b,c))}var d="2.6.1",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l="Webkit Moz O ms",m=l.split(" "),n=l.toLowerCase().split(" "),o={svg:"http://www.w3.org/2000/svg"},p={},q={},r={},s=[],t=s.slice,u,v={}.hasOwnProperty,w;!z(v,"undefined")&&!z(v.call,"undefined")?w=function(a,b){return v.call(a,b)}:w=function(a,b){return b in a&&z(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=self;if(typeof c!="function")throw new TypeError;var d=t.call(arguments,1),e=function(){if(self instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(t.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(t.call(arguments)))};return e}),p.svg=function(){return!!b.createElementNS&&!!b.createElementNS(o.svg,"svg").createSVGRect};for(var E in p)w(p,E)&&(u=E.toLowerCase(),e[u]=p[E](),s.push((e[u]?"":"no-")+u));return e.addTest=function(a,b){if(typeof a=="object")for(var d in a)w(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,enableClasses&&(f.className+=" "+(b?"":"no-")+a),e[a]=b}return e},x(""),h=j=null,e._version=d,e._domPrefixes=n,e._cssomPrefixes=m,e.testProp=function(a){return B([a])},e.testAllProps=D,e.prefixed=function(a,b,c){return b?D(a,b,c):D(a,"pfx")},e}(self,self.document);
+		_modernizrForSequence: function() {
+			;window.ModernizrForSequence=function(a,b,c){function x(a){i.cssText=a}function y(a,b){return x(prefixes.join(a+";")+(b||""))}function z(a,b){return typeof a===b}function A(a,b){return!!~(""+a).indexOf(b)}function B(a,b){for(var d in a){var e=a[d];if(!A(e,"-")&&i[e]!==c)return b=="pfx"?e:!0}return!1}function C(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:z(f,"function")?f.bind(d||b):f}return!1}function D(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+m.join(d+" ")+d).split(" ");return z(b,"string")||z(b,"undefined")?B(e,b):(e=(a+" "+n.join(d+" ")+d).split(" "),C(e,b,c))}var d="2.6.1",e={},f=b.documentElement,g="modernizrForSequence",h=b.createElement(g),i=h.style,j,k={}.toString,l="Webkit Moz O ms",m=l.split(" "),n=l.toLowerCase().split(" "),o={svg:"http://www.w3.org/2000/svg"},p={},q={},r={},s=[],t=s.slice,u,v={}.hasOwnProperty,w;!z(v,"undefined")&&!z(v.call,"undefined")?w=function(a,b){return v.call(a,b)}:w=function(a,b){return b in a&&z(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=self;if(typeof c!="function")throw new TypeError;var d=t.call(arguments,1),e=function(){if(self instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(t.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(t.call(arguments)))};return e}),p.svg=function(){return!!b.createElementNS&&!!b.createElementNS(o.svg,"svg").createSVGRect};for(var E in p)w(p,E)&&(u=E.toLowerCase(),e[u]=p[E](),s.push((e[u]?"":"no-")+u));return e.addTest=function(a,b){if(typeof a=="object")for(var d in a)w(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,enableClasses&&(f.className+=" "+(b?"":"no-")+a),e[a]=b}return e},x(""),h=j=null,e._version=d,e._domPrefixes=n,e._cssomPrefixes=m,e.testProp=function(a){return B([a])},e.testAllProps=D,e.prefixed=function(a,b,c){return b?D(a,b,c):D(a,"pfx")},e}(self,self.document);
 		},
 
-		defaultPreloader: function(prependTo, transitions, prefix) {
+		/* Set up Sequence's default preloader
+		 * prependTo = which element to prepend the preloader to
+		 * transitions = whether CSS3 transitions are supported
+		 * prefix = the prefix for the browser Sequence is being viewed in
+		 */
+		_defaultPreloader: function(prependTo, transitions, prefix) {
 			var icon = '<div class="sequence-preloader"><svg class="preloading" xmlns="http://www.w3.org/2000/svg"><circle class="circle" cx="6" cy="6" r="6" /><circle class="circle" cx="22" cy="6" r="6" /><circle class="circle" cx="38" cy="6" r="6" /></svg></div>';
 
 			$("head").append("<style>.sequence-preloader{height: 100%;position: absolute;width: 100%;z-index: 999999;}@"+prefix+"keyframes preload{0%{opacity: 1;}50%{opacity: 0;}100%{opacity: 1;}}.sequence-preloader .preloading .circle{fill: #ff9442;display: inline-block;height: 12px;position: relative;top: -50%;width: 12px;"+prefix+"animation: preload 1s infinite; animation: preload 1s infinite;}.preloading{display:block;height: 12px;margin: 0 auto;top: 50%;margin-top:-6px;position: relative;width: 48px;}.sequence-preloader .preloading .circle:nth-child(2){"+prefix+"animation-delay: .15s; animation-delay: .15s;}.sequence-preloader .preloading .circle:nth-child(3){"+prefix+"animation-delay: .3s; animation-delay: .3s;}.preloading-complete{opacity: 0;visibility: hidden;"+prefix+"transition-duration: 1s; transition-duration: 1s;}div.inline{background-color: #ff9442; margin-right: 4px; float: left;}</style>");
 			prependTo.prepend(icon);
-			if(!Modernizr.svg && !transitions) { //if SVG isn't supported, remain calm and add this fallback instead...
+			if(!ModernizrForSequence.svg && !transitions) { //if SVG isn't supported, remain calm and add this fallback instead...
 				$(".sequence-preloader").prepend('<div class="preloading"><div class="circle inline"></div><div class="circle inline"></div><div class="circle inline"></div></div>');
 				setInterval(function() {
 					$(".sequence-preloader .circle").fadeToggle(500);
@@ -1126,23 +1174,21 @@ Sequence also relies on the following open source scripts:
 		},
 
 		//a quick test to work out if Opera supports transitions properly (to work around the fact that Opera 11 supports transitions but doesn't return a transition value properly)
-		operaTest: function() {
+		_operaTest: function() {
 			$("body").append('<span id="sequence-opera-test"></span>');
 			var $operaTest = $("#sequence-opera-test");
-			$operaTest.css("-o-transition", "1s");
-			//if the expected value isn't returned...
-			if($operaTest.css("-o-transition") !== "1s") {
-				//cause Opera to go into the fallback theme
-				return false;
+			$operaTest.css("-o-transition", "1s"); //add a transition value to the Opera test
+			if($operaTest.css("-o-transition") !== "1s") { //if the expected value isn't returned...
+				$operaTest.remove();
+				return false; //cause Opera to go into the fallback theme
 			}else{
+				$operaTest.remove();
 				return true;
 			}
-			$operaTest.remove();
 		}
-	};
-	//END PRIVATE METHODS
+		//END PRIVATE METHODS
 
-	//PRIVATE VARIABLES
+	}; //END PROTOTYPE
 
 	var defaults = {
 		//General Settings
@@ -1241,12 +1287,11 @@ Sequence also relies on the following open source scripts:
 			speed: 500
 		}
 	};
-	//END PRIVATE VARIABLES
 
 	$.fn.sequence = function(options) {
 		return this.each(function() {
 			if (!$.data(this, 'sequence')) { //prevent multiple initiations on the same element
-				$.data(this, 'sequence', new Sequence($(this), options, defaults, get));
+				$.data(this, 'sequence', new Sequence($(this), options, defaults));
       }
 		});
 	};

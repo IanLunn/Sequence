@@ -55,6 +55,13 @@ If you'd rather not give up your hard-earned money but still want to show your s
 
 ##What's New? 
 
+###v1.0.1 27/6/2013
+
+- Fixed issue where the preloader may not show in browsers that have unprefixed CSS3 transitions but not CSS3 animations (Blink Engine browsers)
+- Reverse animations are improved in Blink engine browsers
+- Renamed inbuilt Modernizr so it doesn't conflict with your existing implementations
+- Change structure of Sequence's private functions
+
 ###v1.0 18/4/2013
 
 - Renamed sequence.jquery.js to jquery.sequence.js
