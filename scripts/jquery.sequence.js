@@ -286,6 +286,7 @@ Sequence also relies on the following open source scripts:
 
 				self.paginationLinks.on('click.sequence', function() { //when a pagination link is clicked...
 					var associatedFrameNumber = $(this).index() + 1; //get the number of the frame this link is associated with
+					self.nextFrameID = associatedFrameNumber;
 					self.goTo(associatedFrameNumber); //go to the associate frame
 				});
 
