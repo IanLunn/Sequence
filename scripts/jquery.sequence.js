@@ -319,7 +319,9 @@ Sequence also relies on the following open source scripts:
 			self.nextFrameChildren = self.nextFrame.children(); //get the elements within the next frame to be animated
 
 			if(self.pagination !== undefined) { //if using pagination, make the starting frame the current one in pagination
-				$(self.paginationLinks[self.settings.startingFrameID-1]).addClass('current'); //add the 'current' class to the current frame
+				for (var n = 0; n < self.paginationLinks.length; n += self.numberOfFrames) { //handle multiple pagination with pagination links
+					$(self.paginationLinks[self.settings.startingFrameID+n-1]).addClass('current'); //add the 'current' class to the current frame
+				}
 			}
 
 			if(self.transitionsSupported) { //initiate the full featured Sequence if transitions are supported...
@@ -662,7 +664,9 @@ Sequence also relies on the following open source scripts:
 
 				if(self.pagination !== undefined) { //if using pagination...
 					self.paginationLinks.removeClass('current'); //remove the 'current' class from all pagination links
-					$(self.paginationLinks[id-1]).addClass('current'); //add the 'current' class to the current frame
+					for (var n = 0; n < self.paginationLinks.length; n += self.numberOfFrames) { //handle multiple pagination with pagination links
+						$(self.paginationLinks[id+n-1]).addClass('current'); //add the 'current' class to the current frame
+					}
 				}
 
 				if(self.transitionsSupported) { //if the browser supports CSS3 transitions...
