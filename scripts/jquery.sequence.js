@@ -622,6 +622,7 @@ Sequence also relies on the following open source scripts:
 		goTo: function(id, direction, ignoreTransitionThreshold) {
 			var self = this;
 			id = parseFloat(id); //convert the id to a number just in case
+			self.nextFrameID = id; //Set nextFrameID public variable, in case goTo() has been called directly.
 			var transitionThreshold = (ignoreTransitionThreshold === true) ? 0 : self.settings.transitionThreshold; //if transitionThreshold is to be ignored, set it to zero
 
 			if((id === self.currentFrameID) //if the id of the frame the user is trying to go to is the same as the currently active one...
