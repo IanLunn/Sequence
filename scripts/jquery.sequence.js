@@ -1,6 +1,6 @@
 /*
 Sequence.js (http://www.sequencejs.com)
-Version: 1.0.1
+Version: 1.0.1.1
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -286,7 +286,6 @@ Sequence also relies on the following open source scripts:
 
 				self.paginationLinks.on('click.sequence', function() { //when a pagination link is clicked...
 					var associatedFrameNumber = $(this).index() + 1; //get the number of the frame this link is associated with
-					self.nextFrameID = associatedFrameNumber;
 					self.goTo(associatedFrameNumber); //go to the associate frame
 				});
 
@@ -593,22 +592,22 @@ Sequence also relies on the following open source scripts:
 		//Go to the frame ahead of the current one
 		next: function() {
 			var self = this;
-			self.nextFrameID = (self.currentFrameID !== self.numberOfFrames) ? self.currentFrameID + 1 : 1; //work out the next frame
+			id = (self.currentFrameID !== self.numberOfFrames) ? self.currentFrameID + 1 : 1; //work out the next frame ID
 			if(self.active === false || self.active === undefined) { //if Sequence isn't currently animating...
-				self.goTo(self.nextFrameID, 1); //go to the next frame
+				self.goTo(id, 1); //go to the next frame
 			}else{ //if Sequence is currently animating...
-				self.goTo(self.nextFrameID, 1, true); //go immediately to the next frame (ignoring the transition threshold)
+				self.goTo(id, 1, true); //go immediately to the next frame (ignoring the transition threshold)
 			}
 		},
 
 		//Go to the frame prior to the current one
 		prev: function() {
 			var self = this;
-			self.nextFrameID = (self.currentFrameID === 1) ? self.numberOfFrames : self.currentFrameID - 1; //work out the prev frame
+			id = (self.currentFrameID === 1) ? self.numberOfFrames : self.currentFrameID - 1; //work out the prev frame ID
 			if(self.active === false || self.active === undefined) { //if Sequence isn't currently animating...
-				self.goTo(self.nextFrameID, -1); //go to the prev frame
+				self.goTo(id, -1); //go to the prev frame
 			}else{ //if Sequence is currently animating...
-				self.goTo(self.nextFrameID, -1, true); //go immediately to the prev frame (ignoring the transition threshold)
+				self.goTo(id, -1, true); //go immediately to the prev frame (ignoring the transition threshold)
 			}
 		},
 
@@ -621,11 +620,10 @@ Sequence also relies on the following open source scripts:
 		*/
 		goTo: function(id, direction, ignoreTransitionThreshold) {
 			var self = this;
-			id = parseFloat(id); //convert the id to a number just in case
-			self.nextFrameID = id; //Set nextFrameID public variable, in case goTo() has been called directly.
+			self.nextFrameID = parseFloat(id);
 			var transitionThreshold = (ignoreTransitionThreshold === true) ? 0 : self.settings.transitionThreshold; //if transitionThreshold is to be ignored, set it to zero
 
-			if((id === self.currentFrameID) //if the id of the frame the user is trying to go to is the same as the currently active one...
+			if((self.nextFrameID === self.currentFrameID) //if the next frame the user is trying to go to is the same as the currently active one...
 			|| (self.settings.navigationSkip && self.navigationSkipThresholdActive) //or navigationSkip is enabled and the navigationSkipThreshold is active (which prevents frame from being navigated too fast)...
 			|| (!self.settings.navigationSkip && self.active) //or navigationSkip is disbaled but Sequence is animating...
 			|| (!self.transitionsSupported && self.active) //or Sequence is in fallback mode and Sequence is animating...
@@ -651,19 +649,19 @@ Sequence also relies on the following open source scripts:
 				self._resetAutoPlay(); //stop any autoPlay timer that may be running
 
 				if(direction === undefined) { //if no direction to navigate was defined...
-					self.direction = (id > self.currentFrameID) ? 1 : -1; //work out which way to go based on what frame is currently active
+					self.direction = (self.nextFrameID > self.currentFrameID) ? 1 : -1; //work out which way to go based on what frame is currently active
 				}else{
 					self.direction = direction; //go to the developer defined frame
 				}
 
 				self.currentFrame = self.canvas.children(".animate-in"); //find which frame is active -- the frame currently being viewed (and about to be animated out)
-				self.nextFrame = self.frames.eq(id-1); //grab the next frame
+				self.nextFrame = self.frames.eq(self.nextFrameID-1); //grab the next frame
 				self.currentFrameChildren = self.currentFrame.children();	//save the child elements of the current frame
 				self.nextFrameChildren = self.nextFrame.children(); //save the child elements of the next frame
 
 				if(self.pagination !== undefined) { //if using pagination...
 					self.paginationLinks.removeClass('current'); //remove the 'current' class from all pagination links
-					$(self.paginationLinks[id-1]).addClass('current'); //add the 'current' class to the current frame
+					$(self.paginationLinks[self.nextFrameID-1]).addClass('current'); //add the 'current' class to the current frame
 				}
 
 				if(self.transitionsSupported) { //if the browser supports CSS3 transitions...
@@ -808,7 +806,7 @@ Sequence also relies on the following open source scripts:
 						break;
 					}
 				}
-				self.currentFrameID = id; //make the currentFrameID the same as the one that is to animate in
+				self.currentFrameID = self.nextFrameID; //make the currentFrameID the same as the one that is to animate in
 			}
 		},
 

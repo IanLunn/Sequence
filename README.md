@@ -53,7 +53,11 @@ Why purchase a premium theme and not just make a donation? We'd like to give you
 
 If you'd rather not give up your hard-earned money but still want to show your support, we like to receive your feedback, ideas and opinions too.
 
-##What's New? 
+##What's New?
+
+###v1.0.1.1 11/8/2013
+
+- Minor fixes to the nextFrameID public variable so it is always set correctly regardless of how going to the next frame occurs
 
 ###v1.0.1 27/6/2013
 
