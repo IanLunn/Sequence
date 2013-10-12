@@ -974,19 +974,21 @@ Sequence also relies on the following open source scripts:
 						var transitionFunction = convertTimingFunctionToCubicBezier(transitionFunction); //convert the keyword to cubic-bezier()
 					}
 
-					var cubicBezier = transitionFunction.replace('cubic-bezier(', '').replace(')', '').split(','); //remove the CSS function and just get the array
-					$.each(cubicBezier, function(index, value) { //for each point that makes up the cubic bezier...
-						cubicBezier[index] = parseFloat(value); //turn the point into a number (rather than text)
-					});
+					if (self.settings.reverseEaseWhenNavigatingBackwards) {
+						var cubicBezier = transitionFunction.replace('cubic-bezier(', '').replace(')', '').split(','); //remove the CSS function and just get the array
+						$.each(cubicBezier, function(index, value) { //for each point that makes up the cubic bezier...
+							cubicBezier[index] = parseFloat(value); //turn the point into a number (rather than text)
+						});
 
-					//reverse the cubic bezier
-					var reversedCubicBezier = [
-					1 - cubicBezier[2],
-					1 - cubicBezier[3],
-					1 - cubicBezier[0],
-					1 - cubicBezier[1]
-					];
-					transitionFunction = 'cubic-bezier('+reversedCubicBezier+')'; //add the reversed cubic bezier back into a CSS function
+						//reverse the cubic bezier
+						var reversedCubicBezier = [
+						1 - cubicBezier[2],
+						1 - cubicBezier[3],
+						1 - cubicBezier[0],
+						1 - cubicBezier[1]
+						];
+						transitionFunction = 'cubic-bezier('+reversedCubicBezier+')'; //add the reversed cubic bezier back into a CSS function
+					}
 
 					var frameDuration = duration + delay; //get the overall duration of the element
 
@@ -1197,6 +1199,7 @@ Sequence also relies on the following open source scripts:
 		animateStartingFrameIn: false, //Whether the first frame should animate in to its active position
 		transitionThreshold: false, //The delay between a frame animating out and the next animating in (false = no delay, true = the next frame will animate in only once the current frame has animated out)
 		reverseAnimationsWhenNavigatingBackwards: true, //Whether animations should be reversed when a user navigates backwards by clicking a previous button/swiping/pressing the left key
+		reverseEaseWhenNavigatingBackwards: true, //Whether the ease function should be reversed when a user navigates backwards
 		preventDelayWhenReversingAnimations: false, //Whether a delay should be removed when animations are reversed. This delay is removed by default to prevent user confusion
 		moveActiveFrameToTop: true, //Whether a frame should be given a higher `z-index` than other frames whilst it is active, to bring it above the others
 
