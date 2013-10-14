@@ -135,6 +135,12 @@ Sequence also relies on the following open source scripts:
 		var preloadTheseFramesLength = self.settings.preloadTheseFrames.length; //how many frames to preload?
 		var preloadTheseImagesLength = self.settings.preloadTheseImages.length; //how many single images to load?
 
+		// Useful for integration with js module loaders (e.g. requireJS) where window.load may have fired prior to this script executing.
+		// Should be used with care.  Modernizr normally likes to execute in the <head> tags.
+		if (self.settings.windowLoaded === true) {
+			windowLoaded = self.settings.windowLoaded;
+		}
+
 		function saveImagesToArray(length, srcOnly) {
 			var imagesToPreload = []; //saves the images that are to be preloaded
 			if(!srcOnly){
@@ -1199,6 +1205,7 @@ Sequence also relies on the following open source scripts:
 		reverseAnimationsWhenNavigatingBackwards: true, //Whether animations should be reversed when a user navigates backwards by clicking a previous button/swiping/pressing the left key
 		preventDelayWhenReversingAnimations: false, //Whether a delay should be removed when animations are reversed. This delay is removed by default to prevent user confusion
 		moveActiveFrameToTop: true, //Whether a frame should be given a higher `z-index` than other frames whilst it is active, to bring it above the others
+		windowLoaded: false, //Set to true if it is known that the window.onload event has already fired.  Useful with javascript module loaders (such as RequireJS).
 
 		//Autoplay Settings
 		autoPlay: false, //Cause Sequence to automatically change between frames over a period of time, as defined in autoPlayDelay
