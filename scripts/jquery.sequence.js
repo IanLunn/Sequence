@@ -1067,10 +1067,10 @@ Sequence also relies on the following open source scripts:
 					if(defaultOption === ".sequence-preloader") { //if setting up the preloader...
 						self._defaultPreloader(self.container, self.transitionsSupported, self.animationPrefix); //get the default preloader
 					}
-					return $(defaultOption); //return the default element
+					return $(defaultOption, self.container); //return the default element
 
 				default: //if using a developer defined selector...
-					return $(devOption); //return the developer defined element
+					return $(devOption, self.container); //return the developer defined element
 			}
 		},
 
