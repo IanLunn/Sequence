@@ -1,6 +1,6 @@
 /*
 Sequence.js (http://www.sequencejs.com)
-Version: 1.0.1.1
+Version: 1.0.1.2
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
