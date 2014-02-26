@@ -1,0 +1,26 @@
+{
+  "name": "Sequence",
+  "version": "1.0.1.2",
+  "homepage": "http://sequencejs.com/",
+  "authors": [
+    "Ian Lunn <hello@ianlunn.co.uk>"
+  ],
+  "description": "The Responsive Slider with Advanced CSS3 Transitions",
+  "main": "scripts/jquery.sequence.js",
+  "keywords": [
+    "sequence",
+    "sequence.js",
+    "slider",
+    "carousel",
+    "css3",
+    "slider"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

@@ -1,4 +1,4 @@
-/*
+/*!
 Sequence.js (http://www.sequencejs.com)
 Version: 1.0.1.2
 Author: Ian Lunn @IanLunn
@@ -8,7 +8,7 @@ Github: https://github.com/IanLunn/Sequence
 This is a FREE script and is available under a MIT License:
 http://www.opensource.org/licenses/mit-license.php
 
-Sequence.js and its dependencies are (c) Ian Lunn Design 2012 - 2013 unless otherwise stated.
+Sequence.js and its dependencies are (c) Ian Lunn Design 2012 unless otherwise stated.
 
 Sequence also relies on the following open source scripts:
 

@@ -31,45 +31,37 @@ time, mark, audio, video {
   border: 0;
   font-size: 100%;
   font: inherit;
-  vertical-align: baseline;
-}
+  vertical-align: baseline; }
 
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
-  display: block;
-}
+  display: block; }
 
 body {
-  line-height: 1;
-}
+  line-height: 1; }
 
 ol, ul {
-  list-style: none;
-}
+  list-style: none; }
 
 blockquote, q {
-  quotes: none;
-}
+  quotes: none; }
 
 blockquote:before, blockquote:after,
 q:before, q:after {
   content: '';
-  content: none;
-}
+  content: none; }
 
 table {
   border-collapse: collapse;
-  border-spacing: 0;
-}
+  border-spacing: 0; }
 
 /* !CSS RESET */
 /* prefix declarations */
 /* THEME STYLES */
 /* when in fallback mode (for browsers that don't support transitions) hide anything outside of the Sequence container */
 #sequence.sequence-fallback {
-  overflow: hidden;
-}
+  overflow: hidden; }
 
 #sequence {
   /* the Sequence container */
@@ -78,92 +70,77 @@ table {
   right: 0;
   top: 0;
   bottom: 0;
-  overflow: hidden;
-}
-#sequence > .sequence-canvas {
-  /* required - make the Sequence canvas the same height and width as the container */
-  height: 100%;
-  width: 100%;
-}
-#sequence > .sequence-canvas > li {
-  /* each Sequence frame */
-  position: absolute;
-  /* required - allows Sequence to change the z-index of frames, so the active frame is always on top */
-  width: 100%;
-  /* required - makes the frame the same width as the container */
-  height: 100%;
-  /* required - makes the frame the same height as the container */
-  z-index: 1;
-  /* required - allows Sequence to change the z-index of frames, so the active frame is always on top */
-}
-#sequence > .sequence-canvas li > * {
-  /* each top level element to be animated */
-  position: absolute;
-  /* required - make each animated element within a Sequence frame position absolute so their left/right/top/bottom can be manipulated */
-}
-#sequence .logo {
-  position: absolute;
-  z-index: 10;
-  bottom: 20px;
-  right: 20px;
-  -webkit-transition-duration: 0.5s;
-  -moz-transition-duration: 0.5s;
-  -ms-transition-duration: 0.5s;
-  -o-transition-duration: 0.5s;
-  transition-duration: 0.5s;
-}
-#sequence .logo:hover {
-  bottom: 26px;
-}
-#sequence .slide {
-  height: 100%;
-  width: 100%;
-  color: white;
-  text-align: center;
-  font-family: "Ubuntu", serif;
-  font-weight: bold;
-  text-transform: uppercase;
-  text-shadow: 1px 1px 1px #333333;
-}
-#sequence .slide h2 {
-  font-size: 6em;
-  padding: .2em;
-}
-#sequence .slide h3 {
-  font-size: 1.6em;
-  line-height: 120%;
-  padding: 1em;
-}
-#sequence .slide1 {
-  background: #32742C;
-}
-#sequence .slide2 {
-  background: #F18D05;
-}
-#sequence .slide3 {
-  background: #113F8C;
-}
-#sequence .slide {
-  left: 100%;
-  -webkit-transition-duration: 0.5s;
-  -moz-transition-duration: 0.5s;
-  -ms-transition-duration: 0.5s;
-  -o-transition-duration: 0.5s;
-  transition-duration: 0.5s;
-  -webkit-transition-property: "left";
-  -moz-transition-property: "left";
-  -ms-transition-property: "left";
-  -o-transition-property: "left";
-  transition-property: "left";
-  -webkit-transition-timing-function: linear;
-  -moz-transition-timing-function: linear;
-  -ms-transition-timing-function: linear;
-  -o-transition-timing-function: linear;
-  transition-timing-function: linear;
-}
-#sequence .animate-in .slide {
-  left: 0;
-}
-#sequence .animate-out .slide {
-  left: -100%;
-}
+  overflow: hidden; }
+  #sequence > .sequence-canvas {
+    /* required - make the Sequence canvas the same height and width as the container */
+    height: 100%;
+    width: 100%; }
+  #sequence > .sequence-canvas > li {
+    /* each Sequence frame */
+    position: absolute;
+    /* required - allows Sequence to change the z-index of frames, so the active frame is always on top */
+    width: 100%;
+    /* required - makes the frame the same width as the container */
+    height: 100%;
+    /* required - makes the frame the same height as the container */
+    z-index: 1;
+    /* required - allows Sequence to change the z-index of frames, so the active frame is always on top */ }
+  #sequence > .sequence-canvas li > * {
+    /* each top level element to be animated */
+    position: absolute;
+    /* required - make each animated element within a Sequence frame position absolute so their left/right/top/bottom can be manipulated */ }
+  #sequence .logo {
+    position: absolute;
+    z-index: 10;
+    bottom: 20px;
+    right: 20px;
+    -webkit-transition-duration: 0.5s;
+    -moz-transition-duration: 0.5s;
+    -ms-transition-duration: 0.5s;
+    -o-transition-duration: 0.5s;
+    transition-duration: 0.5s; }
+  #sequence .logo:hover {
+    bottom: 26px; }
+  #sequence .slide {
+    height: 100%;
+    width: 100%;
+    color: white;
+    text-align: center;
+    font-family: "Ubuntu", serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 1px #333; }
+    #sequence .slide h2 {
+      font-size: 6em;
+      padding: .2em; }
+    #sequence .slide h3 {
+      font-size: 1.6em;
+      line-height: 120%;
+      padding: 1em; }
+  #sequence .slide1 {
+    background: #32742C; }
+  #sequence .slide2 {
+    background: #F18D05; }
+  #sequence .slide3 {
+    background: #113F8C; }
+  #sequence .slide {
+    left: 100%;
+    -webkit-transition-duration: 0.5s;
+    -moz-transition-duration: 0.5s;
+    -ms-transition-duration: 0.5s;
+    -o-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+    -webkit-transition-property: "left";
+    -moz-transition-property: "left";
+    -ms-transition-property: "left";
+    -o-transition-property: "left";
+    transition-property: "left";
+    -webkit-transition-timing-function: linear;
+    -moz-transition-timing-function: linear;
+    -ms-transition-timing-function: linear;
+    -o-transition-timing-function: linear;
+    transition-timing-function: linear; }
+  #sequence .animate-in .slide {
+    left: 0; }
+  #sequence .animate-out .slide {
+    left: -100%; }
