@@ -1,4 +1,0 @@
-12/03/2013 - v1.3
-
-- Updated to work with Sequence.js v0.9
-- Added height: 100% and width: 100% to the top level UL to allow for detection of mouseenter/mouseleave

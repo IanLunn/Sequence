@@ -1,65 +1,100 @@
-#Sequence - The Responsive Slider with Advanced CSS3 Transitions
-Sequence provides the complete functionality for a website slider without forcing you to use a set theme. In fact, Sequence has no in-built theme, leaving you complete creative control to build a unique slider using only CSS3 -- no jQuery knowledge required!
+Sequence v2
+===========
 
-##Features
-- Unique transition styles created using CSS3
-- Supports all modern browsers
-- Gracefully degrades in older browsers*
-- Supports responsive layouts
-- Supports touch devices and swiping
-- Many developer features with even more to come
+Sequence.js -- originally released in 2011 -- is to be rebuilt from the ground up. This README documents major issues and considerations, and the philosophy for approaching the build.
+
+## Philosophy
+
+Sequence v2 will adhere to the following:
+
+- To be written with vanilla JavaScript
+- No "baked-in" dependencies
+- Exposed API for integration with third-party dependencies
+- AMD support
+- Support all modern browsers and devices
+- Graceful Degradation (Fallbacks for browsers without CSS3 transitions and transforms support)
 - Semantic and easy to use markup
-- Open source
 
-*Tested down to Firefox 3.6 and IE7. Extensive support details to come.
 
-##Theme Demos
-- [Modern Slide In](http://www.sequencejs.com/themes/modern-slide-in/)
-- [Modern Slide In (with hashTags enabled)](http://www.sequencejs.com/themes/modern-slide-in-hashtags/)
-- [Sliding Horizontal Parallax](http://www.sequencejs.com/themes/sliding-horizontal-parallax/)
-- [Apple Style](http://www.sequencejs.com/themes/apple-style/)
-- [Basic Slide](http://ianlunn.github.com/Sequence/themes/basic-slide)
-- [Basic Crossfade](http://ianlunn.github.com/Sequence/themes/basic-crossfade)
-- [Documentation Demo](http://www.sequencejs.com/themes/documentation-demo/) (the theme built using the documentation)
+## Major Issues
 
-##Documentation
-Documentation can be found here: [SequenceJS Demo](https://github.com/IanLunn/Sequence/blob/master/documentation.md).
+The following are major issues present in Sequence v1 that need to be solved to make Sequence v2 a viable solution:
 
-##Author
-[@Ian Lunn](http://twitter.com/#!/IanLunn)
+- Being Required and Limited to Animating All Top-level Elements
+- Frames don't stack well via z-index
+- Animations stop and get snappy when a mobile/tablet window is scrolled (solved)
+- Build process
 
-##License
-sequence.js is a FREE script and is licensed under the following:
-http://www.opensource.org/licenses/mit-license.php
 
-Theme files, their HTML, CSS, JavaScript/jQuery and images are licensed under the following unless otherwise stated:
-http://www.opensource.org/licenses/mit-license.php
+### Being Required and Limited to Animating All Top-level Elements
 
-[SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2012 - 2013 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
+A major drawback with Sequence v1 is that all top-level elements within a frame MUST be animated. This is so that Sequence can watch those top-level elements to know when they have finished animating, to then be able to start the `autoPlay` timer and start the next frames animations.
 
-Full [license information can be found on the SequenceJS.com website](http://www.sequencejs.com/developers/license-information/).
+This results in two problems:
 
-##Support Future Development
+1. Users aren't always aware they MUST animate top-level elements; when they don't Sequence may cease to function as expected
+2. Second-level elements and beyond aren't included in Sequence's `transitionEnd` event and as such, Sequence may animate the next frame's animations prior to these lower level elements finishing animating.
 
-To support the future development of Sequence.js and other open source projects created by [Ian Lunn](https://github.com/IanLunn), please consider making a donation.
+Ideally with Sequence v2, users will be able to animate any element they wish without limitations.
 
-Your donation is not-for-profit (or beer!), and will allow Ian to spend a little less time on client projects and more time supporting and creating open source software.
+Solution: Sequence v2 must know exactly which elements are going to animate so it can then watch them with the `transitionEnd` event. How Sequence v2 determines this will depend on how Sequence's animations are defined (as explained in consideration #1: Animations to be Written via CSS or JavaScript).
 
-Thank you.
+### Frames Don't Stack Well via z-index
 
-**Bitcoin:**
+In Sequence v1, an active frame is immediately given a higher z-index than other frames to make it appear on top.
 
-Bitcoin donations may be sent to the following address:
+For most Sequence v1 themes this is find because frames don't overlap each other; inactive frames would fade or slide out of view, revealing the active frame.
 
-<div style="text-align: center;">
-<a href="bitcoin:1KEbFvcXL8m6LogG2wjSUFz2xH6PeN6jRd?label=Sequence%20Development"><img src="http://ianlunn.co.uk/images/btc-donate.jpg" /></a>
-<p>1KEbFvcXL8m6LogG2wjSUFz2xH6PeN6jRd</p>
-</div>
+In themes such as [Ken Burns Effect](http://www.sequencejs.com/themes/ken-burns-effect/), where images within separate frames sit on top one another, this causes an undesired "snapping" effect where an active frame may immediately snaps in front of the previously active frame. To workaround this, the Ken Burns Effect will hide the contents of an active frame and slowly fade it in. This way, the previously active frame will still be visible (despite having a lower z-index than the newly active frame), until the active frame fades in; hiding the previous frame.
 
-**Purchase a premium theme:**
+There are two problems with this workaround:
 
-If you'd like to support Sequence.js, please consider purchasing a [premium theme from SequenceJS.com](http://www.sequencejs.com/themes/category/premium/). Whether you need the theme or not, we thank you for your genoristy! We're open about our premium licenses so if you think a friend, colleague or client could make use of the theme instead, feel free to pass it on.
+1. The workaround will only work when a image is placed within an `<img />` element. The original build of the Ken Burns Theme placed the images via a CSS `background` property instead. Some hacking on the `<img />` tag is required to produce a `background-size: cover` type of effect that could have been easily achieved if the workaround wasn't necessary.
+2. This workaround is non-intuitive and not immediately apparent to a developer.
 
-Why purchase a premium theme and not just make a donation? We'd like to give you something a little extra to say thanks! A payment of support is made through PayPal (don't worry, you don't need a PayPal account), so it keeps them and our accountants happy too -- because they're not keen on "donations".
+Potential solution (with drawback): One solution is to use JavaScript to change the position of the active element within the DOM. By placing the active element after all other elements, it will naturally appear on top of them without the need for a `z-index`. This solution would allow for Sequence options that determine exactly when a frame becomes active (before or after it animates in), as well as giving the developer the freedom to apply a `z-index` to the element should they wish. A drawback to this solution is that if elements are rearranged in the DOM, the developer can no longer use an `nth-child` selector within their CSS because the position of elements will continue to change. If Sequence v2 goes ahead with writing animations via CSS (as described in consideration #1 Animations to be Written via CSS or JavaScript), this could lead to an unintuitive experience for the developer.
 
-If you'd rather not give up your hard-earned money but still want to show your support, we like to receive your feedback, ideas and opinions too.
+### Animations Stop and Get Snappy When a Mobile/Tablet Window is Scrolled (Solved)
+
+**This solution has been tested and will be integrated into Sequence v2**
+
+When Sequence v1 makes use of the touch swipe event to allow navigation between slides, animations can sometimes stop and get snappy when the window is scrolled. For example: if the page Sequence is on has a vertical scroll bar, when the user swipes sideways to go to the previous/next slide, but does so in a way that causes the window to scroll up/down at the same time, the animations will stop and appear to be snappy.
+
+Solution: A third party touch library should be used that prevents horizontal scrolling whilst the user is swiping vertically. Consider [hammer.js](https://github.com/EightMedia/hammer.js/).
+
+### Build Process
+
+As sequence.js is packaged with many themes, it is necessary for a build process to be put in place that repackages these themes each time a new version of sequence.js is released. With v1 of Sequence, this process has to be done manually -- moving sequence.js into a theme's directory then zipping it -- for each and every theme.
+
+Solution: Grunt.js should be utilised to package themes with that themes dependencies, the latest version of both sequence.js and sequence.min.js, as well as any additional files such as README and LICENSE.
+
+## Major Considerations
+
+The following are major considerations that should be decided upon prior to Sequence v2 being written.
+
+### Animations to be Written via CSS or JavaScript
+
+In Sequence v1, all animations are written using CSS3 transitions and animations. This makes creating themes with Sequence v1 more accessible to developers as JavaScript knowledge isn't required. This way of creating animations is a major selling point of Sequence v1. It adds additional problems to Sequence v1's development though.
+
+It should be decided whether Sequence v2 will continue allowing a developer to create animations written in CSS3, instead specify animations via data-attributes applied to animated elements, or a hybrid of the two.
+
+#### CSS3 Animations Pros & Cons
+
+Pros:
+
+- More accessible to a wider range of theme developers
+
+Cons:
+
+- Harder for Sequence to know what elements are to be animated (See issue #1: Being Required and Limited to Animating All Top-level Elements)
+
+#### Data Attributes Pros & Cons
+
+Pros:
+
+- Easier for Sequence to know what elements are to be animated (See issue #1: Being Required and Limited to Animating All Top-level Elements)
+- Easier for developers wanting to create themes dynamically (to create a theme builder etc)
+
+Cons:
+
+- Not as accessible to develop themes
