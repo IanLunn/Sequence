@@ -1,6 +1,6 @@
 /*!
 Sequence.js (http://www.sequencejs.com)
-Version: 1.0.1.2
+Version: 1.0.1.3
 Author: Ian Lunn @IanLunn
 Author URL: http://www.ianlunn.co.uk/
 Github: https://github.com/IanLunn/Sequence
@@ -14,10 +14,6 @@ Sequence also relies on the following open source scripts:
 
 - jQuery imagesLoaded 2.1.0 (http://github.com/desandro/imagesloaded)
 	Paul Irish et al
-	Available under a MIT License: http://www.opensource.org/licenses/mit-license.php
-
-- jQuery TouchWipe 1.1.1 (http://www.netcu.de/jquery-touchwipe-iphone-ipad-library)
-	Andreas Waltl, netCU Internetagentur (http://www.netcu.de)
 	Available under a MIT License: http://www.opensource.org/licenses/mit-license.php
 
 - Modernizr 2.6.1 Custom Build (http://modernizr.com/) (Named Modernizr for Sequence to prevent conflicts)
@@ -51,7 +47,7 @@ Sequence also relies on the following open source scripts:
 			'transition'       : '',
 			'animation'        : ''
 		};
-		
+
 		var transitionsAndAnimations = { //convert JS transition names to JS transition end and animation end event names (also apply a classname of .sequence to the event)
 			'WebkitTransition' : 'webkitTransitionEnd.sequence',
 			'WebkitAnimation'  : 'webkitAnimationEnd.sequence',
@@ -259,7 +255,7 @@ Sequence also relies on the following open source scripts:
 				oncePreloaded(); //run the init functionality when the preloader has finished
 				$(this).unbind("load.sequence"); //unbind the load event as it's no longer needed
 			}else{ //if the window hasn't already loaded...
-				$(window).bind("load.sequence", function() { //when the window loads...	
+				$(window).bind("load.sequence", function() { //when the window loads...
 					oncePreloaded(); //run the init functionality when the preloader has finished
 					$(this).unbind("load.sequence"); //unbind the load event as it's no longer needed
 				});
@@ -420,7 +416,7 @@ Sequence also relies on the following open source scripts:
 					keyEvents(e.keyCode, self.settings.customKeyEvents); //run custom keyevents
 				});
 			}
-			
+
 			self.canvas.on({
 				'mouseenter.sequence': function() { //when the mouse enter the Sequence element...
 					if(self.settings.pauseOnHover && self.settings.autoPlay && !self.hasTouch) { //if using pauseOnHover and autoPlay on non touch devices
@@ -454,57 +450,6 @@ Sequence also relies on the following open source scripts:
 						}
 					});
 			}
-
-			function cancelTouch() {
-				self.canvas.on("touchmove.sequence", onTouchMove);
-				startX = null;
-				isMoving = false;
-			}
-
-			function onTouchMove(e) {
-				if(self.settings.swipePreventsDefault) {
-					e.preventDefault();
-				}
-				if(isMoving) {
-					var x = e.originalEvent.touches[0].pageX;
-					var y = e.originalEvent.touches[0].pageY;
-					var dx = startX - x;
-					var dy = startY - y;
-					if(Math.abs(dx) >= self.settings.swipeThreshold) {
-						cancelTouch();
-						if(dx > 0) {
-							self._initCustomKeyEvent(self.settings.swipeEvents.left);
-						}else{
-							self._initCustomKeyEvent(self.settings.swipeEvents.right);
-						}
-					}else if(Math.abs(dy) >= self.settings.swipeThreshold) {
-						cancelTouch();
-						if(dy > 0) {
-							self._initCustomKeyEvent(self.settings.swipeEvents.down);
-						}else{
-							self._initCustomKeyEvent(self.settings.swipeEvents.up);
-						}
-					}
-				}
-			}
-
-			function onTouchStart(e) {
-				if(e.originalEvent.touches.length === 1) {
-					startX = e.originalEvent.touches[0].pageX;
-					startY = e.originalEvent.touches[0].pageY;
-					isMoving = true;
-					self.canvas.on("touchmove.sequence", onTouchMove);
-				}
-			}
-
-			if(self.settings.swipeNavigation && self.hasTouch) { //if using swipeNavigation and the device has touch capabilities...
-				//jQuery TouchWipe v1.1.1 (http://www.netcu.de/jquery-touchwipe-iphone-ipad-library)
-				var startX;
-				var startY;
-				var isMoving = false;
-
-				self.canvas.on("touchstart.sequence", onTouchStart);
-			}
 			//END EVENTS
 		}
 	} //END CONSTRUCTOR
@@ -514,7 +459,7 @@ Sequence also relies on the following open source scripts:
 		//PUBLIC METHODS
 		/*
 		start autoPlay -- causing Sequence to automatically change frame every x amount of milliseconds
-		
+
 		delay: a time in ms before starting the autoPlay feature (if unspecified, the default will be used)
 		*/
 		startAutoPlay: function(delay) {
@@ -569,7 +514,7 @@ Sequence also relies on the following open source scripts:
 
 		/*
 		Start the autoPlay feature, as well as deal with any changes to pauseButtons, pauseIcons and public variables etc
-		
+
 		callback: if false, the unpause callback will not be initiated (this is because unpause is used internally during the stop and start of each frame)
 		*/
 		unpause: function(callback) {
@@ -619,7 +564,7 @@ Sequence also relies on the following open source scripts:
 
 		/*
 		Go to a specific frame
-		
+
 		id: number of the frame to go to
 		direction: direction to get to that frame (1 = forward, -1 = reverse)
 		ignoreTransitionThreshold: if true, ignore the transitionThreshold setting and immediately go to the specified frame
@@ -816,7 +761,7 @@ Sequence also relies on the following open source scripts:
 			}
 		},
 
-		/* 
+		/*
 			removes Sequence from the element it's attached to
 
 			callback: a callback to run once .destroy() has finished (or see the sequence.destroyed() callback)
@@ -842,7 +787,7 @@ Sequence also relies on the following open source scripts:
 			}
 
 			$(document).unbind('keydown.sequence'); //unbind key events
-			self.canvas.unbind('mouseenter.sequence, mouseleave.sequence, touchstart.sequence, touchmove.sequence'); //unbind mouse and touch events
+			self.canvas.unbind('mouseenter.sequence, mouseleave.sequence'); //unbind mouse events
 			$(window).unbind('hashchange.sequence'); //unbind hashchange
 
 			//CLEAR TIMERS
@@ -903,7 +848,7 @@ Sequence also relies on the following open source scripts:
 
 		/*
 		reset the transition-duration and transition-delay properties of an element
-		
+
 		elementToReset = the element that is to have it's properties reset
 		cssValue = the value to be given to the transition-duration and transition-delay properties
 		*/
@@ -975,7 +920,7 @@ Sequence also relies on the following open source scripts:
 					var duration = parseFloat($(this).css(self.transitionPrefix+'transition-duration').replace('s', '')); //get the elements transition-duration
 					var delay = parseFloat($(this).css(self.transitionPrefix+'transition-delay').replace('s', '')); //get the elements transition-delay
 					var transitionFunction = $(this).css(self.transitionPrefix+'transition-timing-function'); //get the elements transiion-timing-function
-					
+
 					if(transitionFunction.indexOf('cubic') === -1) { //if the function isn't a cubic-bezier (the Blink engine returns keywords instead)...
 						var transitionFunction = convertTimingFunctionToCubicBezier(transitionFunction); //convert the keyword to cubic-bezier()
 					}
@@ -1013,7 +958,7 @@ Sequence also relies on the following open source scripts:
 
 		/*
 		adds the browser vendors prefix onto multiple CSS properties
-		
+
 		prefix = the prefix for the browser Sequence is being viewed in (-webkit- for example)
 		properties = the properties to be prefixed (transition-duration for example)
 		*/
@@ -1052,7 +997,7 @@ Sequence also relies on the following open source scripts:
 		},
 
 		/*functionality to initiate the preloader, next/previous buttons and so on
-	
+
 		devOption: true = the developer wants to use the default selector. false = don't use a uiElement. string = the developer defined selector to use for the UI element
 		defaultOption: the default selector to use for the UI element, when the developer specifies false for devOption
 		*/

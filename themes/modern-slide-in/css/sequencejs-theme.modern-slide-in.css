@@ -102,12 +102,12 @@ table {
 .sequence-prev {
   color: white;
   cursor: pointer;
-  display: none;
+/*  display: none;*/
   font-weight: bold;
   padding: 10px 15px;
   position: absolute;
   top: 50%;
-  z-index: 1000;
+  z-index: 10000;
   height: 75px;
   margin-top: -47.5px; }
 

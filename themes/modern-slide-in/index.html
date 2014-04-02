@@ -7,8 +7,9 @@
 		<title>Sequence Theme Demo - Modern Slide In</title>
 		<link rel="stylesheet" media="screen" href="css/sequencejs-theme.modern-slide-in.css" />
 		<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Ruluko|Sirin+Stencil">
-		
+
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="js/hammer.js"></script>
 		<script>
 		 if (typeof jQuery == 'undefined'){
 		    document.write(unescape('%3Cscript src="../../scripts/jquery-min.js" %3E%3C/script%3E'));
@@ -18,11 +19,12 @@
 		<script src="sequencejs-options.modern-slide-in.js"></script>
 	</head>
 	<body>
+		<img class="sequence-prev" src="images/bt-prev.png" alt="Previous Frame" />
+		<img class="sequence-next" src="images/bt-next.png" alt="Next Frame" />
 		<div class="sequence-theme">
 			<div id="sequence">
 
-				<img class="sequence-prev" src="images/bt-prev.png" alt="Previous Frame" />
-				<img class="sequence-next" src="images/bt-next.png" alt="Next Frame" />
+
 
 				<ul class="sequence-canvas">
 					<li class="animate-in">
