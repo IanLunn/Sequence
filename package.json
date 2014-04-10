@@ -1,0 +1,30 @@
+{
+  "name": "Sequence",
+  "version": "2.0.0",
+  "author": "Ian Lunn",
+  "description": "Sequence v2 Alpha",
+  "license": "MIT",
+  "homepage": "https://github.com/IanLunn/sequence",
+  "bugs": "https://github.com/IanLunn/sequence/issues",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IanLunn/sequence.git"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-sass": "~0.6.0",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-autoprefixer": "~0.4.1",
+    "grunt-contrib-cssmin": "~0.7.0",
+    "grunt-contrib-uglify": "~0.3.0",
+    "grunt-contrib-connect": "~0.6.0",
+    "grunt-open": "~0.2.3",
+    "connect-livereload": "~0.3.2",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-version": "~0.3.0",
+    "load-grunt-tasks": "~0.2.1",
+    "time-grunt": "~0.2.8",
+    "grunt-contrib-compress": "^0.8.0",
+    "grunt-contrib-clean": "^0.5.0"
+  }
+}

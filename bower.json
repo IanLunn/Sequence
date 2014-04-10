@@ -1,0 +1,39 @@
+{
+  "name": "Sequence",
+  "version": "2.0.0",
+  "description": "Sequence v2 Alpha",
+  "license": "MIT",
+  "homepage": "https://github.com/IanLunn/Sequence",
+
+  "authors": [
+    "Ian Lunn <hello@ianlunn.co.uk>"
+  ],
+
+  "main": "dist/sequence.min.js",
+
+  "keywords": [
+    "sequence",
+    "sequence.js",
+    "slider",
+    "css3",
+    "slider",
+    "carousel",
+    "css3",
+    "carousel"
+  ],
+
+  "license": "MIT",
+  "private": true,
+
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+
+  "dependencies": {
+    "hammerjs": "1.0.10",
+  },
+}

@@ -98,3 +98,18 @@ Pros:
 Cons:
 
 - Not as accessible to develop themes
+
+
+
+
+## Grunt Build Process
+
+Sequence v2 utilises Grunt to task manage during development. The following commands are made available for quicker development:
+
+`grunt`
+
+`grunt run`
+
+`grunt doc`
+
+`grunt package-themes`
