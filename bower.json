@@ -9,7 +9,7 @@
     "Ian Lunn <hello@ianlunn.co.uk>"
   ],
 
-  "main": "dist/sequence.min.js",
+  "main": "scripts/sequence.min.js",
 
   "keywords": [
     "sequence",

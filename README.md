@@ -62,11 +62,13 @@ When Sequence v1 makes use of the touch swipe event to allow navigation between 
 
 Solution: A third party touch library should be used that prevents horizontal scrolling whilst the user is swiping vertically. Consider [hammer.js](https://github.com/EightMedia/hammer.js/).
 
-### Build Process
+### Build Process (Solved)
+
+**This solution has been tested and will be integrated into Sequence v2**
 
 As sequence.js is packaged with many themes, it is necessary for a build process to be put in place that repackages these themes each time a new version of sequence.js is released. With v1 of Sequence, this process has to be done manually -- moving sequence.js into a theme's directory then zipping it -- for each and every theme.
 
-Solution: Grunt.js should be utilised to package themes with that themes dependencies, the latest version of both sequence.js and sequence.min.js, as well as any additional files such as README and LICENSE.
+Solution: A grunt.js plugin has been created to allow for the automated packaging of Sequence themes.
 
 ## Major Considerations
 
@@ -106,10 +108,58 @@ Cons:
 
 Sequence v2 utilises Grunt to task manage during development. The following commands are made available for quicker development:
 
-`grunt`
+`grunt` - starts a server at [http://localhost:8000/](http://localhost:8000/), opens the main Sequence page in the browser and watches for files being changed during development.
 
 `grunt run`
 
 `grunt doc`
 
 `grunt package-themes`
+
+
+## Initiating Sequence
+
+Sequence can be initiated either via a traditional method or with Require.js
+
+### Traditional
+
+To initiate Sequence, add a reference to `sequence.min.js` and `hammer.min.js` just before the closing `</body>` element on the page you'd like Sequence to appear:
+
+```javascript
+<script src="scripts/third-party/hammer.min.js"></script>
+<script src="scripts/sequence.min.js"></script>
+```
+
+Then add an instance of Sequence using the following:
+
+```javascript
+<script>
+  var sequence = sequence(document.getElementById("sequence"));
+</script>
+```
+
+The above code will initiate an instance of Sequence on an element with the ID of `sequence`, eg: `<div id="sequence"></div>`.
+
+### Require.js
+
+Using [require.js](http://requirejs.org/) makes managing scripts and their dependencies easier. When loading Sequence via require.js, it isn't necessary to reference its dependencies, as Sequence and require.js will take care of that for you.
+
+To initiate Sequence using require.js, add a reference to require.js in the `<head></head>` tags of the page you'd like Sequence to be placed (as per the [require.js instructions](http://requirejs.org/docs/start.html#add)):
+
+```javascript
+<script data-main="scripts/main" src="scripts/require.min.js"></script>
+```
+
+In `scripts/main.js`, add the following:
+
+```javascript
+require(["sequence/sequence"], function(sequence) {
+  var sequence = sequence(document.getElementById("sequence"));
+});
+```
+
+The above code will initiate an instance of Sequence as soon as it is available on an element with the ID of `sequence`, eg: `<div id="sequence"></div>`.
+
+### Multiple Instances
+
+Where necessary, multiple instances of Sequence can be added to a page.

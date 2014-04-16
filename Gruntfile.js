@@ -29,7 +29,7 @@ module.exports = function(grunt) {
       }
     },
 
-    jsdoc : {
+    jsdoc: {
 			dist : {
 				src: ['src/**/*.js'],
 				options: {
@@ -333,7 +333,7 @@ module.exports = function(grunt) {
 
   // Setup documentation
   grunt.registerTask('doc', [
-    'jsdoc:dist'
+    'jsdoc'
   ]);
 
   // Compile themes into zip files for distribution (used internally)

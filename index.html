@@ -1,1 +1,31 @@
-<script src="dist/sequence.min.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+
+	<title></title>
+
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link href="css/styles.css" rel="stylesheet" media="all">
+
+	<!--[if lt IE 9]><script src="js/html5shiv-printshiv.js" media="all"></script><![endif]-->
+
+</head>
+<body>
+	<div id="sequence1" style="border: red solid 10px; height: 100px; width: 100px;">x</div>
+  <div id="sequence2" style="border: red solid 10px; height: 100px; width: 100px;"></div>
+
+	<script src="scripts/third-party/hammer.min.js"></script>
+	<script src="scripts/sequence.min.js"></script>
+	<script>
+		var options = {
+
+		}
+		var sequence = sequence(document.getElementById("sequence1"), options);
+
+		console.log(sequence);
+	</script>
+</body>
+</html>

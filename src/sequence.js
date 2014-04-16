@@ -8,36 +8,61 @@
  * @copyright IanLunn
  */
 
-;(function (global) { function moduleDefinition(/*dependency*/) {
+;(function (global) { function defineSequence(Hammer) {
 
-// ---------------------------------------------------------------------------
+  // ---------------------------------------------------------------------------
 
-'use strict';
+  'use strict';
 
-/**
- * @param {}
- * @return {}
- * @api public
- */
 
-function sequence() {
-}
+  /**
+   * Description
+   *
+   * @param {}
+   * @return {}
+   * @api private
+   */
+  function privateDo() {
+    console.log("private do");
+  }
 
-/**
- * Expose sequence
- */
+  /**
+   * @param {Object} element - the element Sequence is bound to
+   * @param {Object} options - this instances options
+   * @returns {Object}
+   * @api public
+   */
+  function sequence(element, options) {
 
-return sequence;
+    var self = {};
+    self.element = element;
+    self.options = "hi";
 
-// ---------------------------------------------------------------------------
+    Hammer(element).on("dragleft", function() {
+      alert('dragged!');
+    });
 
-} if (typeof exports === 'object') {
-    // node export
-    module.exports = moduleDefinition(/*require('dependency')*/);
-} else if (typeof define === 'function' && define.amd) {
-    // amd anonymous module registration
-    define([/*'dependency'*/], moduleDefinition);
-} else {
+    privateDo();
+
+    self.publicDo = function() {
+      console.log("public do," + element);
+    }
+
+    return self;
+  }
+
+  /**
+   * Expose sequence
+   */
+  return sequence;
+
+  // ---------------------------------------------------------------------------
+
+  } if(typeof define === 'function' && define.amd) {
+      // amd anonymous module registration
+      define(['third-party/hammer.min'], defineSequence);
+  }else{
     // browser global
-    global.sequence = moduleDefinition(/*global.dependency*/);
-}}(this));
+    global.sequence = defineSequence(Hammer);
+  }
+}(this));
