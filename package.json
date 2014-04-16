@@ -25,6 +25,9 @@
     "load-grunt-tasks": "~0.2.1",
     "time-grunt": "~0.2.8",
     "grunt-contrib-compress": "^0.8.0",
-    "grunt-contrib-clean": "^0.5.0"
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-text-replace": "^0.3.11",
+    "grunt-contrib-rename": "0.0.3",
+    "grunt-sequence-themes": "0.1.0"
   }
 }

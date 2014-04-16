@@ -21,13 +21,13 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     copy: {
-			main: {
-				files: [
-					{src: ['src/sequence.js'], dest: 'scripts/sequence.js'},
-					{src: ['bower_components/hammerjs/hammer.min.js'], dest: 'scripts/third-party/hammer.min.js'},
-				]
-			}
-		},
+      main: {
+        files: [
+          {src: ['src/sequence.js'], dest: 'scripts/sequence.js'},
+          {src: ['bower_components/hammerjs/hammer.min.js'], dest: 'scripts/third-party/hammer.min.js'},
+        ]
+      }
+    },
 
     jsdoc : {
 			dist : {
@@ -67,7 +67,6 @@ module.exports = function(grunt) {
       main: {
         expand: true,
         flatten: true,
-        // cwd: 'themes/',
         src: ['scss/styles.scss'],
         dest: 'css/',
         ext: '.css',
@@ -286,19 +285,42 @@ module.exports = function(grunt) {
 			server: {
 				path: 'http://localhost:' + SERVER_PORT
 			}
-		}
+		},
+
+    // Compile themes into zip files for distribution (used internally)
+    package_sequence_themes: {
+      themes: {
+        options: {
+          type: 'free'
+        },
+        expand: true,
+        cwd: 'themes',
+        src: ['*'],
+        dest: 'packaged-themes/free/'
+      },
+
+      premium_themes: {
+        options: {
+          type: 'premium'
+        },
+        expand: true,
+        cwd: 'premium-themes',
+        src: ['*'],
+        dest: 'packaged-themes/premium/'
+      }
+    }
   });
 
   require('load-grunt-tasks')(grunt);
 
-  //watch for local development
+  // Watch for local development
   grunt.registerTask('default', [
     'connect:livereload',
     'open',
     'watch'
   ]);
 
-  //manual compile
+  // Manual compile
   grunt.registerTask('run', [
     'version:js',
     'version:json',
@@ -309,8 +331,13 @@ module.exports = function(grunt) {
     'uglify'
   ]);
 
-  //setup documentation
+  // Setup documentation
   grunt.registerTask('doc', [
     'jsdoc:dist'
+  ]);
+
+  // Compile themes into zip files for distribution (used internally)
+  grunt.registerTask('package-themes', [
+    'package_sequence_themes'
   ]);
 };
