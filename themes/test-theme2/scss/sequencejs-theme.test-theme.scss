@@ -14,9 +14,87 @@
  * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
  */
 
- $hi: red;
+@import "partials/mixins";
 
- body {
-  color: $hi;
-  transition: 1s;
- }
+body {
+  overflow: hidden;
+}
+
+body,
+html {
+  height: 100%;
+}
+
+#sequence {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+
+  .slide,
+  .slide:before {
+    display: inline-block;
+    *display: inline;
+    zoom: 1;
+    vertical-align: middle;
+  }
+
+  .slide:before {
+    content: "";
+    height: 100%;
+  }
+
+  .slide {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+  }
+
+  .slide:nth-child(even) {
+    background: #ccc;
+  }
+
+  .title {
+    display: inline-block;
+    opacity: 0;
+    transform: translate(0, -20px);
+    transition-duration: .5s;
+    transition-delay: 1s;
+  }
+
+  .slider {
+    white-space: nowrap;
+    height: 100%;
+    width: 100%;
+    transition-duration: 1s;
+    transition-property: transform;
+  }
+
+
+  &.step1-in .slider {
+    transform: translate(0, 0);
+
+    .title1 {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+  }
+
+  &.step2-in .slider {
+    transform: translate(-100%, 0);
+
+    .title2 {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+  }
+
+  &.step3-in .slider {
+    transform: translate(-200%, 0);
+
+    .title3 {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+  }
+}

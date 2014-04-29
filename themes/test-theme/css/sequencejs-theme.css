@@ -14,8 +14,88 @@
  * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
  */
 
-body {
+/* prefix declarations */
+
+#sequence {
+  position: relative;
+  height: 400px;
+  width: 600px;
+  border: red solid 1px;
+  margin: 0 auto;
+}
+
+.model {
+  position: absolute;
+  left: -100px;
+  top: 20px;
+  border: red solid 1px;
+  width: 100px;
+  height: 100px;
   color: red;
-  -webkit-transition: 1s;
-  transition: 1s;
+  -webkit-transition-timing-function: linear;
+  transition-timing-function: linear;
+}
+
+.text {
+  position: absolute;
+  left: -100px;
+  top: 0;
+}
+
+.step1-in .model1 {
+  left: 50%;
+  margin-left: -50px;
+  -webkit-transition-duration: .5s;
+  transition-duration: .5s;
+}
+
+.step1-out .model1 {
+  left: 100%;
+  -webkit-transition-duration: .5s;
+  transition-duration: .5s;
+}
+
+.step2-in .model2 {
+  left: 50%;
+  margin-left: -50px;
+  -webkit-transition-duration: .5s;
+  transition-duration: .5s;
+}
+
+.step2-in .text {
+  left: 50%;
+  top: 50%;
+  -webkit-transition-duration: 10s;
+  transition-duration: 10s;
+}
+
+.step2-out .model2 {
+  left: 100%;
+  -webkit-transition-duration: .5s;
+  transition-duration: .5s;
+}
+
+.step3-in .model3 {
+  left: 50%;
+  margin-left: -50px;
+  -webkit-transition-duration: 5s;
+  transition-duration: 5s;
+}
+
+.step3-in .text {
+  left: 50%;
+  top: 50%;
+}
+
+.step3-out .model3 {
+  left: 100%;
+  -webkit-transition-duration: .6s;
+  transition-duration: .6s;
+}
+
+.step3-out .text {
+  left: -100px;
+  top: 0;
+  -webkit-transition-duration: 1s;
+  transition-duration: 1s;
 }

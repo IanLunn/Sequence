@@ -88,6 +88,18 @@ module.exports = function(grunt) {
         }
       },
 
+      test_themes: {
+        expand: true,
+        cwd: 'tests/test-themes/',
+        src: ['**/*.scss'],
+        dest: 'tests/test-themes/',
+        ext: '.css',
+        extDot: 'first',
+        rename: function(dest, src) {
+          return dest + src.replace("scss", "css");
+        }
+      },
+
       premium_themes: {
         expand: true,
         cwd: 'premium-themes/',
@@ -117,6 +129,10 @@ module.exports = function(grunt) {
         src: 'themes/*/css/*.css'
       },
 
+      test_themes: {
+        src: 'tests/test-themes/*/css/*.css'
+      },
+
       premium_themes: {
         src: 'premium-themes/*/css/*.css'
       },
@@ -140,6 +156,14 @@ module.exports = function(grunt) {
         cwd: 'themes/',
         src: ['*/css/*.css', '!*/css/*.min.css'],
         dest: 'themes/',
+        ext: '.min.css'
+      },
+
+      test_themes: {
+        expand: true,
+        cwd: 'tests/test-themes/',
+        src: ['*/css/*.css', '!*/css/*.min.css'],
+        dest: 'tests/test-themes/',
         ext: '.min.css'
       },
 
@@ -181,6 +205,18 @@ module.exports = function(grunt) {
         }]
       },
 
+      test_themes: {
+        files: [{
+          expand: true,
+          cwd: 'test/test-themes/',
+          src: ['*/scripts/*.js', '!*/scripts/*.min.js'],
+          dest: 'test/test-themes/',
+          rename: function(dest, src) {
+            return dest + src.replace(".js", ".min.js");
+          }
+        }]
+      },
+
       premium_themes: {
         files: [{
           expand: true,
@@ -192,6 +228,30 @@ module.exports = function(grunt) {
           }
         }]
       }
+		},
+
+    connect: {
+			options: {
+				port: SERVER_PORT,
+				hostname: 'localhost'
+			},
+			livereload: {
+				options: {
+					base: '/',
+					middleware: function (connect) {
+						return [
+							lrSnippet,
+							mountFolder(connect, '')
+						];
+					}
+				}
+			}
+		},
+
+		open: {
+			server: {
+				path: 'http://localhost:' + SERVER_PORT
+			}
 		},
 
     watch: {
@@ -220,8 +280,8 @@ module.exports = function(grunt) {
 
       // Uglify free themes
       themes_js: {
-        files: ['themes/*/scripts/*.js'],
-        tasks: ['uglify:themes'],
+        files: ['themes/*/scripts/*.js', 'tests/test-themes/*/scripts/*.js'],
+        tasks: ['uglify:themes', 'uglify:test_themes'],
         options: {
           spawn: false
         }
@@ -229,8 +289,8 @@ module.exports = function(grunt) {
 
       // Process SASS, autoprefix, and minify theme CSS
       themes_css: {
-        files: ['themes/*/scss/*.scss'],
-        tasks: ['sass:themes', 'autoprefixer:themes', 'cssmin:themes'],
+        files: ['themes/*/scss/*.scss', 'tests/test-themes/*/scss/*.scss'],
+        tasks: ['sass:themes', 'sass:test_themes', 'autoprefixer:themes', 'autoprefixer:test_themes', 'cssmin:themes', 'cssmin:test_themes'],
         options: {
           spawn: false
         }
@@ -256,36 +316,12 @@ module.exports = function(grunt) {
 
       // Refresh the page when .html pages are changed
       html: {
-        files: ['*.html', 'themes/*/*.html', 'premium-themes/*/*.html'],
+        files: ['*.html', 'themes/*/*.html', 'premium-themes/*/*.html', 'tests/**/*.html'],
         options: {
           spawn: false
         }
       }
     },
-
-    connect: {
-			options: {
-				port: SERVER_PORT,
-				hostname: 'localhost'
-			},
-			livereload: {
-				options: {
-					base: '/',
-					middleware: function (connect) {
-						return [
-							lrSnippet,
-							mountFolder(connect, '')
-						];
-					}
-				}
-			}
-		},
-
-		open: {
-			server: {
-				path: 'http://localhost:' + SERVER_PORT
-			}
-		},
 
     // Compile themes into zip files for distribution (used internally)
     package_sequence_themes: {

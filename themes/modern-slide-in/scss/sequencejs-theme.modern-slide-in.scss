@@ -1,0 +1,144 @@
+/*!
+ * Sequence.js Theme
+ *
+ * Theme Name: Modern Slide In
+ * Version: 2.0
+ * Theme URL: http://sequencejs.com/themes/modern-slide-in/
+ *
+ * Author: Ian Lunn @IanLunn
+ * Author URL: http://ianlunn.co.uk/
+ *
+ * This theme is made available under a MIT License:
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
+ */
+
+@import "partials/mixins";
+
+.sequence-theme {
+  background: #D9D9D9;
+}
+
+#sequence {
+  position: relative;
+  height: 600px;
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+
+  .slide {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+
+    > * {
+      position: absolute;
+    }
+
+    .model {
+      position: absolute;
+      max-width: 30%;
+      height: auto;
+      opacity: 0;
+      transform: translateX(75%) translateZ(0);
+      transition-property: transform, opacity;
+    }
+  }
+
+  .valign {
+    width: 100%;
+    text-align: right;
+  }
+
+  .valign div {
+    width: 60%;
+    text-align: left;
+  }
+
+  .valign,
+  .valign:before {
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+  }
+
+  .valign:before {
+    content: "";
+  }
+
+  .valign div {
+    display: inline-block;
+  }
+
+  h2 {
+    font-size: 2em;
+    opacity: 0;
+    transform: translate(-80px, 0);
+  }
+
+  h3 {
+    opacity: 0;
+    transform: translate(80px, 0);
+  }
+
+  h2,
+  h3 {
+    margin: .4em 0;
+    transition-duration: .4s;
+  }
+
+  &.step1-in .slide1,
+  &.step2-in .slide2,
+  &.step3-in .slide3,
+  &.step4-in .slide4,
+  &.step5-in .slide5,
+  &.step6-in .slide6,
+  &.step7-in .slide7,
+  &.step8-in .slide8,
+  &.step9-in .slide9,
+  &.step10-in .slide10 {
+    .model {
+      transform: translateX(15%);
+      opacity: 1;
+      transition-duration: .5s;
+    }
+
+    h2,
+    h3 {
+      opacity: 1;
+      transform: translate(0);
+      transition-delay: .25s;
+    }
+  }
+
+  &.step1-out .slide1,
+  &.step2-out .slide2,
+  &.step3-out .slide3,
+  &.step4-out .slide4,
+  &.step5-out .slide5,
+  &.step6-out .slide6,
+  &.step7-out .slide7,
+  &.step8-out .slide8,
+  &.step9-out .slide9,
+  &.step10-out .slide10 {
+    h2,
+    h3,
+    .model {
+      opacity: 0;
+    }
+
+    .model {
+      transform: translateX(-25%);
+      transition-duration: .75s;
+    }
+
+    h2 {
+      transform: translate(80px, 0);
+    }
+
+    h3 {
+      transform: translate(-80px, 0);
+    }
+  }
+}

@@ -1,4 +1,44 @@
-x
-sss
-sxxss
-sssss
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Test Theme</title>
+
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="css/normalize.css" rel="stylesheet" media="all">
+  <link href="css/sequencejs-theme.css" rel="stylesheet" media="all">
+
+  <!--[if lt IE 9]><script src="js/html5shiv-printshiv.js" media="all"></script><![endif]-->
+
+</head>
+<body>
+  <div id="sequence" class="some-other-class">
+
+    <div class="model model1">
+      Model 1
+    </div>
+
+    <div class="model model2">
+      Model 2
+    </div>
+
+    <div class="model model3">
+      Model 3
+    </div>
+
+  </div>
+
+  <script src="/scripts/third-party/modernizr.min.js"></script>
+  <script src="/scripts/third-party/hammer.min.js"></script>
+  <script src="/scripts/sequence.js"></script>
+  <script>
+    var options = {
+      debug: true
+    }
+    var sequence1 = sequence(document.getElementById("sequence"), 3, options);
+  </script>
+</body>
+</html>
