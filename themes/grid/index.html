@@ -16,29 +16,22 @@
 </head>
 <body>
   <div id="sequence" class="some-other-class">
-
-    <div class="model model1">
-      Model 1
-    </div>
-
-    <div class="model model2">
-      Model 2
-    </div>
-
-    <div class="model model3">
-      Model 3
-    </div>
-
+    <ul class="canvas">
+      <li>
+        <h2 class="title">Built using Sequence.js</h2>
+      </li><li>
+        <h2 class="title">CSS3 Animation Framework</h2>
+      </li><li>
+        <h2 class="title">No JavaScript Knowledge Required</h2>
+      </li>
+    </ul>
   </div>
 
   <script src="/scripts/third-party/modernizr.min.js"></script>
   <script src="/scripts/third-party/hammer.min.js"></script>
   <script src="/scripts/sequence.js"></script>
   <script>
-    var options = {
-      debug: true
-    }
-    var sequence1 = sequence(document.getElementById("sequence"), 3, options);
+    var sequence = sequence(document.getElementById("sequence"));
   </script>
 </body>
 </html>

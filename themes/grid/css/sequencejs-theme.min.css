@@ -1,0 +1,15 @@
+/*!
+ * Sequence.js Theme
+ *
+ * Theme Name: Theme Test
+ * Version: 1.0
+ * Theme URL: http://sequencejs.com/themes/theme-test/
+ *
+ * Author: Ian Lunn @IanLunn
+ * Author URL: http://ianlunn.co.uk/
+ *
+ * This theme is made available under a MIT License:
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
+ */body,html{height:100%}#sequence{position:relative;height:100%;width:100%;overflow:hidden;margin:0;padding:0}#sequence.step1 .canvas{-webkit-transform:translate(0);-ms-transform:translate(0);transform:translate(0)}#sequence.step2 .canvas{-webkit-transform:translate(-100%,0);-ms-transform:translate(-100%,0);transform:translate(-100%,0)}#sequence.step3 .canvas{-webkit-transform:translate(-200%,0);-ms-transform:translate(-200%,0);transform:translate(-200%,0)}#sequence .canvas,#sequence .canvas>li{margin:0;padding:0;list-style:none}#sequence .canvas{position:absolute;height:100%;width:100%;display:inline;white-space:nowrap;-webkit-transition-duration:1s;transition-duration:1s}#sequence .canvas>li{display:inline-block;width:100%;height:100%;text-align:center}#sequence .canvas>li:nth-child(even){background:#ccc}#sequence .title{display:inline-block;-webkit-transform:translate(0,-20px);-ms-transform:translate(0,-20px);transform:translate(0,-20px);-webkit-transition-duration:.5s;transition-duration:.5s;-webkit-transition-delay:1s;transition-delay:1s;opacity:0}#sequence .animate-in .title{opacity:1;-webkit-transform:translate(0,0);-ms-transform:translate(0,0);transform:translate(0,0)}

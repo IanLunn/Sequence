@@ -1,0 +1,15 @@
+/*!
+ * Sequence.js Theme
+ *
+ * Theme Name: Theme Test
+ * Version: 1.0
+ * Theme URL: http://sequencejs.com/themes/theme-test/
+ *
+ * Author: Ian Lunn @IanLunn
+ * Author URL: http://ianlunn.co.uk/
+ *
+ * This theme is made available under a MIT License:
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
+ */#sequence{position:relative;height:400px;width:600px;border:red solid 1px;margin:0 auto}li{list-style:none;margin:0;padding:0}.box{position:absolute;left:-100px;top:20px;border:red solid 1px;width:100px;height:100px;color:red;-webkit-transition-timing-function:linear;transition-timing-function:linear;-webkit-transition-duration:1s;transition-duration:1s}.animate-in .box{left:50%;margin-left:-50px}.animate-out .box{left:100%}

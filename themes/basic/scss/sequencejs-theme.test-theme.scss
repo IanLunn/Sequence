@@ -24,7 +24,13 @@
   margin: 0 auto;
 }
 
-.model {
+li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.box {
   position: absolute;
   left: -100px;
   top: 20px;
@@ -33,72 +39,40 @@
   height: 100px;
   color: red;
   transition-timing-function: linear;
+  transition-duration: 1s;
+  // transition-delay: 1s;
 }
 
-.text {
-  position: absolute;
-  left: -100px;
-  top: 0;
-}
-
-.step1-in {
-  .model1 {
+.animate-in {
+  .box {
     left: 50%;
     margin-left: -50px;
-    transition-duration: .5s;
   }
 }
 
-.step1-out {
-  .model1 {
+.animate-out {
+  .box {
     left: 100%;
-    transition-duration: .5s;
   }
 }
 
-.step2-in {
-  .model2 {
-    left: 50%;
-    margin-left: -50px;
-    transition-duration: .5s;
-  }
-
-  .text {
-    left: 50%;
-    top: 50%;
-    transition-duration: 10s;
-  }
+.animate-in .box1 {
+  // transition-duration: 3s;
+  // transition-delay: .5s;
 }
 
-.step2-out {
-  .model2 {
-    left: 100%;
-    transition-duration: .5s;
-  }
+.animate-out .box1 {
+  // transition-duration: 2s;
+  // transition-delay: .5s;
+
 }
 
-.step3-in {
-  .model3 {
-    left: 50%;
-    margin-left: -50px;
-    transition-duration: 5s;
-  }
-
-  .text {
-    left: 50%;
-    top: 50%;
-  }
+.animate-in .box2 {
+  // transition-duration: 2s;
+  // transition-delay: .5s;
 }
 
-.step3-out {
-  .model3 {
-    left: 100%;
-    transition-duration: .6s;
-  }
-
-  .text {
-    left: -100px;
-    top: 0;
-    transition-duration: 1s;
-  }
+.animate-out .box3 {
+  // transition-duration: 5s;
+  // transition-delay: 2s;
 }

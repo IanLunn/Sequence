@@ -17,20 +17,23 @@
 <body>
   <div id="sequence" class="some-other-class">
 
-    <div class="slider">
-      <div class="slide1 slide">
-
-        <h2 class="title1 title">Built using Sequence.js</h2>
-
-      </div><div class="slide2 slide">
-
-        <h2 class="title2 title">CSS3 Animation Framework</h2>
-
-      </div><div class="slide3 slide">
-
-        <h2 class="title3 title">No JavaScript Knowledge Required</h2>
-      </div>
-    </div>
+    <ul class="canvas">
+      <li class="a">
+        <div class="box box1">
+          Box 1
+        </div>
+      </li>
+      <li class="b">
+        <div class="box box2">
+          Box 2
+        </div>
+      </li>
+      <li class="c animate-in">
+        <div class="box box3">
+          Box 3
+        </div>
+      </li>
+    </ul>
 
   </div>
 
@@ -38,10 +41,7 @@
   <script src="/scripts/third-party/hammer.min.js"></script>
   <script src="/scripts/sequence.js"></script>
   <script>
-    var options = {
-      debug: true
-    }
-    var sequence1 = sequence(document.getElementById("sequence"), 3, options);
+    var sequence = sequence(document.getElementById("sequence"));
   </script>
 </body>
 </html>
