@@ -26,11 +26,11 @@
     startingStepId: 1,             //y
     startingStepAnimatesIn: false, //y
     cycle: true,                   //y
-    phaseThreshold: true,         //y
+    phaseThreshold: false,         //y
 
     reverseAnimationsWhenNavigatingBackwards: true, //y
     reverseEaseWhenNavigatingBackwards: true,       //y
-    moveActiveFrameToTop: true,
+    moveActiveFrameToTop: true,                     //y
     windowLoaded: false,
 
     // Canvas Animation Settings
@@ -50,21 +50,19 @@
     preventReverseSkipping: false, //y
 
     // Next/Prev Button Settings
-    nextButton: false,
-    showNextButtonOnInit: true,
-    prevButton: false,
-    showPrevButtonOnInit: true,
+    nextButton: true,              //y - now true by default
+    prevButton: true,              //y - now true by default
 
     // Pause Settings
-    pauseButton: false,
+    pauseButton: true,
     unpauseDelay: null,
     pauseOnHover: true,
     pauceIcon: false,
-    showPauseButtonOnInit: true,
+    // showPauseButtonOnInit: true,
 
     // Pagination Settings
-    pagination: false,
-    showPaginationOnInit: true,
+    pagination: true,              //
+    // showPaginationOnInit: true,
 
     // Preloader Settings
     preloader: false,
@@ -259,6 +257,55 @@
         self._animation.resetInheritedSpeed(step, "animate-in");
         updateClassList(element, "", "animate-in");
       }
+    }
+  };
+
+  /**
+   * Get the index of a clicked pagination item
+   *
+   * The index is taken from the top level elements witint a pagination
+   * element. This function will iterate through each parent until it
+   * reaches the top level, then get all top level elements and determine
+   * the index of the chosen top level.
+   *
+   * @param {Object} paginationElement - The parent element that pagiation links belong to
+   * @param {Object} target - The parent above the previous target
+   * @param {Object} previousTarget - The element that was previously checked to determine if it was top level
+   */
+  function getPaginationIndex(paginationElement, target, previousTarget) {
+
+    // If we've iterated through too many elements and reached <body>, give up!
+    if(target.localName === "body") {
+      return;
+    }
+
+    // We're at the pagination parent
+    if(paginationElement === target) {
+
+      if(previousTarget !== undefined) {
+
+        // Get the top level element clicked and all top level elements
+        var topLevel = previousTarget;
+        var allTopLevel = paginationElement.getElementsByTagName(topLevel.localName);
+
+        // Count the number of top level elements
+        var i = allTopLevel.length;
+
+        // Which top level element was clicked?
+        while(i--) {
+          if(topLevel === allTopLevel[i]) {
+
+            // One-base the index and return it
+            return i + 1;
+          }
+        }
+      }
+    }
+
+    // Not yet at the pagination parent element, iterate again
+    else{
+      var previousTarget = target;
+      return getPaginationIndex(paginationElement, target.parentNode, previousTarget);
     }
   };
 
@@ -489,6 +536,67 @@
         // TODO: make IE7 compatible
 
         element.parentNode.removeChild(element);
+      }
+    }
+
+    /**
+     * Manage UI elements such as nextButton, prevButton, and pagination
+     */
+    self.ui = {
+
+      // Default UI elements
+      defaultElements: {
+        "nextButton": ".sequence-next",
+        "prevButton": ".sequence-prev",
+        "pagination": ".sequence-pagination",
+        "preloader": ".sequence-preloader"
+      },
+
+      /**
+       * Setup UI elements on Sequence initiation
+       */
+      init: function() {
+
+        // If being used, get the next button(s) and set up the events
+        if(self.options.nextButton !== false) {
+          self.nextButton = this.getElement("nextButton", self.options.nextButton);
+          self.manageEvent.add.button(self.nextButton, self.next);
+        }
+
+        // If being used, get the next button(s) and set up the events
+        if(self.options.prevButton !== false) {
+          self.prevButton = this.getElement("prevButton", self.options.prevButton);
+          self.manageEvent.add.button(self.prevButton, self.prev);
+        }
+
+        // If being used, get the pagination element(s) and set up the events
+        if(self.options.pagination !== false) {
+          self.pagination = this.getElement("pagination", self.options.pagination);
+          self.manageEvent.add.pagination(self.pagination);
+        }
+      },
+
+      /**
+       * Get an UI element
+       */
+      getElement: function(type, option) {
+
+        // TODO - change querySelectorAll to something IE7 compatible
+
+        var element;
+
+        // Get the element being used
+        if(option === true) {
+
+          // Default element
+          element = document.querySelectorAll(this.defaultElements[type]);
+        }else{
+
+          // Custom element
+          element = document.querySelectorAll(option);
+        }
+
+        return element;
       }
     }
 
@@ -1229,6 +1337,59 @@
       add: {
 
         /**
+         * Add next buttons
+         *
+         * @param {Array} elements - The element or elements acting as the next button
+         */
+        button: function(elements, callback) {
+
+          // Count the number of elements being added
+          var elementLength = elements.length;
+
+          // Add a click event for each element
+          for(var i = 0; i < elementLength; i++) {
+            var element = elements[i];
+
+            addEventListener_cb(element, "click", function(e) {
+
+              callback();
+            });
+          }
+        },
+
+        /**
+         * Add pagination
+         *
+         * @param {Array} elements - The element or elements acting as pagination
+         */
+        pagination: function(elements) {
+
+          // Count the number of elements being added
+          var elementLength = elements.length;
+
+          // Add a click event for each element
+          for(var i = 0; i < elementLength; i++) {
+            var element = elements[i];
+
+            addEventListener_cb(element, "click", function(e, element) {
+
+              // Get the ID of the clicked pagination link
+              var id = getPaginationIndex(this, e.target);
+
+              // Go to the clicked pagination ID
+              self.goTo(id);
+            });
+          }
+        },
+
+        /**
+         * Navigate to a step when Sequence is swiped
+         */
+        swipeNavigation: function() {
+
+        },
+
+        /**
          * Navigate to a step when corresponding keys are pressed
          */
         keyNavigation: function() {
@@ -1257,7 +1418,8 @@
         },
 
         /**
-         *
+         * Throttle the window resize event so it only occurs every x amount of
+         * milliseconds, as defined by the resizeThreshold global variable.
          */
         resizeThrottle: function() {
 
@@ -1334,6 +1496,8 @@
       self.animationMap = self._getAnimationMap.init(element);
 
       self.animationMap["stepsAnimating"] = 0;
+
+      self.ui.init();
 
       console.log(self.animationMap);
 
@@ -1418,6 +1582,7 @@
       /**
        * Don't go to a step if:
        *
+       * - ID isn't defined
        * - It doesn't exist
        * - It is already active
        * - navigationSkip isn't allowed and an animation is active
@@ -1426,7 +1591,8 @@
            in a different direction to the one already active
        */
       if(
-        id < 1 || id > self.noOfSteps
+        id === undefined
+        || id < 1 || id > self.noOfSteps
         || id === self.currentStepId
         || (self.options.navigationSkip === false && self.isActive === true)
         || (self.options.navigationSkip === true && self.navigationSkipThresholdActive === true)
@@ -1570,8 +1736,11 @@
 
     /* --- EVENTS --- */
 
-    if(self.options.keyNavigation === true) {
+    if(self.options.swipeNavigation === true) {
+      self.manageEvent.add.swipeNavigation();
+    }
 
+    if(self.options.keyNavigation === true) {
       self.manageEvent.add.keyNavigation();
     }
 
@@ -1593,6 +1762,6 @@
       define(['third-party/hammer.min'], defineSequence);
   }else{
     // browser global
-    global.sequence = defineSequence();
+    global.sequence = defineSequence(Hammer);
   }
 }(this));
