@@ -28,18 +28,7 @@ html {
   overflow: hidden;
   margin: 0;
   padding: 0;
-
-  &.step1 .canvas {
-    transform: translate(0);
-  }
-
-  &.step2 .canvas {
-    transform: translate(-100%, 0);
-  }
-
-  &.step3 .canvas {
-    transform: translate(-200%, 0);
-  }
+  border: red solid 1px;
 
   /* Reset */
   .canvas,
@@ -55,7 +44,7 @@ html {
     width: 100%;
     display: inline;
     white-space: nowrap;
-    transition-duration: 1s;
+    // transition-duration: 1s;
 
     > li {
       display: inline-block;
@@ -69,11 +58,15 @@ html {
     }
   }
 
+  .d {
+    display: block !important;
+  }
+
   .title {
     display: inline-block;
     transform: translate(0, -20px);
-    transition-duration: .5s;
-    transition-delay: 1s;
+    transition-duration: 1s;
+    // transition-delay: 1s;
     opacity: 0;
   }
 

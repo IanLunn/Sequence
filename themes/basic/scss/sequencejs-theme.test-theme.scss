@@ -16,7 +16,8 @@
 
 @import "partials/mixins";
 
-#sequence {
+#sequence,
+#sequence2 {
   position: relative;
   height: 400px;
   width: 600px;
@@ -24,10 +25,12 @@
   margin: 0 auto;
 }
 
-li {
-  list-style: none;
+/* Reset */
+.canvas,
+.canvas > li {
   margin: 0;
   padding: 0;
+  list-style: none;
 }
 
 .box {
@@ -40,7 +43,22 @@ li {
   color: red;
   transition-timing-function: linear;
   transition-duration: 1s;
-  // transition-delay: 1s;
+}
+
+.box4,
+.box5 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-left: -10px;
+  width: 10px;
+  height: 10px;
+  background: blue;
+}
+
+.box5 {
+  top: 100%;
+  margin-top: -10px;
 }
 
 .animate-in {
@@ -48,31 +66,59 @@ li {
     left: 50%;
     margin-left: -50px;
   }
+
+  .box1 {
+    // transition-duration: 3s;
+    // transition-delay: 1s;
+  }
+
+  .box2 {
+    // transition-duration: 2s;
+    // transition-delay: 5s;
+  }
+
+  .box3 {
+    // transition-duration: 3s;
+    // transition-delay: 1s;
+  }
+
+  .box4,
+  .box5 {
+    left: 100%;
+    margin-left: -10px;
+    transition-delay: 1s;
+  }
+
+  .box5 {
+    top: 100%;
+    margin-top: -10px;
+    transition-delay: 2s;
+  }
 }
 
 .animate-out {
   .box {
     left: 100%;
   }
-}
 
-.animate-in .box1 {
-  // transition-duration: 3s;
-  // transition-delay: .5s;
-}
+  .box1 {
+    // transition-duration: 2s;
+    // transition-delay: .5s;
+  }
 
-.animate-out .box1 {
-  // transition-duration: 2s;
-  // transition-delay: .5s;
+  .box2 {
+    // transition-duration: 5s;
+    // transition-delay: 2s;
+  }
 
-}
+  .box3 {
+    // transition-duration: 5s;
+    // transition-delay: 2s;
+  }
 
-.animate-in .box2 {
-  // transition-duration: 2s;
-  // transition-delay: .5s;
-}
-
-.animate-out .box3 {
-  // transition-duration: 5s;
-  // transition-delay: 2s;
+  .box4,
+  .box5 {
+    top: 50%;
+    transition-delay: 1s;
+  }
 }

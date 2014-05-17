@@ -16,7 +16,8 @@
 
 /* prefix declarations */
 
-#sequence {
+#sequence,
+#sequence2 {
   position: relative;
   height: 400px;
   width: 600px;
@@ -24,10 +25,13 @@
   margin: 0 auto;
 }
 
-li {
-  list-style: none;
+/* Reset */
+
+.canvas,
+.canvas > li {
   margin: 0;
   padding: 0;
+  list-style: none;
 }
 
 .box {
@@ -44,11 +48,49 @@ li {
   transition-duration: 1s;
 }
 
+.box4,
+.box5 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-left: -10px;
+  width: 10px;
+  height: 10px;
+  background: blue;
+}
+
+.box5 {
+  top: 100%;
+  margin-top: -10px;
+}
+
 .animate-in .box {
   left: 50%;
   margin-left: -50px;
 }
 
+.animate-in .box4,
+.animate-in .box5 {
+  left: 100%;
+  margin-left: -10px;
+  -webkit-transition-delay: 1s;
+  transition-delay: 1s;
+}
+
+.animate-in .box5 {
+  top: 100%;
+  margin-top: -10px;
+  -webkit-transition-delay: 2s;
+  transition-delay: 2s;
+}
+
 .animate-out .box {
   left: 100%;
+}
+
+.animate-out .box4,
+.animate-out .box5 {
+  top: 50%;
+  -webkit-transition-delay: 1s;
+  transition-delay: 1s;
 }

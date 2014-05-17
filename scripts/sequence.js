@@ -14,25 +14,28 @@
   'use strict';
 
   // See Sequence._animation.domDelay() for an explanation of this
-  var domDelayDuration = 50;
+  var domThreshold = 50;
+
+  // Throttle the window resize event - see self.manageEvent.add.resizeThrottle()
+  var resizeThreshold = 100;
 
   // Default Sequence settings
   var defaults = {
 
     // General Settings
-    startingStepId: 3,             //y
+    startingStepId: 1,             //y
     startingStepAnimatesIn: false, //y
     cycle: true,                   //y
-    phaseThreshold: false,         //y
+    phaseThreshold: true,         //y
 
     reverseAnimationsWhenNavigatingBackwards: true, //y
     reverseEaseWhenNavigatingBackwards: true,       //y
-    preventDelayWhenReversingAnimations: false,     //y
     moveActiveFrameToTop: true,
     windowLoaded: false,
 
     // Canvas Animation Settings
-    autoAnimateCanvas: false,
+    animateCanvas: true,           //y
+    animateCanvasDuration: 500,    //y
 
     // Autoplay Settings
     autoPlay: false,               //y
@@ -42,8 +45,8 @@
     // Navigation Skipping Settings
     navigationSkip: true,          //y
     navigationSkipThreshold: 250,  //y
-    fadeStepWhenSkipped: true,
-    fadeStepTime: 150,             //y
+    fadeStepWhenSkipped: true,     //y
+    fadeStepTime: 500,             //y
     preventReverseSkipping: false, //y
 
     // Next/Prev Button Settings
@@ -120,8 +123,10 @@
    *
    * @param {Object} a - The first object to merge
    * @param {Object} b - The second object to merge (takes precedence)
+   * @api private
    */
   function extend(a, b) {
+
     for(var i in b) {
       a[i] = b[i];
     }
@@ -201,21 +206,61 @@
     return convertedTime;
   }
 
+  /**
+   * Does an element have a particular class?
+   *
+   * @param {Object} el - The element to check
+   * @param {String} name - The name of the class to check for
+   * @return {Boolean}
+   * @api private
+   */
   function hasClass(el, name) {
-    return new RegExp('(\\s|^)'+name+'(\\s|$)').test(el.className);
+    return new RegExp('(\\s|^)' + name + '(\\s|$)').test(el.className);
   }
 
+  /**
+   * Add a class to an element
+   *
+   * @param {Object} el - The element to add a class to
+   * @param {String} name - The class to add
+   * @api private
+   */
   function addClass(el, name) {
     if(!hasClass(el, name)) {
       el.className += (el.className ? ' ': '') + name;
     }
   }
 
+  /**
+   * Remove a class from an element
+   *
+   * @param {Object} el - The element to remove a class from
+   * @param {String} name - The class to remove
+   * @api private
+   */
   function removeClass(el, name) {
     if(hasClass(el, name)) {
-      el.className = el.className.replace(new RegExp('(\\s|^)'+name+'(\\s|$)'),' ').replace(/^\s+|\s+$/g, '');
+      el.className = el.className.replace(new RegExp('(\\s|^)' + name + '(\\s|$)'),' ').replace(/^\s+|\s+$/g, '');
     }
   }
+
+  /**
+   * Remove the no-JS "animate-in" class from a step
+   */
+  function removeNoJsClass(self) {
+
+    // Look for the step with the "animate-in" class and remove the class
+    for(var i = 0; i < self.steps.length; i++) {
+      var element = self.steps[i];
+
+      if((" " + element.className + " ").replace(/[\n\t]/g, " ").indexOf(" animate-in ") > -1) {
+        var step = "step" + (i + 1);
+
+        self._animation.resetInheritedSpeed(step, "animate-in");
+        updateClassList(element, "", "animate-in");
+      }
+    }
+  };
 
   /**
    * Add and/or remove classes to/from an element
@@ -457,7 +502,7 @@
        */
       fadeIn: function(element, duration) {
 
-        if(ModernizrSeq.csstransitions === true) {
+        if(self.transitionsSupported === true) {
 
           element.style.transition = duration + "ms opacity linear";
           element.style.opacity = 1;
@@ -470,15 +515,92 @@
       /**
        * Fade an element out using transitions if they're supported, else use JS
        */
-      fadeOut: function(element, duration) {
+      fadeOut: function(element, duration, callback) {
 
-        if(ModernizrSeq.csstransitions === true) {
+        if(self.transitionsSupported === true) {
 
           element.style.transition = duration + "ms opacity linear";
-          element.style.opacity = 0;
+          element.style.opacity = ".2";
         }else{
 
          // TODO - make the step fade out using JS
+        }
+
+        if(callback !== undefined) {
+          setTimeout(function() {
+            callback();
+          }, duration);
+        }
+
+      },
+
+      /**
+       * Move the canvas to show a specific step
+       *
+       * @param {Number} id - The ID of the step to move to
+       * @param {Boolean} animate - Should the canvas animate or snap?
+       */
+      moveCanvas: function(id, animate) {
+
+        if(self.options.animateCanvas === true) {
+
+          // Get the canvas element and step element to animate to
+          var canvas = self.canvas[0];
+
+          // Get the current step element and its position
+          var step = self.steps[id - 1];
+          var stepX = step.offsetLeft;
+          var stepY = step.offsetTop;
+          var position = stepX + stepY;
+
+          /**
+           * Does the canvas need to animate?
+           *
+           * This is based on the position of the steps. If the next step is in
+           * exactly the same position as the current one, an animation doesn't
+           * need to occur.
+           */
+          if(position !== self.canvasPreviousPosition && self.canvasPreviousPosition !== undefined) {
+
+            var duration = 0;
+
+            // Should the canvas animate?
+            if(animate === true) {
+              duration = self.options.animateCanvasDuration;
+            }
+
+            // Animate the canvas using CSS transitions
+            // Note: translate3d() is used to initiate hardware acceleration
+            if(self.transitionsSupported === true) {
+              canvas.style.transition = duration + "ms transform";
+              canvas.style.transform = "translate3d(-" + stepX + "px, -" + stepY + "px, 0)";
+            }
+
+            // Animate the canvas using JavaScript
+            else{
+              // TODO
+            }
+          }
+
+          // Save the canvas position
+          self.canvasPreviousPosition = position;
+        }
+      },
+
+      /**
+       * If the moveActiveFrameToTop option is being used, move the next step
+       * to the top (via a z-index equivalent to the number of steps), and the
+       * current step to the bottom
+       *
+       * @param {Object} currentStepElement - The current step to be moved off the top
+       * @param {Object} nextStepElement - The next step to be moved to the top
+       */
+      moveActiveFrameToTop: function(currentStepElement, nextStepElement) {
+
+        if(self.options.moveActiveFrameToTop === true) {
+
+          currentStepElement.style.zIndex = 1;
+          nextStepElement.style.zIndex = self.noOfSteps;
         }
       },
 
@@ -486,56 +608,82 @@
        * If the navigationSkipThreshold option is being used, prevent the use
        * of goTo() during the threshold period
        *
-       * @param {Number} id - The id of the step that was skipped
-       * @param {Object} self -
+       * @param {Number} id -
        */
-      manageNavigationSkip: function(id, nextId, self) {
+      manageNavigationSkip: function(id, direction, currentStep, nextStep, nextStepElement) {
 
         var _animation = this;
 
+        // Show the next frame again
+        self._animation.fadeIn(nextStepElement, 0);
+
         if(self.options.navigationSkip === true) {
 
-          if(self.isActive === true) {
+          // Count the number of steps currently animating
+          var activeStepsLength = self.animationMap["stepsAnimating"];
 
+          // Add the steps to the list of active steps
+          self.animationMap[currentStep]["isAnimating"] = true;
+          self.animationMap[nextStep]["isAnimating"] = true;
+          self.animationMap["stepsAnimating"] += 2;
+
+          // Are there steps currently animating that need to be faded out?
+          if(activeStepsLength !== 0) {
+
+            // Start the navigation skip threshold
             self.navigationSkipThresholdActive = true;
-
-            // Zero-base the ID of the skipped step and get the associated element
-            var skippedStepId = id - 1;
-            var skippedStep = self.steps[skippedStepId];
-
-            // Keep note that the element was skipped so we can fade it in again
-            self.steps[skippedStepId]["skipped"] = true;
 
             // Fade a step out if the user navigates to another prior to its
             // animation finishing
             if(self.options.fadeStepWhenSkipped === true) {
-              _animation.fadeOut(skippedStep, self.options.fadeStepTime);
+
+              // Fade all elements that are animating
+              // (not including the current one)
+              for(var i = 1; i <= self.noOfSteps; i++) {
+
+                var step = "step" + i;
+                var stepProperties = self.animationMap[step];
+
+                if(stepProperties.isAnimating === true && i !== id) {
+                  var stepElement = stepProperties.element;
+                  self._animation.stepSkipped(direction, step, stepElement);
+                }
+              }
             }
-
-            //start the navigationSkipThreshold timer to prevent being able to navigate too quickly
-            setTimeout(function() {
-              self.navigationSkipThresholdActive = false;
-            }, self.options.navigationSkipThreshold);
           }
 
-          // If a step was previously hidden, fade it in again
-          nextId = nextId - 1;
-
-          if(self.steps[nextId]["skipped"] === true) {
-            var skippedStep = self.steps[nextId];
-            _animation.fadeIn(skippedStep, self.options.fadeStepTime);
-          }
+          // Start the navigationSkipThreshold timer to prevent being able to
+          // navigate too quickly
+          setTimeout(function() {
+            self.navigationSkipThresholdActive = false;
+          }, self.options.navigationSkipThreshold);
         }
+      },
+
+      /**
+       * Deal with a step when it has been skipped
+       *
+       * @param {Object} element - The step element that was skipped
+       */
+      stepSkipped: function(direction, step, stepElement) {
+
+        var phase = (direction === 1) ? "animate-out": "animate-in";
+
+        // Fade the step out
+        self._animation.fadeOut(stepElement, self.options.fadeStepTime, function() {
+
+          // Stop the skipped element from animating
+          // TODO
+        });
       },
 
       /**
        * Change a step's class. Example: go from step1 to step2
        *
        * @param {Number} id - The ID of the step to change to
-       * @param {Object} self - Variables and methods available to this instance
        * @api public
        */
-      changeStep: function(id, self) {
+      changeStep: function(id) {
 
         // Get the step to add
         var stepToAdd = "step" + id;
@@ -587,7 +735,7 @@
       /**
        * Go forward to the next step
        */
-      forward: function(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, self) {
+      forward: function(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations) {
 
         var _animation = this;
 
@@ -599,14 +747,14 @@
           updateClassList(currentStepElement, "animate-out", "animate-in");
 
           // Make the next step transition to "animate-in"
-          _animation.startAnimateIn(id, 1, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, self);
+          _animation.startAnimateIn(id, 1, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations);
         });
       },
 
       /**
        * Go in reverse to the next step
        */
-      reverse: function(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, self) {
+      reverse: function(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations) {
 
         var _animation = this;
 
@@ -623,14 +771,14 @@
           updateClassList(currentStepElement, "", "animate-in");
 
           // Make the next step transition to "animate-in"
-          _animation.startAnimateIn(id, -1, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, self);
+          _animation.startAnimateIn(id, -1, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations);
         });
       },
 
       /**
        *
        */
-      startAnimateIn: function(id, direction, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, self) {
+      startAnimateIn: function(id, direction, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations) {
 
         // The next ID is now the current ID
         self.currentStepId = id;
@@ -638,51 +786,76 @@
         // Callback
         self.animationStarted(id);
 
+        var currentPhaseDuration = 0;
+        var nextPhaseDuration = 0;
+        var nextPhaseThreshold = 0;
         var stepDurationTotal = 0;
-        var currentPhaseDuration = stepDurations["current-phase"];
-        var nextPhaseDuration = stepDurations["next-phase"];
 
-        // When should the "animate-in" phase start?
-        // How long until the step completely finishes animating?
+        // When should the "animate-in" phase start and how long until the step
+        // completely finishes animating?
         if(self._firstRun === false) {
-          var nextPhaseThreshold = stepDurations["next-phase-threshold"];
-          var stepDurationTotal = stepDurations["step-total"];
-        }
+          currentPhaseDuration = stepDurations["current-phase"]["total"];
+          nextPhaseDuration = stepDurations["next-phase"]["total"];
+          nextPhaseThreshold = stepDurations["next-phase-threshold"];
+          stepDurationTotal = stepDurations["step-total"];
 
-        // Set the first step's speed to 0 to have it immediately snap into place
-        else if(self._firstRun === true && self.options.startingStepAnimatesIn === false) {
-          self._animation.resetInheritedSpeed(nextStep, "animate-in", self);
-          stepDurationTotal = 0;
-        }
-
-        // The first step is animating in - the step duration total is the same
-        // as the next phase's total animation
-        else{
-          stepDurationTotal = stepDurations["next-phase"]["total"];
-        }
-
-        // Start the "animate-in" phase
-        if(self._firstRun === false) {
-
+          // Start the "animate-in" phase
           setTimeout(function() {
             updateClassList(nextStepElement, "animate-in", "animate-out");
           }, nextPhaseThreshold);
-        }else{
+        }
 
-          nextPhaseThreshold = 0;
+        // This is the first run
+        else {
+
+          // Snap the first step into place without animation
+          if(self.options.startingStepAnimatesIn === false) {
+
+            // Set the first step's speed to 0 to have it immediately snap into place
+            self._animation.resetInheritedSpeed(nextStep, "animate-in");
+          }
+
+          // Animate the first step into place
+          else{
+
+            // The step duration total is the same as the next phase's total animation
+            nextPhaseDuration = stepDurations["next-phase"]["total"];
+            stepDurationTotal = nextPhaseDuration;
+          }
+
+          // We're now done with the first run
+          // Add the "animate-in" class to the next step
           self._firstRun = false;
           updateClassList(nextStepElement, "animate-in", "animate-out");
         }
 
-        // Wait for the step to finish animating
-        self._animation.ended(id, stepDurationTotal);
+        // Wait for the current and next phases to end
+        self._animation.phaseEnded(currentPhaseDuration, currentStep, self.currentPhaseEnded);
+        self._animation.phaseEnded(nextPhaseDuration, nextStep, self.nextPhaseEnded);
 
+        // Wait for the step (both phases) to finish animating
+        self._animation.stepEnded(id, stepDurationTotal);
+      },
+
+      /**
+       * When a phase's animations have completely finished
+       */
+      phaseEnded: function(stepDurationTotal, step, callback) {
+
+        setTimeout(function() {
+
+          self.animationMap[step]["isAnimating"] = false;
+          self.animationMap["stepsAnimating"] -= 1;
+
+          // Callback
+          callback();
+        }, stepDurationTotal);
       },
 
       /**
        * When a step's animations have completely finished
        */
-      ended: function(id, stepDurationTotal) {
+      stepEnded: function(id, stepDurationTotal) {
 
         setTimeout(function() {
           self.autoPlay();
@@ -754,12 +927,8 @@
            * position should be given a 2 (3 - 1) second delay to create a perfect
            * reversal of animation.
            *
-           * Note: This delay may be bad for user experience because the
-           * users action wonâ€™t immediately create an on-screen event. If the
-           * developer wants, they can remove the delay with the
-           * preventDelayWhenReversingAnimations option.
            */
-          if(self.options.preventDelayWhenReversingAnimations === false && phaseThreshold !== true) {
+          if(phaseThreshold !== true) {
 
             // Add the delay to whichever element animates for the shortest period
 
@@ -866,7 +1035,7 @@
 
         setTimeout(function() {
           callback();
-        }, domDelayDuration);
+        }, domThreshold);
       },
 
       /**
@@ -947,10 +1116,9 @@
        *
        * @param {String} step - The step that the elements we'll reset belong to
        * @param {String} phase - The next phase "animate-in" or "animate-out"
-       * @param {Object} self - Variables and methods available to this instance
        * @api public
        */
-      resetInheritedSpeed: function(step, phase, self) {
+      resetInheritedSpeed: function(step, phase, x) {
 
         var _animation = this;
 
@@ -986,7 +1154,7 @@
 
             stepProperties.element.style.transition = "";
           }
-        }, domDelayDuration);
+        }, domThreshold);
       },
 
       /**
@@ -1027,7 +1195,7 @@
        * @param {Object} self - Variables and methods available to this instance
        * @return {Number} direction - The direction 1 or -1
        */
-      getDirection: function(id, direction, self) {
+      getDirection: function(id, direction) {
 
         var _animation = this;
 
@@ -1060,6 +1228,9 @@
 
       add: {
 
+        /**
+         * Navigate to a step when corresponding keys are pressed
+         */
         keyNavigation: function() {
 
           addEventListener_cb(window, "keydown", function(e) {
@@ -1083,12 +1254,57 @@
               break;
             }
           });
+        },
+
+        /**
+         *
+         */
+        resizeThrottle: function() {
+
+          // Events to be executed when the throttled window resize occurs
+          function throttledEvents() {
+
+            /**
+             * Snap to the currently active step
+             *
+             * Assume the canvas is laid out in a 2 x 2 grid, the Sequence
+             * element has a height of 100%, and the user is viewing the second
+             * row of steps -- when the user resizes the window, the second row
+             * of steps will no longer be positioned perfectly in the window.
+             * This event will immediately snap the canvas back into place.
+             */
+            self._animation.moveCanvas(self.currentStepId, false);
+
+            // Callback
+            self.throttledResize();
+          }
+
+          /**
+           * Throttle the resize event to only execute throttledEvents() every
+           * 100ms. This is so not too many events occur during a resize. The
+           * threshold can be changed using the resizeThreshold global variable.
+           */
+          var throttleTimer;
+          addEventListener_cb(window, "resize", function(e) {
+
+            clearTimeout(throttleTimer);
+            throttleTimer = setTimeout(throttledEvents, resizeThreshold);
+          });
         }
 
       },
 
       remove: {
 
+        keyNavigation: function() {
+
+          // TODO
+        },
+
+        resizeThrottle: function() {
+
+          // TODO
+        }
       }
     }
 
@@ -1099,24 +1315,6 @@
      * @api public
      */
     self._init = function(element) {
-
-      /**
-       * Remove the no-JS "animate-in" class from a step
-       */
-      var removeNoJsClass = function(self) {
-
-        // Look for the step with the "animate-in" class and remove the class
-        for(var i = 0; i < self.steps.length; i++) {
-          var element = self.steps[i];
-
-          if((" " + element.className + " ").replace(/[\n\t]/g, " ").indexOf(" animate-in ") > -1) {
-            var step = "step" + (i + 1);
-
-            self._animation.resetInheritedSpeed(step, "animate-in", self);
-            updateClassList(element, "", "animate-in");
-          }
-        }
-      };
 
       // Get the element Sequence is attached to, the canvas and it's steps
       self.element = element;
@@ -1129,14 +1327,20 @@
       // Get number of steps
       self.noOfSteps = self.steps.length;
 
+      // Are transitions supported?
+      self.transitionsSupported = ModernizrSeq.csstransitions;
+
       // Get Sequence's animation map (which elements will animate and their timings)
       self.animationMap = self._getAnimationMap.init(element);
+
+      self.animationMap["stepsAnimating"] = 0;
 
       console.log(self.animationMap);
 
       // Remove the no-JS "animate-in" class from a step
       removeNoJsClass(self);
 
+      // On the first run, we need to treat the animation a little differently
       self._firstRun = true;
 
       // Get the first step's ID
@@ -1154,12 +1358,15 @@
       // Get the previous step
       var prevStep = "step" + self.currentStepId;
 
+      // Keep track of which elements are animating
+      self.elementsAnimating = [];
+
       // Go to the first step
       self.goTo(id, self.options.autoPlayDirection, true);
 
       // Snap the previous step into position
       self._animation.domDelay(function() {
-        self._animation.resetInheritedSpeed(prevStep, "animate-out", self);
+        self._animation.resetInheritedSpeed(prevStep, "animate-out");
       });
     }
 
@@ -1206,7 +1413,7 @@
     self.goTo = function(id, direction, ignorePhaseThreshold) {
 
       // Get the direction to navigate if one wasn't specified
-      direction = self._animation.getDirection(id, direction, self);
+      direction = self._animation.getDirection(id, direction);
 
       /**
        * Don't go to a step if:
@@ -1228,13 +1435,6 @@
         return false;
       }
 
-      // Determine how often goTo() can be used based on navigationSkipThreshold
-      // and manage step fading accordingly
-      self._animation.manageNavigationSkip(self.currentStepId, id, self);
-
-      // Sequence is now animating
-      self.isActive = true;
-
       // Save the latest direction
       self.direction = direction;
 
@@ -1246,27 +1446,38 @@
       }
 
       // Get the next and current steps, and their elements
-      var nextStep = "step" + id;
       var currentStep = "step" + self.currentStepId;
-      var nextStepElement = self.animationMap[nextStep].element;
+      var nextStep = "step" + id;
       var currentStepElement = self.animationMap[currentStep].element;
+      var nextStepElement = self.animationMap[nextStep].element;
+
+      // Move the active frame to the top (via a higher z-index)
+      self._animation.moveActiveFrameToTop(currentStepElement, nextStepElement);
+
+      // Determine how often goTo() can be used based on navigationSkipThreshold
+      // and manage step fading accordingly
+      self._animation.manageNavigationSkip(id, direction, currentStep, nextStep, nextStepElement);
+
+      // Sequence is now animating
+      self.isActive = true;
 
       // Change the step number on the Sequence element
-      self._animation.changeStep(id, self);
+      self._animation.changeStep(id);
+
+      // Animate the canvas
+      self._animation.moveCanvas(id, true);
 
       // Reset the next step's elements durations to 0ms so it can be snapped into place
-      self._animation.resetInheritedSpeed(nextStep, "animate-out", self);
+      self._animation.resetInheritedSpeed(nextStep, "animate-out");
 
       // Determine how long the phases will last for, as well as the total length of the step
       var stepDurations = self._animation.getStepDurations(id, nextStep, currentStep, direction);
 
-      console.log(stepDurations)
-
       // Are we moving the phases forward or in reverse?
       if(direction === 1) {
-        self._animation.forward(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, self);
+        self._animation.forward(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations);
       }else{
-        self._animation.reverse(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, self);
+        self._animation.reverse(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations);
       }
     }
 
@@ -1295,7 +1506,7 @@
     }
 
     /**
-     * Destroy an instance of Sequence :(
+     * Destroy an instance of Sequence
      *
      * @return {Boolean}
      * @api public
@@ -1309,7 +1520,7 @@
     /**
      * Callback executed when a step animation starts
      *
-     * @param {Object} self - all available public variables/methods
+     * @param {Object} self - Variables and methods available to this instance
      * @api public
      */
     self.animationStarted = function(id) {
@@ -1320,14 +1531,36 @@
     /**
      * Callback executed when a step animation finishes
      *
-     * @param {Object} self - all available public variables/methods
+     * @param {Object} self - Variables and methods available to this instance
      * @api public
      */
     self.animationFinished = function(id) {
 
-      console.log("finished", id);
+      // console.log("finished", id);
     }
 
+    /**
+     *
+     */
+    self.currentPhaseEnded = function() {
+
+      // console.log("currentended")
+    }
+
+    /**
+     *
+     */
+    self.nextPhaseEnded = function() {
+
+      // console.log("nextended")
+    }
+
+    /**
+     * When the throttled window resize event occurs
+     */
+    self.throttledResize = function() {
+
+    }
 
     // Set up an instance of Sequence
     self._init(element, options);
@@ -1340,6 +1573,10 @@
     if(self.options.keyNavigation === true) {
 
       self.manageEvent.add.keyNavigation();
+    }
+
+    if(self.options.animateCanvas === true) {
+      self.manageEvent.add.resizeThrottle();
     }
 
     // Expose this instances public variables and methods
