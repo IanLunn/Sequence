@@ -58,11 +58,9 @@
     unpauseDelay: null,
     pauseOnHover: true,
     pauceIcon: false,
-    // showPauseButtonOnInit: true,
 
     // Pagination Settings
-    pagination: true,              //
-    // showPaginationOnInit: true,
+    pagination: true,              //y - now true by default
 
     // Preloader Settings
     preloader: false,
@@ -88,17 +86,16 @@
     },
 
     // Touch Swipe Settings
-  	swipeNavigation: true,
-    swipeThreshold: 20,
-    swipePreventsDefault: false,
-    swipeEvents: {
+  	swipeNavigation: true,                 //y
+    swipeEvents: {                         //y
       left: function(self) {self.prev()},
       right: function(self) {self.next()},
       up: false,
       down: false
     },
+    swipeHammerOptions: {},                //y
 
-  	//hashTags Settings
+  	// HashTags Settings
     //when using hashTags, please include a reference to Ben Alman's jQuery HashChange plugin above your reference to Sequence.js
 
     //info: http://benalman.com/projects/jquery-hashchange-plugin/
@@ -1387,6 +1384,41 @@
          */
         swipeNavigation: function() {
 
+          Hammer(self.element, self.options.swipeHammerOptions).on("dragleft dragright release", function(e) {
+
+            switch(e.type) {
+
+                // Prevent the browser scrolling will dragging left and right
+              case "dragleft":
+              case "dragright":
+                e.gesture.preventDefault();
+              break;
+
+              // Execute a swipe event when the user releases their finger
+              case "release":
+
+                switch(e.gesture.direction) {
+
+                  case "left":
+                    self.options.swipeEvents.left(self);
+                  break;
+
+                  case "right":
+                    self.options.swipeEvents.right(self);
+                  break;
+
+                  case "up":
+                    self.options.swipeEvents.up(self);
+                  break;
+
+                  case "down":
+                    self.options.swipeEvents.down(self);
+                  break;
+                }
+
+              break;
+            }
+          });
         },
 
         /**
@@ -1564,6 +1596,15 @@
       }
 
       self.goTo(prevStepId);
+    }
+
+    /**
+     * Stop Sequence's autoPlay feature
+     *
+     * @api public
+     */
+    self.pause = function() {
+
     }
 
     /**
