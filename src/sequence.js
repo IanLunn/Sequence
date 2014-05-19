@@ -54,10 +54,9 @@
     prevButton: true,              //y - now true by default
 
     // Pause Settings
-    pauseButton: true,
-    unpauseDelay: null,
-    pauseOnHover: true,
-    pauceIcon: false,
+    pauseButton: true,             //y - now true by default
+    unpauseThreshold: null,        //y
+    pauseOnHover: true,            //y
 
     // Pagination Settings
     pagination: true,              //y - now true by default
@@ -373,6 +372,9 @@
         // Where we'll save the animations
         this.animationMap = {};
 
+        // Where we'll save how many steps are animating
+        this.animationMap["stepsAnimating"] = 0;
+
         // Initiate each Sequence step on the cloned Sequence
         this.steps();
 
@@ -543,34 +545,11 @@
 
       // Default UI elements
       defaultElements: {
-        "nextButton": ".sequence-next",
-        "prevButton": ".sequence-prev",
-        "pagination": ".sequence-pagination",
-        "preloader": ".sequence-preloader"
-      },
-
-      /**
-       * Setup UI elements on Sequence initiation
-       */
-      init: function() {
-
-        // If being used, get the next button(s) and set up the events
-        if(self.options.nextButton !== false) {
-          self.nextButton = this.getElement("nextButton", self.options.nextButton);
-          self.manageEvent.add.button(self.nextButton, self.next);
-        }
-
-        // If being used, get the next button(s) and set up the events
-        if(self.options.prevButton !== false) {
-          self.prevButton = this.getElement("prevButton", self.options.prevButton);
-          self.manageEvent.add.button(self.prevButton, self.prev);
-        }
-
-        // If being used, get the pagination element(s) and set up the events
-        if(self.options.pagination !== false) {
-          self.pagination = this.getElement("pagination", self.options.pagination);
-          self.manageEvent.add.pagination(self.pagination);
-        }
+        "nextButton" : ".sequence-next",
+        "prevButton" : ".sequence-prev",
+        "pauseButton": ".sequence-pause",
+        "pagination" : ".sequence-pagination",
+        "preloader"  : ".sequence-preloader"
       },
 
       /**
@@ -594,6 +573,100 @@
         }
 
         return element;
+      }
+    }
+
+    /**
+     * Methods relating to autoPlay.
+     */
+    self._autoPlay = {
+
+      /**
+       * Start or restart autoPlay only if autoPlay is enabled and Sequence isn't
+       * currently paused.
+       */
+      init: function() {
+
+        if(self.options.autoPlay === true && self.isPaused === false) {
+          this.start();
+        }
+      },
+
+      /**
+       * Unpause autoPlay
+       */
+      unpause: function() {
+
+        if(self.isPaused === true) {
+
+          self.isPaused = false;
+          this.start();
+
+          removeClass(self.element, "paused");
+
+          // Callback
+          self.unpaused();
+        }
+      },
+
+      /**
+       * Pause autoPlay
+       */
+      pause: function() {
+
+        if(self.isPaused === false) {
+
+          self.isPaused = true;
+          this.stop();
+
+          addClass(self.element, "paused");
+
+          // Callback
+          self.paused();
+        }
+      },
+
+      /**
+       * Start autoPlay
+       */
+      start: function() {
+
+        var threshold;
+
+        // How long to wait before autoPlay should start?
+        if(self.isPaused === false) {
+          threshold = self.options.autoPlayThreshold;
+        }else{
+          threshold = self.options.unpauseThreshold;
+        }
+
+        // autoPlay is now active
+        self.isAutoPlaying = true;
+        self.options.autoPlay = true;
+
+        // Clear the previous autoPlayTimer
+        clearTimeout(self.autoPlayTimer);
+
+        // Choose the direction and start autoPlay
+        self.autoPlayTimer = setTimeout(function() {
+
+          if(self.options.autoPlayDirection === 1) {
+            self.next();
+          }else{
+            self.prev();
+          }
+        }, threshold);
+      },
+
+      /**
+       * Stop autoPlay
+       */
+      stop: function() {
+
+        self.isAutoPlaying = false;
+        self.options.autoPlay = false;
+
+        clearTimeout(self.autoPlayTimer);
       }
     }
 
@@ -963,7 +1036,7 @@
       stepEnded: function(id, stepDurationTotal) {
 
         setTimeout(function() {
-          self.autoPlay();
+          self._autoPlay.init();
 
           self.isActive = false;
 
@@ -1331,6 +1404,51 @@
      */
     self.manageEvent = {
 
+      /**
+       * Set up events on init
+       */
+      init: function() {
+
+        if(self.options.swipeNavigation === true) {
+          self.manageEvent.add.swipeNavigation();
+        }
+
+        if(self.options.keyNavigation === true) {
+          self.manageEvent.add.keyNavigation();
+        }
+
+        if(self.options.animateCanvas === true) {
+          self.manageEvent.add.resizeThrottle();
+        }
+
+        // If being used, get the next button(s) and set up the events
+        if(self.options.nextButton !== false) {
+          self.nextButton = self.ui.getElement("nextButton", self.options.nextButton);
+          self.manageEvent.add.button(self.nextButton, self.next);
+        }
+
+        // If being used, get the next button(s) and set up the events
+        if(self.options.prevButton !== false) {
+          self.prevButton = self.ui.getElement("prevButton", self.options.prevButton);
+          self.manageEvent.add.button(self.prevButton, self.prev);
+        }
+
+        // If being used, get the pause button(s) and set up the events
+        if(self.options.pauseButton !== false) {
+          self.pauseButton = self.ui.getElement("pauseButton", self.options.pauseButton);
+          self.manageEvent.add.button(self.pauseButton, self.togglePause);
+        }
+
+        // If being used, set up the pauseOnHover event
+        self.manageEvent.add.pauseOnHover();
+
+        // If being used, get the pagination element(s) and set up the events
+        if(self.options.pagination !== false) {
+          self.pagination = self.ui.getElement("pagination", self.options.pagination);
+          self.manageEvent.add.pagination(self.pagination);
+        }
+      },
+
       add: {
 
         /**
@@ -1380,6 +1498,84 @@
         },
 
         /**
+         * Pause and unpause autoPlay when the user's cursor enters and leaves
+         * the Sequence element accordingly.
+         *
+         * Note: autoPlay will be paused only when the cursor is inside the
+         * boundaries of the Sequence element, either on the element itself or
+         * its children. Child elements overflowing the Sequence element will
+         * not cause Sequence to be paused.
+         */
+        pauseOnHover: function() {
+
+          /**
+           * Determine if the cursor is inside the boundaries of the Sequence
+           * element.
+           *
+           * @param {Object} element - The Sequence element
+           * @param {Object} cursor - The event holding cursor properties
+           */
+          var insideElement = function(element, cursor) {
+
+            // Get the boundaries of the Sequence element
+            var elementLeft = element.offsetLeft;
+            var elementRight = elementLeft + element.clientWidth;
+            var elementTop = element.offsetTop;
+            var elementBottom = elementTop + element.clientHeight;
+
+            // Return true if inside the boundaries of the Sequence element
+            if(cursor.clientX >= elementLeft && cursor.clientX <= elementRight && cursor.clientY >= elementTop && cursor.clientY <= elementBottom) {
+              return true;
+            }else{
+              return false;
+            }
+          }
+
+          var previouslyInside = false;
+
+          /**
+           * Pause autoPlay only when the cursor is inside the boundaries of the
+           * Sequence element
+           */
+          addEventListener_cb(self.element, "mousemove", function(e) {
+
+            // Is the cursor inside the Sequence element?
+            if(insideElement(this, e) === true) {
+
+              // Pause if the cursor was previously outside the Sequence element
+              if(previouslyInside === false && self.options.pauseOnHover === true) {
+                self._autoPlay.pause();
+              }
+
+              // We're now inside the Sequence element
+              previouslyInside = true;
+            }else{
+
+              // Unpause if the cursor was previously inside the Sequence element
+              if(previouslyInside === true && self.isHardPaused === false && self.options.pauseOnHover === true) {
+                self._autoPlay.unpause();
+              }
+
+              // We're now outside the Sequence element
+              previouslyInside = false;
+            }
+          });
+
+          /**
+           * Unpause autoPlay when the cursor leaves the Sequence element
+           */
+          addEventListener_cb(self.element, "mouseleave", function(e) {
+            if(self.isHardPaused === false && self.options.pauseOnHover === true) {
+              self._autoPlay.unpause();
+            }
+
+            // We're now outside the Sequence element
+            previouslyInside = false;
+          });
+
+        },
+
+        /**
          * Navigate to a step when Sequence is swiped
          */
         swipeNavigation: function() {
@@ -1408,11 +1604,15 @@
                   break;
 
                   case "up":
-                    self.options.swipeEvents.up(self);
+                    if(self.options.swipeEvents.up !== false) {
+                      self.options.swipeEvents.up(self);
+                    }
                   break;
 
                   case "down":
-                    self.options.swipeEvents.down(self);
+                    if(self.options.swipeEvents.down !== false) {
+                      self.options.swipeEvents.down(self);
+                    }
                   break;
                 }
 
@@ -1527,11 +1727,15 @@
       // Get Sequence's animation map (which elements will animate and their timings)
       self.animationMap = self._getAnimationMap.init(element);
 
-      self.animationMap["stepsAnimating"] = 0;
+      // Set up events
+      self.manageEvent.init();
 
-      self.ui.init();
+      //
+      self.isAutoPlaying = false;
+      self.isPaused = (self.options.autoPlay === true) ? false: true;
+      self.isHardPaused = self.isPaused;
 
-      console.log(self.animationMap);
+      self.options.unpauseThreshold = (self.options.unpauseThreshold === null) ? self.options.autoPlayThreshold : self.options.unpauseThreshold;
 
       // Remove the no-JS "animate-in" class from a step
       removeNoJsClass(self);
@@ -1557,6 +1761,11 @@
       // Keep track of which elements are animating
       self.elementsAnimating = [];
 
+      // Callback
+      if(self.options.autoPlay === true) {
+        self.unpaused();
+      }
+
       // Go to the first step
       self.goTo(id, self.options.autoPlayDirection, true);
 
@@ -1564,6 +1773,16 @@
       self._animation.domDelay(function() {
         self._animation.resetInheritedSpeed(prevStep, "animate-out");
       });
+    }
+
+    /**
+     * Destroy an instance of Sequence
+     *
+     * @return {Boolean}
+     * @api public
+     */
+    self.destroy = function() {
+
     }
 
     /**
@@ -1599,12 +1818,51 @@
     }
 
     /**
+     * Stop and start Sequence's autoPlay feature
+     *
+     * @api public
+     */
+    self.togglePause = function() {
+
+      // Pause autoPlay
+      if(self.isPaused === false) {
+
+        self.pause();
+      }
+
+      // Unpause autoPlay
+      else{
+
+        self.unpause();
+      }
+    }
+
+    /**
      * Stop Sequence's autoPlay feature
+     *
+     * isPaused = autoPlay is paused by Sequence and expects to be unpaused in
+     * the future. For example: when the user hovers over the Sequence element.
+     *
+     * isHardPaused = autoPlay is paused by the user via a pause button or
+     * public method. For example: whent the user presses a pause button.
      *
      * @api public
      */
     self.pause = function() {
 
+      self.isHardPaused = true;
+      self._autoPlay.pause();
+    }
+
+    /**
+     * Start Sequence's autoPlay feature
+     *
+     * @api public
+     */
+    self.unpause = function() {
+
+      self.isHardPaused = false;
+      self._autoPlay.unpause();
     }
 
     /**
@@ -1688,41 +1946,21 @@
       }
     }
 
-    /**
-     * Cause Sequence to continously change steps after a certain period of time
-     * has passed after a steps animations have ended. The period of time is
-     * defined using the autoPlayThreshold option.
-     *
-     * autoPlay in the options must be set to true.
-     *
-     * @api public
-     */
-    self.autoPlay = function() {
-
-      if(self.options.autoPlay === true) {
-
-        self.autoPlayTimer = setTimeout(function() {
-
-          if(self.options.autoPlayDirection === 1) {
-            self.next();
-          }else{
-            self.prev();
-          }
-        }, self.options.autoPlayThreshold);
-      }
-    }
-
-    /**
-     * Destroy an instance of Sequence
-     *
-     * @return {Boolean}
-     * @api public
-     */
-    self.destroy = function() {
-
-    }
-
     /* --- CALLBACKS --- */
+
+    /**
+     * Callback executed when autoPlay is paused
+     */
+    self.paused = function() {
+
+    }
+
+    /**
+     * Callback executed when autoPlay is unpaused
+     */
+    self.unpaused = function() {
+
+    }
 
     /**
      * Callback executed when a step animation starts
@@ -1771,23 +2009,6 @@
 
     // Set up an instance of Sequence
     self._init(element, options);
-
-
-
-
-    /* --- EVENTS --- */
-
-    if(self.options.swipeNavigation === true) {
-      self.manageEvent.add.swipeNavigation();
-    }
-
-    if(self.options.keyNavigation === true) {
-      self.manageEvent.add.keyNavigation();
-    }
-
-    if(self.options.animateCanvas === true) {
-      self.manageEvent.add.resizeThrottle();
-    }
 
     // Expose this instances public variables and methods
     return self;

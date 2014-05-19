@@ -16,7 +16,7 @@
 </head>
 <body>
   <button class="sequence-prev">Prev</button>
-  <button class="sequence-pause">Pause</button>
+  <button class="sequence-pause">Unpause</button>
   <button class="sequence-next">Next</button>
 
   <div class="sequence-pagination">
@@ -42,8 +42,8 @@
         <div class="box box3">
           Box 3
 
-          <div class="box box4"></div>
-          <div class="box box5"></div>
+          <!-- <div class="box box4"></div> -->
+          <!-- <div class="box box5"></div> -->
         </div>
 
         <!-- <div class="box box6">
@@ -90,7 +90,7 @@ Morbi pharetra felis vitae rutrum porttitor. In vel luctus leo. Aliquam odio tur
 
 Praesent et accumsan neque. Suspendisse potenti. Vivamus blandit ullamcorper diam et vulputate. Vivamus tortor dui, tempor ullamcorper leo sed, aliquam pellentesque tellus. Integer varius urna arcu, in rhoncus massa tempor eu. Morbi ut nibh nisi. Donec euismod neque velit, eu porta enim aliquet a. Phasellus at dolor lacus. Nunc dignissim orci faucibus metus convallis ornare.
 
-Nam tristique felis id elit posuere, at dictum nisi pharetra. Nunc tincidunt odio consectetur eleifend euismod. Fusce iaculis risus vel nunc euismod, eu lacinia sem tincidunt. Curabitur in consectetur eros. Fusce fringilla convallis mi id eleifend. Maecenas dictum nulla tortor, ut aliquam dolor sollicitudin a. Nam sagittis dignissim scelerisque. 
+Nam tristique felis id elit posuere, at dictum nisi pharetra. Nunc tincidunt odio consectetur eleifend euismod. Fusce iaculis risus vel nunc euismod, eu lacinia sem tincidunt. Curabitur in consectetur eros. Fusce fringilla convallis mi id eleifend. Maecenas dictum nulla tortor, ut aliquam dolor sollicitudin a. Nam sagittis dignissim scelerisque.
 
   <script src="../../scripts/third-party/modernizr.min.js"></script>
   <script src="../../scripts/third-party/hammer.min.js"></script>
@@ -102,6 +102,16 @@ Nam tristique felis id elit posuere, at dictum nisi pharetra. Nunc tincidunt odi
       pagination: true
     }
     var sequence = sequence(document.getElementById("sequence"), options);
+
+    // sequence.unpaused = function() {
+    //
+    //     sequence.pauseButton[0].innerHTML = "Pause";
+    // }
+    //
+    // sequence.paused = function() {
+    //
+    //   sequence.pauseButton[0].innerHTML = "Unpause";
+    // }
   </script>
 </body>
 </html>
