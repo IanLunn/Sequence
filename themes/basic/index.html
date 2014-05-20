@@ -27,19 +27,19 @@
 
   <div id="sequence" class="some-other-class">
     <ul class="sequence-canvas">
-      <li class="a">
+      <li>
         <div class="box box1">
           <a href="#1">Box 1</a>
           <img src="images/model1.png" />
         </div>
       </li>
-      <li class="b">
+      <li>
         <div class="box box2">
           <a href="#2">Box 2</a>
           <img src="images/model2.png" />
         </div>
       </li>
-      <li class="c animate-in">
+      <li class="animate-in">
         <div class="box box3">
           <a href="#3">Box 3</a>
 
@@ -54,10 +54,7 @@
 
       </li>
     </ul>
-
   </div>
-
-
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. In ac velit non leo egestas suscipit a nec lacus. Morbi sodales elementum leo. Nam erat turpis, condimentum sed porta congue, accumsan quis magna. Vivamus et magna adipiscing, congue urna non, pellentesque nunc. Nullam tempor mauris sed lorem facilisis, et vulputate lorem feugiat. Vivamus et felis sit amet nulla mattis aliquam. In velit tortor, placerat vel posuere quis, facilisis a metus. Proin porta, enim vitae tristique auctor, sapien eros porttitor odio, ut molestie libero orci non enim. Duis blandit neque est, ac lacinia turpis aliquet quis. Quisque hendrerit consequat nunc eu posuere. Pellentesque congue felis ut neque tristique rutrum. Fusce iaculis facilisis ipsum eu congue. Nunc congue in quam vitae lacinia.
 
@@ -103,13 +100,13 @@ Nam tristique felis id elit posuere, at dictum nisi pharetra. Nunc tincidunt odi
       prevButton: true,
       pagination: true
     }
-    var sequence = sequence(document.getElementById("sequence"), options);
+    var sequence1 = sequence(document.getElementById("sequence"), options);
 
-    sequence.unpaused = function() {
+    sequence1.unpaused = function() {
       sequence.pauseButton[0].innerHTML = "Pause";
     }
 
-    sequence.paused = function() {
+    sequence1.paused = function() {
       sequence.pauseButton[0].innerHTML = "Unpause";
     }
   </script>

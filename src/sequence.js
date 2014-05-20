@@ -32,7 +32,6 @@
     startingStepAnimatesIn: false, //y
     cycle: true,                   //y
     phaseThreshold: false,         //y
-
     reverseAnimationsWhenNavigatingBackwards: true, //y
     reverseEaseWhenNavigatingBackwards: true,       //y
     moveActiveFrameToTop: true,                     //y
@@ -116,7 +115,7 @@
   }
 
   /**
-   *
+   * Is an object an array?
    */
   function isArray(object) {
 
@@ -144,47 +143,77 @@
     return a;
   }
 
-  /*
+
+  /**
    * Cross Browser helper to addEventListener
-   * Source: https://gist.github.com/eduardocereto/955642
+   * Source: http://ejohn.org/projects/flexible-javascript-events/
    *
-   * @param {HTMLElement} obj - The Element to attach event to.
-   * @param {string} evt - The event that will trigger the binded function.
-   * @param {function(event)} fnc - The function to bind to the element.
-   * @return {boolean} - true if it was successfuly binded.
+   * @param {Object} obj - The Element to attach event to.
+   * @param {String} type - The event that will trigger the binded function.
+   * @param {Function} fn - The function to bind to the element.
    */
-  function addEventListener_cb(obj, evt, fnc) {
+  function addEvent(obj, type, fn) {
+    if(obj.attachEvent === true) {
 
-    // W3C model
-    if(obj.addEventListener) {
-      obj.addEventListener(evt, fnc, false);
-      return true;
+      obj['e'+type+fn] = fn;
+      obj[type+fn] = function(){obj['e'+type+fn]( window.event );}
+      obj.attachEvent('on'+type, obj[type+fn]);
+    }else{
+      obj.addEventListener(type, fn, false);
     }
 
-    // Microsoft model
-    else if(obj.attachEvent) {
-      return obj.attachEvent("on" + evt, fnc);
+    return fn;
+  }
+
+  /**
+   * Cross Browser helper to removeEventListener
+   * Source: http://ejohn.org/projects/flexible-javascript-events/
+   *
+   * @param {Object} obj - The element to remove the event from.
+   * @param {string} type - The event to remove from the element.
+   * @param {Function} fn - The function to remove from the the element.
+   */
+  function removeEvent( obj, type, fn ) {
+    if(obj.detachEvent === true) {
+
+      obj.detachEvent('on'+type, obj[type+fn]);
+      obj[type+fn] = null;
+    }else{
+      obj.removeEventListener(type, fn, false);
+    }
+  }
+
+  /**
+   *
+   */
+  function getElementsByClassName(node, classname) {
+
+    // Use native implementation if available
+    if(node.getElementsByClassName === true) {
+      return node.getElementsByClassName(classname);
     }
 
-    // Browser don't support W3C or MSFT model, go on with traditional
-    else {
-      evt = "on" + evt;
-      if(typeof obj[evt] === "function") {
+    // Browser doesn't support getElementsByClassName
+    else{
+      return(function getElementsByClass(searchClass,node) {
+        if(node === null)
+          node = document;
+          var classElements = [],
+              els = node.getElementsByTagName("*"),
+              elsLen = els.length,
+              pattern = new RegExp("(^|\\s)"+searchClass+"(\\s|$)"), i, j;
 
-        // Object already has a function on traditional
-        // Let's wrap it with our own function inside another function
-        fnc = (function(f1,f2) {
-          return function() {
-            f1.apply(this,arguments);
-            f2.apply(this,arguments);
+        for(i = 0, j = 0; i < elsLen; i++) {
+
+          if(pattern.test(els[i].className)) {
+            classElements[j] = els[i];
+            j++;
           }
-        })(obj[evt], fnc);
-      }
-      obj[evt] = fnc;
-      return true;
-    }
+        }
 
-    return false;
+        return classElements;
+      })(classname, node);
+    }
   }
 
   /**
@@ -341,6 +370,34 @@
   }
 
   /**
+   * Get Sequence's steps
+   *
+   * @return {Array} steps - The elements that make up Sequence's steps
+   * @api private
+   */
+  var getSteps = function(parent) {
+
+    var steps = [];
+
+    // Get all of Sequence's elements and count them
+    var elements = parent[0].getElementsByTagName("*");
+    var elementsLength = elements.length;
+
+    // Get the elements that have a parent with a class of "sequence-canvas"
+    for(var i = 0; i < elementsLength; i++) {
+
+      var element = elements[i];
+      var parent = element.parentNode;
+
+      if(hasClass(parent, "sequence-canvas") === true) {
+        steps.push(element);
+      }
+    }
+
+    return steps;
+  }
+
+  /**
    * Constructor
    *
    * @param {Object} element - the element Sequence is bound to
@@ -379,8 +436,8 @@
         // Clone Sequence so it can be quickly forced through each step
         // and get the canvas and each step
         this.clonedSequence = this.createClone(element);
-        this.clonedCanvas = this.clonedSequence.querySelectorAll(".sequence-canvas");
-        this.clonedSteps = this.clonedSequence.querySelectorAll(".sequence-canvas > li");
+        this.clonedCanvas = getElementsByClassName(self.element, "sequence-canvas");
+        this.clonedSteps = getSteps(this.clonedCanvas);
 
         // Get any non-animation class names applied to Sequence
         this.originalClasses = this.clonedSequence.className;
@@ -1704,6 +1761,17 @@
      */
     self.manageEvent = {
 
+      // Keep track of the added events here
+      list: {
+        "load": [],
+        "click": [],
+        "mousemove": [],
+        "mouseleave": [],
+        "Hammer": [],
+        "keydown": [],
+        "resize": []
+      },
+
       /**
        * Set up events on init
        */
@@ -1751,6 +1819,24 @@
         }
       },
 
+      /**
+       * Remove an event from all of the elements it is attached to
+       *
+       * @param{String} type - The type of event to move eg. "click"
+       */
+      remove: function(type) {
+
+        // Get the elements using the event and count them
+        var eventElements = self.manageEvent.list[type];
+        var eventElementsLength = eventElements.length;
+
+        // Remove the event from each element
+        for(var i = 0; i < eventElementsLength; i++) {
+          var eventProperties = eventElements[i];
+          removeEvent(eventProperties.element, type, eventProperties.handler);
+        }
+      },
+
       add: {
 
         /**
@@ -1758,9 +1844,11 @@
          */
         windowLoad: function() {
 
-          addEventListener_cb(window, "load", function() {
+          var handler = addEvent(window, "load", function() {
             windowLoaded = true;
           });
+
+          self.manageEvent.list["load"].push({"element": window, "handler": handler});
         },
 
         /**
@@ -1771,16 +1859,19 @@
         button: function(elements, callback) {
 
           // Count the number of elements being added
-          var elementLength = elements.length;
+          var elementLength = elements.length,
+              handler,
+              element;
 
           // Add a click event for each element
           for(var i = 0; i < elementLength; i++) {
-            var element = elements[i];
+            element = elements[i];
 
-            addEventListener_cb(element, "click", function(e) {
-
+            handler = addEvent(element, "click", function(e) {
               callback();
             });
+
+            self.manageEvent.list["click"].push({"element": element, "handler": handler});
           }
         },
 
@@ -1792,13 +1883,15 @@
         pagination: function(elements) {
 
           // Count the number of elements being added
-          var elementLength = elements.length;
+          var elementLength = elements.length,
+              handler,
+              element;
 
           // Add a click event for each element
           for(var i = 0; i < elementLength; i++) {
-            var element = elements[i];
+            element = elements[i];
 
-            addEventListener_cb(element, "click", function(e, element) {
+            handler = addEvent(element, "click", function(e, element) {
 
               // Get the ID of the clicked pagination link
               var id = getPaginationIndex(this, e.target);
@@ -1806,6 +1899,8 @@
               // Go to the clicked pagination ID
               self.goTo(id);
             });
+
+            self.manageEvent.list["click"].push({"element": element, "handler": handler});
           }
         },
 
@@ -1843,13 +1938,14 @@
             }
           }
 
-          var previouslyInside = false;
+          var previouslyInside = false,
+              handler;
 
           /**
            * Pause autoPlay only when the cursor is inside the boundaries of the
            * Sequence element
            */
-          addEventListener_cb(self.element, "mousemove", function(e) {
+          handler = addEvent(self.element, "mousemove", function(e) {
 
             // Is the cursor inside the Sequence element?
             if(insideElement(this, e) === true) {
@@ -1873,10 +1969,12 @@
             }
           });
 
+          self.manageEvent.list["mousemove"].push({"element": self.element, "handler": handler});
+
           /**
            * Unpause autoPlay when the cursor leaves the Sequence element
            */
-          addEventListener_cb(self.element, "mouseleave", function(e) {
+          handler = addEvent(self.element, "mouseleave", function(e) {
             if(self.isHardPaused === false && self.options.pauseOnHover === true) {
               self._autoPlay.unpause();
             }
@@ -1885,6 +1983,7 @@
             previouslyInside = false;
           });
 
+          self.manageEvent.list["mouseleave"].push({"element": self.element, "handler": handler});
         },
 
         /**
@@ -1892,7 +1991,7 @@
          */
         swipeNavigation: function() {
 
-          Hammer(self.element, self.options.swipeHammerOptions).on("dragleft dragright release", function(e) {
+          var handler = function(e) {
 
             switch(e.type) {
 
@@ -1930,7 +2029,11 @@
 
               break;
             }
-          });
+          };
+
+          Hammer(self.element, self.options.swipeHammerOptions).on("dragleft dragright release", handler);
+
+          self.manageEvent.list["Hammer"].push({"element": self.element, "handler": handler});
         },
 
         /**
@@ -1938,7 +2041,7 @@
          */
         keyNavigation: function() {
 
-          addEventListener_cb(window, "keydown", function(e) {
+          var handler = addEvent(window, "keydown", function(e) {
 
             // Get the key pressed
             var keyCodeChar = parseInt(String.fromCharCode(e.keyCode));
@@ -1959,6 +2062,8 @@
               break;
             }
           });
+
+          self.manageEvent.list["keydown"].push({"element": window, "handler": handler});
         },
 
         /**
@@ -1990,26 +2095,16 @@
            * 100ms. This is so not too many events occur during a resize. The
            * threshold can be changed using the resizeThreshold global variable.
            */
-          var throttleTimer;
-          addEventListener_cb(window, "resize", function(e) {
+          var throttleTimer,
+              handler;
+
+          handler = addEvent(window, "resize", function(e) {
 
             clearTimeout(throttleTimer);
             throttleTimer = setTimeout(throttledEvents, resizeThreshold);
           });
-        }
 
-      },
-
-      remove: {
-
-        keyNavigation: function() {
-
-          // TODO
-        },
-
-        resizeThrottle: function() {
-
-          // TODO
+          self.manageEvent.list["resize"].push({"element": window, "handler": handler});
         }
       }
     }
@@ -2018,14 +2113,14 @@
      * Set up an instance of Sequence
      *
      * @param {Object} element - The element Sequence is attached to
-     * @api public
+     * @api private
      */
     self._init = function(element) {
 
       // Get the element Sequence is attached to, the canvas and it's steps
       self.element = element;
-      self.canvas = element.querySelectorAll(".sequence-canvas");
-      self.steps = element.querySelectorAll(".sequence-canvas > li");
+      self.canvas = getElementsByClassName(self.element, "sequence-canvas");
+      self.steps = getSteps(self.canvas);
 
       // Get number of steps
       self.noOfSteps = self.steps.length;
@@ -2323,7 +2418,7 @@
      */
     self.preloaded = function() {
 
-      console.log("preloaded");
+      // console.log("preloaded");
     }
 
     /**
@@ -2336,8 +2431,8 @@
      */
     self.preloadProgress = function(result, src, progress, length) {
 
-      console.log( "image is " + result + " for " + src );
-      console.log("progress: " + progress + " of " + length);
+      // console.log( "image is " + result + " for " + src );
+      // console.log("progress: " + progress + " of " + length);
     }
 
     // Merge developer options with defaults
