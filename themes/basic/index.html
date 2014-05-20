@@ -26,21 +26,22 @@
   </div>
 
   <div id="sequence" class="some-other-class">
-
-    <ul class="canvas">
+    <ul class="sequence-canvas">
       <li class="a">
         <div class="box box1">
-          Box 1
+          <a href="#1">Box 1</a>
+          <img src="images/model1.png" />
         </div>
       </li>
       <li class="b">
         <div class="box box2">
-          Box 2
+          <a href="#2">Box 2</a>
+          <img src="images/model2.png" />
         </div>
       </li>
       <li class="c animate-in">
         <div class="box box3">
-          Box 3
+          <a href="#3">Box 3</a>
 
           <!-- <div class="box box4"></div> -->
           <!-- <div class="box box5"></div> -->
@@ -93,6 +94,7 @@ Praesent et accumsan neque. Suspendisse potenti. Vivamus blandit ullamcorper dia
 Nam tristique felis id elit posuere, at dictum nisi pharetra. Nunc tincidunt odio consectetur eleifend euismod. Fusce iaculis risus vel nunc euismod, eu lacinia sem tincidunt. Curabitur in consectetur eros. Fusce fringilla convallis mi id eleifend. Maecenas dictum nulla tortor, ut aliquam dolor sollicitudin a. Nam sagittis dignissim scelerisque.
 
   <script src="../../scripts/third-party/modernizr.min.js"></script>
+  <script src="../../scripts/third-party/imagesloaded.pkgd.min.js"></script>
   <script src="../../scripts/third-party/hammer.min.js"></script>
   <script src="../../scripts/sequence.js"></script>
   <script>
@@ -103,15 +105,13 @@ Nam tristique felis id elit posuere, at dictum nisi pharetra. Nunc tincidunt odi
     }
     var sequence = sequence(document.getElementById("sequence"), options);
 
-    // sequence.unpaused = function() {
-    //
-    //     sequence.pauseButton[0].innerHTML = "Pause";
-    // }
-    //
-    // sequence.paused = function() {
-    //
-    //   sequence.pauseButton[0].innerHTML = "Unpause";
-    // }
+    sequence.unpaused = function() {
+      sequence.pauseButton[0].innerHTML = "Pause";
+    }
+
+    sequence.paused = function() {
+      sequence.pauseButton[0].innerHTML = "Unpause";
+    }
   </script>
 </body>
 </html>

@@ -9,7 +9,7 @@
  * @copyright IanLunn
  */
 
-;(function (global) { function defineSequence(Hammer) {
+;(function (global) { function defineSequence(ModernizrSeq, imagesLoaded, Hammer) {
 
   'use strict';
 
@@ -18,6 +18,11 @@
 
   // Throttle the window resize event - see self.manageEvent.add.resizeThrottle()
   var resizeThreshold = 100;
+
+  // Sequence will only load when the window load event completes. If you're
+  // initiating Sequence after the window load event has already completed, set
+  // windowLoaded to true in the options (self.options.windowLoaded = true)
+  var windowLoaded = false;
 
   // Default Sequence settings
   var defaults = {
@@ -50,31 +55,30 @@
     preventReverseSkipping: false, //y
 
     // Next/Prev Button Settings
-    nextButton: true,              //y - now true by default
-    prevButton: true,              //y - now true by default
+    nextButton: true,                     //y - now true by default
+    prevButton: true,                     //y - now true by default
 
     // Pause Settings
-    pauseButton: true,             //y - now true by default
-    unpauseThreshold: null,        //y
-    pauseOnHover: true,            //y
+    pauseButton: true,                    //y - now true by default
+    unpauseThreshold: null,               //y
+    pauseOnHover: true,                   //y
 
     // Pagination Settings
-    pagination: true,              //y - now true by default
+    pagination: true,                     //y - now true by default
 
     // Preloader Settings
-    preloader: false,
-    preloadTheseFrames: [1],
-    preloadTheseImages: [
+    preloader: true,                      //y
+    preloadTheseSteps: [1],               //y
+    preloadTheseImages: [                 //y
+      "images/model2.png",
+      "images/model3.png",
     	/**
        * Example usage
        * "images/catEatingSalad.jpg",
        * "images/meDressedAsBatman.png"
        */
     ],
-    hideFramesUntilPreloaded: true,
-    prependPreloadingComplete: true,
-    hidePreloaderUsingCSS: true,
-    hidePreloaderDelay: 0,
+    hideStepsUntilPreloaded: true,        //y
 
     // Keyboard Settings
     keyNavigation: true,                  //y
@@ -108,6 +112,18 @@
     fallback: {
       theme: "slide",
       speed: 500
+    }
+  }
+
+  /**
+   *
+   */
+  function isArray(object) {
+
+    if( Object.prototype.toString.call( object ) === '[object Array]' ) {
+      return true;
+    }else{
+      return false;
     }
   }
 
@@ -363,8 +379,8 @@
         // Clone Sequence so it can be quickly forced through each step
         // and get the canvas and each step
         this.clonedSequence = this.createClone(element);
-        this.clonedCanvas = this.clonedSequence.querySelectorAll(".canvas");
-        this.clonedSteps = this.clonedSequence.querySelectorAll(".canvas > li");
+        this.clonedCanvas = this.clonedSequence.querySelectorAll(".sequence-canvas");
+        this.clonedSteps = this.clonedSequence.querySelectorAll(".sequence-canvas > li");
 
         // Get any non-animation class names applied to Sequence
         this.originalClasses = this.clonedSequence.className;
@@ -541,7 +557,7 @@
     /**
      * Manage UI elements such as nextButton, prevButton, and pagination
      */
-    self.ui = {
+    self._ui = {
 
       // Default UI elements
       defaultElements: {
@@ -573,7 +589,43 @@
         }
 
         return element;
-      }
+      },
+
+      /**
+       * Fade an element in using transitions if they're supported, else use JS
+       */
+      show: function(element, duration) {
+
+        if(self.transitionsSupported === true) {
+
+          element.style.transition = duration + "ms opacity linear";
+          element.style.opacity = 1;
+        }else{
+
+         // TODO - make the step fade out using JS
+        }
+      },
+
+      /**
+       * Fade an element out using transitions if they're supported, else use JS
+       */
+      hide: function(element, duration, callback) {
+
+        if(self.transitionsSupported === true) {
+
+          element.style.transition = duration + "ms opacity linear";
+          element.style.opacity = ".2";
+        }else{
+
+         // TODO - make the step fade out using JS
+        }
+
+        if(callback !== undefined) {
+          setTimeout(function() {
+            callback();
+          }, duration);
+        }
+      },
     }
 
     /**
@@ -586,6 +638,13 @@
        * currently paused.
        */
       init: function() {
+
+        //
+        self.isAutoPlaying = false;
+        self.isPaused = (self.options.autoPlay === true) ? false: true;
+        self.isHardPaused = self.isPaused;
+
+        self.options.unpauseThreshold = (self.options.unpauseThreshold === null) ? self.options.autoPlayThreshold : self.options.unpauseThreshold;
 
         if(self.options.autoPlay === true && self.isPaused === false) {
           this.start();
@@ -676,43 +735,6 @@
     self._animation = {
 
       /**
-       * Fade an element in using transitions if they're supported, else use JS
-       */
-      fadeIn: function(element, duration) {
-
-        if(self.transitionsSupported === true) {
-
-          element.style.transition = duration + "ms opacity linear";
-          element.style.opacity = 1;
-        }else{
-
-         // TODO - make the step fade out using JS
-        }
-      },
-
-      /**
-       * Fade an element out using transitions if they're supported, else use JS
-       */
-      fadeOut: function(element, duration, callback) {
-
-        if(self.transitionsSupported === true) {
-
-          element.style.transition = duration + "ms opacity linear";
-          element.style.opacity = ".2";
-        }else{
-
-         // TODO - make the step fade out using JS
-        }
-
-        if(callback !== undefined) {
-          setTimeout(function() {
-            callback();
-          }, duration);
-        }
-
-      },
-
-      /**
        * Move the canvas to show a specific step
        *
        * @param {Number} id - The ID of the step to move to
@@ -793,7 +815,7 @@
         var _animation = this;
 
         // Show the next frame again
-        self._animation.fadeIn(nextStepElement, 0);
+        self._ui.show(nextStepElement, 0);
 
         if(self.options.navigationSkip === true) {
 
@@ -848,7 +870,7 @@
         var phase = (direction === 1) ? "animate-out": "animate-in";
 
         // Fade the step out
-        self._animation.fadeOut(stepElement, self.options.fadeStepTime, function() {
+        self._ui.hide(stepElement, self.options.fadeStepTime, function() {
 
           // Stop the skipped element from animating
           // TODO
@@ -1296,7 +1318,7 @@
        * @param {String} phase - The next phase "animate-in" or "animate-out"
        * @api public
        */
-      resetInheritedSpeed: function(step, phase, x) {
+      resetInheritedSpeed: function(step, phase) {
 
         var _animation = this;
 
@@ -1400,6 +1422,284 @@
     }
 
     /**
+     * Manage Sequence preloading
+     */
+    self._preload = {
+
+      /**
+       * Setup Sequence preloading
+       */
+      init: function(callback) {
+
+        var _preload = this;
+
+        if(self.options.preloader !== false) {
+
+          // Add a class of "sequence-preloading" to the Sequence element
+          addClass(self.element, "sequence-preloading");
+
+          // Get the preloader
+          self.preloader = self._ui.getElement("preloader", self.options.preloader);
+
+          // Add the preloader element if necessary
+          _preload.append();
+
+          // Add the preloader's default styles
+          _preload.addStyles();
+
+          // Hide steps if necessary
+          _preload.hideAndShowSteps("hide");
+
+          // Get images from particular Sequence steps to be preloaded
+          // Get images with specific source values to be preloaded
+        	var stepImagesToPreload = this.saveImagesToArray(self.options.preloadTheseSteps);
+          var individualImagesToPreload = this.saveImagesToArray(self.options.preloadTheseImages, true);
+
+          // Combine step images and individual images
+          var imagesToPreload = stepImagesToPreload.concat(individualImagesToPreload);
+
+          // Initiate the imagesLoaded plugin
+          var imgLoad = imagesLoaded(imagesToPreload);
+
+          // When imagesLoaded() has finished (regardless of whether images
+          // completed or failed to load)
+          imgLoad.on("always", function(instance) {
+            _preload.complete(callback);
+          });
+
+          // Track the number of images that have loaded so far
+          var progress = 1;
+
+          imgLoad.on("progress", function( instance, image ) {
+
+            // Has the image loaded or is it broken?
+            var result = image.isLoaded ? 'loaded' : 'broken';
+
+            // Callback
+            self.preloadProgress(result, image.img.src, progress++, imagesToPreload.length);
+          });
+        }
+      },
+
+      /**
+       * When preloading has finished, show the steps again and hide the preloader
+       */
+      complete: function(callback) {
+
+        // Callback
+        self.preloaded();
+
+        // Show steps if necessary
+        this.hideAndShowSteps("show");
+
+        // Remove the "preloading" class and add the "preloaded" class
+        removeClass(self.element, "sequence-preloading");
+        addClass(self.element, "sequence-preloaded");
+
+        // Hide the preloader
+        this.hide();
+
+        callback();
+      },
+
+      /**
+       * Sequence's default preloader styles and animation for the preloader icon
+       */
+      defaultStyles: '.sequence-preloader {position: absolute;z-index: 9999;height: 100%;width: 100%;}.sequence-preloader .preload .circle {position: relative;top: -50%;display: inline-block;height: 12px;width: 12px;fill: #ff9442;animation: preload 1s infinite;}.preload {position: relative;top: 50%;display: block;height: 12px;width: 48px;margin: -6px auto 0 auto;}.preload-complete {opacity: 0;visibility: hidden;'+ModernizrSeq.prefixed("transition")+': .5s;}.preload.fallback .circle {float: left;margin-right: 4px;background-color: #ff9442;border-radius: 6px;}',
+
+      /**
+       * Add the preloader's styles to the <head></head>
+       */
+      addStyles: function() {
+
+        if(self.options.preloader === true) {
+
+          // Get the <head> and create the <style> element
+          var head = document.head || document.getElementsByTagName('head')[0];
+          this.styleElement = document.createElement('style');
+
+          // Add the default styles to the <style> element
+          this.styleElement.type = 'text/css';
+          if(this.styleElement.styleSheet) {
+            this.styleElement.styleSheet.cssText = this.defaultStyles;
+          }else{
+            this.styleElement.appendChild(document.createTextNode(this.defaultStyles));
+          }
+
+          // Add the <style> element to the <head>
+          head.appendChild(this.styleElement);
+
+          // Animate the preloader using JavaScript if the browser doesn't support SVG
+          if(ModernizrSeq.svg === false) {
+
+            // Get the preload indicator
+            var preloadIndicator = self.preloader.firstChild;
+
+            // Make the preload indicator fade in and out
+            this.preloadIndicatorTimer = setInterval(function() {
+              self._ui.hide(preloadIndicator, 500, function() {
+                self._ui.show(preloadIndicator, 500);
+              });
+            }, 1000);
+          }
+        }
+      },
+
+      /**
+       * Remove the preloader's styles from the <head></head>
+       */
+      removeStyles: function() {
+
+        this.styleElement.parentNode.removeChild(this.styleElement);
+      },
+
+      /**
+       * Get <img> elements and return them to be preloaded. Elements can be got
+       * either via the <img> element itself or a src attribute.
+       *
+       * @param {Number} images - The <img> elements or image src attributes to save
+       * @param {Boolean} srcOnly - Is the element to be retrieved via the src?
+       * @return {Array} imagesToPreload - The images to preload
+       */
+      saveImagesToArray: function(images, srcOnly) {
+
+        // Where we'll save the images
+      	var imagesToPreload = [];
+
+        // If there aren't any images, return an empty array
+        if(isArray(images) === false) {
+          return imagesToPreload;
+        }
+
+        // Count the number of images
+        var imageLength = images.length;
+
+        // Get each step's <img> elements and add them to imagesToPreload
+        if(srcOnly !== true) {
+
+          // Get each step
+          for(var i = 0; i < imageLength; i++) {
+
+            // Get the step and any images belonging to it
+            var step = self.steps[i];
+            var imagesInStep = step.getElementsByTagName("img");
+            var imagesInStepLength = imagesInStep.length;
+
+            // Get each image within the step
+            for(var j = 0; j < imagesInStepLength; j++) {
+
+              var image = imagesInStep[j];
+              imagesToPreload.push(image);
+            }
+          }
+        }
+
+        // Get each step's <img> elements via the src and add them to imagesToPreload
+        else{
+
+          var img = [];
+
+          for(var i = 0; i < imageLength; i++) {
+            var src = images[i];
+
+            img[i] = new Image();
+            img[i].src = src;
+
+            imagesToPreload.push(img[i]);
+          }
+        }
+
+        return imagesToPreload;
+      },
+
+      /**
+       * Hide the preloader using CSS transitions if supported, else use JavaScript
+       */
+      hide: function() {
+
+        var _preload = this;
+
+        if(self.transitionsSupported === true) {
+          addClass(self.preloader, "preload-complete");
+        }else{
+          self._ui.hide(self.preloader, 500);
+        }
+
+        // Stop the preload inidcator fading in/out (for non-SVG browsers only)
+        clearInterval(this.preloadIndicatorTimer);
+
+        // Remove the preloader once it has been hidden
+        setTimeout(function() {
+          _preload.remove();
+        }, 500);
+      },
+
+      /**
+       * Append the default preloader
+       */
+      append: function() {
+
+        if(self.options.preloader === true && self.preloader.length === 0) {
+
+          // Set up the preloader container
+          self.preloader = document.createElement("div");
+          self.preloader.className = "sequence-preloader";
+
+          self.preloader = [self.preloader];
+
+          // Use the SVG preloader
+          if(ModernizrSeq.svg === true) {
+
+            self.preloader[0].innerHTML = '<svg class="preload" xmlns="http://www.w3.org/2000/svg"><circle class="circle" cx="6" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" repeatCount="indefinite" /></circle><circle class="circle" cx="22" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" begin="150ms" repeatCount="indefinite" /></circle><circle class="circle" cx="38" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" begin="300ms" repeatCount="indefinite" /></circle></svg>';
+          }
+
+          // Use the Non-SVG preloader
+          else{
+
+            self.preloader[0].innerHTML = '<div class="preload fallback"><div class="circle"></div><div class="circle"></div><div class="circle"></div></div>';
+          }
+
+          // Add the preloader
+          self.element.insertBefore(self.preloader[0], null);
+        }
+      },
+
+      /**
+       * Remove the preloader
+       */
+      remove: function() {
+
+        self.preloader[0].parentNode.removeChild(self.preloader[0]);
+
+        // If using the default preloader, remove its styles
+        if(self.options.preloader === true) {
+          this.removeStyles();
+        }
+      },
+
+      /**
+       * If enabled, hide/show Sequence steps until preloading has finished
+       */
+      hideAndShowSteps: function(type) {
+
+        if(self.options.hideStepsUntilPreloaded === true && self.preloader.length !== 0) {
+
+          // Hide or show each step
+          for(var i = 0; i < self.noOfSteps; i++) {
+            var step = self.steps[i];
+
+            if(type === "hide") {
+              self._ui.hide(step, 0);
+            }else{
+              self._ui.show(step, 0);
+            }
+
+          }
+        }
+      }
+    }
+
+    /**
      * Add and remove Sequence events
      */
     self.manageEvent = {
@@ -1409,47 +1709,59 @@
        */
       init: function() {
 
+        this.add.windowLoad();
+
         if(self.options.swipeNavigation === true) {
-          self.manageEvent.add.swipeNavigation();
+          this.add.swipeNavigation();
         }
 
         if(self.options.keyNavigation === true) {
-          self.manageEvent.add.keyNavigation();
+          this.add.keyNavigation();
         }
 
         if(self.options.animateCanvas === true) {
-          self.manageEvent.add.resizeThrottle();
+          this.add.resizeThrottle();
         }
 
         // If being used, get the next button(s) and set up the events
         if(self.options.nextButton !== false) {
-          self.nextButton = self.ui.getElement("nextButton", self.options.nextButton);
-          self.manageEvent.add.button(self.nextButton, self.next);
+          self.nextButton = self._ui.getElement("nextButton", self.options.nextButton);
+          this.add.button(self.nextButton, self.next);
         }
 
         // If being used, get the next button(s) and set up the events
         if(self.options.prevButton !== false) {
-          self.prevButton = self.ui.getElement("prevButton", self.options.prevButton);
-          self.manageEvent.add.button(self.prevButton, self.prev);
+          self.prevButton = self._ui.getElement("prevButton", self.options.prevButton);
+          this.add.button(self.prevButton, self.prev);
         }
 
         // If being used, get the pause button(s) and set up the events
         if(self.options.pauseButton !== false) {
-          self.pauseButton = self.ui.getElement("pauseButton", self.options.pauseButton);
-          self.manageEvent.add.button(self.pauseButton, self.togglePause);
+          self.pauseButton = self._ui.getElement("pauseButton", self.options.pauseButton);
+          this.add.button(self.pauseButton, self.togglePause);
         }
 
         // If being used, set up the pauseOnHover event
-        self.manageEvent.add.pauseOnHover();
+        this.add.pauseOnHover();
 
         // If being used, get the pagination element(s) and set up the events
         if(self.options.pagination !== false) {
-          self.pagination = self.ui.getElement("pagination", self.options.pagination);
-          self.manageEvent.add.pagination(self.pagination);
+          self.pagination = self._ui.getElement("pagination", self.options.pagination);
+          this.add.pagination(self.pagination);
         }
       },
 
       add: {
+
+        /**
+         * Determine if the window has loaded
+         */
+        windowLoad: function() {
+
+          addEventListener_cb(window, "load", function() {
+            windowLoaded = true;
+          });
+        },
 
         /**
          * Add next buttons
@@ -1712,11 +2024,8 @@
 
       // Get the element Sequence is attached to, the canvas and it's steps
       self.element = element;
-      self.canvas = element.querySelectorAll(".canvas");
-      self.steps = element.querySelectorAll(".canvas > li");
-
-      // Merge developer options with defaults
-      self.options = extend(defaults, options);
+      self.canvas = element.querySelectorAll(".sequence-canvas");
+      self.steps = element.querySelectorAll(".sequence-canvas > li");
 
       // Get number of steps
       self.noOfSteps = self.steps.length;
@@ -1730,12 +2039,8 @@
       // Set up events
       self.manageEvent.init();
 
-      //
-      self.isAutoPlaying = false;
-      self.isPaused = (self.options.autoPlay === true) ? false: true;
-      self.isHardPaused = self.isPaused;
-
-      self.options.unpauseThreshold = (self.options.unpauseThreshold === null) ? self.options.autoPlayThreshold : self.options.unpauseThreshold;
+      // Set up autoPlay
+      self._autoPlay.init();
 
       // Remove the no-JS "animate-in" class from a step
       removeNoJsClass(self);
@@ -1761,18 +2066,30 @@
       // Keep track of which elements are animating
       self.elementsAnimating = [];
 
-      // Callback
-      if(self.options.autoPlay === true) {
-        self.unpaused();
+      var goToFirstStep = function() {
+
+        // Callback
+        if(self.options.autoPlay === true) {
+          self.unpaused();
+        }
+
+        // Go to the first step
+        self.goTo(id, self.options.autoPlayDirection, true);
+
+        // Snap the previous step into position
+        self._animation.domDelay(function() {
+          self._animation.resetInheritedSpeed(prevStep, "animate-out");
+        });
       }
 
-      // Go to the first step
-      self.goTo(id, self.options.autoPlayDirection, true);
-
-      // Snap the previous step into position
-      self._animation.domDelay(function() {
-        self._animation.resetInheritedSpeed(prevStep, "animate-out");
-      });
+      // Set up preloading if required, then go to the first step
+      if(self.options.preloader !== false) {
+        self._preload.init(function() {
+          goToFirstStep();
+        });
+      }else{
+        goToFirstStep();
+      }
     }
 
     /**
@@ -1824,15 +2141,9 @@
      */
     self.togglePause = function() {
 
-      // Pause autoPlay
       if(self.isPaused === false) {
-
         self.pause();
-      }
-
-      // Unpause autoPlay
-      else{
-
+      }else{
         self.unpause();
       }
     }
@@ -2007,6 +2318,41 @@
 
     }
 
+    /**
+     * Callback executed when preloading has finished
+     */
+    self.preloaded = function() {
+
+      console.log("preloaded");
+    }
+
+    /**
+     * Callback executed every time an image to be preloaded returns a status
+     *
+     * @param {String} result - Whether the image is "loaded" or "broken"
+     * @param {String} src - The source of the image
+     * @param {Number} progress - The number of images that have returned a result
+     * @param {Number} length - The total number of images that are being preloaded
+     */
+    self.preloadProgress = function(result, src, progress, length) {
+
+      console.log( "image is " + result + " for " + src );
+      console.log("progress: " + progress + " of " + length);
+    }
+
+    // Merge developer options with defaults
+    self.options = extend(defaults, options);
+
+    /**
+     * Useful for integration with js module loaders (e.g. requireJS)
+     * where window.load may have fired prior to this script executing.
+     * Should be used with care. Modernizr normally likes to execute in
+     * the <head> tags.
+     */
+    if(self.options.windowLoaded === true) {
+      windowLoaded = self.options.windowLoaded;
+    }
+
     // Set up an instance of Sequence
     self._init(element, options);
 
@@ -2021,9 +2367,9 @@
 
   } if(typeof define === 'function' && define.amd) {
       // amd anonymous module registration
-      define(['third-party/hammer.min'], defineSequence);
+      define(['third-party/modernizr.min'], ['third-party/imagesloaded.pkgd.min'], ['third-party/hammer.min'], defineSequence);
   }else{
     // browser global
-    global.sequence = defineSequence(Hammer);
+    global.sequence = defineSequence(ModernizrSeq, imagesLoaded, Hammer);
   }
 }(this));

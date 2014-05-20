@@ -16,8 +16,7 @@
 
 /* prefix declarations */
 
-#sequence,
-#sequence2 {
+#sequence {
   position: relative;
   height: 400px;
   width: 600px;
@@ -27,8 +26,8 @@
 
 /* Reset */
 
-.canvas,
-.canvas > li {
+.sequence-canvas,
+.sequence-canvas > li {
   margin: 0;
   padding: 0;
   list-style: none;
