@@ -27,31 +27,24 @@
 
   <div id="sequence" class="some-other-class">
     <ul class="sequence-canvas">
-      <li>
+      <li id="first" data-sequence-hashtag="one">
         <div class="box box1">
           <a href="#1">Box 1</a>
-          <img src="images/model1.png" />
+          <!-- <div class="box box4"></div> -->
         </div>
       </li>
-      <li>
+      <li id="second" data-sequence-hashtag="two">
         <div class="box box2">
           <a href="#2">Box 2</a>
-          <img src="images/model2.png" />
         </div>
       </li>
-      <li class="animate-in">
+      <li id="third" class="animate-in" data-sequence-hashtag="three">
         <div class="box box3">
           <a href="#3">Box 3</a>
 
           <!-- <div class="box box4"></div> -->
           <!-- <div class="box box5"></div> -->
         </div>
-
-        <!-- <div class="box box6">
-          Box 6
-        </div> -->
-
-
       </li>
     </ul>
   </div>
@@ -98,9 +91,13 @@ Nam tristique felis id elit posuere, at dictum nisi pharetra. Nunc tincidunt odi
     var options = {
       nextButton: true,
       prevButton: true,
-      pagination: true
+      pagination: true,
+      startingStepId: 3
     }
-    var sequence1 = sequence(document.getElementById("sequence"), options);
+
+    var hi = document.getElementById("sequence");
+
+    var sequence1 = sequence(hi, options);
 
     sequence1.unpaused = function() {
       sequence.pauseButton[0].innerHTML = "Pause";

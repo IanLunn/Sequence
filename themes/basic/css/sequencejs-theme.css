@@ -72,6 +72,8 @@
 .animate-in .box5 {
   left: 100%;
   margin-left: -10px;
+  -webkit-transition-duration: 1s;
+  transition-duration: 1s;
 }
 
 .animate-in .box5 {
@@ -86,4 +88,6 @@
 .animate-out .box4,
 .animate-out .box5 {
   top: 50%;
+  -webkit-transition-delay: 1s;
+  transition-delay: 1s;
 }

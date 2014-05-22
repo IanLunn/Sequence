@@ -28,30 +28,29 @@
   var defaults = {
 
     // General Settings
-    startingStepId: 1,             //y
-    startingStepAnimatesIn: false, //y
-    cycle: true,                   //y
-    phaseThreshold: false,         //y
-    reverseAnimationsWhenNavigatingBackwards: true, //y
-    reverseEaseWhenNavigatingBackwards: true,       //y
-    moveActiveFrameToTop: true,                     //y
+    startingStepId: 1,                    //y
+    startingStepAnimatesIn: false,        //y
+    cycle: true,                          //y
+    phaseThreshold: false,                //y
+    reverseWhenNavigatingBackwards: true, //y
+    moveActiveFrameToTop: true,           //y
     windowLoaded: false,
 
     // Canvas Animation Settings
-    animateCanvas: true,           //y
-    animateCanvasDuration: 500,    //y
+    animateCanvas: true,                  //y
+    animateCanvasDuration: 500,           //y
 
     // Autoplay Settings
-    autoPlay: false,               //y
-    autoPlayDirection: 1,          //y
-    autoPlayThreshold: 3000,       //y
+    autoPlay: false,                      //y
+    autoPlayDirection: 1,                 //y
+    autoPlayThreshold: 3000,              //y
 
     // Navigation Skipping Settings
-    navigationSkip: true,          //y
-    navigationSkipThreshold: 250,  //y
-    fadeStepWhenSkipped: true,     //y
-    fadeStepTime: 500,             //y
-    preventReverseSkipping: false, //y
+    navigationSkip: true,                 //y
+    navigationSkipThreshold: 250,         //y
+    fadeStepWhenSkipped: true,            //y
+    fadeStepTime: 500,                    //y
+    preventReverseSkipping: false,        //y
 
     // Next/Prev Button Settings
     nextButton: true,                     //y - now true by default
@@ -66,29 +65,30 @@
     pagination: true,                     //y - now true by default
 
     // Preloader Settings
-    preloader: true,                      //y
+    preloader: false,                     //y
     preloadTheseSteps: [1],               //y
     preloadTheseImages: [                 //y
-      "images/model2.png",
-      "images/model3.png",
     	/**
        * Example usage
        * "images/catEatingSalad.jpg",
-       * "images/meDressedAsBatman.png"
+       * "images/grandmaDressedAsBatman.png"
        */
     ],
     hideStepsUntilPreloaded: true,        //y
 
     // Keyboard Settings
     keyNavigation: true,                  //y
+    keyNavigationGlobal: false,
     numericKeysGoToFrames: true,          //y
   	keyEvents: {                          //y
       left: function(self) {self.prev()},
       right: function(self) {self.next()}
     },
 
-    // Touch Swipe Settings
-  	swipeNavigation: true,                 //y
+    /**
+     * Touch Swipe Settings
+     */
+  	swipeNavigation: false,                //y
     swipeEvents: {                         //y
       left: function(self) {self.prev()},
       right: function(self) {self.next()},
@@ -97,25 +97,30 @@
     },
     swipeHammerOptions: {},                //y
 
-  	// HashTags Settings
-    //when using hashTags, please include a reference to Ben Alman's jQuery HashChange plugin above your reference to Sequence.js
+  	/**
+     * HashTags Settings
+     */
+    hashTags: true,                        //y
 
-    //info: http://benalman.com/projects/jquery-hashchange-plugin/
-    //plugin: https://raw.github.com/cowboy/jquery-hashchange/v1.3/jquery.ba-hashchange.min.js
-    //GitHub: https://github.com/cowboy/jquery-hashchange
-    hashTags: false, //when a frame is navigated to, change the hashtag to the frames ID
-    hashDataAttribute: false, //false = the hashTag is taken from a frames ID attribute | true = the hashTag is taken from the data attribute "data-sequence-hash"
-    hashChangesOnFirstFrame: false, //false = the hashTag won't change for the first frame but will for those after
+    // Get the hashTag from an ID or data-sequence-hashtag attribute?
+    hashDataAttribute: false,               //y
 
-    //Fallback Theme Settings (For browsers that don't support CSS3 transitions)
+    // Should the hash change on the first frame?
+    hashChangesOnFirstFrame: false,         //y
+
+    /**
+     * Fallback Theme Settings (For browsers that don't support CSS3 transitions)
+     */
     fallback: {
-      theme: "slide",
       speed: 500
     }
   }
 
   /**
    * Is an object an array?
+   *
+   * @param {Object} objecy - The object we want to test
+   * @api private
    */
   function isArray(object) {
 
@@ -143,7 +148,6 @@
     return a;
   }
 
-
   /**
    * Cross Browser helper to addEventListener
    * Source: http://ejohn.org/projects/flexible-javascript-events/
@@ -151,8 +155,11 @@
    * @param {Object} obj - The Element to attach event to.
    * @param {String} type - The event that will trigger the binded function.
    * @param {Function} fn - The function to bind to the element.
+   * @return {Function} fn - Return the function so it can be removed later
+   * @api private
    */
   function addEvent(obj, type, fn) {
+
     if(obj.attachEvent === true) {
 
       obj['e'+type+fn] = fn;
@@ -172,8 +179,10 @@
    * @param {Object} obj - The element to remove the event from.
    * @param {string} type - The event to remove from the element.
    * @param {Function} fn - The function to remove from the the element.
+   * @api private
    */
-  function removeEvent( obj, type, fn ) {
+  function removeEvent(obj, type, fn) {
+
     if(obj.detachEvent === true) {
 
       obj.detachEvent('on'+type, obj[type+fn]);
@@ -184,7 +193,12 @@
   }
 
   /**
+   * Get an element by its class name
    *
+   * @param {HTMLElement} node - The parent element the element you want to find belongs to
+   * @param {String} classname - The name of the class to find
+   * @return {HTMLElement} - The element within the parent with the defined class
+   * @api private
    */
   function getElementsByClassName(node, classname) {
 
@@ -265,7 +279,7 @@
    * @api private
    */
   function addClass(el, name) {
-    if(!hasClass(el, name)) {
+    if(!hasClass(el, name) === true) {
       el.className += (el.className ? ' ': '') + name;
     }
   }
@@ -278,7 +292,7 @@
    * @api private
    */
   function removeClass(el, name) {
-    if(hasClass(el, name)) {
+    if(hasClass(el, name) === true) {
       el.className = el.className.replace(new RegExp('(\\s|^)' + name + '(\\s|$)'),' ').replace(/^\s+|\s+$/g, '');
     }
   }
@@ -292,11 +306,11 @@
     for(var i = 0; i < self.steps.length; i++) {
       var element = self.steps[i];
 
-      if((" " + element.className + " ").replace(/[\n\t]/g, " ").indexOf(" animate-in ") > -1) {
+      if(hasClass(element, "animate-in") === true) {
         var step = "step" + (i + 1);
 
         self._animation.resetInheritedSpeed(step, "animate-in");
-        updateClassList(element, "", "animate-in");
+        removeClass(element, "animate-in");
       }
     }
   };
@@ -349,25 +363,6 @@
       return getPaginationIndex(paginationElement, target.parentNode, previousTarget);
     }
   };
-
-  /**
-   * Add and/or remove classes to/from an element
-   *
-   * @param {Object} element - The element to add/remove classes to/from
-   * @param {String} classToAdd - A single string list of classes to add separated by a space
-   * @param {String} classToRemove - A single string list of classes to remove separated by a space
-   * @api private
-   */
-  function updateClassList(element, classToAdd, classToRemove) {
-
-    if(classToAdd !== "") {
-      addClass(element, classToAdd);
-    }
-
-    if(classToRemove !== undefined) {
-      removeClass(element, classToRemove)
-    }
-  }
 
   /**
    * Get Sequence's steps
@@ -436,7 +431,7 @@
         // Clone Sequence so it can be quickly forced through each step
         // and get the canvas and each step
         this.clonedSequence = this.createClone(element);
-        this.clonedCanvas = getElementsByClassName(self.element, "sequence-canvas");
+        this.clonedCanvas = getElementsByClassName(this.clonedSequence, "sequence-canvas");
         this.clonedSteps = getSteps(this.clonedCanvas);
 
         // Get any non-animation class names applied to Sequence
@@ -481,7 +476,7 @@
           this.animationMap[stepNo].element = realStepElement;
 
           // Add the step class to the sequence element
-          updateClassList(this.clonedSequence, stepNo);
+          addClass(this.clonedSequence, stepNo);
 
           // Get the animations for this step's "animate-in"
           // and "animate-out" phases
@@ -489,7 +484,7 @@
           this.phases("animate-out", stepNo, clonedStepElement, clonedStepChildren, realStepChildren, noOfStepChildren);
 
           // Remove the step class now we're done with it
-          updateClassList(this.clonedSequence, "", stepNo);
+          removeClass(this.clonedSequence, stepNo);
         }
       },
 
@@ -511,9 +506,14 @@
         var maxDuration = undefined;
         var maxDelay = undefined;
         var maxComputedDuration = undefined;
+        var element,
+            realElement,
+            styles,
+            elementNo,
+            elementProperties = {};
 
         // Add the phase class to the current step
-        updateClassList(clonedStepElement, phase);
+        addClass(clonedStepElement, phase);
 
         // Where we'll save this phase's properties
         this.animationMap[stepNo][phase] = {};
@@ -522,15 +522,15 @@
          * Save the step's child element properties if it will animate in the
          * phase being tested
          */
-        for(var elementNo = 0; elementNo < noOfStepChildren; elementNo++) {
+        for(elementNo = 0; elementNo < noOfStepChildren; elementNo++) {
 
           // Get the cloned element being tested and the real element to be saved
-          var element = clonedStepChildren[elementNo];
-          var realElement = realStepChildren[elementNo];
+          element = clonedStepChildren[elementNo];
+          realElement = realStepChildren[elementNo];
 
           // Get the element's styles
-          var styles = getComputedStyle(element, null) || element.currentStyle;
-          var elementProperties = {};
+          styles = getComputedStyle(element, null) || element.currentStyle;
+          elementProperties = {};
 
           // Get the element's transition-duration and transition-delay, then
           // calculate the computed duration
@@ -570,7 +570,7 @@
         }
 
         // Remove the phase class from the current step
-        updateClassList(clonedStepElement, "", phase);
+        removeClass(clonedStepElement, phase);
 
         // Save this phase's animated elements and maxium computed duration
         this.animationMap[stepNo][phase]["elements"] = elements;
@@ -682,7 +682,7 @@
             callback();
           }, duration);
         }
-      },
+      }
     }
 
     /**
@@ -949,9 +949,10 @@
         if(self.currentStepId !== undefined) {
 
           var stepToRemove = "step" + self.currentStepId;
-          updateClassList(self.element, stepToAdd, stepToRemove);
+          addClass(self.element, stepToAdd);
+          removeClass(self.element, stepToRemove);
         }else{
-          updateClassList(self.element, stepToAdd);
+          addClass(self.element, stepToAdd);
         }
       },
 
@@ -997,11 +998,12 @@
         var _animation = this;
 
         // Snap the step to the "animate-start" phase
-        updateClassList(nextStepElement, "", "animate-out");
+        removeClass(nextStepElement, "animate-out");
 
         _animation.domDelay(function() {
           // Make the current step transition to "animate-out"
-          updateClassList(currentStepElement, "animate-out", "animate-in");
+          addClass(currentStepElement, "animate-out");
+          removeClass(currentStepElement, "animate-in");
 
           // Make the next step transition to "animate-in"
           _animation.startAnimateIn(id, 1, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations);
@@ -1016,7 +1018,7 @@
         var _animation = this;
 
         // Snap the step to the "animate-out" phase
-        updateClassList(nextStepElement, "animate-out");
+        addClass(nextStepElement, "animate-out");
 
         _animation.domDelay(function() {
 
@@ -1025,7 +1027,7 @@
           _animation.reverseProperties(nextStep, "animate-in", stepDurations["next-phase"]);
 
           // Make the current step transition to "animate-start"
-          updateClassList(currentStepElement, "", "animate-in");
+          removeClass(currentStepElement, "animate-in");
 
           // Make the next step transition to "animate-in"
           _animation.startAnimateIn(id, -1, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations);
@@ -1035,18 +1037,60 @@
       /**
        *
        */
+      _currentPhaseStarted: function() {
+
+        // Callback
+        self.currentPhaseStarted();
+      },
+
+      /**
+       *
+       */
+      _currentPhaseEnded: function() {
+
+        // Callback
+        self.currentPhaseEnded();
+      },
+
+      /**
+       *
+       */
+      _nextPhaseStarted: function() {
+
+        // Update the hashTag if being used
+        self._hashTags.update();
+
+        // Callback
+        self.nextPhaseStarted();
+      },
+
+      /**
+       *
+       */
+      _nextPhaseEnded: function() {
+
+        // Callback
+        self.nextPhaseEnded();
+      },
+
+      /**
+       * Start the next step's "animate-in" phase
+       */
       startAnimateIn: function(id, direction, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations) {
+
+        var _animation = this;
+
+        var currentPhaseDuration = 0,
+            nextPhaseDuration = 0,
+            nextPhaseThreshold = 0,
+            stepDurationTotal = 0;
 
         // The next ID is now the current ID
         self.currentStepId = id;
 
         // Callback
         self.animationStarted(id);
-
-        var currentPhaseDuration = 0;
-        var nextPhaseDuration = 0;
-        var nextPhaseThreshold = 0;
-        var stepDurationTotal = 0;
+        _animation._currentPhaseStarted();
 
         // When should the "animate-in" phase start and how long until the step
         // completely finishes animating?
@@ -1058,7 +1102,9 @@
 
           // Start the "animate-in" phase
           setTimeout(function() {
-            updateClassList(nextStepElement, "animate-in", "animate-out");
+            _animation._nextPhaseStarted();
+            addClass(nextStepElement, "animate-in");
+            removeClass(nextStepElement, "animate-out");
           }, nextPhaseThreshold);
         }
 
@@ -1069,7 +1115,7 @@
           if(self.options.startingStepAnimatesIn === false) {
 
             // Set the first step's speed to 0 to have it immediately snap into place
-            self._animation.resetInheritedSpeed(nextStep, "animate-in");
+            _animation.resetInheritedSpeed(nextStep, "animate-in");
           }
 
           // Animate the first step into place
@@ -1082,16 +1128,18 @@
 
           // We're now done with the first run
           // Add the "animate-in" class to the next step
+          _animation._nextPhaseStarted();
           self._firstRun = false;
-          updateClassList(nextStepElement, "animate-in", "animate-out");
+          addClass(nextStepElement, "animate-in");
+          removeClass(nextStepElement, "animate-out");
         }
 
         // Wait for the current and next phases to end
-        self._animation.phaseEnded(currentPhaseDuration, currentStep, self.currentPhaseEnded);
-        self._animation.phaseEnded(nextPhaseDuration, nextStep, self.nextPhaseEnded);
+        _animation.phaseEnded(currentPhaseDuration, currentStep, _animation._currentPhaseEnded);
+        _animation.phaseEnded(nextPhaseDuration, nextStep, _animation._nextPhaseEnded);
 
         // Wait for the step (both phases) to finish animating
-        self._animation.stepEnded(id, stepDurationTotal);
+        _animation.stepEnded(id, stepDurationTotal);
       },
 
       /**
@@ -1300,11 +1348,6 @@
        */
       reverseTimingFunction: function(timingFunction) {
 
-        // Don't reverse the timing function if the options specify it shouldn't be
-        if(self.options.reverseEaseWhenNavigatingBackwards === false) {
-          return timingFunction;
-        }
-
         // Convert timingFunction keywords to a cubic-bezier function
         // This is needed because some browsers return a keyword, others a function
         var timingFunctionToCubicBezier = {
@@ -1462,7 +1505,7 @@
         }
 
         // If a direction wasn't defined, work out the best one to use
-        if(self.options.reverseAnimationsWhenNavigatingBackwards === true) {
+        if(self.options.reverseWhenNavigatingBackwards === true) {
 
           if(direction === undefined && self.options.cycle === true) {
             direction = _animation.getShortestDirection(id, self.currentStepId, self.noOfSteps);
@@ -1475,7 +1518,175 @@
         }
 
         return direction;
+      }
+    }
+
+    /**
+     * Manage Sequence hashTag support
+     */
+    self._hashTags = {
+
+      /**
+       * Set up hashTags
+       *
+       * @return {Number} id - The id of the first step (_hashTags.init() will
+       * override this if an entering URL contains a hashTag that corresponds
+       * to a step)
+       */
+      init: function(id) {
+
+        if(self.options.hashTags === true) {
+
+          var correspondingStepId;
+
+          // Get each step's hashTag
+          self.stepHashTags = this.getStepHashTags();
+
+          // Get the current hashTag and its corresponding step's ID
+          self.currentHashTag = location.hash.replace("#", "");
+          correspondingStepId = this.hasCorrespondingStep();
+
+          // If the entering URL contains a hashTag, and the hashTag relates to
+          // a corresponding step, the step's ID will override the startStepId
+          // defined in options
+          if(correspondingStepId > -1) {
+            id = correspondingStepId + 1;
+          }
+        }
+
+        // Return either the startingStepId as defined in settings or if the
+        // entering URL contained a hashTag that corresponds to a step, return
+        // its ID instead
+        return id;
       },
+
+      /**
+       * Does a hashTag have a corresponding step?
+       */
+      hasCorrespondingStep: function() {
+
+        var correspondingStep = -1;
+        var correspondingStepId = self.stepHashTags.indexOf(self.currentHashTag);
+
+        if(correspondingStepId > -1) {
+          correspondingStep = correspondingStepId;
+        }
+
+        return correspondingStep;
+      },
+
+      /**
+       * Get each steps hashTag to return an array of hashTags
+       *
+       * @return {Array} stepHashTags - An array of hashTags
+       */
+      getStepHashTags: function() {
+
+        var elementHashTag,
+            stepHashTags = [];
+
+        // Get each steps hashtag
+        for(var i = 0; i < self.noOfSteps; i++) {
+
+          elementHashTag = (self.options.hashDataAttribute === false) ? self.steps[i].id: self.steps[i].dataset.sequenceHashtag;
+
+          // Add the hashtag to an array
+          stepHashTags.push(elementHashTag);
+        }
+
+        return stepHashTags;
+      },
+
+      /**
+       * Update the hashTag if:
+       *
+       * - hashTags are being used and this isn't the first run
+       * - hashTags are being used, this is the first run, and the first hash change is allowed in the options
+       */
+      update: function() {
+
+        if(
+          self.options.hashTags === true
+          && self._firstRun === false
+          || (self.options.hashTags === true && self._firstRun === true && self.options.hashChangesOnFirstFrame === true)) {
+
+            // Zero-base the currentStepId
+            var hashTagId = self.currentStepId - 1;
+
+            // Get the current hashTag
+            self.currentHashTag = self.stepHashTags[hashTagId];
+
+            // Add the hashTag to the URL
+            location.hash = self.currentHashTag;
+        }
+      },
+
+      /**
+       * Cross Browser helper for an hashchange event
+       * Source: http://stackoverflow.com/questions/9339865/get-the-hashchange-event-to-work-in-all-browsers-including-ie7/
+       */
+      setupEvent: function() {
+
+
+        if ('onhashchange' in window) {
+
+          if(window.addEventListener) {
+
+            window.addHashChange = function(func, before) {
+              window.addEventListener('hashchange', func, before);
+            };
+
+            window.removeHashChange = function(func) {
+              window.removeEventListener('hashchange', func);
+            };
+          }else if(window.attachEvent) {
+
+            window.addHashChange = function(func) {
+              window.attachEvent('onhashchange', func);
+            };
+
+            window.removeHashChange = function(func) {
+              window.detachEvent('onhashchange', func);
+            };
+          }
+        }else{
+
+          var hashChangeFuncs = [];
+          var oldHref = location.href;
+
+          window.addHashChange = function(func, before) {
+
+            if(typeof func === 'function') {
+              hashChangeFuncs[before?'unshift':'push'](func);
+            }
+          };
+
+          window.removeHashChange = function(func) {
+
+            for (var i=hashChangeFuncs.length-1; i>=0; i--) {
+              if (hashChangeFuncs[i] === func) {
+                hashChangeFuncs.splice(i, 1);
+              }
+            }
+          };
+
+          setInterval(function() {
+            var newHref = location.href;
+
+            if (oldHref !== newHref) {
+              var _oldHref = oldHref;
+              oldHref = newHref;
+              for (var i=0; i < hashChangeFuncs.length; i++) {
+                hashChangeFuncs[i].call(window, {
+                  'type': 'hashchange',
+                  'newURL': newHref,
+                  'oldURL': _oldHref
+                });
+              }
+            }
+          }, 100);
+        }
+      }
     }
 
     /**
@@ -1769,6 +1980,7 @@
         "mouseleave": [],
         "Hammer": [],
         "keydown": [],
+        "hashchange": [],
         "resize": []
       },
 
@@ -1778,6 +1990,8 @@
       init: function() {
 
         this.add.windowLoad();
+
+        this.add.hashChange();
 
         if(self.options.swipeNavigation === true) {
           this.add.swipeNavigation();
@@ -1822,7 +2036,7 @@
       /**
        * Remove an event from all of the elements it is attached to
        *
-       * @param{String} type - The type of event to move eg. "click"
+       * @param{String} type - The type of event to remove eg. "click"
        */
       remove: function(type) {
 
@@ -1830,11 +2044,25 @@
         var eventElements = self.manageEvent.list[type];
         var eventElementsLength = eventElements.length;
 
-        // Remove the event from each element
-        for(var i = 0; i < eventElementsLength; i++) {
-          var eventProperties = eventElements[i];
-          removeEvent(eventProperties.element, type, eventProperties.handler);
+        switch(type) {
+
+          case "hashchange":
+            removeHashChange(eventElements[0].handler);
+          break;
+
+          case "hammer":
+
+          break;
+
+          default:
+            // Remove the event from each element
+            for(var i = 0; i < eventElementsLength; i++) {
+              var eventProperties = eventElements[i];
+              removeEvent(eventProperties.element, type, eventProperties.handler);
+            }
         }
+
+
       },
 
       add: {
@@ -1849,6 +2077,48 @@
           });
 
           self.manageEvent.list["load"].push({"element": window, "handler": handler});
+        },
+
+        /**
+         * Add the hashchange event
+         */
+        hashChange: function() {
+
+          // Setup the cross-browser hashchange event
+          self._hashTags.setupEvent();
+
+          var handler = function(e) {
+
+            var newHashTag,
+                id;
+
+            // Get the hashTag from the URL
+            newHashTag = e.newURL || location.href;
+            newHashTag = newHashTag.split("#")[1];
+
+            // Go to the new step if we're not already on it
+            if(self.currentHashTag !== newHashTag) {
+
+              // Get the ID of the new hash tag and one-base it
+              id = self.stepHashTags.indexOf(newHashTag) + 1;
+
+              /**
+               * Go to the new step
+               *
+               * Note: When the user is navigating through history via their
+               * browser's back/forward buttons for example, we can't prevent
+               * going to a step to meet the navigationSkipThreshold option. To
+               * prevent the hashTag and the current step from becoming
+               * unsynchronized we must ignore the navigationSkipThreshold
+               * setting.
+               */
+              self.goTo(id, undefined, undefined, true);
+            }
+          }
+
+          addHashChange(handler);
+
+          self.manageEvent.list["hashchange"].push({"element": window, "handler": handler});
         },
 
         /**
@@ -2117,6 +2387,8 @@
      */
     self._init = function(element) {
 
+      var id;
+
       // Get the element Sequence is attached to, the canvas and it's steps
       self.element = element;
       self.canvas = getElementsByClassName(self.element, "sequence-canvas");
@@ -2131,22 +2403,29 @@
       // Get Sequence's animation map (which elements will animate and their timings)
       self.animationMap = self._getAnimationMap.init(element);
 
+      // Remove the no-JS "animate-in" class from a step
+      removeNoJsClass(self);
+
       // Set up events
       self.manageEvent.init();
 
       // Set up autoPlay
       self._autoPlay.init();
 
-      // Remove the no-JS "animate-in" class from a step
-      removeNoJsClass(self);
-
       // On the first run, we need to treat the animation a little differently
       self._firstRun = true;
 
-      // Get the first step's ID
-      var id = self.options.startingStepId;
+      // Keep track of which elements are animating
+      self.elementsAnimating = [];
 
-      // Get the previous step id
+      // Get the first step's ID
+      id = self.options.startingStepId - 1;
+
+      // Set up hashTag support if being used and override the first ID if there
+      // is a hashTag in the entering URL that has a corresponding step
+      id = self._hashTags.init(id);
+
+      // Get the previous step ID
       if(self.options.autoPlayDirection === 1) {
         var prevStepId = id - 1;
         self.currentStepId = (prevStepId < 1) ? self.noOfSteps: prevStepId;
@@ -2158,8 +2437,7 @@
       // Get the previous step
       var prevStep = "step" + self.currentStepId;
 
-      // Keep track of which elements are animating
-      self.elementsAnimating = [];
+      self.manageEvent.remove("hashchange");
 
       var goToFirstStep = function() {
 
@@ -2168,13 +2446,13 @@
           self.unpaused();
         }
 
-        // Go to the first step
-        self.goTo(id, self.options.autoPlayDirection, true);
-
         // Snap the previous step into position
         self._animation.domDelay(function() {
           self._animation.resetInheritedSpeed(prevStep, "animate-out");
         });
+
+        // Go to the first step
+        self.goTo(id, self.options.autoPlayDirection, true);
       }
 
       // Set up preloading if required, then go to the first step
@@ -2279,7 +2557,7 @@
      * @param {Boolean} ignorePhaseThreshold - if true, ignore the transitionThreshold setting and immediately go to the specified step
      * @api public
      */
-    self.goTo = function(id, direction, ignorePhaseThreshold) {
+    self.goTo = function(id, direction, ignorePhaseThreshold, hashTagNav) {
 
       // Get the direction to navigate if one wasn't specified
       direction = self._animation.getDirection(id, direction);
@@ -2291,7 +2569,9 @@
        * - It doesn't exist
        * - It is already active
        * - navigationSkip isn't allowed and an animation is active
-       * - navigationSkip is allowed but the threshold is yet to expire
+       * - navigationSkip is allowed but the threshold is yet to expire (unless
+       *   navigating via forward/back button with hashTags enabled - see
+       *   manageEvent.add.hashChange() for an explanation of this)
        * - preventReverseSkipping is enabled and the user is trying to navigate
            in a different direction to the one already active
        */
@@ -2300,7 +2580,7 @@
         || id < 1 || id > self.noOfSteps
         || id === self.currentStepId
         || (self.options.navigationSkip === false && self.isActive === true)
-        || (self.options.navigationSkip === true && self.navigationSkipThresholdActive === true)
+        || (self.options.navigationSkip === true && self.navigationSkipThresholdActive === true && hashTagNav === undefined)
         || (self.options.preventReverseSkipping === true && self.direction !== direction && self.isActive === true)
       ) {
         return false;
@@ -2393,9 +2673,25 @@
     /**
      *
      */
+    self.currentPhaseStarted = function() {
+
+      // console.log("currentstarted");
+    }
+
+    /**
+     *
+     */
     self.currentPhaseEnded = function() {
 
       // console.log("currentended")
+    }
+
+    /**
+     *
+     */
+    self.nextPhaseStarted = function() {
+
+      // console.log("nextstarted");
     }
 
     /**

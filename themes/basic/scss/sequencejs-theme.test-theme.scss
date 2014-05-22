@@ -68,7 +68,7 @@
 
   .box1 {
     // transition-duration: 3s;
-    // transition-delay: 1s;
+    // transition-delay: 2s;
   }
 
   .box2 {
@@ -85,7 +85,8 @@
   .box5 {
     left: 100%;
     margin-left: -10px;
-    // transition-delay: 1s;
+    // transition-delay: 2s;
+    transition-duration: 1s;
   }
 
   .box5 {
@@ -111,13 +112,14 @@
   }
 
   .box3 {
-    // transition-duration: 5s;
+    // transition-duration: 2s;
     // transition-delay: 2s;
   }
 
   .box4,
   .box5 {
     top: 50%;
-    // transition-delay: 1s;
+    // transition-duration: 3s;
+    transition-delay: 1s;
   }
 }
