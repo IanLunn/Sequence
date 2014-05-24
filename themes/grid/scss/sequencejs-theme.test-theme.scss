@@ -23,28 +23,26 @@ html {
 
 #sequence {
   position: relative;
-  height: 100%;
-  width: 100%;
+  height: 600px;
+  width: 800px;
   overflow: hidden;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   border: red solid 1px;
 
   /* Reset */
-  .canvas,
-  .canvas > li {
+  .sequence-canvas,
+  .sequence-canvas > li {
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .canvas {
+  .sequence-canvas {
     position: absolute;
     height: 100%;
     width: 100%;
-    display: inline;
     white-space: nowrap;
-    // transition-duration: 1s;
 
     > li {
       display: inline-block;
@@ -60,6 +58,12 @@ html {
 
   .d {
     display: block !important;
+  }
+
+  .e {
+    position: absolute !important;
+    left: -4000px !important;
+    background: blue;
   }
 
   .title {

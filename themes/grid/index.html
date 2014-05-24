@@ -16,24 +16,31 @@
 </head>
 <body>
   <div id="sequence">
-    <ul class="canvas">
-      <li class="a">
+    <ul class="sequence-canvas">
+      <li id="a" class="a">
         <h2 class="title">Built using Sequence.js</h2>
-      </li><li class="b">
+      </li><li id="b" class="b">
         <h2 class="title">CSS3 Animation Framework</h2>
       </li><li class="c">
         <h2 class="title">No JavaScript Knowledge Required</h2>
       </li><li class="d">
         <h2 class="title">No JavaScript Knowledge Required</h2>
       </li>
+      <li class="e">
+        <h2 class="title">No JavaScript Knowledge Required</h2>
+      </li>
     </ul>
   </div>
 
-  <script src="/scripts/third-party/modernizr.min.js"></script>
-  <script src="/scripts/third-party/hammer.min.js"></script>
-  <script src="/scripts/sequence.js"></script>
+  <script src="../../scripts/third-party/modernizr.min.js"></script>
+  <script src="../../scripts/third-party/imagesloaded.pkgd.min.js"></script>
+  <script src="../../scripts/third-party/hammer.min.js"></script>
+  <script src="../../scripts/sequence.js"></script>
   <script>
-    var sequence = sequence(document.getElementById("sequence"));
+    var options = {
+
+    }
+    var sequence = sequence(document.getElementById("sequence"), options);
   </script>
 </body>
 </html>

@@ -23,43 +23,48 @@ html {
 
 #sequence {
   position: relative;
-  height: 100%;
-  width: 100%;
+  height: 600px;
+  width: 800px;
   overflow: hidden;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   border: red solid 1px;
   /* Reset */
 }
 
-#sequence .canvas,
-#sequence .canvas > li {
+#sequence .sequence-canvas,
+#sequence .sequence-canvas > li {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-#sequence .canvas {
+#sequence .sequence-canvas {
   position: absolute;
   height: 100%;
   width: 100%;
-  display: inline;
   white-space: nowrap;
 }
 
-#sequence .canvas > li {
+#sequence .sequence-canvas > li {
   display: inline-block;
   width: 100%;
   height: 100%;
   text-align: center;
 }
 
-#sequence .canvas > li:nth-child(even) {
+#sequence .sequence-canvas > li:nth-child(even) {
   background: #ccc;
 }
 
 #sequence .d {
   display: block !important;
+}
+
+#sequence .e {
+  position: absolute !important;
+  left: -4000px !important;
+  background: blue;
 }
 
 #sequence .title {

@@ -92,19 +92,18 @@ Nam tristique felis id elit posuere, at dictum nisi pharetra. Nunc tincidunt odi
       nextButton: true,
       prevButton: true,
       pagination: true,
-      startingStepId: 3
+      startingStepId: 1,
+      animateCanvas: false
     }
 
-    var hi = document.getElementById("sequence");
-
-    var sequence1 = sequence(hi, options);
+    var sequence1 = sequence(document.getElementById("sequence"), options);
 
     sequence1.unpaused = function() {
-      sequence.pauseButton[0].innerHTML = "Pause";
+      sequence1.pauseButton[0].innerHTML = "Pause";
     }
 
     sequence1.paused = function() {
-      sequence.pauseButton[0].innerHTML = "Unpause";
+      sequence1.pauseButton[0].innerHTML = "Unpause";
     }
   </script>
 </body>

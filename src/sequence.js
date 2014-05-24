@@ -9,7 +9,7 @@
  * @copyright IanLunn
  */
 
-;(function (global) { function defineSequence(ModernizrSeq, imagesLoaded, Hammer) {
+;(function (global) { function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
   'use strict';
 
@@ -29,7 +29,7 @@
 
     // General Settings
     startingStepId: 1,                    //y
-    startingStepAnimatesIn: false,        //y
+    startingStepAnimatesIn: true,         //y
     cycle: true,                          //y
     phaseThreshold: false,                //y
     reverseWhenNavigatingBackwards: true, //y
@@ -85,9 +85,9 @@
       right: function(self) {self.next()}
     },
 
-    /**
-     * Touch Swipe Settings
-     */
+
+    // Touch Swipe Settings
+    // -----------------------
   	swipeNavigation: false,                //y
     swipeEvents: {                         //y
       left: function(self) {self.prev()},
@@ -97,9 +97,9 @@
     },
     swipeHammerOptions: {},                //y
 
-  	/**
-     * HashTags Settings
-     */
+
+  	// HashTags Settings
+    // -----------------
     hashTags: true,                        //y
 
     // Get the hashTag from an ID or data-sequence-hashtag attribute?
@@ -108,11 +108,26 @@
     // Should the hash change on the first frame?
     hashChangesOnFirstFrame: false,         //y
 
-    /**
-     * Fallback Theme Settings (For browsers that don't support CSS3 transitions)
-     */
+
+    // Fallback Theme Settings
+    // -----------------------
     fallback: {
-      speed: 500
+
+      // The speed to transition between steps
+      speed: 500,
+
+      /**
+       * auto   - Sequence will detect the best layout to use based on the
+       *          animateCanvas option. If animateCanvas is false, the "basic"
+       *          layout will be used. If animateCanvas is true, the "custom"
+       *          layout is used.
+       * basic  - Layout each step in one row using inline-block
+       * custom - Assume the developer defined layout is to be used and don't
+       *          layout the steps in any way.
+       *
+       * See sequence._animationFallback.setupCanvas();
+       */
+      layout: "auto"
     }
   }
 
@@ -302,6 +317,10 @@
    */
   function removeNoJsClass(self) {
 
+    if(self.transitionsSupported === false) {
+      return;
+    }
+
     // Look for the step with the "animate-in" class and remove the class
     for(var i = 0; i < self.steps.length; i++) {
       var element = self.steps[i];
@@ -428,26 +447,40 @@
        */
       init: function(element) {
 
-        // Clone Sequence so it can be quickly forced through each step
-        // and get the canvas and each step
-        this.clonedSequence = this.createClone(element);
-        this.clonedCanvas = getElementsByClassName(this.clonedSequence, "sequence-canvas");
-        this.clonedSteps = getSteps(this.clonedCanvas);
-
-        // Get any non-animation class names applied to Sequence
-        this.originalClasses = this.clonedSequence.className;
-
         // Where we'll save the animations
         this.animationMap = {};
 
-        // Where we'll save how many steps are animating
-        this.animationMap["stepsAnimating"] = 0;
+        if(self.transitionsSupported === true) {
 
-        // Initiate each Sequence step on the cloned Sequence
-        this.steps();
+          // Clone Sequence so it can be quickly forced through each step
+          // and get the canvas and each step
+          this.clonedSequence = this.createClone(element);
+          this.clonedCanvas = getElementsByClassName(this.clonedSequence, "sequence-canvas");
+          this.clonedSteps = getSteps(this.clonedCanvas);
 
-        // Remove the Sequence clone now we've got the animation map
-        this.destroyClone(this.clonedSequence);
+          // Get any non-animation class names applied to Sequence
+          this.originalClasses = this.clonedSequence.className;
+
+          // Where we'll save how many steps are animating
+          this.animationMap["stepsAnimating"] = 0;
+
+          // Initiate each Sequence step on the cloned Sequence
+          this.steps();
+
+          // Remove the Sequence clone now we've got the animation map
+          this.destroyClone(this.clonedSequence);
+        }
+
+        // CSS transitions aren't supported, just return the step elements
+        else{
+
+          for(var i = 0; i < self.noOfSteps; i++) {
+
+            var step = "step" + (i + 1);
+            this.animationMap[step] = {};
+            this.animationMap[step]["element"] = self.steps[i];
+          }
+        }
 
         return this.animationMap;
       },
@@ -534,9 +567,9 @@
 
           // Get the element's transition-duration and transition-delay, then
           // calculate the computed duration
-          var transitionDuration = convertTimeToMs(styles[ModernizrSeq.prefixed("transitionDuration")]);
-          var transitionDelay = convertTimeToMs(styles[ModernizrSeq.prefixed("transitionDelay")]);
-          var transitionTimingFunction = styles[ModernizrSeq.prefixed("transitionTimingFunction")];
+          var transitionDuration = convertTimeToMs(styles[ModernizrSequence.prefixed("transitionDuration")]);
+          var transitionDelay = convertTimeToMs(styles[ModernizrSequence.prefixed("transitionDelay")]);
+          var transitionTimingFunction = styles[ModernizrSequence.prefixed("transitionTimingFunction")];
           var computedDuration = transitionDuration + transitionDelay;
 
           /**
@@ -787,7 +820,7 @@
     }
 
     /**
-     * Controls all of Sequence's animations and DOM manipulations
+     * Controls Sequence's animations
      */
     self._animation = {
 
@@ -804,11 +837,12 @@
           // Get the canvas element and step element to animate to
           var canvas = self.canvas[0];
 
-          // Get the current step element and its position
+          // Get the current step element, its position, and reverse them
+          // (positive to negative and vice versa)
           var step = self.steps[id - 1];
-          var stepX = step.offsetLeft;
-          var stepY = step.offsetTop;
-          var position = stepX + stepY;
+          var stepX = step.offsetLeft * -1;
+          var stepY = step.offsetTop * -1;
+          var position = [stepX, stepY];
 
           /**
            * Does the canvas need to animate?
@@ -830,11 +864,12 @@
             // Note: translate3d() is used to initiate hardware acceleration
             if(self.transitionsSupported === true) {
               canvas.style.transition = duration + "ms transform";
-              canvas.style.transform = "translate3d(-" + stepX + "px, -" + stepY + "px, 0)";
+              canvas.style.transform = "translate3d(" + stepX + "px, " + stepY + "px, 0)";
             }
 
             // Animate the canvas using JavaScript
             else{
+
               // TODO
             }
           }
@@ -856,7 +891,10 @@
 
         if(self.options.moveActiveFrameToTop === true) {
 
-          currentStepElement.style.zIndex = 1;
+          var prevStepElement = self.animationMap["step" + self.prevStepId].element;
+
+          prevStepElement.style.zIndex = 1;
+          currentStepElement.style.zIndex = self.noOfSteps - 1;
           nextStepElement.style.zIndex = self.noOfSteps;
         }
       },
@@ -868,6 +906,10 @@
        * @param {Number} id -
        */
       manageNavigationSkip: function(id, direction, currentStep, nextStep, nextStepElement) {
+
+        if(self.transitionsSupported === false) {
+          return;
+        }
 
         var _animation = this;
 
@@ -1035,45 +1077,6 @@
       },
 
       /**
-       *
-       */
-      _currentPhaseStarted: function() {
-
-        // Callback
-        self.currentPhaseStarted();
-      },
-
-      /**
-       *
-       */
-      _currentPhaseEnded: function() {
-
-        // Callback
-        self.currentPhaseEnded();
-      },
-
-      /**
-       *
-       */
-      _nextPhaseStarted: function() {
-
-        // Update the hashTag if being used
-        self._hashTags.update();
-
-        // Callback
-        self.nextPhaseStarted();
-      },
-
-      /**
-       *
-       */
-      _nextPhaseEnded: function() {
-
-        // Callback
-        self.nextPhaseEnded();
-      },
-
-      /**
        * Start the next step's "animate-in" phase
        */
       startAnimateIn: function(id, direction, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations) {
@@ -1086,6 +1089,7 @@
             stepDurationTotal = 0;
 
         // The next ID is now the current ID
+        self.prevStepId = self.currentStepId;
         self.currentStepId = id;
 
         // Callback
@@ -1143,6 +1147,45 @@
       },
 
       /**
+       *
+       */
+      _currentPhaseStarted: function() {
+
+        // Callback
+        self.currentPhaseStarted();
+      },
+
+      /**
+       *
+       */
+      _currentPhaseEnded: function() {
+
+        // Callback
+        self.currentPhaseEnded();
+      },
+
+      /**
+       *
+       */
+      _nextPhaseStarted: function() {
+
+        // Update the hashTag if being used
+        self._hashTags.update();
+
+        // Callback
+        self.nextPhaseStarted();
+      },
+
+      /**
+       *
+       */
+      _nextPhaseEnded: function() {
+
+        // Callback
+        self.nextPhaseEnded();
+      },
+
+      /**
        * When a phase's animations have completely finished
        */
       phaseEnded: function(stepDurationTotal, step, callback) {
@@ -1184,6 +1227,10 @@
        * @return {Number} stepDuration - The time the step will take to animate
        */
       getStepDurations: function(nextStepId, nextStep, currentStep, direction) {
+
+        if(self.transitionsSupported === false) {
+          return;
+        }
 
         var durations = {};
         durations["current-phase"] = {};
@@ -1420,6 +1467,10 @@
        */
       resetInheritedSpeed: function(step, phase) {
 
+        if(self.transitionsSupported === false) {
+          return;
+        }
+
         var _animation = this;
 
         // Get the step's elements and count them
@@ -1483,7 +1534,6 @@
         direction = (forwardDirection <= reverseDirection) ? 1: -1;
 
         return direction;
-
       },
 
       /**
@@ -1505,7 +1555,7 @@
         }
 
         // If a direction wasn't defined, work out the best one to use
-        if(self.options.reverseWhenNavigatingBackwards === true) {
+        if(self.options.reverseWhenNavigatingBackwards === true || self.transitionsSupported === false) {
 
           if(direction === undefined && self.options.cycle === true) {
             direction = _animation.getShortestDirection(id, self.currentStepId, self.noOfSteps);
@@ -1518,6 +1568,197 @@
         }
 
         return direction;
+      },
+
+      /**
+       * Determine what properties the browser supports. Currently tests
+       * transitions and animations
+       */
+      propertySupport: function() {
+
+
+        self.transitionsSupported = false;
+        self.animationsSupported = false;
+
+        // Are transitions supported?
+        if(ModernizrSequence.csstransitions === true) {
+          self.transitionsSupported = true;
+        }
+
+        // Are animations supported?
+        if(ModernizrSequence.cssanimations === true) {
+          self.animationsSupported = true;
+        }
+      },
+    }
+
+    /**
+     * Controls Sequence's animations when in a browser that doesn't support
+     * CSS transitions
+     */
+    self._animationFallback = {
+
+      /**
+       * Animate an element using JavaScript
+       *
+       * @param {HTMLElement} element -
+       * @param {String} style -
+       * @param {String} unit -
+       * @param {Number} from -
+       * @param {Number} to -
+       * @param {Number} time -
+       * @param {Function} callback -
+       */
+      animate: function(element, style, unit, from, to, time, callback) {
+
+        if(element === false) {
+          return;
+        }
+
+        var start = new Date().getTime();
+
+        var timer = setInterval(function() {
+
+          var step = Math.min(1, (new Date().getTime()-start) / time);
+
+          element.style[style] = (from + step * (to - from)) + unit;
+
+          if(step === 1) {
+
+            if(callback !== undefined) {
+              callback();
+            }
+
+            clearInterval(timer);
+          }
+        },25);
+
+        element.style[style] = from + unit;
+      },
+
+      /**
+       * Setup the canvas ready for the fallback animation
+       */
+      setupCanvas: function(id) {
+
+        if(self.transitionsSupported === false) {
+
+          // Add the "sequence-fallback" class to the Sequence element
+          addClass(self.element, "sequence-fallback");
+
+          // Prevent steps from appearing outside of the Sequence element
+          self.element.style.overflow = "hidden";
+          self.element.style.whiteSpace = "nowrap";
+
+          // Get the width of the canvas
+          this.canvasWidth = self.canvas[0].offsetWidth;
+
+          // Make the canvas 100% width/height
+          self.canvas[0].style.position = "relative";
+          self.canvas[0].style.width = "100%";
+          self.canvas[0].style.height = "100%";
+
+          // Make each step 100% width/height
+          for(var i = 0; i < self.noOfSteps; i++) {
+
+            // Get the step and its ID (one-based)
+            var step = self.steps[i];
+            var stepId = i + 1;
+
+            /**
+             * Move each step to its "animate-in" position
+             *
+             * Note: in fallback mode, steps will always remain in their
+             * "animate-in" position and the canvas will be animated
+             */
+            addClass(step, "animate-in");
+
+            // Make the step 100% width/height
+            step.style.width = "100%";
+            step.style.height = "100%";
+
+            // Should we use the basic layout or let the developer use a
+            // custom one?
+            var layoutOption = self.options.fallback.layout;
+
+            if(
+              (layoutOption === "auto" && self.options.animateCanvas === false)
+              || layoutOption === "basic"
+            ) {
+
+              step.style.display = "inline-block";
+              step.style.position = "relative";
+            }
+          }
+        }
+      },
+
+      /**
+       * Move the canvas using basic animation
+       */
+      moveCanvas: function(currentStepElement, nextStepElement, animate) {
+
+        // Get the canvas element and step element to animate to
+        var canvas = self.canvas[0];
+
+        // Get the X, Y positions of the current and next step
+        var currentStepX = currentStepElement.offsetLeft;
+        var currentStepY = currentStepElement.offsetTop;
+        var nextStepX = nextStepElement.offsetLeft;
+        var nextStepY = nextStepElement.offsetTop;
+
+        // Animate the canvas
+        if(animate === true) {
+
+          // Animate to the X, Y positions of the next step
+          this.animate(canvas, "left", "px", -currentStepX, -nextStepX, self.options.fallback.speed);
+          this.animate(canvas, "top", "px", -currentStepY, -nextStepY, self.options.fallback.speed);
+        }
+
+        // Snap the canvas into place
+        else {
+
+          canvas.style.left = -nextStepX + "px";
+          canvas.style.top = -nextStepY + "px";
+        }
+      },
+
+      /**
+       * Go to a step using basic animation
+       */
+      goTo: function(id, currentStep, currentStepElement, nextStep, nextStepElement, direction, hashTagNav) {
+
+        var from;
+
+        // The next ID is now the current ID
+        self.prevStepId = self.currentStepId;
+        self.currentStepId = id;
+
+        // Update the hashTag if being used
+        if(hashTagNav === undefined) {
+          self._hashTags.update();
+        }
+
+
+        // When should the "animate-in" phase start and how long until the step
+        // completely finishes animating?
+        if(self._firstRun === false) {
+
+          this.moveCanvas(currentStepElement, nextStepElement, true);
+
+          // Callback
+          self.animationStarted(self.currentStepId);
+        }
+
+        // This is the first step we're going to
+        else{
+
+          this.moveCanvas(currentStepElement, nextStepElement);
+          self._firstRun = false;
+        }
+
+        // Wait for the step (both phases) to finish animating
+        self._animation.stepEnded(id, self.options.fallback.speed);
       }
     }
 
@@ -1537,13 +1778,22 @@
 
         if(self.options.hashTags === true) {
 
-          var correspondingStepId;
+          var correspondingStepId,
+              newHashTag;
+
+          // Get the current hashTag
+          newHashTag = location.hash.replace("#", "");
+
+          // If there is a hashTag but no value, don't go any further
+          if(newHashTag === "") {
+            return id;
+          }
 
           // Get each step's hashTag
           self.stepHashTags = this.getStepHashTags();
 
-          // Get the current hashTag and its corresponding step's ID
-          self.currentHashTag = location.hash.replace("#", "");
+          // Get the current hashTag's step ID's
+          self.currentHashTag = newHashTag;
           correspondingStepId = this.hasCorrespondingStep();
 
           // If the entering URL contains a hashTag, and the hashTag relates to
@@ -1617,7 +1867,18 @@
             self.currentHashTag = self.stepHashTags[hashTagId];
 
             // Add the hashTag to the URL
-            location.hash = self.currentHashTag;
+            if(history.pushState) {
+              history.pushState(null, null, "#" + self.currentHashTag);
+            }
+            else {
+              location.hash = self.currentHashTag;
+
+              // TODO - Browser support. This currently doesn't work properly in
+              // browsers that don't support pushState. When the hash is added,
+              // the browser will automatically snap to the element relating to
+              // the hash. Sequence's animation will then kick in and the step
+              // show will not be the intended step. Needs a fix!
+            }
         }
       },
 
@@ -1773,7 +2034,7 @@
       /**
        * Sequence's default preloader styles and animation for the preloader icon
        */
-      defaultStyles: '.sequence-preloader {position: absolute;z-index: 9999;height: 100%;width: 100%;}.sequence-preloader .preload .circle {position: relative;top: -50%;display: inline-block;height: 12px;width: 12px;fill: #ff9442;animation: preload 1s infinite;}.preload {position: relative;top: 50%;display: block;height: 12px;width: 48px;margin: -6px auto 0 auto;}.preload-complete {opacity: 0;visibility: hidden;'+ModernizrSeq.prefixed("transition")+': .5s;}.preload.fallback .circle {float: left;margin-right: 4px;background-color: #ff9442;border-radius: 6px;}',
+     defaultStyles: '.sequence-preloader {position: absolute;z-index: 9999;height: 100%;width: 100%;}.sequence-preloader .preload .circle {position: relative;top: -50%;display: inline-block;height: 12px;width: 12px;fill: #ff9442;animation: preload 1s infinite;}.preload {position: relative;top: 50%;display: block;height: 12px;width: 48px;margin: -6px auto 0 auto;}.preload-complete {opacity: 0;visibility: hidden;'+ModernizrSequence.prefixed("transition")+': .5s;}.preload.fallback .circle {float: left;margin-right: 4px;background-color: #ff9442;border-radius: 6px;}',
 
       /**
        * Add the preloader's styles to the <head></head>
@@ -1798,7 +2059,7 @@
           head.appendChild(this.styleElement);
 
           // Animate the preloader using JavaScript if the browser doesn't support SVG
-          if(ModernizrSeq.svg === false) {
+          if(ModernizrSequence.svg === false) {
 
             // Get the preload indicator
             var preloadIndicator = self.preloader.firstChild;
@@ -1916,7 +2177,7 @@
           self.preloader = [self.preloader];
 
           // Use the SVG preloader
-          if(ModernizrSeq.svg === true) {
+          if(ModernizrSequence.svg === true) {
 
             self.preloader[0].innerHTML = '<svg class="preload" xmlns="http://www.w3.org/2000/svg"><circle class="circle" cx="6" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" repeatCount="indefinite" /></circle><circle class="circle" cx="22" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" begin="150ms" repeatCount="indefinite" /></circle><circle class="circle" cx="38" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" begin="300ms" repeatCount="indefinite" /></circle></svg>';
           }
@@ -2061,8 +2322,6 @@
               removeEvent(eventProperties.element, type, eventProperties.handler);
             }
         }
-
-
       },
 
       add: {
@@ -2101,6 +2360,8 @@
 
               // Get the ID of the new hash tag and one-base it
               id = self.stepHashTags.indexOf(newHashTag) + 1;
+
+              self.currentHashTag = newHashTag;
 
               /**
                * Go to the new step
@@ -2387,7 +2648,10 @@
      */
     self._init = function(element) {
 
-      var id;
+      var id,
+          prevStep,
+          prevStepId,
+          goToFirstStep;
 
       // Get the element Sequence is attached to, the canvas and it's steps
       self.element = element;
@@ -2397,8 +2661,8 @@
       // Get number of steps
       self.noOfSteps = self.steps.length;
 
-      // Are transitions supported?
-      self.transitionsSupported = ModernizrSeq.csstransitions;
+      // Find out what properties the browser supports and add classes to Sequence
+      self._animation.propertySupport();
 
       // Get Sequence's animation map (which elements will animate and their timings)
       self.animationMap = self._getAnimationMap.init(element);
@@ -2419,7 +2683,7 @@
       self.elementsAnimating = [];
 
       // Get the first step's ID
-      id = self.options.startingStepId - 1;
+      id = self.options.startingStepId;
 
       // Set up hashTag support if being used and override the first ID if there
       // is a hashTag in the entering URL that has a corresponding step
@@ -2427,19 +2691,21 @@
 
       // Get the previous step ID
       if(self.options.autoPlayDirection === 1) {
-        var prevStepId = id - 1;
-        self.currentStepId = (prevStepId < 1) ? self.noOfSteps: prevStepId;
+        prevStepId = id - 1;
+        self.prevStepId = (prevStepId < 1) ? self.noOfSteps: prevStepId;
       }else{
-        var prevStepId = id + 1;
-        self.currentStepId = (prevStepId > self.noOfSteps) ? 1: prevStepId;
+        prevStepId = id + 1;
+        self.prevStepId = (prevStepId > self.noOfSteps) ? 1: prevStepId;
       }
 
-      // Get the previous step
-      var prevStep = "step" + self.currentStepId;
+      // Get the previous step and next step
+      self.currentStepId = self.prevStepId;
+      prevStep = "step" + self.prevStepId;
 
-      self.manageEvent.remove("hashchange");
+      // If the browser doesn't support CSS transitions, setup the fallback
+      self._animationFallback.setupCanvas(id);
 
-      var goToFirstStep = function() {
+      goToFirstStep = function() {
 
         // Callback
         if(self.options.autoPlay === true) {
@@ -2586,14 +2852,14 @@
         return false;
       }
 
+      var phaseThreshold = 0;
+
       // Save the latest direction
       self.direction = direction;
 
       // Ignore the phaseThreshold (on first run for example)
       if(ignorePhaseThreshold === undefined) {
-        var phaseThreshold = self.options.phaseThreshold;
-      }else{
-        var phaseThreshold = 0;
+        phaseThreshold = self.options.phaseThreshold;
       }
 
       // Get the next and current steps, and their elements
@@ -2615,20 +2881,29 @@
       // Change the step number on the Sequence element
       self._animation.changeStep(id);
 
-      // Animate the canvas
-      self._animation.moveCanvas(id, true);
+      if(self.transitionsSupported === true) {
 
-      // Reset the next step's elements durations to 0ms so it can be snapped into place
-      self._animation.resetInheritedSpeed(nextStep, "animate-out");
+        // Animate the canvas
+        self._animation.moveCanvas(id, true);
 
-      // Determine how long the phases will last for, as well as the total length of the step
-      var stepDurations = self._animation.getStepDurations(id, nextStep, currentStep, direction);
+        // Reset the next step's elements durations to 0ms so it can be snapped into place
+        self._animation.resetInheritedSpeed(nextStep, "animate-out");
 
-      // Are we moving the phases forward or in reverse?
-      if(direction === 1) {
-        self._animation.forward(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations);
-      }else{
-        self._animation.reverse(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations);
+        // Determine how long the phases will last for, as well as the total length of the step
+        var stepDurations = self._animation.getStepDurations(id, nextStep, currentStep, direction);
+
+        // Are we moving the phases forward or in reverse?
+        if(direction === 1) {
+          self._animation.forward(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations);
+        }else{
+          self._animation.reverse(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations);
+        }
+      }
+
+      // Use fallback animation
+      else{
+
+        self._animationFallback.goTo(id, currentStep, currentStepElement, nextStep, nextStepElement, direction, hashTagNav);
       }
     }
 
@@ -2707,6 +2982,7 @@
      */
     self.throttledResize = function() {
 
+      // console.log("throttleResized")
     }
 
     /**
@@ -2761,6 +3037,6 @@
       define(['third-party/modernizr.min'], ['third-party/imagesloaded.pkgd.min'], ['third-party/hammer.min'], defineSequence);
   }else{
     // browser global
-    global.sequence = defineSequence(ModernizrSeq, imagesLoaded, Hammer);
+    global.sequence = defineSequence(ModernizrSequence, imagesLoaded, Hammer);
   }
 }(this));

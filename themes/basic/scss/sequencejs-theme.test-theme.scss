@@ -34,7 +34,7 @@
 
 .box {
   position: absolute;
-  left: -100px;
+  left: 100%;
   top: 20px;
   border: red solid 1px;
   width: 100px;
@@ -98,7 +98,7 @@
 
 .animate-out {
   .box {
-    left: 100%;
+    left: -100px;
   }
 
   .box1 {

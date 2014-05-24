@@ -1,0 +1,15 @@
+/*!
+ * Sequence.js Theme
+ *
+ * Theme Name: Photo Slide
+ * Version: 1.0
+ * Theme URL: http://sequencejs.com/themes/photo-slide/
+ *
+ * Author: Ian Lunn @IanLunn
+ * Author URL: https://ianlunn.co.uk/
+ *
+ * This theme is made available under a MIT License:
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
+ */#sequence{position:relative;height:600px;width:100%}#sequence .sequence-canvas,#sequence .sequence-canvas>li{margin:0;padding:0;list-style:none}#sequence .sequence-canvas,#sequence li{position:absolute;width:100%;height:100%}#sequence .sequence-canvas li>*{position:absolute;top:0}#sequence div{width:100%;height:100%;-webkit-transform:translateY(-100%) translateZ(0);-ms-transform:translateY(-100%) translateZ(0);transform:translateY(-100%) translateZ(0);-webkit-transition:1s;transition:1s;background-size:cover;background-position:50%;background-repeat:no-repeat}#sequence h2{top:80px;left:80px;color:#fff;text-transform:uppercase;font-size:30px;opacity:0;-webkit-transition:1s;transition:1s}#sequence .slide1{background-image:url(../images/image1.jpg)}#sequence .slide2{background-image:url(../images/image2.jpg)}#sequence .slide3{background-image:url(../images/image3.jpg)}#sequence .animate-in div{-webkit-transform:translateY(0) translateZ(0);-ms-transform:translateY(0) translateZ(0);transform:translateY(0) translateZ(0)}#sequence .animate-in h2{opacity:1}#sequence .animate-out div{-webkit-transform:translateY(0) translateZ(0);-ms-transform:translateY(0) translateZ(0);transform:translateY(0) translateZ(0)}
