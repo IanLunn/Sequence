@@ -856,7 +856,7 @@
             var duration = 0;
 
             // Should the canvas animate?
-            if(animate === true) {
+            if(animate === true && self._firstRun === false) {
               duration = self.options.animateCanvasDuration;
             }
 
@@ -1035,7 +1035,7 @@
       /**
        * Go forward to the next step
        */
-      forward: function(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations) {
+      forward: function(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav) {
 
         var _animation = this;
 
@@ -1048,14 +1048,14 @@
           removeClass(currentStepElement, "animate-in");
 
           // Make the next step transition to "animate-in"
-          _animation.startAnimateIn(id, 1, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations);
+          _animation.startAnimateIn(id, 1, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav);
         });
       },
 
       /**
        * Go in reverse to the next step
        */
-      reverse: function(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations) {
+      reverse: function(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav) {
 
         var _animation = this;
 
@@ -1072,14 +1072,14 @@
           removeClass(currentStepElement, "animate-in");
 
           // Make the next step transition to "animate-in"
-          _animation.startAnimateIn(id, -1, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations);
+          _animation.startAnimateIn(id, -1, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav);
         });
       },
 
       /**
        * Start the next step's "animate-in" phase
        */
-      startAnimateIn: function(id, direction, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations) {
+      startAnimateIn: function(id, direction, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav) {
 
         var _animation = this;
 
@@ -1106,7 +1106,7 @@
 
           // Start the "animate-in" phase
           setTimeout(function() {
-            _animation._nextPhaseStarted();
+            _animation._nextPhaseStarted(hashTagNav);
             addClass(nextStepElement, "animate-in");
             removeClass(nextStepElement, "animate-out");
           }, nextPhaseThreshold);
@@ -1132,7 +1132,7 @@
 
           // We're now done with the first run
           // Add the "animate-in" class to the next step
-          _animation._nextPhaseStarted();
+          _animation._nextPhaseStarted(hashTagNav);
           self._firstRun = false;
           addClass(nextStepElement, "animate-in");
           removeClass(nextStepElement, "animate-out");
@@ -1167,10 +1167,12 @@
       /**
        *
        */
-      _nextPhaseStarted: function() {
+      _nextPhaseStarted: function(hashTagNav) {
 
         // Update the hashTag if being used
-        self._hashTags.update();
+        if(hashTagNav === undefined) {
+          self._hashTags.update();
+        }
 
         // Callback
         self.nextPhaseStarted();
@@ -1739,7 +1741,6 @@
           self._hashTags.update();
         }
 
-
         // When should the "animate-in" phase start and how long until the step
         // completely finishes animating?
         if(self._firstRun === false) {
@@ -1782,15 +1783,15 @@
               newHashTag;
 
           // Get the current hashTag
-          newHashTag = location.hash.replace("#", "");
+          newHashTag = location.hash.replace("#!", "");
+
+          // Get each step's hashTag
+          self.stepHashTags = this.getStepHashTags();
 
           // If there is a hashTag but no value, don't go any further
           if(newHashTag === "") {
             return id;
           }
-
-          // Get each step's hashTag
-          self.stepHashTags = this.getStepHashTags();
 
           // Get the current hashTag's step ID's
           self.currentHashTag = newHashTag;
@@ -1868,16 +1869,10 @@
 
             // Add the hashTag to the URL
             if(history.pushState) {
-              history.pushState(null, null, "#" + self.currentHashTag);
+              history.pushState(null, null, "#!" + self.currentHashTag);
             }
             else {
-              location.hash = self.currentHashTag;
-
-              // TODO - Browser support. This currently doesn't work properly in
-              // browsers that don't support pushState. When the hash is added,
-              // the browser will automatically snap to the element relating to
-              // the hash. Sequence's animation will then kick in and the step
-              // show will not be the intended step. Needs a fix!
+              location.hash = "#!" + self.currentHashTag;
             }
         }
       },
@@ -1887,7 +1882,6 @@
        * Source: http://stackoverflow.com/questions/9339865/get-the-hashchange-event-to-work-in-all-browsers-including-ie7/
        */
       setupEvent: function() {
-
 
         if ('onhashchange' in window) {
 
@@ -2353,7 +2347,7 @@
 
             // Get the hashTag from the URL
             newHashTag = e.newURL || location.href;
-            newHashTag = newHashTag.split("#")[1];
+            newHashTag = newHashTag.split("#!")[1];
 
             // Go to the new step if we're not already on it
             if(self.currentHashTag !== newHashTag) {
@@ -2658,6 +2652,8 @@
       self.canvas = getElementsByClassName(self.element, "sequence-canvas");
       self.steps = getSteps(self.canvas);
 
+      self.canvasPreviousPosition = 0;
+
       // Get number of steps
       self.noOfSteps = self.steps.length;
 
@@ -2842,7 +2838,7 @@
            in a different direction to the one already active
        */
       if(
-        id === undefined
+           id === undefined
         || id < 1 || id > self.noOfSteps
         || id === self.currentStepId
         || (self.options.navigationSkip === false && self.isActive === true)
@@ -2894,9 +2890,9 @@
 
         // Are we moving the phases forward or in reverse?
         if(direction === 1) {
-          self._animation.forward(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations);
+          self._animation.forward(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav);
         }else{
-          self._animation.reverse(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations);
+          self._animation.reverse(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav);
         }
       }
 

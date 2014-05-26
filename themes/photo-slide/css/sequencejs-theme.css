@@ -60,10 +60,15 @@
   left: 80px;
   color: white;
   text-transform: uppercase;
-  font-size: 30px;
+  text-rendering: optimizeLegibility;
+  font-size: 42px;
+  font-family: "Avant Garde", Avantgarde, "Century Gothic", CenturyGothic, "AppleGothic", sans-serif;
   opacity: 0;
-  -webkit-transition: 1s;
-  transition: 1s;
+  -webkit-transition-duration: 1s;
+  transition-duration: 1s;
+  -webkit-transition-property: opacity, text-shadow;
+  transition-property: opacity, text-shadow;
+  letter-spacing: .05em;
 }
 
 #sequence .slide1 {
