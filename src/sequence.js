@@ -9,407 +9,9 @@
  * @copyright IanLunn
  */
 
-;(function (global) { function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
+function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
   'use strict';
-
-  // See Sequence._animation.domDelay() for an explanation of this
-  var domThreshold = 50;
-
-  // Throttle the window resize event - see self.manageEvent.add.resizeThrottle()
-  var resizeThreshold = 100;
-
-  // Sequence will only load when the window load event completes. If you're
-  // initiating Sequence after the window load event has already completed, set
-  // windowLoaded to true in the options (self.options.windowLoaded = true)
-  var windowLoaded = false;
-
-  // Default Sequence settings
-  var defaults = {
-
-    // General Settings
-    startingStepId: 1,                    //y
-    startingStepAnimatesIn: true,         //y
-    cycle: true,                          //y
-    phaseThreshold: false,                //y
-    reverseWhenNavigatingBackwards: true, //y
-    moveActiveFrameToTop: true,           //y
-    windowLoaded: false,
-
-    // Canvas Animation Settings
-    animateCanvas: true,                  //y
-    animateCanvasDuration: 500,           //y
-
-    // Autoplay Settings
-    autoPlay: false,                      //y
-    autoPlayDirection: 1,                 //y
-    autoPlayThreshold: 3000,              //y
-
-    // Navigation Skipping Settings
-    navigationSkip: true,                 //y
-    navigationSkipThreshold: 250,         //y
-    fadeStepWhenSkipped: true,            //y
-    fadeStepTime: 500,                    //y
-    preventReverseSkipping: false,        //y
-
-    // Next/Prev Button Settings
-    nextButton: true,                     //y - now true by default
-    prevButton: true,                     //y - now true by default
-
-    // Pause Settings
-    pauseButton: true,                    //y - now true by default
-    unpauseThreshold: null,               //y
-    pauseOnHover: true,                   //y
-
-    // Pagination Settings
-    pagination: true,                     //y - now true by default
-
-    // Preloader Settings
-    preloader: false,                     //y
-    preloadTheseSteps: [1],               //y
-    preloadTheseImages: [                 //y
-    	/**
-       * Example usage
-       * "images/catEatingSalad.jpg",
-       * "images/grandmaDressedAsBatman.png"
-       */
-    ],
-    hideStepsUntilPreloaded: true,        //y
-
-    // Keyboard Settings
-    keyNavigation: true,                  //y
-    keyNavigationGlobal: false,
-    numericKeysGoToFrames: true,          //y
-  	keyEvents: {                          //y
-      left: function(self) {self.prev()},
-      right: function(self) {self.next()}
-    },
-
-
-    // Touch Swipe Settings
-    // -----------------------
-  	swipeNavigation: false,                //y
-    swipeEvents: {                         //y
-      left: function(self) {self.prev()},
-      right: function(self) {self.next()},
-      up: false,
-      down: false
-    },
-    swipeHammerOptions: {},                //y
-
-
-  	// HashTags Settings
-    // -----------------
-    hashTags: true,                        //y
-
-    // Get the hashTag from an ID or data-sequence-hashtag attribute?
-    hashDataAttribute: false,               //y
-
-    // Should the hash change on the first frame?
-    hashChangesOnFirstFrame: false,         //y
-
-
-    // Fallback Theme Settings
-    // -----------------------
-    fallback: {
-
-      // The speed to transition between steps
-      speed: 500,
-
-      /**
-       * auto   - Sequence will detect the best layout to use based on the
-       *          animateCanvas option. If animateCanvas is false, the "basic"
-       *          layout will be used. If animateCanvas is true, the "custom"
-       *          layout is used.
-       * basic  - Layout each step in one row using inline-block
-       * custom - Assume the developer defined layout is to be used and don't
-       *          layout the steps in any way.
-       *
-       * See sequence._animationFallback.setupCanvas();
-       */
-      layout: "auto"
-    }
-  }
-
-  /**
-   * Is an object an array?
-   *
-   * @param {Object} objecy - The object we want to test
-   * @api private
-   */
-  function isArray(object) {
-
-    if( Object.prototype.toString.call( object ) === '[object Array]' ) {
-      return true;
-    }else{
-      return false;
-    }
-  }
-
-  /**
-   * Extend object a with the properties of object b.
-   * If there's a conflict, object b takes precedence.
-   *
-   * @param {Object} a - The first object to merge
-   * @param {Object} b - The second object to merge (takes precedence)
-   * @api private
-   */
-  function extend(a, b) {
-
-    for(var i in b) {
-      a[i] = b[i];
-    }
-
-    return a;
-  }
-
-  /**
-   * Cross Browser helper to addEventListener
-   * Source: http://ejohn.org/projects/flexible-javascript-events/
-   *
-   * @param {Object} obj - The Element to attach event to.
-   * @param {String} type - The event that will trigger the binded function.
-   * @param {Function} fn - The function to bind to the element.
-   * @return {Function} fn - Return the function so it can be removed later
-   * @api private
-   */
-  function addEvent(obj, type, fn) {
-
-    if(obj.attachEvent === true) {
-
-      obj['e'+type+fn] = fn;
-      obj[type+fn] = function(){obj['e'+type+fn]( window.event );}
-      obj.attachEvent('on'+type, obj[type+fn]);
-    }else{
-      obj.addEventListener(type, fn, false);
-    }
-
-    return fn;
-  }
-
-  /**
-   * Cross Browser helper to removeEventListener
-   * Source: http://ejohn.org/projects/flexible-javascript-events/
-   *
-   * @param {Object} obj - The element to remove the event from.
-   * @param {string} type - The event to remove from the element.
-   * @param {Function} fn - The function to remove from the the element.
-   * @api private
-   */
-  function removeEvent(obj, type, fn) {
-
-    if(obj.detachEvent === true) {
-
-      obj.detachEvent('on'+type, obj[type+fn]);
-      obj[type+fn] = null;
-    }else{
-      obj.removeEventListener(type, fn, false);
-    }
-  }
-
-  /**
-   * Get an element by its class name
-   *
-   * @param {HTMLElement} node - The parent element the element you want to find belongs to
-   * @param {String} classname - The name of the class to find
-   * @return {HTMLElement} - The element within the parent with the defined class
-   * @api private
-   */
-  function getElementsByClassName(node, classname) {
-
-    // Use native implementation if available
-    if(node.getElementsByClassName === true) {
-      return node.getElementsByClassName(classname);
-    }
-
-    // Browser doesn't support getElementsByClassName
-    else{
-      return(function getElementsByClass(searchClass,node) {
-        if(node === null)
-          node = document;
-          var classElements = [],
-              els = node.getElementsByTagName("*"),
-              elsLen = els.length,
-              pattern = new RegExp("(^|\\s)"+searchClass+"(\\s|$)"), i, j;
-
-        for(i = 0, j = 0; i < elsLen; i++) {
-
-          if(pattern.test(els[i].className)) {
-            classElements[j] = els[i];
-            j++;
-          }
-        }
-
-        return classElements;
-      })(classname, node);
-    }
-  }
-
-  /**
-   * Converts a time value taken from a CSS property, such as "0.5s"
-   * and converts it to a number in milliseconds, such as 500
-   *
-   * @param {String} time - the time in a string
-   * @return {Number}
-   * @api private
-   */
-  function convertTimeToMs(time) {
-
-    var convertedTime;
-    var fraction;
-
-    // Deal with milliseconds and seconds
-    if(time.indexOf("ms") > -1) {
-      fraction = 1;
-    }else{
-      fraction = 1000;
-    }
-
-    if(time == "0s") {
-      convertedTime = 0;
-    }else{
-      convertedTime = parseFloat(time.replace("s", "")) * fraction;
-    }
-
-    return convertedTime;
-  }
-
-  /**
-   * Does an element have a particular class?
-   *
-   * @param {Object} el - The element to check
-   * @param {String} name - The name of the class to check for
-   * @return {Boolean}
-   * @api private
-   */
-  function hasClass(el, name) {
-    return new RegExp('(\\s|^)' + name + '(\\s|$)').test(el.className);
-  }
-
-  /**
-   * Add a class to an element
-   *
-   * @param {Object} el - The element to add a class to
-   * @param {String} name - The class to add
-   * @api private
-   */
-  function addClass(el, name) {
-    if(!hasClass(el, name) === true) {
-      el.className += (el.className ? ' ': '') + name;
-    }
-  }
-
-  /**
-   * Remove a class from an element
-   *
-   * @param {Object} el - The element to remove a class from
-   * @param {String} name - The class to remove
-   * @api private
-   */
-  function removeClass(el, name) {
-    if(hasClass(el, name) === true) {
-      el.className = el.className.replace(new RegExp('(\\s|^)' + name + '(\\s|$)'),' ').replace(/^\s+|\s+$/g, '');
-    }
-  }
-
-  /**
-   * Remove the no-JS "animate-in" class from a step
-   */
-  function removeNoJsClass(self) {
-
-    if(self.transitionsSupported === false) {
-      return;
-    }
-
-    // Look for the step with the "animate-in" class and remove the class
-    for(var i = 0; i < self.steps.length; i++) {
-      var element = self.steps[i];
-
-      if(hasClass(element, "animate-in") === true) {
-        var step = "step" + (i + 1);
-
-        self._animation.resetInheritedSpeed(step, "animate-in");
-        removeClass(element, "animate-in");
-      }
-    }
-  };
-
-  /**
-   * Get the index of a clicked pagination item
-   *
-   * The index is taken from the top level elements witint a pagination
-   * element. This function will iterate through each parent until it
-   * reaches the top level, then get all top level elements and determine
-   * the index of the chosen top level.
-   *
-   * @param {Object} paginationElement - The parent element that pagiation links belong to
-   * @param {Object} target - The parent above the previous target
-   * @param {Object} previousTarget - The element that was previously checked to determine if it was top level
-   */
-  function getPaginationIndex(paginationElement, target, previousTarget) {
-
-    // If we've iterated through too many elements and reached <body>, give up!
-    if(target.localName === "body") {
-      return;
-    }
-
-    // We're at the pagination parent
-    if(paginationElement === target) {
-
-      if(previousTarget !== undefined) {
-
-        // Get the top level element clicked and all top level elements
-        var topLevel = previousTarget;
-        var allTopLevel = paginationElement.getElementsByTagName(topLevel.localName);
-
-        // Count the number of top level elements
-        var i = allTopLevel.length;
-
-        // Which top level element was clicked?
-        while(i--) {
-          if(topLevel === allTopLevel[i]) {
-
-            // One-base the index and return it
-            return i + 1;
-          }
-        }
-      }
-    }
-
-    // Not yet at the pagination parent element, iterate again
-    else{
-      var previousTarget = target;
-      return getPaginationIndex(paginationElement, target.parentNode, previousTarget);
-    }
-  };
-
-  /**
-   * Get Sequence's steps
-   *
-   * @return {Array} steps - The elements that make up Sequence's steps
-   * @api private
-   */
-  var getSteps = function(parent) {
-
-    var steps = [];
-
-    // Get all of Sequence's elements and count them
-    var elements = parent[0].getElementsByTagName("*");
-    var elementsLength = elements.length;
-
-    // Get the elements that have a parent with a class of "sequence-canvas"
-    for(var i = 0; i < elementsLength; i++) {
-
-      var element = elements[i];
-      var parent = element.parentNode;
-
-      if(hasClass(parent, "sequence-canvas") === true) {
-        steps.push(element);
-      }
-    }
-
-    return steps;
-  }
 
   /**
    * Constructor
@@ -419,7 +21,409 @@
    * @return {Object} self - Variables and methods available to this instance
    * @api public
    */
-  function Sequence(element, options) {
+  var Sequence = (function(element, options) {
+
+    /* --- PRIVATE VARIABLES/METHODS --- */
+
+    // Default Sequence settings
+    var defaults = {
+
+      // General Settings
+      startingStepId: 1,                    //y
+      startingStepAnimatesIn: true,         //y
+      cycle: true,                          //y
+      phaseThreshold: false,                //y
+      reverseWhenNavigatingBackwards: true, //y
+      moveActiveFrameToTop: true,           //y
+      windowLoaded: false,
+
+      // Canvas Animation Settings
+      animateCanvas: true,                  //y
+      animateCanvasDuration: 500,           //y
+
+      // Autoplay Settings
+      autoPlay: false,                      //y
+      autoPlayDirection: 1,                 //y
+      autoPlayThreshold: 3000,              //y
+
+      // Navigation Skipping Settings
+      navigationSkip: true,                 //y
+      navigationSkipThreshold: 250,         //y
+      fadeStepWhenSkipped: true,            //y
+      fadeStepTime: 500,                    //y
+      preventReverseSkipping: false,        //y
+
+      // Next/Prev Button Settings
+      nextButton: true,                     //y - now true by default
+      prevButton: true,                     //y - now true by default
+
+      // Pause Settings
+      pauseButton: true,                    //y - now true by default
+      unpauseThreshold: null,               //y
+      pauseOnHover: true,                   //y
+
+      // Pagination Settings
+      pagination: true,                     //y - now true by default
+
+      // Preloader Settings
+      preloader: false,                     //y
+      preloadTheseSteps: [1],               //y
+      preloadTheseImages: [                 //y
+        /**
+         * Example usage
+         * "images/catEatingSalad.jpg",
+         * "images/grandmaDressedAsBatman.png"
+         */
+      ],
+      hideStepsUntilPreloaded: true,        //y
+
+      // Keyboard Settings
+      keyNavigation: true,                  //y
+      keyNavigationGlobal: false,
+      numericKeysGoToFrames: true,          //y
+      keyEvents: {                          //y
+        left: function(self) {self.prev()},
+        right: function(self) {self.next()}
+      },
+
+
+      // Touch Swipe Settings
+      // -----------------------
+      swipeNavigation: false,                //y
+      swipeEvents: {                         //y
+        left: function(self) {self.prev()},
+        right: function(self) {self.next()},
+        up: false,
+        down: false
+      },
+      swipeHammerOptions: {},                //y
+
+
+      // HashTags Settings
+      // -----------------
+      hashTags: false,                        //y
+
+      // Get the hashTag from an ID or data-sequence-hashtag attribute?
+      hashDataAttribute: false,               //y
+
+      // Should the hash change on the first frame?
+      hashChangesOnFirstFrame: false,         //y
+
+
+      // Fallback Theme Settings
+      // -----------------------
+      fallback: {
+
+        // The speed to transition between steps
+        speed: 500,
+
+        /**
+         * auto   - Sequence will detect the best layout to use based on the
+         *          animateCanvas option. If animateCanvas is false, the "basic"
+         *          layout will be used. If animateCanvas is true, the "custom"
+         *          layout is used.
+         * basic  - Layout each step in one row using inline-block
+         * custom - Assume the developer defined layout is to be used and don't
+         *          layout the steps in any way.
+         *
+         * See sequence._animationFallback.setupCanvas();
+         */
+        layout: "auto"
+      }
+    }
+
+    // See Sequence._animation.domDelay() for an explanation of this
+    var domThreshold = 50;
+
+    // Throttle the window resize event - see self.manageEvent.add.resizeThrottle()
+    var resizeThreshold = 100;
+
+    // Sequence will only load when the window load event completes. If you're
+    // initiating Sequence after the window load event has already completed, set
+    // windowLoaded to true in the options (self.options.windowLoaded = true)
+    var windowLoaded = false;
+
+    /**
+     * Is an object an array?
+     *
+     * @param {Object} objecy - The object we want to test
+     * @api private
+     */
+    function isArray(object) {
+
+      if( Object.prototype.toString.call( object ) === '[object Array]' ) {
+        return true;
+      }else{
+        return false;
+      }
+    }
+
+    /**
+     * Extend object a with the properties of object b.
+     * If there's a conflict, object b takes precedence.
+     *
+     * @param {Object} a - The first object to merge
+     * @param {Object} b - The second object to merge (takes precedence)
+     * @api private
+     */
+    function extend(a, b) {
+
+      for(var i in b) {
+        a[i] = b[i];
+      }
+
+      return a;
+    }
+
+    /**
+     * Cross Browser helper to addEventListener
+     * Source: http://ejohn.org/projects/flexible-javascript-events/
+     *
+     * @param {Object} obj - The Element to attach event to.
+     * @param {String} type - The event that will trigger the binded function.
+     * @param {Function} fn - The function to bind to the element.
+     * @return {Function} fn - Return the function so it can be removed later
+     * @api private
+     */
+    function addEvent(obj, type, fn) {
+
+      if(obj.attachEvent === true) {
+
+        obj['e'+type+fn] = fn;
+        obj[type+fn] = function(){obj['e'+type+fn]( window.event );}
+        obj.attachEvent('on'+type, obj[type+fn]);
+      }else{
+        obj.addEventListener(type, fn, false);
+      }
+
+      return fn;
+    }
+
+    /**
+     * Cross Browser helper to removeEventListener
+     * Source: http://ejohn.org/projects/flexible-javascript-events/
+     *
+     * @param {Object} obj - The element to remove the event from.
+     * @param {string} type - The event to remove from the element.
+     * @param {Function} fn - The function to remove from the the element.
+     * @api private
+     */
+    function removeEvent(obj, type, fn) {
+
+      if(obj.detachEvent === true) {
+
+        obj.detachEvent('on'+type, obj[type+fn]);
+        obj[type+fn] = null;
+      }else{
+        obj.removeEventListener(type, fn, false);
+      }
+    }
+
+    /**
+     * Get an element by its class name
+     *
+     * @param {HTMLElement} node - The parent element the element you want to find belongs to
+     * @param {String} classname - The name of the class to find
+     * @return {HTMLElement} - The element within the parent with the defined class
+     * @api private
+     */
+    function getElementsByClassName(node, classname) {
+
+      // Use native implementation if available
+      if(node.getElementsByClassName === true) {
+        return node.getElementsByClassName(classname);
+      }
+
+      // Browser doesn't support getElementsByClassName
+      else{
+        return(function getElementsByClass(searchClass,node) {
+          if(node === null)
+            node = document;
+            var classElements = [],
+                els = node.getElementsByTagName("*"),
+                elsLen = els.length,
+                pattern = new RegExp("(^|\\s)"+searchClass+"(\\s|$)"), i, j;
+
+          for(i = 0, j = 0; i < elsLen; i++) {
+
+            if(pattern.test(els[i].className)) {
+              classElements[j] = els[i];
+              j++;
+            }
+          }
+
+          return classElements;
+        })(classname, node);
+      }
+    }
+
+    /**
+     * Converts a time value taken from a CSS property, such as "0.5s"
+     * and converts it to a number in milliseconds, such as 500
+     *
+     * @param {String} time - the time in a string
+     * @return {Number}
+     * @api private
+     */
+    function convertTimeToMs(time) {
+
+      var convertedTime;
+      var fraction;
+
+      // Deal with milliseconds and seconds
+      if(time.indexOf("ms") > -1) {
+        fraction = 1;
+      }else{
+        fraction = 1000;
+      }
+
+      if(time == "0s") {
+        convertedTime = 0;
+      }else{
+        convertedTime = parseFloat(time.replace("s", "")) * fraction;
+      }
+
+      return convertedTime;
+    }
+
+    /**
+     * Does an element have a particular class?
+     *
+     * @param {Object} el - The element to check
+     * @param {String} name - The name of the class to check for
+     * @return {Boolean}
+     * @api private
+     */
+    function hasClass(el, name) {
+      return new RegExp('(\\s|^)' + name + '(\\s|$)').test(el.className);
+    }
+
+    /**
+     * Add a class to an element
+     *
+     * @param {Object} el - The element to add a class to
+     * @param {String} name - The class to add
+     * @api private
+     */
+    function addClass(el, name) {
+      if(!hasClass(el, name) === true) {
+        el.className += (el.className ? ' ': '') + name;
+      }
+    }
+
+    /**
+     * Remove a class from an element
+     *
+     * @param {Object} el - The element to remove a class from
+     * @param {String} name - The class to remove
+     * @api private
+     */
+    function removeClass(el, name) {
+      if(hasClass(el, name) === true) {
+        el.className = el.className.replace(new RegExp('(\\s|^)' + name + '(\\s|$)'),' ').replace(/^\s+|\s+$/g, '');
+      }
+    }
+
+    /**
+     * Remove the no-JS "animate-in" class from a step
+     */
+    function removeNoJsClass(self) {
+
+      if(self.transitionsSupported === false) {
+        return;
+      }
+
+      // Look for the step with the "animate-in" class and remove the class
+      for(var i = 0; i < self.steps.length; i++) {
+        var element = self.steps[i];
+
+        if(hasClass(element, "animate-in") === true) {
+          var step = "step" + (i + 1);
+
+          self._animation.resetInheritedSpeed(step, "animate-in");
+          removeClass(element, "animate-in");
+        }
+      }
+    };
+
+    /**
+     * Get the index of a clicked pagination item
+     *
+     * The index is taken from the top level elements witint a pagination
+     * element. This function will iterate through each parent until it
+     * reaches the top level, then get all top level elements and determine
+     * the index of the chosen top level.
+     *
+     * @param {Object} paginationElement - The parent element that pagiation links belong to
+     * @param {Object} target - The parent above the previous target
+     * @param {Object} previousTarget - The element that was previously checked to determine if it was top level
+     */
+    function getPaginationIndex(paginationElement, target, previousTarget) {
+
+      // If we've iterated through too many elements and reached <body>, give up!
+      if(target.localName === "body") {
+        return;
+      }
+
+      // We're at the pagination parent
+      if(paginationElement === target) {
+
+        if(previousTarget !== undefined) {
+
+          // Get the top level element clicked and all top level elements
+          var topLevel = previousTarget;
+          var allTopLevel = paginationElement.getElementsByTagName(topLevel.localName);
+
+          // Count the number of top level elements
+          var i = allTopLevel.length;
+
+          // Which top level element was clicked?
+          while(i--) {
+            if(topLevel === allTopLevel[i]) {
+
+              // One-base the index and return it
+              return i + 1;
+            }
+          }
+        }
+      }
+
+      // Not yet at the pagination parent element, iterate again
+      else{
+        var previousTarget = target;
+        return getPaginationIndex(paginationElement, target.parentNode, previousTarget);
+      }
+    };
+
+    /**
+     * Get Sequence's steps
+     *
+     * @return {Array} steps - The elements that make up Sequence's steps
+     * @api private
+     */
+    var getSteps = function(parent) {
+
+      var steps = [];
+
+      // Get all of Sequence's elements and count them
+      var elements = parent[0].getElementsByTagName("*");
+      var elementsLength = elements.length;
+
+      // Get the elements that have a parent with a class of "sequence-canvas"
+      for(var i = 0; i < elementsLength; i++) {
+
+        var element = elements[i];
+        var parent = element.parentNode;
+
+        if(hasClass(parent, "sequence-canvas") === true) {
+          steps.push(element);
+        }
+      }
+
+      return steps;
+    }
+
+    /* --- PUBLIC VARIABLES/METHODS --- */
 
     var self = {};
 
@@ -1975,7 +1979,7 @@
 
           // Get images from particular Sequence steps to be preloaded
           // Get images with specific source values to be preloaded
-        	var stepImagesToPreload = this.saveImagesToArray(self.options.preloadTheseSteps);
+          var stepImagesToPreload = this.saveImagesToArray(self.options.preloadTheseSteps);
           var individualImagesToPreload = this.saveImagesToArray(self.options.preloadTheseImages, true);
 
           // Combine step images and individual images
@@ -2087,7 +2091,7 @@
       saveImagesToArray: function(images, srcOnly) {
 
         // Where we'll save the images
-      	var imagesToPreload = [];
+        var imagesToPreload = [];
 
         // If there aren't any images, return an empty array
         if(isArray(images) === false) {
@@ -3003,6 +3007,8 @@
       // console.log("progress: " + progress + " of " + length);
     }
 
+    /* --- INIT --- */
+
     // Merge developer options with defaults
     self.options = extend(defaults, options);
 
@@ -3021,18 +3027,20 @@
 
     // Expose this instances public variables and methods
     return self;
-  }
+  });
 
-  // Expose sequence
   return Sequence;
+}
 
-  // ---------------------------------------------------------------------------
+if (typeof define === 'function' && define.amd) {
 
-  } if(typeof define === 'function' && define.amd) {
-      // amd anonymous module registration
-      define(['third-party/modernizr.min'], ['third-party/imagesloaded.pkgd.min'], ['third-party/hammer.min'], defineSequence);
-  }else{
-    // browser global
-    global.sequence = defineSequence(ModernizrSequence, imagesLoaded, Hammer);
-  }
-}(this));
+  define(
+    ['third-party/modernizr.min'],
+    ['third-party/imagesloaded.pkgd.min'],
+    ['third-party/hammer.min'],
+    defineSequence
+  );
+}
+else {
+  sequence = defineSequence(ModernizrSequence, imagesLoaded, Hammer);
+}

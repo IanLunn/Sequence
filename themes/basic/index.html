@@ -19,13 +19,37 @@
   <button class="sequence-pause">Unpause</button>
   <button class="sequence-next">Next</button>
 
-  <div class="sequence-pagination">
+  <div id="x" class="sequence-pagination">
     <button>Step 1</button>
     <button>Step 2</button>
     <button>Step 3</button>
   </div>
 
-  <div id="sequence" class="some-other-class">
+  <div id="sequence1" class="sequence some-other-class">
+    <ul class="sequence-canvas">
+      <li id="first" data-sequence-hashtag="one">
+        <div class="box box1">
+          <a href="#1">Box 1</a>
+          <!-- <div class="box box4"></div> -->
+        </div>
+      </li>
+      <li id="second" data-sequence-hashtag="two">
+        <div class="box box2">
+          <a href="#2">Box 2</a>
+        </div>
+      </li>
+      <li id="third" class="animate-in" data-sequence-hashtag="three">
+        <div class="box box3">
+          <a href="#3">Box 3</a>
+
+          <!-- <div class="box box4"></div> -->
+          <!-- <div class="box box5"></div> -->
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div id="sequence2" class="sequence some-other-class">
     <ul class="sequence-canvas">
       <li id="first" data-sequence-hashtag="one">
         <div class="box box1">
@@ -88,23 +112,18 @@ Nam tristique felis id elit posuere, at dictum nisi pharetra. Nunc tincidunt odi
   <script src="../../scripts/third-party/hammer.min.js"></script>
   <script src="../../scripts/sequence.js"></script>
   <script>
-    var options = {
-      nextButton: true,
-      prevButton: true,
-      pagination: true,
+    var options1 = {
       startingStepId: 1,
-      animateCanvas: false
+      cycle: false
     }
 
-    var sequence1 = sequence(document.getElementById("sequence"), options);
-
-    sequence1.unpaused = function() {
-      sequence1.pauseButton[0].innerHTML = "Pause";
+    var options2 = {
+      startingStepId: 2,
+      nextButton: false
     }
 
-    sequence1.paused = function() {
-      sequence1.pauseButton[0].innerHTML = "Unpause";
-    }
+    var sequence1 = sequence(document.getElementById("sequence1"), options1);
+    var sequence2 = sequence(document.getElementById("sequence2"), options2);
   </script>
 </body>
 </html>
