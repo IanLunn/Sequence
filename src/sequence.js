@@ -2,116 +2,198 @@
  * Sequence
  * The CSS3 Animation Framework
  *
- * @link https://github.com/IanLunn/sequence
+ * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
  * @version 2.0.0
- * @license https://github.com/IanLunn/sequence/blob/master/LICENSE
+ * @license https://github.com/IanLunn/Sequence/blob/master/LICENSE
  * @copyright IanLunn
  */
 
-function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
+function defineSequence(imagesLoaded, Hammer) {
 
   'use strict';
 
   /**
-   * Constructor
+   * Sequence function
    *
    * @param {Object} element - the element Sequence is bound to
    * @param {Object} options - this instance's options
-   * @return {Object} self - Variables and methods available to this instance
+   * @return {Object} self - Properties and methods available to this instance
    * @api public
    */
   var Sequence = (function(element, options) {
 
-    /* --- PRIVATE VARIABLES/METHODS --- */
+    /* --- PRIVATE VARIABLES/FUNCTIONS --- */
 
     // Default Sequence settings
     var defaults = {
 
-      // General Settings
-      startingStepId: 1,                    //y
-      startingStepAnimatesIn: true,         //y
-      cycle: true,                          //y
-      phaseThreshold: false,                //y
-      reverseWhenNavigatingBackwards: true, //y
-      moveActiveFrameToTop: true,           //y
-      windowLoaded: false,
+      /* --- General --- */
 
-      // Canvas Animation Settings
-      animateCanvas: true,                  //y
-      animateCanvasDuration: 500,           //y
+      // The first step to show
+      startingStepId: 1,
 
-      // Autoplay Settings
-      autoPlay: false,                      //y
-      autoPlayDirection: 1,                 //y
-      autoPlayThreshold: 3000,              //y
+      // Should the starting step animate in to begin with?
+      startingStepAnimatesIn: false,
 
-      // Navigation Skipping Settings
-      navigationSkip: true,                 //y
-      navigationSkipThreshold: 250,         //y
-      fadeStepWhenSkipped: true,            //y
-      fadeStepTime: 500,                    //y
-      preventReverseSkipping: false,        //y
+      // When the last step is reached, should Sequence cycle back to the start?
+      cycle: true,
 
-      // Next/Prev Button Settings
-      nextButton: true,                     //y - now true by default
-      prevButton: true,                     //y - now true by default
+      // How long to wait between the current phase animating out, and the next
+      // animating in.
+      phaseThreshold: true,
 
-      // Pause Settings
-      pauseButton: true,                    //y - now true by default
-      unpauseThreshold: null,               //y
-      pauseOnHover: true,                   //y
+      // Should animations be reversed when navigating backwards?
+      reverseWhenNavigatingBackwards: false,
 
-      // Pagination Settings
-      pagination: true,                     //y - now true by default
+      // Should the active step be given a higher z-index?
+      moveActiveStepToTop: true,
 
-      // Preloader Settings
-      preloader: false,                     //y
-      preloadTheseSteps: [1],               //y
-      preloadTheseImages: [                 //y
+
+      /* --- Canvas Animation --- */
+
+      // Should the canvas automatically animate between steps?
+      animateCanvas: true,
+
+      // Time it should take to animate between steps
+      animateCanvasDuration: 500,
+
+
+      /* --- autoPlay --- */
+
+      // Cause Sequence to automatically navigate between steps
+      autoPlay: true,
+
+      // How long to wait between each step before navigation occurs again
+      autoPlayThreshold: 5000,
+
+      // Direction of navigation when autoPlay is enabled
+      autoPlayDirection: 1,
+
+
+      /* --- Navigation Skipping --- */
+
+      // Allow the user to navigate between steps even if they haven't
+      // finished animating
+      navigationSkip: true,
+
+      // How long to wait before the user is allowed to skip to another step
+      navigationSkipThreshold: 250,
+
+      // Fade a step when it has been skipped
+      fadeStepWhenSkipped: true,
+
+      // How long the fade should take
+      fadeStepTime: 500,
+
+      // Don't allow the user to go to a previous step when the current one is
+      // still active
+      preventReverseSkipping: false,
+
+
+      /* --- Next/Prev Button --- */
+
+      // Use next and previous buttons? You can also specify a CSS selector to
+      // change what element acts as the button. If true, the element uses
+      // classes of "sequence-next" and "sequence-prev"
+      nextButton: true,
+      prevButton: true,
+
+
+      /* --- Pause Button --- */
+
+      // Use a pause button? You can also specify a CSS selector to
+      // change what element acts as the button. If true, the element uses the
+      // class of "sequence-pause"
+      pauseButton: true,
+
+      // Amount of time to wait until autoPlay starts again after being unpaused
+      unpauseThreshold: null,
+
+      // Pause autoPlay when the Sequence element is hovered over
+      pauseOnHover: true,
+
+
+      /* --- Pagination --- */
+
+      // Use pagination? You can also specify a CSS selector to
+      // change what element acts as pagination. If true, the element uses the
+      // class of "sequence-pagination"
+      pagination: true,
+
+
+      /* --- Preloader --- */
+
+      // You can also specify a CSS selector to
+      // change what element acts as the preloader. If true, the element uses
+      // the class of "sequence-preloader"
+      preloader: false,
+
+      // Preload all images from specific steps
+      preloadTheseSteps: [1],
+
+      // Preload specified images
+      preloadTheseImages: [
         /**
          * Example usage
          * "images/catEatingSalad.jpg",
          * "images/grandmaDressedAsBatman.png"
          */
       ],
-      hideStepsUntilPreloaded: true,        //y
 
-      // Keyboard Settings
-      keyNavigation: true,                  //y
-      keyNavigationGlobal: false,
-      numericKeysGoToFrames: true,          //y
-      keyEvents: {                          //y
-        left: function(self) {self.prev()},
-        right: function(self) {self.next()}
+      // Hide Sequence's steps until it has preloaded
+      hideStepsUntilPreloaded: true,
+
+
+      /* --- Keyboard --- */
+
+      // Can the user navigate between steps by pressing keyboard buttons?
+      keyNavigation: true,
+
+      // When numeric keys 1 - 9 are pressed, Sequence will navigate to the
+      // corresponding step
+      numericKeysGoToSteps: true,
+
+      // Events to run when the user presses the left/right keys
+      keyEvents: {
+        left: function(sequence) {sequence.prev()},
+        right: function(sequence) {sequence.next()}
       },
 
 
-      // Touch Swipe Settings
-      // -----------------------
-      swipeNavigation: false,                //y
-      swipeEvents: {                         //y
-        left: function(self) {self.prev()},
-        right: function(self) {self.next()},
+      /* --- Touch Swipe --- */
+
+      // Can the user navigate between steps by swiping on a touch enabled device?
+      swipeNavigation: true,
+
+      // Events to run when the user swipes in a particular direction
+      swipeEvents: {
+        left: function(sequence) {sequence.prev()},
+        right: function(sequence) {sequence.next()},
         up: false,
         down: false
       },
-      swipeHammerOptions: {},                //y
+
+      // Options to supply the third-party Hammer library See: https://github.com/EightMedia/hammer.js/wiki/Getting-Started
+      swipeHammerOptions: {},
 
 
-      // HashTags Settings
-      // -----------------
-      hashTags: false,                        //y
+      /* --- hashTags --- */
+
+      // Should the URL update to include a hashTag that relates to the current
+      // step being shown?
+      hashTags: false,
 
       // Get the hashTag from an ID or data-sequence-hashtag attribute?
-      hashDataAttribute: false,               //y
+      hashDataAttribute: false,
 
-      // Should the hash change on the first frame?
-      hashChangesOnFirstFrame: false,         //y
+      // Should the hash change on the first step?
+      hashChangesOnFirstStep: false,
 
 
-      // Fallback Theme Settings
-      // -----------------------
+      /* --- Fallback Theme --- */
+
+      // Settings to use when the browser doesn't support CSS transitions
       fallback: {
 
         // The speed to transition between steps
@@ -132,21 +214,27 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
       }
     }
 
+
     // See Sequence._animation.domDelay() for an explanation of this
     var domThreshold = 50;
 
-    // Throttle the window resize event - see self.manageEvent.add.resizeThrottle()
+    // Throttle the window resize event
+    // see self.manageEvent.add.resizeThrottle()
     var resizeThreshold = 100;
 
-    // Sequence will only load when the window load event completes. If you're
-    // initiating Sequence after the window load event has already completed, set
-    // windowLoaded to true in the options (self.options.windowLoaded = true)
-    var windowLoaded = false;
+    /**
+     * This version of Modernizr is for use with Sequence.js and is included
+     * internally to prevent conflicts with other Modernizr builds.
+     *
+     * Modernizr 2.8.2 (Custom Build) | MIT & BSD
+     * Build: http://modernizr.com/download/#-cssanimations-csstransitions-svg-prefixed-testprop-testallprops-domprefixes
+     */
+    var Modernizr=function(a,b,c){function x(a){i.cssText=a}function y(a,b){return x(prefixes.join(a+";")+(b||""))}function z(a,b){return typeof a===b}function A(a,b){return!!~(""+a).indexOf(b)}function B(a,b){for(var d in a){var e=a[d];if(!A(e,"-")&&i[e]!==c)return b=="pfx"?e:!0}return!1}function C(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:z(f,"function")?f.bind(d||b):f}return!1}function D(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+m.join(d+" ")+d).split(" ");return z(b,"string")||z(b,"undefined")?B(e,b):(e=(a+" "+n.join(d+" ")+d).split(" "),C(e,b,c))}var d="2.8.2",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l="Webkit Moz O ms",m=l.split(" "),n=l.toLowerCase().split(" "),o={svg:"http://www.w3.org/2000/svg"},p={},q={},r={},s=[],t=s.slice,u,v={}.hasOwnProperty,w;!z(v,"undefined")&&!z(v.call,"undefined")?w=function(a,b){return v.call(a,b)}:w=function(a,b){return b in a&&z(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=t.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(t.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(t.call(arguments)))};return e}),p.cssanimations=function(){return D("animationName")},p.csstransitions=function(){return D("transition")},p.svg=function(){return!!b.createElementNS&&!!b.createElementNS(o.svg,"svg").createSVGRect};for(var E in p)w(p,E)&&(u=E.toLowerCase(),e[u]=p[E](),s.push((e[u]?"":"no-")+u));return e.addTest=function(a,b){if(typeof a=="object")for(var d in a)w(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,typeof enableClasses!="undefined"&&enableClasses&&(f.className+=" "+(b?"":"no-")+a),e[a]=b}return e},x(""),h=j=null,e._version=d,e._domPrefixes=n,e._cssomPrefixes=m,e.testProp=function(a){return B([a])},e.testAllProps=D,e.prefixed=function(a,b,c){return b?D(a,b,c):D(a,"pfx")},e}(this,window.document);
 
     /**
      * Is an object an array?
      *
-     * @param {Object} objecy - The object we want to test
+     * @param {Object} object - The object we want to test
      * @api private
      */
     function isArray(object) {
@@ -326,6 +414,9 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
     /**
      * Remove the no-JS "animate-in" class from a step
+     *
+     * @param {Object} self - Properties and methods available to this instance
+     * @api private
      */
     function removeNoJsClass(self) {
 
@@ -357,6 +448,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
      * @param {Object} paginationElement - The parent element that pagiation links belong to
      * @param {Object} target - The parent above the previous target
      * @param {Object} previousTarget - The element that was previously checked to determine if it was top level
+     * @api private
      */
     function getPaginationIndex(paginationElement, target, previousTarget) {
 
@@ -398,6 +490,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
     /**
      * Get Sequence's steps
      *
+     * @param {HTMLElement} parent - The parent element of the steps
      * @return {Array} steps - The elements that make up Sequence's steps
      * @api private
      */
@@ -423,7 +516,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
       return steps;
     }
 
-    /* --- PUBLIC VARIABLES/METHODS --- */
+    /* --- PUBLIC PROPERTIES/METHODS --- */
 
     var self = {};
 
@@ -438,16 +531,15 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
      * A phase's duration consists of the highest combination of
      * transition-duration and transition-delay
      *
-     * @api public
+     * @api private
      */
     self._getAnimationMap = {
 
       /**
        * Start getting the animation map.
        *
-       * @param {Object} element - the Sequence element
+       * @param {HTMLElement} element - the Sequence element
        * @return {Object}
-       * @api public
        */
       init: function(element) {
 
@@ -491,8 +583,6 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
       /**
        * Initiate each Sequence step on the cloned Sequence
-       *
-       * @api public
        */
       steps: function() {
 
@@ -534,7 +624,6 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
        * @param {Array} clonedStepChildren - All of the cloned step's child elements
        * @param {Array} realStepChildren - All of the real step's child elements
        * @param {Number} noOfStepChildren - The number of step child elements
-       * @api public
        */
       phases: function(phase, stepNo, clonedStepElement, clonedStepChildren, realStepChildren, noOfStepChildren) {
 
@@ -571,9 +660,9 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
           // Get the element's transition-duration and transition-delay, then
           // calculate the computed duration
-          var transitionDuration = convertTimeToMs(styles[ModernizrSequence.prefixed("transitionDuration")]);
-          var transitionDelay = convertTimeToMs(styles[ModernizrSequence.prefixed("transitionDelay")]);
-          var transitionTimingFunction = styles[ModernizrSequence.prefixed("transitionTimingFunction")];
+          var transitionDuration = convertTimeToMs(styles[Modernizr.prefixed("transitionDuration")]);
+          var transitionDelay = convertTimeToMs(styles[Modernizr.prefixed("transitionDelay")]);
+          var transitionTimingFunction = styles[Modernizr.prefixed("transitionTimingFunction")];
           var computedDuration = transitionDuration + transitionDelay;
 
           /**
@@ -622,7 +711,6 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
        *
        * @param {Object} element - The Sequence element to clone
        * @return {Object} The cloned element
-       * @api public
        */
       createClone: function(element) {
 
@@ -638,7 +726,6 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
        * Destroy a cloned Sequence element
        *
        * @param {Object} element - The cloned element to destroy
-       * @api public
        */
       destroyClone: function(element) {
 
@@ -650,6 +737,8 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
     /**
      * Manage UI elements such as nextButton, prevButton, and pagination
+     *
+     * @api private
      */
     self._ui = {
 
@@ -664,6 +753,10 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
       /**
        * Get an UI element
+       *
+       * @param {String} type - The type of UI element (nextButton for example)
+       * @return {Boolean | HTMLElement} option - True if using the default
+       *                                          element, else an HTMLElement
        */
       getElement: function(type, option) {
 
@@ -687,6 +780,9 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
       /**
        * Fade an element in using transitions if they're supported, else use JS
+       *
+       * @param {HTMLElement} element - The element to show
+       * @param {Number} duration - The duration to show the element over
        */
       show: function(element, duration) {
 
@@ -702,6 +798,10 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
       /**
        * Fade an element out using transitions if they're supported, else use JS
+       *
+       * @param {HTMLElement} element - The element to hide
+       * @param {Number} duration - The duration to hide the element over
+       * @param {Function} callback - Function to execute when the element is hidden
        */
       hide: function(element, duration, callback) {
 
@@ -723,23 +823,27 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
     }
 
     /**
-     * Methods relating to autoPlay.
+     * Methods relating to autoPlay
+     *
+     * @api private
      */
     self._autoPlay = {
 
       /**
-       * Start or restart autoPlay only if autoPlay is enabled and Sequence isn't
-       * currently paused.
+       * Start or restart autoPlay only if autoPlay is enabled and Sequence
+       * isn't currently paused.
        */
       init: function() {
 
-        //
-        self.isAutoPlaying = false;
+        self.isAutoPlayActive = false;
         self.isPaused = (self.options.autoPlay === true) ? false: true;
         self.isHardPaused = self.isPaused;
 
+        // Should the unpause threshold be taken from the autoPlayThreshold or
+        // has the developer defined an unpauseThreshold?
         self.options.unpauseThreshold = (self.options.unpauseThreshold === null) ? self.options.autoPlayThreshold : self.options.unpauseThreshold;
 
+        // Start autoPlay
         if(self.options.autoPlay === true && self.isPaused === false) {
           this.start();
         }
@@ -758,7 +862,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
           removeClass(self.element, "paused");
 
           // Callback
-          self.unpaused();
+          self.unpaused(self);
         }
       },
 
@@ -775,7 +879,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
           addClass(self.element, "paused");
 
           // Callback
-          self.paused();
+          self.paused(self);
         }
       },
 
@@ -794,7 +898,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
         }
 
         // autoPlay is now active
-        self.isAutoPlaying = true;
+        self.isAutoPlayActive = true;
         self.options.autoPlay = true;
 
         // Clear the previous autoPlayTimer
@@ -816,7 +920,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
        */
       stop: function() {
 
-        self.isAutoPlaying = false;
+        self.isAutoPlayActive = false;
         self.options.autoPlay = false;
 
         clearTimeout(self.autoPlayTimer);
@@ -825,6 +929,8 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
     /**
      * Controls Sequence's animations
+     *
+     * @api private
      */
     self._animation = {
 
@@ -884,16 +990,16 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
       },
 
       /**
-       * If the moveActiveFrameToTop option is being used, move the next step
+       * If the moveActiveStepToTop option is being used, move the next step
        * to the top (via a z-index equivalent to the number of steps), and the
        * current step to the bottom
        *
-       * @param {Object} currentStepElement - The current step to be moved off the top
-       * @param {Object} nextStepElement - The next step to be moved to the top
+       * @param {HTMLElement} currentStepElement - The current step to be moved off the top
+       * @param {HTMLElement} nextStepElement - The next step to be moved to the top
        */
-      moveActiveFrameToTop: function(currentStepElement, nextStepElement) {
+      moveActiveStepToTop: function(currentStepElement, nextStepElement) {
 
-        if(self.options.moveActiveFrameToTop === true) {
+        if(self.options.moveActiveStepToTop === true) {
 
           var prevStepElement = self.animationMap["step" + self.prevStepId].element;
 
@@ -907,7 +1013,11 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
        * If the navigationSkipThreshold option is being used, prevent the use
        * of goTo() during the threshold period
        *
-       * @param {Number} id -
+       * @param {Number} id - The ID of the step Sequence is trying to go to
+       * @param {Number} direction - The direction Sequence is trying to go
+       * @param {String} currentStep - The current step that is active
+       * @param {String} nextStep - The next step to become active
+       * @param {HTMLObject} nextStepElement -  The element that is to become the next step
        */
       manageNavigationSkip: function(id, direction, currentStep, nextStep, nextStepElement) {
 
@@ -917,7 +1027,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
         var _animation = this;
 
-        // Show the next frame again
+        // Show the next step again
         self._ui.show(nextStepElement, 0);
 
         if(self.options.navigationSkip === true) {
@@ -935,6 +1045,10 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
             // Start the navigation skip threshold
             self.navigationSkipThresholdActive = true;
+
+            // If a step is waiting to animate in based on the phaseThreshold,
+            // cancel it
+            clearTimeout(self.phaseThresholdTimer);
 
             // Fade a step out if the user navigates to another prior to its
             // animation finishing
@@ -966,7 +1080,9 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
       /**
        * Deal with a step when it has been skipped
        *
-       * @param {Object} element - The step element that was skipped
+       * @param {Number} direction - The direction of navigation when the step was skipped
+       * @param {String} step - The step that was skipped
+       * @param {HTMLElement} stepElement - The step element that was skipped
        */
       stepSkipped: function(direction, step, stepElement) {
 
@@ -983,8 +1099,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
       /**
        * Change a step's class. Example: go from step1 to step2
        *
-       * @param {Number} id - The ID of the step to change to
-       * @api public
+       * @param {Number} id - The ID of the step to change
        */
       changeStep: function(id) {
 
@@ -1006,8 +1121,9 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
        * Apply the reversed properties to all animatable elements within a step
        *
        * @param {String} step - The step that the elements we'll override belong to
-       * @param {Number} delay - The delay to be applied
-       * @return {Number} computedDuration - The time the steps will take to finish their reversed transition
+       * @param {Number} phase - The animation phase "animate-in" or "animate-out"
+       * @return {Object} stepDurations - How long a step will animate for,
+       *                                  including animation, delay, and total
        */
       reverseProperties: function(step, phase, stepDurations) {
 
@@ -1038,6 +1154,15 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
       /**
        * Go forward to the next step
+       *
+       * @param {Number} id - The ID of the next step
+       * @param {String} nextStep - The name of the next step
+       * @param {HTMLElement} nextStepElement - The element that is the next step
+       * @param {String} currentStep - The name of the current step
+       * @param {HTMLElement} currentStepElement - The element that is the current step
+       * @param {Object} stepDurations - How long a step will animate for,
+       *                                 including animation, delay, and total
+       * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
        */
       forward: function(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav) {
 
@@ -1058,6 +1183,15 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
       /**
        * Go in reverse to the next step
+       *
+       * @param {Number} id - The ID of the next step
+       * @param {String} nextStep - The name of the next step
+       * @param {HTMLElement} nextStepElement - The element that is the next step
+       * @param {String} currentStep - The name of the current step
+       * @param {HTMLElement} currentStepElement - The element that is the current step
+       * @param {Object} stepDurations - How long a step will animate for,
+       *                                 including animation, delay, and total
+       * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
        */
       reverse: function(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav) {
 
@@ -1082,6 +1216,16 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
       /**
        * Start the next step's "animate-in" phase
+       *
+       * @param {Number} id - The ID of the next step
+       * @param {Number} direction - The direction of navigation
+       * @param {String} nextStep - The name of the next step
+       * @param {HTMLElement} nextStepElement - The element that is the next step
+       * @param {String} currentStep - The name of the current step
+       * @param {HTMLElement} currentStepElement - The element that is the current step
+       * @param {Object} stepDurations - How long a step will animate for,
+       *                                 including animation, delay, and total
+       * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
        */
       startAnimateIn: function(id, direction, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav) {
 
@@ -1097,7 +1241,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
         self.currentStepId = id;
 
         // Callback
-        self.animationStarted(id);
+        self.animationStarted(id, self);
         _animation._currentPhaseStarted();
 
         // When should the "animate-in" phase start and how long until the step
@@ -1109,7 +1253,8 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
           stepDurationTotal = stepDurations["step-total"];
 
           // Start the "animate-in" phase
-          setTimeout(function() {
+          self.phaseThresholdTimer = setTimeout(function() {
+
             _animation._nextPhaseStarted(hashTagNav);
             addClass(nextStepElement, "animate-in");
             removeClass(nextStepElement, "animate-out");
@@ -1151,25 +1296,27 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
       },
 
       /**
-       *
+       * When the current phase starts animating
        */
       _currentPhaseStarted: function() {
 
         // Callback
-        self.currentPhaseStarted();
+        self.currentPhaseStarted(self);
       },
 
       /**
-       *
+       * When the current phase finishes animating
        */
       _currentPhaseEnded: function() {
 
         // Callback
-        self.currentPhaseEnded();
+        self.currentPhaseEnded(self);
       },
 
       /**
+       * When the next phase starts animating
        *
+       * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
        */
       _nextPhaseStarted: function(hashTagNav) {
 
@@ -1179,20 +1326,24 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
         }
 
         // Callback
-        self.nextPhaseStarted();
+        self.nextPhaseStarted(self);
       },
 
       /**
-       *
+       * When the next phase finishes animating
        */
       _nextPhaseEnded: function() {
 
         // Callback
-        self.nextPhaseEnded();
+        self.nextPhaseEnded(self);
       },
 
       /**
        * When a phase's animations have completely finished
+       *
+       * @param {Number} stepDurationTotal - The amount of time before the step finishes animating
+       * @param {String} step - The name of the step that ended
+       * @param {Function} callback - A function to execute when the phase ends
        */
       phaseEnded: function(stepDurationTotal, step, callback) {
 
@@ -1208,6 +1359,9 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
       /**
        * When a step's animations have completely finished
+       *
+       * @param {Number} id - The ID of the step that ended
+       * @param {Number} stepDurationTotal - The amount of time before the step finishes animating
        */
       stepEnded: function(id, stepDurationTotal) {
 
@@ -1217,7 +1371,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
           self.isActive = false;
 
           // Callback
-          self.animationFinished(id);
+          self.animationFinished(id, self);
         }, stepDurationTotal);
       },
 
@@ -1228,8 +1382,10 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
        * will always be the longest computed duration from the "animate-in"
        * phase, as the "animate-out" phase is immediately snapped into place.
        *
+       * @param {Number} nextStepId - The ID of the next step
        * @param {String} nextStep - The step that will be animated-in
        * @param {String} currentStep - The step that will be animated-out
+       * @param {Number} direction - The direction of navigation
        * @return {Number} stepDuration - The time the step will take to animate
        */
       getStepDurations: function(nextStepId, nextStep, currentStep, direction) {
@@ -1358,9 +1514,8 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
       /**
        * Change "animate-out" to "animate-in" and vice-versa.
        *
-       * @param {String} - The phase to reverse
+       * @param {String} phase - The phase to reverse
        * @return {String} - The reversed phase
-       * @api public
        */
       reversePhase: function(phase) {
 
@@ -1387,7 +1542,6 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
        * this but 50ms is enough to capture even the slowest of browsers.
        *
        * @param {Function} callback - a function to run after the delay
-       * @api public
        */
       domDelay: function(callback) {
 
@@ -1397,7 +1551,10 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
       },
 
       /**
+       * Reverse a CSS timing function
        *
+       * @param {String} timingFunction - The timing function to reverse
+       * @return {String} timingFunction - The reverse timing function
        */
       reverseTimingFunction: function(timingFunction) {
 
@@ -1446,6 +1603,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
        *
        * @param {String} step - The step that the elements we'll override belong to
        * @param {String} phase - The next phase "animate-in" or "animate-out"
+       * @return {Object} stepProperties - The step properties
        */
       getStepProperties: function(step, phase) {
 
@@ -1469,7 +1627,6 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
        *
        * @param {String} step - The step that the elements we'll reset belong to
        * @param {String} phase - The next phase "animate-in" or "animate-out"
-       * @api public
        */
       resetInheritedSpeed: function(step, phase) {
 
@@ -1548,7 +1705,6 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
        *
        * @param {Number} id - The id of the step to go to
        * @param {Number} direction - The defined direction 1 or -1
-       * @param {Object} self - Variables and methods available to this instance
        * @return {Number} direction - The direction 1 or -1
        */
       getDirection: function(id, direction) {
@@ -1582,17 +1738,16 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
        */
       propertySupport: function() {
 
-
         self.transitionsSupported = false;
         self.animationsSupported = false;
 
         // Are transitions supported?
-        if(ModernizrSequence.csstransitions === true) {
+        if(Modernizr.csstransitions === true) {
           self.transitionsSupported = true;
         }
 
         // Are animations supported?
-        if(ModernizrSequence.cssanimations === true) {
+        if(Modernizr.cssanimations === true) {
           self.animationsSupported = true;
         }
       },
@@ -1601,19 +1756,21 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
     /**
      * Controls Sequence's animations when in a browser that doesn't support
      * CSS transitions
+     *
+     * @api private
      */
     self._animationFallback = {
 
       /**
        * Animate an element using JavaScript
        *
-       * @param {HTMLElement} element -
-       * @param {String} style -
-       * @param {String} unit -
-       * @param {Number} from -
-       * @param {Number} to -
-       * @param {Number} time -
-       * @param {Function} callback -
+       * @param {HTMLElement} element - The element to animate
+       * @param {String} style - The style to be animated
+       * @param {String} unit - The value unit such as "px", "%" etc
+       * @param {Number} from - The start value of the animation
+       * @param {Number} to - The end value of the animation
+       * @param {Number} time - how long to animate for
+       * @param {Function} callback - A function to execute once the animation has finished
        */
       animate: function(element, style, unit, from, to, time, callback) {
 
@@ -1644,6 +1801,8 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
       /**
        * Setup the canvas ready for the fallback animation
+       *
+       * @param {Number} id - The first Id that Sequence will go to
        */
       setupCanvas: function(id) {
 
@@ -1701,6 +1860,10 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
       /**
        * Move the canvas using basic animation
+       *
+       * @param {HTMLElement} currentStepElement - The element that is the current step
+       * @param {HTMLElement} nextStepElement - The element that is the next step
+       * @param {Boolean} animate - Show the canvas animate or snap?
        */
       moveCanvas: function(currentStepElement, nextStepElement, animate) {
 
@@ -1731,6 +1894,14 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
       /**
        * Go to a step using basic animation
+       *
+       * @param {Number} id - The ID of the step to go to
+       * @param {String} currentStep - The name of the current step
+       * @param {HTMLElement} currentStepElement - The element that is the current step
+       * @param {String} nextStep - The name of the next step
+       * @param {HTMLElement} nextStepElement - The element that is the next step
+       * @param {Number} direction - The direction of navigation
+       * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
        */
       goTo: function(id, currentStep, currentStepElement, nextStep, nextStepElement, direction, hashTagNav) {
 
@@ -1752,7 +1923,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
           this.moveCanvas(currentStepElement, nextStepElement, true);
 
           // Callback
-          self.animationStarted(self.currentStepId);
+          self.animationStarted(self.currentStepId, self);
         }
 
         // This is the first step we're going to
@@ -1769,12 +1940,15 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
     /**
      * Manage Sequence hashTag support
+     *
+     * @api private
      */
     self._hashTags = {
 
       /**
        * Set up hashTags
        *
+       * @param {Number} id - The id of the first step
        * @return {Number} id - The id of the first step (_hashTags.init() will
        * override this if an entering URL contains a hashTag that corresponds
        * to a step)
@@ -1817,6 +1991,8 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
       /**
        * Does a hashTag have a corresponding step?
+       *
+       * @return {Number} correspondingStep - The step ID relating to the hashTag
        */
       hasCorrespondingStep: function() {
 
@@ -1863,7 +2039,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
         if(
           self.options.hashTags === true
           && self._firstRun === false
-          || (self.options.hashTags === true && self._firstRun === true && self.options.hashChangesOnFirstFrame === true)) {
+          || (self.options.hashTags === true && self._firstRun === true && self.options.hashChangesOnFirstStep === true)) {
 
             // Zero-base the currentStepId
             var hashTagId = self.currentStepId - 1;
@@ -1950,11 +2126,15 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
     /**
      * Manage Sequence preloading
+     *
+     * @api private
      */
     self._preload = {
 
       /**
        * Setup Sequence preloading
+       *
+       * @param {Function} callback - Function to execute when preloading has finished
        */
       init: function(callback) {
 
@@ -2003,18 +2183,20 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
             var result = image.isLoaded ? 'loaded' : 'broken';
 
             // Callback
-            self.preloadProgress(result, image.img.src, progress++, imagesToPreload.length);
+            self.preloadProgress(result, image.img.src, progress++, imagesToPreload.length, self);
           });
         }
       },
 
       /**
        * When preloading has finished, show the steps again and hide the preloader
+       *
+       * @param {Function} callback - Function to execute when preloading has finished
        */
       complete: function(callback) {
 
         // Callback
-        self.preloaded();
+        self.preloaded(self);
 
         // Show steps if necessary
         this.hideAndShowSteps("show");
@@ -2032,7 +2214,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
       /**
        * Sequence's default preloader styles and animation for the preloader icon
        */
-     defaultStyles: '.sequence-preloader {position: absolute;z-index: 9999;height: 100%;width: 100%;}.sequence-preloader .preload .circle {position: relative;top: -50%;display: inline-block;height: 12px;width: 12px;fill: #ff9442;animation: preload 1s infinite;}.preload {position: relative;top: 50%;display: block;height: 12px;width: 48px;margin: -6px auto 0 auto;}.preload-complete {opacity: 0;visibility: hidden;'+ModernizrSequence.prefixed("transition")+': .5s;}.preload.fallback .circle {float: left;margin-right: 4px;background-color: #ff9442;border-radius: 6px;}',
+     defaultStyles: '.sequence-preloader {position: absolute;z-index: 9999;height: 100%;width: 100%;}.sequence-preloader .preload .circle {position: relative;top: -50%;display: inline-block;height: 12px;width: 12px;fill: #ff9442;}.preload {position: relative;top: 50%;display: block;height: 12px;width: 48px;margin: -6px auto 0 auto;}.preload-complete {opacity: 0;visibility: hidden;'+Modernizr.prefixed("transition")+': .5s;}.preload.fallback .circle {float: left;margin-right: 4px;background-color: #ff9442;border-radius: 6px;}',
 
       /**
        * Add the preloader's styles to the <head></head>
@@ -2057,7 +2239,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
           head.appendChild(this.styleElement);
 
           // Animate the preloader using JavaScript if the browser doesn't support SVG
-          if(ModernizrSequence.svg === false) {
+          if(Modernizr.svg === false) {
 
             // Get the preload indicator
             var preloadIndicator = self.preloader.firstChild;
@@ -2175,7 +2357,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
           self.preloader = [self.preloader];
 
           // Use the SVG preloader
-          if(ModernizrSequence.svg === true) {
+          if(Modernizr.svg === true) {
 
             self.preloader[0].innerHTML = '<svg class="preload" xmlns="http://www.w3.org/2000/svg"><circle class="circle" cx="6" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" repeatCount="indefinite" /></circle><circle class="circle" cx="22" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" begin="150ms" repeatCount="indefinite" /></circle><circle class="circle" cx="38" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" begin="300ms" repeatCount="indefinite" /></circle></svg>';
           }
@@ -2206,6 +2388,8 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
       /**
        * If enabled, hide/show Sequence steps until preloading has finished
+       *
+       * @param {String} type - "show" or "hide"
        */
       hideAndShowSteps: function(type) {
 
@@ -2228,6 +2412,8 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
     /**
      * Add and remove Sequence events
+     *
+     * @api public
      */
     self.manageEvent = {
 
@@ -2247,8 +2433,6 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
        * Set up events on init
        */
       init: function() {
-
-        this.add.windowLoad();
 
         this.add.hashChange();
 
@@ -2295,7 +2479,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
       /**
        * Remove an event from all of the elements it is attached to
        *
-       * @param{String} type - The type of event to remove eg. "click"
+       * @param {String} type - The type of event to remove eg. "click"
        */
       remove: function(type) {
 
@@ -2323,18 +2507,6 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
       },
 
       add: {
-
-        /**
-         * Determine if the window has loaded
-         */
-        windowLoad: function() {
-
-          var handler = addEvent(window, "load", function() {
-            windowLoaded = true;
-          });
-
-          self.manageEvent.list["load"].push({"element": window, "handler": handler});
-        },
 
         /**
          * Add the hashchange event
@@ -2384,6 +2556,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
          * Add next buttons
          *
          * @param {Array} elements - The element or elements acting as the next button
+         * @param {Function} callback - Function to execute when the button is clicked
          */
         button: function(elements, callback) {
 
@@ -2576,7 +2749,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
             var keyCodeChar = parseInt(String.fromCharCode(e.keyCode));
 
             // Go to the numeric key pressed
-            if((keyCodeChar > 0 && keyCodeChar <= self.noOfSteps) && (self.options.numericKeysGoToFrames)) {
+            if((keyCodeChar > 0 && keyCodeChar <= self.noOfSteps) && (self.options.numericKeysGoToSteps)) {
               self.goTo(keyCodeChar);
             }
 
@@ -2616,7 +2789,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
             self._animation.moveCanvas(self.currentStepId, false);
 
             // Callback
-            self.throttledResize();
+            self.throttledResize(self);
           }
 
           /**
@@ -2650,6 +2823,9 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
           prevStep,
           prevStepId,
           goToFirstStep;
+
+      // Merge developer options with defaults
+      self.options = extend(defaults, options);
 
       // Get the element Sequence is attached to, the canvas and it's steps
       self.element = element;
@@ -2709,7 +2885,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
 
         // Callback
         if(self.options.autoPlay === true) {
-          self.unpaused();
+          self.unpaused(self);
         }
 
         // Snap the previous step into position
@@ -2821,6 +2997,7 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
      * @param {Number} id - The ID of the step to go to
      * @param {Number} direction - Direction to get to the step (1 = forward, -1 = reverse)
      * @param {Boolean} ignorePhaseThreshold - if true, ignore the transitionThreshold setting and immediately go to the specified step
+     * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
      * @api public
      */
     self.goTo = function(id, direction, ignorePhaseThreshold, hashTagNav) {
@@ -2868,8 +3045,8 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
       var currentStepElement = self.animationMap[currentStep].element;
       var nextStepElement = self.animationMap[nextStep].element;
 
-      // Move the active frame to the top (via a higher z-index)
-      self._animation.moveActiveFrameToTop(currentStepElement, nextStepElement);
+      // Move the active step to the top (via a higher z-index)
+      self._animation.moveActiveStepToTop(currentStepElement, nextStepElement);
 
       // Determine how often goTo() can be used based on navigationSkipThreshold
       // and manage step fading accordingly
@@ -2912,24 +3089,25 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
     /**
      * Callback executed when autoPlay is paused
      */
-    self.paused = function() {
+    self.paused = function(self) {
 
     }
 
     /**
      * Callback executed when autoPlay is unpaused
      */
-    self.unpaused = function() {
+    self.unpaused = function(self) {
 
     }
 
     /**
      * Callback executed when a step animation starts
      *
-     * @param {Object} self - Variables and methods available to this instance
+     * @param {Number} id - The ID of the step that was started
+     * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.animationStarted = function(id) {
+    self.animationStarted = function(id, self) {
 
       // console.log("started", id);
     }
@@ -2937,58 +3115,77 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
     /**
      * Callback executed when a step animation finishes
      *
-     * @param {Object} self - Variables and methods available to this instance
+     * @param {Number} id - The ID of the step that finished
+     * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.animationFinished = function(id) {
+    self.animationFinished = function(id, self) {
 
       // console.log("finished", id);
     }
 
     /**
+     * Callback executed when the current phase starts animating
      *
+     * @param {Object} self - Properties and methods available to this instance
+     * @api public
      */
-    self.currentPhaseStarted = function() {
+    self.currentPhaseStarted = function(self) {
 
       // console.log("currentstarted");
     }
 
     /**
+     * Callback executed when the current phase finishes animating
      *
+     * @param {Object} self - Properties and methods available to this instance
+     * @api public
      */
-    self.currentPhaseEnded = function() {
+    self.currentPhaseEnded = function(self) {
 
       // console.log("currentended")
     }
 
     /**
+     * Callback executed when the next phase starts animating
      *
+     * @param {Object} self - Properties and methods available to this instance
+     * @api public
      */
-    self.nextPhaseStarted = function() {
+    self.nextPhaseStarted = function(self) {
 
       // console.log("nextstarted");
     }
 
     /**
+     * Callback executed when the next phase finishes animating
      *
+     * @param {Object} self - Properties and methods available to this instance
+     * @api public
      */
-    self.nextPhaseEnded = function() {
+    self.nextPhaseEnded = function(self) {
 
       // console.log("nextended")
     }
 
     /**
      * When the throttled window resize event occurs
+     *
+     * @param {Object} self - Properties and methods available to this instance
+     * @api public
      */
-    self.throttledResize = function() {
+    self.throttledResize = function(self) {
 
       // console.log("throttleResized")
     }
 
     /**
      * Callback executed when preloading has finished
+     *
+     * @param {Object} self - Properties and methods available to this instance
+     * @api public
      */
-    self.preloaded = function() {
+    self.preloaded = function(self) {
 
       // console.log("preloaded");
     }
@@ -3000,30 +3197,20 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
      * @param {String} src - The source of the image
      * @param {Number} progress - The number of images that have returned a result
      * @param {Number} length - The total number of images that are being preloaded
+     * @param {Object} self - Properties and methods available to this instance
+     * @api public
      */
-    self.preloadProgress = function(result, src, progress, length) {
+    self.preloadProgress = function(result, src, progress, length, self) {
 
       // console.log( "image is " + result + " for " + src );
       // console.log("progress: " + progress + " of " + length);
     }
 
+
     /* --- INIT --- */
 
-    // Merge developer options with defaults
-    self.options = extend(defaults, options);
-
-    /**
-     * Useful for integration with js module loaders (e.g. requireJS)
-     * where window.load may have fired prior to this script executing.
-     * Should be used with care. Modernizr normally likes to execute in
-     * the <head> tags.
-     */
-    if(self.options.windowLoaded === true) {
-      windowLoaded = self.options.windowLoaded;
-    }
-
     // Set up an instance of Sequence
-    self._init(element, options);
+    self._init(element);
 
     // Expose this instances public variables and methods
     return self;
@@ -3032,15 +3219,4 @@ function defineSequence(ModernizrSequence, imagesLoaded, Hammer) {
   return Sequence;
 }
 
-if (typeof define === 'function' && define.amd) {
-
-  define(
-    ['third-party/modernizr.min'],
-    ['third-party/imagesloaded.pkgd.min'],
-    ['third-party/hammer.min'],
-    defineSequence
-  );
-}
-else {
-  sequence = defineSequence(ModernizrSequence, imagesLoaded, Hammer);
-}
+sequence = defineSequence(imagesLoaded, Hammer);

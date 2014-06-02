@@ -2,13 +2,13 @@
   "name": "Sequence",
   "version": "2.0.0",
   "author": "Ian Lunn",
-  "description": "Sequence v2 Alpha",
+  "description": "Sequence v2 Pre-alpha",
   "license": "MIT",
-  "homepage": "https://github.com/IanLunn/sequence",
-  "bugs": "https://github.com/IanLunn/sequence/issues",
+  "homepage": "https://github.com/IanLunn/Sequence",
+  "bugs": "https://github.com/IanLunn/Sequence/issues",
   "repository": {
     "type": "git",
-    "url": "git://github.com/IanLunn/sequence.git"
+    "url": "git://github.com/IanLunn/Sequence.git"
   },
   "devDependencies": {
     "grunt": "~0.4.2",

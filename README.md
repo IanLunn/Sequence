@@ -1,165 +1,93 @@
-Sequence v2
-===========
+Sequence v2 (Pre-alpha) [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=IanLunn&url=https://github.com/IanLunn/Sequence&title=Sequence&language=english&tags=github&category=software)
+=====================
 
-Sequence.js -- originally released in 2011 -- is to be rebuilt from the ground up. This README documents major issues and considerations, and the philosophy for approaching the build.
+## The CSS Animation Framework
+
+*Pre-alpha warning: Sequence.js v2 is not yet ready for production and is only made available for testing and development. Many features are yet to be implemented and those that have are yet to be tested. If you're looking for a production ready version, checkout [Sequence v1](http://sequencejs.com/).*
+
+Sequence allows you to create your own unique animated themes for sliders, presentations, banners, accordions, and other step-based applications.
 
 ## Philosophy
 
-Sequence v2 will adhere to the following:
+The key philosophy for Sequence is to aid you in creating your animated application without getting in the way of how you or a web browser work. Create content and then animate it using the HTML and CSS you're used to. There's no special syntax to learn, no limitations on the elements you can use, and no heavy JavaScript implementations recreating what the browser is already capable of.
 
-- To be written with vanilla JavaScript
-- No "baked-in" dependencies
-- Exposed API for integration with third-party dependencies
-- AMD support
-- Support all modern browsers and devices
-- Graceful Degradation (Fallbacks for browsers without CSS3 transitions and transforms support)
-- Semantic and easy to use markup
+## Demo Themes
 
 
-## Major Issues
 
-The following are major issues present in Sequence v1 that need to be solved to make Sequence v2 a viable solution:
+**TBA**
 
-- Being Required and Limited to Animating All Top-level Elements
-- Frames don't stack well via z-index
-- Animations stop and get snappy when a mobile/tablet window is scrolled (solved)
-- Build process
+## Features
 
+Sequence is packed full of features:
 
-### Being Required and Limited to Animating All Top-level Elements
+-
+-
 
-A major drawback with Sequence v1 is that all top-level elements within a frame MUST be animated. This is so that Sequence can watch those top-level elements to know when they have finished animating, to then be able to start the `autoPlay` timer and start the next frames animations.
+To get started, head to the [documentation](https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md).
 
-This results in two problems:
+## How to Contribute
 
-1. Users aren't always aware they MUST animate top-level elements; when they don't Sequence may cease to function as expected
-2. Second-level elements and beyond aren't included in Sequence's `transitionEnd` event and as such, Sequence may animate the next frame's animations prior to these lower level elements finishing animating.
+Sequence.js is nearing version 2 and we need your help to get there. You can contribute in the following ways:
 
-Ideally with Sequence v2, users will be able to animate any element they wish without limitations.
+- Create themes using the early versions of Sequence v2 and provide the following types of feedback:
+  - [Report bugs](https://github.com/IanLunn/Sequence/issues)
+  - Ease of use (Did you find Sequence v2 easy to use? Can it be made easier?)
+  - Feature suggestions
+  - Documentation improvements (Did you feel anything in the documentation was unclear or missing?)
+- Complete tasks on the [Todo list](#todo-list)
+- Fix bugs (visit the [v2 milestone on GitHub](https://github.com/IanLunn/Sequence/issues?milestone=11&state=open) for a complete list)
+- Master Sequence v2 and consider becoming a [Premium Theme Partner](#premium-theme-partnership)
+- Consider [supporting the future of Sequence v2 financially](#support-sequence-development)
 
-Solution: Sequence v2 must know exactly which elements are going to animate so it can then watch them with the `transitionEnd` event. How Sequence v2 determines this will depend on how Sequence's animations are defined (as explained in consideration #1: Animations to be Written via CSS or JavaScript).
+Feedback can be provided on the project's [GitHub page](https://github.com/IanLunn/Sequence/), to [@IanLunn on Twitter](https://twitter.com/IanLunn) or [via email](mailto://hello@ianlunn.co.uk).
 
-### Frames Don't Stack Well via z-index
+## Todo List
 
-In Sequence v1, an active frame is immediately given a higher z-index than other frames to make it appear on top.
+Where possible, `src/sequence.js` contains `// TODO` comments showing functionality that has not yet been implemented.
 
-For most Sequence v1 themes this is find because frames don't overlap each other; inactive frames would fade or slide out of view, revealing the active frame.
+The following is a complete list of the work still needed to be carried out to reach a stable version ready for launch:
 
-In themes such as [Ken Burns Effect](http://www.sequencejs.com/themes/ken-burns-effect/), where images within separate frames sit on top one another, this causes an undesired "snapping" effect where an active frame may immediately snaps in front of the previously active frame. To workaround this, the Ken Burns Effect will hide the contents of an active frame and slowly fade it in. This way, the previously active frame will still be visible (despite having a lower z-index than the newly active frame), until the active frame fades in; hiding the previous frame.
+1. Clear all [listed bugs](https://github.com/IanLunn/Sequence/issues?milestone=11&state=open)
+2. keyNavigation should only work when Sequence has focus
+3. Implement reverse animations for the `reverseWhenNavigatingBackwards` option
+4. Remove event for hashChange when using IE
+5. Implement ability to remove the Hammer event
+6. Implement `swipeHammerOptions` option
+7. Implement `destroy()`
+8. Implement AMD/Require.js support
+9. Make `_getAnimationMap.destroyClone()` IE7 compatible
+10. Make `_ui.getElement()` IE7 compatible
+11. Implement fallback functionality for `_ui.show()` and `_ui.hide()` when the browser doesn't support CSS transitions
+12. Implement fallback functionality for `_animation.moveCanvas()` when the browser doesn't support CSS transitions
+13. Implement `_animation.stepSkipped()` functionality to stop a step from animating when it is skipped
+14. Browser/Device Test - Sequence v2 has been developed in Firefox on a Mac. No other browsers/devices have been tested yet
+15. Add "current" class to pagination links when used
+16. Build Yeoman generator for Sequence themes
 
-There are two problems with this workaround:
+## Premium Theme Partnership
 
-1. The workaround will only work when a image is placed within an `<img />` element. The original build of the Ken Burns Theme placed the images via a CSS `background` property instead. Some hacking on the `<img />` tag is required to produce a `background-size: cover` type of effect that could have been easily achieved if the workaround wasn't necessary.
-2. This workaround is non-intuitive and not immediately apparent to a developer.
+When v2 launches, we will be looking for people who we can partner with to sell Sequence themes on the [official marketplace](http://sequencejs.com). If this is of interest, please [get in touch](http://sequencejs.com/contact/).
 
-Potential solution (with drawback): One solution is to use JavaScript to change the position of the active element within the DOM. By placing the active element after all other elements, it will naturally appear on top of them without the need for a `z-index`. This solution would allow for Sequence options that determine exactly when a frame becomes active (before or after it animates in), as well as giving the developer the freedom to apply a `z-index` to the element should they wish. A drawback to this solution is that if elements are rearranged in the DOM, the developer can no longer use an `nth-child` selector within their CSS because the position of elements will continue to change. If Sequence v2 goes ahead with writing animations via CSS (as described in consideration #1 Animations to be Written via CSS or JavaScript), this could lead to an unintuitive experience for the developer.
+We will release further information about the premium theme partnership in the near future.
 
-### Animations Stop and Get Snappy When a Mobile/Tablet Window is Scrolled (Solved)
+## Support Sequence Development
 
-**This solution has been tested and will be integrated into Sequence v2**
+To support the future development of Sequence.js and other open source projects created by [Ian Lunn](https://github.com/IanLunn), please consider making a contribution.
 
-When Sequence v1 makes use of the touch swipe event to allow navigation between slides, animations can sometimes stop and get snappy when the window is scrolled. For example: if the page Sequence is on has a vertical scroll bar, when the user swipes sideways to go to the previous/next slide, but does so in a way that causes the window to scroll up/down at the same time, the animations will stop and appear to be snappy.
+Your contribution is not-for-profit (or beer!), and will allow Ian to spend a little less time on client projects and more time supporting and creating open source software.
 
-Solution: A third party touch library should be used that prevents horizontal scrolling whilst the user is swiping vertically. Consider [hammer.js](https://github.com/EightMedia/hammer.js/).
+Thank you.
 
-### Build Process (Solved)
+### Flatter
 
-**This solution has been tested and will be integrated into Sequence v2**
+[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=IanLunn&url=https://github.com/IanLunn/Sequence&title=Sequence&language=english&tags=github&category=software)
 
-As sequence.js is packaged with many themes, it is necessary for a build process to be put in place that repackages these themes each time a new version of sequence.js is released. With v1 of Sequence, this process has to be done manually -- moving sequence.js into a theme's directory then zipping it -- for each and every theme.
+### Bitcoin
 
-Solution: A grunt.js plugin has been created to allow for the automated packaging of Sequence themes.
+Bitcoin contributions may be sent to the following address:
 
-## Major Considerations
-
-The following are major considerations that should be decided upon prior to Sequence v2 being written.
-
-### Animations to be Written via CSS or JavaScript
-
-In Sequence v1, all animations are written using CSS3 transitions and animations. This makes creating themes with Sequence v1 more accessible to developers as JavaScript knowledge isn't required. This way of creating animations is a major selling point of Sequence v1. It adds additional problems to Sequence v1's development though.
-
-It should be decided whether Sequence v2 will continue allowing a developer to create animations written in CSS3, instead specify animations via data-attributes applied to animated elements, or a hybrid of the two.
-
-#### CSS3 Animations Pros & Cons
-
-Pros:
-
-- More accessible to a wider range of theme developers
-
-Cons:
-
-- Harder for Sequence to know what elements are to be animated (See issue #1: Being Required and Limited to Animating All Top-level Elements)
-
-#### Data Attributes Pros & Cons
-
-Pros:
-
-- Easier for Sequence to know what elements are to be animated (See issue #1: Being Required and Limited to Animating All Top-level Elements)
-- Easier for developers wanting to create themes dynamically (to create a theme builder etc)
-
-Cons:
-
-- Not as accessible to develop themes
-
-
-
-
-## Grunt Build Process
-
-Sequence v2 utilises Grunt to task manage during development. The following commands are made available for quicker development:
-
-`grunt` - starts a server at [http://localhost:8000/](http://localhost:8000/), opens the main Sequence page in the browser and watches for files being changed during development.
-
-`grunt run`
-
-`grunt doc`
-
-`grunt package-themes`
-
-
-## Initiating Sequence
-
-Sequence can be initiated either via a traditional method or with Require.js
-
-### Traditional
-
-To initiate Sequence, add a reference to `sequence.min.js` and `hammer.min.js` just before the closing `</body>` element on the page you'd like Sequence to appear:
-
-```javascript
-<script src="scripts/third-party/hammer.min.js"></script>
-<script src="scripts/sequence.min.js"></script>
-```
-
-Then add an instance of Sequence using the following:
-
-```javascript
-<script>
-  var sequence = sequence(document.getElementById("sequence"));
-</script>
-```
-
-The above code will initiate an instance of Sequence on an element with the ID of `sequence`, eg: `<div id="sequence"></div>`.
-
-### Require.js
-
-Using [require.js](http://requirejs.org/) makes managing scripts and their dependencies easier. When loading Sequence via require.js, it isn't necessary to reference its dependencies, as Sequence and require.js will take care of that for you.
-
-To initiate Sequence using require.js, add a reference to require.js in the `<head></head>` tags of the page you'd like Sequence to be placed (as per the [require.js instructions](http://requirejs.org/docs/start.html#add)):
-
-```javascript
-<script data-main="scripts/main" src="scripts/require.min.js"></script>
-```
-
-In `scripts/main.js`, add the following:
-
-```javascript
-require(["sequence/sequence"], function(sequence) {
-  var sequence = sequence(document.getElementById("sequence"));
-});
-```
-
-The above code will initiate an instance of Sequence as soon as it is available on an element with the ID of `sequence`, eg: `<div id="sequence"></div>`.
-
-### Multiple Instances
-
-Where necessary, multiple instances of Sequence can be added to a page.
+<div style="text-align: center;">
+<a href="bitcoin:1KEbFvcXL8m6LogG2wjSUFz2xH6PeN6jRd?label=Sequence.js%20Development"><img src="http://ianlunn.co.uk/images/btc-donate.jpg" /></a>
+<p>1KEbFvcXL8m6LogG2wjSUFz2xH6PeN6jRd</p>
+</div>
