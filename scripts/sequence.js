@@ -4,7 +4,7 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0
+ * @version 2.0.0 Alpha
  * @license https://github.com/IanLunn/Sequence/blob/master/LICENSE
  * @copyright IanLunn
  */
@@ -175,7 +175,9 @@ function defineSequence(imagesLoaded, Hammer) {
       },
 
       // Options to supply the third-party Hammer library See: https://github.com/EightMedia/hammer.js/wiki/Getting-Started
-      swipeHammerOptions: {},
+      swipeHammerOptions: {
+        prevent_mouseevents: true
+      },
 
 
       /* --- hashTags --- */

@@ -227,6 +227,14 @@ module.exports = function(grunt) {
         livereload: true
       },
 
+      versions: {
+        files: ['package.json'],
+        tasks: ['version'],
+        options: {
+          spawn: false
+        }
+      },
+
       // Uglify sequence.js
       main_js: {
         files: ['src/sequence.js'],

@@ -1071,6 +1071,17 @@ When the user swipes left, the Sequence event `self.prev()` is initiated. `self.
 - object: An object containing `left`, `right`, `up`, and `down` properties that have a related public method to executed when the user swipes in one of those directions
 - `false`: No swipe events
 
+#### `swipeHammerOptions`
+
+- Type: An object
+- Default: `{prevent_mouseevents: true}`
+
+Options to be used in the third-party Hammer.js library that powers touch functionality. See the [Hammer.js Wiki](https://github.com/EightMedia/hammer.js/wiki/Getting-Started#gesture-options) for a complete list of options.
+
+By default, `prevent_mouseevents` is enabled to stop a mouse cursor from triggering touch events on a desktop computer.
+
+The Hammer events used by Sequence are `dragleft dragright release`.
+
 ### <a id="hash-tag-options">Hash Tag Options</a>
 
 When enabled, the hash tag options will append a hash tag to a page's URL, reflecting the currently active slide's `id` or `data-sequence-hashtag` attribute.
