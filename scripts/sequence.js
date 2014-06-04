@@ -176,7 +176,9 @@ function defineSequence(imagesLoaded, Hammer) {
 
       // Options to supply the third-party Hammer library See: https://github.com/EightMedia/hammer.js/wiki/Getting-Started
       swipeHammerOptions: {
-        prevent_mouseevents: true
+        prevent_mouseevents: true,
+        drag_min_distance: 10,
+        stop_browser_behavior: false
       },
 
 
@@ -1327,6 +1329,8 @@ function defineSequence(imagesLoaded, Hammer) {
           self._hashTags.update();
         }
 
+        self._pagination.update();
+
         // Callback
         self.nextPhaseStarted(self);
       },
@@ -1937,6 +1941,53 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // Wait for the step (both phases) to finish animating
         self._animation.stepEnded(id, self.options.fallback.speed);
+      }
+    }
+
+    /**
+     * Manage pagination
+     *
+     * @api private
+     */
+    self._pagination = {
+
+      /**
+       * Update the pagination to activate the relevant link
+       */
+      update: function() {
+
+        if(self.pagination.length > 0) {
+
+          // Remove the "sequence-current" class from a previous pagination link
+          // if there is one
+          if(self.currentPaginationLink !== undefined) {
+            removeClass(self.currentPaginationLink, "sequence-current");
+          }
+
+          // Zero-base the currentStepId
+          var id = self.currentStepId - 1;
+
+          // When we'll save the pagination links
+          var paginationLinks = [];
+
+          // Get the pagination child elements and count them
+          var childElements = self.pagination[0].childNodes;
+          var childElementsLength = childElements.length;
+
+          // Get each top level pagination link
+          for(var i = 0; i < childElementsLength; i++) {
+            var child = childElements[i];
+            if(child.nodeType === 1) {
+              paginationLinks.push(child);
+            }
+          }
+
+          // Get the pagination link that corresponds with the current ID
+          self.currentPaginationLink = paginationLinks[id];
+
+          // Add the "sequence-current" class to the new pagination link
+          addClass(self.currentPaginationLink, "sequence-current");
+        }
       }
     }
 
@@ -2708,34 +2759,42 @@ function defineSequence(imagesLoaded, Hammer) {
               // Execute a swipe event when the user releases their finger
               case "release":
 
-                switch(e.gesture.direction) {
+                // Execute the swipe event if the user swipes more than the
+                // drag_min_distance option
+                if(
+                     Math.abs(e.gesture.deltaX) >= self.hammerTime.options.drag_min_distance
+                  || Math.abs(e.gesture.deltaY) >= self.hammerTime.options.drag_min_distance
+                ){
 
-                  case "left":
-                    self.options.swipeEvents.left(self);
-                  break;
+                  switch(e.gesture.direction) {
 
-                  case "right":
-                    self.options.swipeEvents.right(self);
-                  break;
+                    case "left":
+                      self.options.swipeEvents.left(self);
+                    break;
 
-                  case "up":
-                    if(self.options.swipeEvents.up !== false) {
-                      self.options.swipeEvents.up(self);
-                    }
-                  break;
+                    case "right":
+                      self.options.swipeEvents.right(self);
+                    break;
 
-                  case "down":
-                    if(self.options.swipeEvents.down !== false) {
-                      self.options.swipeEvents.down(self);
-                    }
-                  break;
+                    case "up":
+                      if(self.options.swipeEvents.up !== false) {
+                        self.options.swipeEvents.up(self);
+                      }
+                    break;
+
+                    case "down":
+                      if(self.options.swipeEvents.down !== false) {
+                        self.options.swipeEvents.down(self);
+                      }
+                    break;
+                  }
                 }
 
               break;
             }
           };
 
-          Hammer(self.element, self.options.swipeHammerOptions).on("dragleft dragright release", handler);
+          self.hammerTime = Hammer(self.element, self.options.swipeHammerOptions).on("dragleft dragright release", handler);
 
           self.manageEvent.list["Hammer"].push({"element": self.element, "handler": handler});
         },

@@ -29,3 +29,13 @@ var options = {
 
 // Launch Sequence on the element, and with the options we specified above
 var mySequence = sequence(sequenceElement, options);
+
+var pauseButton = document.getElementById("pause");
+
+mySequence.paused = function() {
+  pauseButton.innerHTML = "Unpause";
+}
+
+mySequence.unpaused = function() {
+  pauseButton.innerHTML = "Pause";
+}

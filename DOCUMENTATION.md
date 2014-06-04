@@ -834,14 +834,14 @@ The pagination and its immediate descendants can consist of any element(s). So, 
 
 The immediate descendants can also have child elements of their own. These additional elements do not affect how the pagination works.
 
-When a Sequence step is navigated to (via any navigation method, such as clicking pagination links, pressing a keyboard key etc), the associated pagination link will be given a class of `current`, so you can style the current pagination link as you wish:
+When a Sequence step is navigated to (via any navigation method, such as clicking pagination links, pressing a keyboard key etc), the associated pagination link will be given a class of `sequence-current`, so you can style the current pagination link as you wish:
 
 HTML:
 
 ```html
 <ul class="sequence-pagination">
   <li>Step 1</li>
-  <li class="current">Step 2</li>
+  <li class="sequence-current">Step 2</li>
   <li>Step 3</li>
 </ul>
 ```
@@ -849,7 +849,7 @@ HTML:
 CSS:
 
 ```css
-.sequence-pagination .current {
+.sequence-pagination .sequence-current {
   font-weight: bold;
 }
 ```
@@ -1074,11 +1074,15 @@ When the user swipes left, the Sequence event `self.prev()` is initiated. `self.
 #### `swipeHammerOptions`
 
 - Type: An object
-- Default: `{prevent_mouseevents: true}`
+- Default: `{prevent_mouseevents: true, drag_min_distance: 10, stop_browser_behavior: false}`
 
 Options to be used in the third-party Hammer.js library that powers touch functionality. See the [Hammer.js Wiki](https://github.com/EightMedia/hammer.js/wiki/Getting-Started#gesture-options) for a complete list of options.
 
-By default, `prevent_mouseevents` is enabled to stop a mouse cursor from triggering touch events on a desktop computer.
+Default options:
+
+- `prevent_mouseevents` is enabled to stop a mouse cursor from triggering touch events on a desktop computer
+- `drag_min_distance` is set to 10. This is minimum drag distance the user must swipe prior to a swipe function being executed
+- `stop_browser_behavior` set to `false` will allow the user to select text within a Hammer enabled Sequence element.
 
 The Hammer events used by Sequence are `dragleft dragright release`.
 
@@ -1453,6 +1457,12 @@ Returns the HTML element used as Sequence's container.
 - Type: Array
 
 Returns an array containing the HTML elements currently being animated by Sequence.
+
+#### `hammerTime`
+
+- Type: Object
+
+Returns an object containing the Hammer event when the `swipeNavigation` option is enabled.
 
 #### `isActive`
 

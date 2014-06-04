@@ -10,7 +10,8 @@
     "grunt-contrib-cssmin": "~0.7.0",
     "grunt-contrib-uglify": "~0.2.7",
     "grunt-contrib-copy": "~0.5.0",
-    "time-grunt": "~0.2.8"
+    "time-grunt": "~0.2.8",
+    "grunt-version": "~0.3.0"
   },
   "dependencies": {
     "load-grunt-tasks": "~0.2.0"

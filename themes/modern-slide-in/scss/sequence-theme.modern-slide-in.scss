@@ -1,0 +1,434 @@
+/*!
+ * Theme Name: Modern Slide In
+ * Version: 0.2.0
+ * Theme URL: http://www.sequencejs.com/themes/modern-slide-in/
+ *
+ * A minimalist theme for showcasing products.
+ *
+ * Powered by Sequence.js - The open-source CSS animation framework.
+ *
+ * Author: Ian Lunn
+ * Author URL: https://ianlunn.co.uk/
+ *
+ * Modern Slide In Sequence Theme Copyright (c) Ian Lunn 2014
+ * License: MIT http://opensource.org/licenses/MIT
+ *
+ * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
+ */
+
+@import "partials/mixins";
+
+// Google Fonts
+@import url(http://fonts.googleapis.com/css?family=Oxygen:700|Source+Sans+Pro:300);
+
+$maxWidth: 960px;
+$maxHeight: 585px;
+
+#sequence {
+  position: relative;
+  background: #D9D9D9 url("../images/bg-sequence.jpg") no-repeat 50% 100%;
+  background-size: cover;
+
+  // Dimensions
+  height: 420px;
+  width: 100%;
+
+  // Hide anything that goes beyond the boundaries of the Sequence container
+  overflow: hidden;
+
+  // Center the Sequence container on the page
+  margin: 0 auto;
+  padding: 0;
+
+  // Reset the canvas and steps for more browser consistency
+  .sequence-canvas,
+  .sequence-canvas > * {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    list-style: none;
+  }
+
+  .sequence-canvas {
+    position: relative;
+    max-width: $maxWidth;
+    display: block;
+    margin: 0 auto;
+  }
+
+  // Layer each step in the same position
+  .sequence-canvas > * {
+    position: absolute;
+    font-size: 0; /* Prevent 4px gap between inline-block elements */
+  }
+
+  // Styles for next/previous buttons and pagination
+  .navigation {
+    position: relative;
+    z-index: 10;
+    top: 50%;
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    pointer-events: none;
+
+    .sequence-next,
+    .sequence-prev {
+      position: absolute;
+      top: 50%;
+      margin-top: -33px;
+      width: 35px;
+      height: 66px;
+      border: none;
+      cursor: pointer;
+      pointer-events: auto;
+      @include prefixed(transition-duration, .2s);
+
+      // Image replacement
+      border: 0;
+      font: 0/0 a;
+      text-shadow: none;
+      color: transparent;
+    }
+
+    .sequence-next {
+      right: 20px;
+      background: url("../images/bt-next.png");
+      @include prefixed(transform, translate3d(0, 0, 0));
+
+      &:hover {
+        @include prefixed(transform, translate3d(4px, 0, 0));
+      }
+    }
+
+    .sequence-prev {
+      left: 20px;
+      background: url("../images/bt-prev.png");
+      @include prefixed(transform, translate3d(0, 0, 0));
+
+      &:hover {
+        @include prefixed(transform, translate3d(-4px, 0, 0));
+      }
+    }
+  }
+
+  .sequence-pagination {
+    display: none;
+  }
+
+  // Starting positions and default styles for content
+  .model,
+  .title {
+    display: block;
+    vertical-align: middle;
+    margin: 0 2.5%;
+    font-size: 16px;
+    font-size: 1rem;
+    width: 95%;
+  }
+
+  .model {
+    height: 76%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: 100%;
+      width: auto;
+      margin: 0 auto;
+      opacity: 0;
+      @include prefixed(transform, translate3d(60px, 0, 0));
+      @include prefixed(transition-duration, .5s);
+      @include prefixed(transition-properties, "transform, opacity");
+    }
+  }
+
+  .title {
+    height: 20%;
+    bottom: 0;
+    font-size: 0;
+
+    br {
+      display: none;
+    }
+
+    &:before {
+      content: "";
+      display: inline-block;
+      vertical-align: middle;
+      height: 100%;
+      width: 0;
+    }
+
+    h2,
+    h3 {
+      font-size: 22px;
+      font-size: 1.4rem;
+      display: inline-block;
+      width: 98%;
+      vertical-align: middle;
+      text-align: center;
+      margin: 0;
+      opacity: 0;
+      @include prefixed(transition-duration, .3s);
+      @include prefixed(transition-properties, "opacity");
+    }
+
+    h2 {
+      margin-bottom: .4em;
+      padding: .2em 1%;
+      font-family: 'Oxygen', sans-serif;
+      color: white;
+      background: black;
+    }
+
+    h3 {
+      display: none;
+    }
+  }
+
+  // Animate in positions for content
+  .animate-in {
+
+    .model img {
+      @include prefixed(transform, translate3d(0, 0, 0));
+      opacity: 1;
+    }
+
+    .title {
+      h2,
+      h3 {
+        opacity: 1;
+        @include prefixed(transform, translate3d(0, 0, 0));
+      }
+    }
+  }
+
+  // Animate out positions for content
+  .animate-out {
+
+    .model img {
+      @include prefixed(transform, translate3d(-60px, 0, 0));
+      opacity: 0;
+    }
+
+    .title {
+
+      h2,
+      h3 {
+        opacity: 0;
+        @include prefixed(transform, translate3d(0, 0, 0));
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 520px) {
+  #sequence {
+    height: 380px;
+  }
+}
+
+@media only screen and (min-width: 640px) {
+
+  #sequence {
+
+    // Vertically align the content using a :before element
+    .sequence-canvas > *:before {
+      content: "";
+      height: 100%;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    // Starting positions and default styles for content
+    .model,
+    .title {
+      display: inline-block;
+      vertical-align: middle;
+      height: auto;
+      margin: 0 5% 0 2.5%;
+      font-size: 16px;
+      font-size: 1rem;
+    }
+
+    .model {
+      margin-left: 12.5%;
+      width: 25%;
+
+      img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto;
+        opacity: 0;
+        @include prefixed(transform, translate3d(60px, 0, 0));
+        @include prefixed(transition-duration, .5s);
+        @include prefixed(transition-properties, "transform, opacity");
+      }
+    }
+
+    .title {
+      width: 40%;
+      margin-right: 12.5%;
+
+      h2,
+      h3 {
+        display: inline-block;
+        width: auto;
+        margin: 0;
+        opacity: 0;
+        text-align: left;
+        @include prefixed(transition-duration, .3s);
+        @include prefixed(transition-properties, "transform, opacity");
+      }
+
+      h2 {
+        margin-bottom: .4em;
+        padding: .2em .6em;
+        font-family: 'Oxygen', sans-serif;
+        font-size: 1.2em;
+        color: white;
+        background: black;
+        @include prefixed(transform, translate3d(-120px, 0, 0));
+      }
+
+      h3 {
+        font-family: 'Source Sans Pro', sans-serif;
+        font-size: 1.3em;
+        @include prefixed(transform, translate3d(120px, 0, 0));
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 680px) {
+  #sequence {
+    height: 400px;
+
+
+  }
+}
+
+@media only screen and (min-width: 720px) {
+
+  #sequence {
+    height: 440px;
+  }
+}
+
+@media only screen and (min-width: 800px) {
+  #sequence {
+    height: 500px;
+
+    .pagination-container {
+      position: absolute;
+      z-index: 10;
+      bottom: 5px;
+      width: 100%;
+      pointer-events: none;
+    }
+
+    .sequence-pagination {
+      display: block;
+      margin: 0 auto;
+      padding: 0 20px;
+      max-width: 1240px;
+      text-align: right;
+
+      li {
+        display: inline-block;
+        list-style: none;
+        margin: 0 10px;
+        padding: 0;
+        cursor: pointer;
+      }
+
+      li img {
+        opacity: .4;
+        pointer-events: auto;
+        @include prefixed(transform, translate3d(0, 0, 0));
+        @include prefixed(transition-duration, .2s);
+        @include prefixed(transition-properties, "transform, opacity");
+      }
+
+      li.sequence-current img {
+        opacity: 1;
+      }
+
+      li:hover img {
+        @include prefixed(transform, translate3d(0, -4px, 0));
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 860px) {
+  #sequence {
+    height: $maxHeight;
+
+    .model {
+      margin-left: 10%;
+      width: 27.5%;
+    }
+
+    .title {
+      width: 42.5%;
+      margin-right: 10%;
+
+      br {
+        display: inline-block;
+      }
+    }
+  }
+}
+
+@media only screen and (min-width: 1020px) {
+  #sequence {
+    .model {
+      margin-left: 5%;
+      width: 32.5%;
+    }
+
+    .title {
+      width: 47.5%;
+      margin-right: 5%;
+    }
+  }
+}
+
+@media only screen and (min-width: 1120px) {
+  #sequence {
+    .model {
+      margin-left: 0;
+      width: 37.5%;
+    }
+
+    .title {
+      width: 52.5%;
+      margin-right: 0;
+    }
+  }
+}
+
+/* Apply Retina (@2x) Images */
+@media (min--moz-device-pixel-ratio: 1.5),
+       (-o-min-device-pixel-ratio: 3/2),
+       (-webkit-min-device-pixel-ratio: 1.5),
+       (min-device-pixel-ratio: 1.5),
+       (min-resolution: 144dpi),
+       (min-resolution: 1.5dppx) {
+
+        #sequence .navigation .sequence-next {
+          background: url("../images/bt-next@2x.png");
+          background-size: 35px 66px;
+        }
+
+        #sequence .navigation .sequence-prev {
+          background: url("../images/bt-prev@2x.png");
+          background-size: 35px 66px;
+        }
+}
