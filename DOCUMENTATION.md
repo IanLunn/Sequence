@@ -607,6 +607,8 @@ Whether a step should be given a higher `z-index` than other steps whilst it is 
 
 Canvas animation causes Sequence to automatically animate the canvas element to show the next step. Automatic animation consists of finding the next step's position and then directly animating to it.
 
+**Pre-alpha note**: Currently canvas animation will only get the `offsetLeft` and `offsetTop` of an element -- meaning you can't position steps using CSS transforms as yet. In the future, we plan to add the ability to transform steps via CSS so they can translate, rotate, and scale in 2D and 3D space. If you're familiar with manipulating 2D and 3D transform matrices, we're hiring a developer to implement this functionality. Please see the [description and contact details here](http://ianlunn.co.uk/transform-matrix-project/).
+
 If you'd like to customize how the canvas animates, set `animateCanvas` to `false`. Regardless of the `animateCanvas` option, the Sequence element is given a class representing the current step being viewed. `step1`, `step2`, and so on. These classes allow you to control canvas animation manually.
 
 **Browser Support**: In modern browsers, animation is powered by CSS transitions and JavaScript in non-supporting browsers.

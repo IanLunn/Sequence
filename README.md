@@ -13,16 +13,27 @@ The key philosophy for Sequence is to aid you in creating your animated applicat
 
 ## Demo Themes
 
-
-
 **TBA**
 
 ## Features
 
 Sequence is packed full of features:
 
--
--
+- Create animated themes using CSS transitions
+- Fully supports responsive design
+- Supported on mobile, tablet and desktop devices
+- No limitations on CSS or HTML you can use
+- Auto play
+- Animate canvas as well as content
+- next/previous/pause buttons and pagination support
+- Preloader
+- Touch support
+- Hash tag support
+- Keyboard navigation
+- Automatically reverses animations when navigating backwards (if required)
+- API for custom functionality
+- Fallback mode for legacy browsers
+- [Yeoman generator](https://github.com/IanLunn/generator-sequence) available for quick scaffolding of themes
 
 To get started, head to the [documentation](https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md).
 
@@ -48,22 +59,21 @@ Where possible, `src/sequence.js` contains `// TODO` comments showing functional
 
 The following is a complete list of the work still needed to be carried out to reach a stable version ready for launch:
 
-1. Clear all [listed bugs](https://github.com/IanLunn/Sequence/issues?milestone=11&state=open)
-2. keyNavigation should only work when Sequence has focus
-3. Implement reverse animations for the `reverseWhenNavigatingBackwards` option
-4. Remove event for hashChange when using IE
-5. Implement ability to remove the Hammer event
-6. Implement `swipeHammerOptions` option
-7. Implement `destroy()`
-8. Implement AMD/Require.js support
-9. Make `_getAnimationMap.destroyClone()` IE7 compatible
-10. Make `_ui.getElement()` IE7 compatible
-11. Implement fallback functionality for `_ui.show()` and `_ui.hide()` when the browser doesn't support CSS transitions
-12. Implement fallback functionality for `_animation.moveCanvas()` when the browser doesn't support CSS transitions
-13. Implement `_animation.stepSkipped()` functionality to stop a step from animating when it is skipped
-14. Browser/Device Test - Sequence v2 has been developed in Firefox on a Mac. No other browsers/devices have been tested yet
-15. Add "current" class to pagination links when used
-16. Build Yeoman generator for Sequence themes
+1. Implement 2D/3D canvas animation **Paid project - [details](http://ianlunn.co.uk/transform-matrix-project/)**
+- Clear all [listed bugs](https://github.com/IanLunn/Sequence/issues?milestone=11&state=open)
+- keyNavigation should only work when Sequence has focus
+- Implement reverse animations for the `reverseWhenNavigatingBackwards` option
+- Remove event for hashChange when using IE
+- Implement ability to remove the Hammer event
+- Implement `destroy()`
+- Implement AMD/Require.js support
+- Make `_getAnimationMap.destroyClone()` IE7 compatible
+- Make `_ui.getElement()` IE7 compatible
+- Implement fallback functionality for `_ui.show()` and `_ui.hide()` when the browser doesn't support CSS transitions
+- Implement fallback functionality for `_animation.moveCanvas()` when the browser doesn't support CSS transitions
+- Implement `_animation.stepSkipped()` functionality to stop a step from animating when it is skipped
+- Browser/Device Test - Sequence v2 has been developed in Firefox on a Mac. No other browsers/devices have been tested yet
+- [Improve Yeoman generator for Sequence](https://github.com/IanLunn/generator-sequence/issues) themes
 
 ## Premium Theme Partnership
 
