@@ -977,8 +977,9 @@ function defineSequence(imagesLoaded, Hammer) {
             // Animate the canvas using CSS transitions
             // Note: translate3d() is used to initiate hardware acceleration
             if(self.transitionsSupported === true) {
-              canvas.style.transition = duration + "ms transform";
-              canvas.style.transform = "translate3d(" + stepX + "px, " + stepY + "px, 0)";
+              canvas.style[Modernizr.prefixed("transition")] = duration + "ms";
+              canvas.style[Modernizr.prefixed("transition-property")] = Modernizr.prefixed("transform");
+              canvas.style[Modernizr.prefixed("transform")] = "translate3d(" + stepX + "px, " + stepY + "px, 0)";
             }
 
             // Animate the canvas using JavaScript

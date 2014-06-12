@@ -13,7 +13,10 @@ The key philosophy for Sequence is to aid you in creating your animated applicat
 
 ## Demo Themes
 
-**TBA**
+- Basic
+- Modern Slide In
+- Pop Slide
+- Test Theme
 
 ## Features
 
@@ -59,7 +62,7 @@ Where possible, `src/sequence.js` contains `// TODO` comments showing functional
 
 The following is a complete list of the work still needed to be carried out to reach a stable version ready for launch:
 
-1. Implement 2D/3D canvas animation **Paid project - [details](http://ianlunn.co.uk/transform-matrix-project/)**
+1. Implement 2D/3D canvas animation
 - Clear all [listed bugs](https://github.com/IanLunn/Sequence/issues?milestone=11&state=open)
 - keyNavigation should only work when Sequence has focus
 - Implement reverse animations for the `reverseWhenNavigatingBackwards` option
