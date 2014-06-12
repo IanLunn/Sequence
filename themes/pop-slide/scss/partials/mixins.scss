@@ -1,0 +1,8 @@
+// Prefix declarations
+@mixin prefixed($property, $value) {
+    -webkit-#{$property}: unquote($value);
+       -moz-#{$property}: unquote($value);
+        -ms-#{$property}: unquote($value);
+         -o-#{$property}: unquote($value);
+            #{$property}: unquote($value);
+}

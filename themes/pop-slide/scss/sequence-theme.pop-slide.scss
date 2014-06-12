@@ -1,0 +1,280 @@
+/*!
+ * Theme Name: Pop Slide
+ * Version: 0.1.0
+ * Theme URL: http://sequencejs.com/themes/pop-slide/
+ *
+ * A colourful slider with highlighted pagination
+ *
+ * Powered by Sequence.js - The open-source CSS animation framework.
+ *
+ * Author: Ian Lunn
+ * Author URL: https://ianlunn.co.uk/
+ *
+ * Pop Slide Sequence Theme Copyright (c) Ian Lunn 2014
+ * License: MIT http://opensource.org/licenses/MIT
+ *
+ * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
+ */
+
+@import "partials/mixins";
+
+$sequenceWidth: 960px;
+$sequenceHeight: 400px;
+
+@import url(http://fonts.googleapis.com/css?family=Dosis:600,700);
+
+
+#sequence {
+  position: relative;
+
+  // Dimensions
+  height: $sequenceHeight;
+  width: 100%;
+  max-width: $sequenceWidth;
+
+  // Hide anything that goes beyond the boundaries of the Sequence container
+  overflow: hidden;
+
+  // Center the Sequence container on the page
+  margin: 0 auto;
+  padding: 0;
+
+  // Some basic styles
+  font-family: sans-serif;
+
+  .sequence-pagination {
+    position: absolute;
+    z-index: 10;
+    bottom: 10px;
+    left: 0;
+    padding: 0;
+    width: 100%;
+    font-size: 0;
+    font-family: 'Dosis', sans-serif;
+    font-weight: 600;
+    text-align: center;
+
+    li {
+      position: relative;
+      display: inline-block;
+
+      width: 40px;
+      height: 40px;
+      margin: 0 1%;
+      cursor: pointer;
+      // padding: 10px 1%;
+      background: #512A5E;
+
+      &.sequence-current {
+        background: #F7DB15;
+      }
+    }
+  }
+
+  // Reset the canvas and steps for more browser consistency
+  .sequence-canvas,
+  .sequence-canvas > * {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  // Make the canvas the same dimensions as the container and prevent lines from
+  // wrapping so each step can sit side-by-side
+  .sequence-canvas {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    white-space: nowrap;
+    font-size: 0;
+
+    // Make the steps the same size as the container and sit side-by-side
+    > * {
+      position: relative;
+      display: inline-block;
+      vertical-align: top;
+      width: 100%;
+      height: 100%;
+      white-space: normal;
+      font-size: 1rem;
+      font-size: 16px;
+      background-size: cover;
+      background-position: 50%;
+    }
+
+    li:nth-child(1) {
+      background-image: url("../images/kaki-king.jpg");
+    }
+
+    li:nth-child(2) {
+      background-image: url("../images/micky-green.jpg");
+    }
+
+    li:nth-child(3) {
+      background-image: url("../images/scampi.jpg");
+    }
+
+    li:nth-child(4) {
+      background-image: url("../images/puggy.jpg");
+    }
+
+    li:nth-child(5) {
+      background-image: url("../images/god-speed-you-black-emperor.jpg");
+    }
+  }
+
+
+  small {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: white;
+
+    a {
+      color: white;
+    }
+
+    a:hover {
+      text-decoration: none;
+    }
+  }
+
+  // Starting positions and default styles for content
+  .title {
+    display: inline-block;
+    position: absolute;
+    bottom: 70px;
+    left: 50%;
+    width: 90%;
+    margin-left: -47%;
+    padding: 0 2%;
+    line-height: 120%;
+    background: white;
+    text-align: center;
+
+    h2 {
+      margin: .6em 0 .4em 0;
+      font-size: 1em;
+    }
+
+    .button {
+      position: relative;
+      bottom: -6px;
+      padding: .2em .6em;
+      background: #F7DB15;
+      color: black;
+      font-family: 'Dosis', sans-serif;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .button:hover {
+      background: #512A5E;
+      color: white;
+    }
+  }
+}
+
+@media only screen and (min-width: 480px) {
+  #sequence {
+    .title {
+      width: 65%;
+      margin-left: -33.5%;
+    }
+  }
+}
+
+@media only screen and (min-width: 640px) {
+  #sequence {
+
+    .sequence-pagination {
+      li {
+        position: relative;
+        display: inline-block;
+        vertical-align: bottom;
+        list-style: none;
+        width: 14%;
+        height: auto;
+        margin: 0 1%;
+        padding: 10px 1%;
+        cursor: pointer;
+        border-bottom: black solid 4px;
+        font-size: 14px;
+        font-size: 1rem;
+        font-weight: bold;
+        background: #512A5E;
+        color: white;
+
+        // Overflow text with ...
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        @include prefixed(transition-duration, .35s);
+        @include prefixed(transform-origin, 0 100%);
+        @include prefixed(transform, translateZ(0));
+        @include prefixed(transition-property, "width");
+
+        &.sequence-current {
+          width: 24%;
+          background: #512A5E;
+          border-bottom-color: #F7DB15;
+        }
+      }
+    }
+
+    .title {
+      bottom: 80px;
+    }
+  }
+}
+
+@media only screen and (min-width: 720px) {
+  #sequence {
+    .title {
+      width: 35%;
+      top: 20px;
+      right: 20px;
+      margin-left: auto;
+      bottom: auto;
+
+      @include prefixed(transition-duration, .35s);
+      @include prefixed(transform, translateY(-200%));
+      @include prefixed(transition-property, transform);
+      @include prefixed(transition-timing-function, cubic-bezier(0.230, 1.000, 0.320, 1.000));
+
+      .button {
+        position: absolute;
+        right: -10px;
+        bottom: -10px;
+        display: inline-block;
+      }
+
+      h2 {
+        padding: .4em;
+        font-size: 1.5em;
+        line-height: 120%;
+        text-align: left;
+      }
+    }
+
+    small {
+      top: auto;
+      bottom: 70px;
+    }
+
+    // Animate in positions for content
+    .animate-in {
+      .title {
+        @include prefixed(transform, translateY(0));
+      }
+    }
+
+    // Animate out positions for content
+    .animate-out {
+      .title {
+        @include prefixed(transform, translateY(0));
+      }
+    }
+  }
+}
