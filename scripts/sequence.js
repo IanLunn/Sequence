@@ -4,7 +4,7 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0 Alpha Alpha
+ * @version 2.0.0-alpha
  * @license https://github.com/IanLunn/Sequence/blob/master/LICENSE
  * @copyright IanLunn
  */
