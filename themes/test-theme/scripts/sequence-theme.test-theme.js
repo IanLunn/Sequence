@@ -27,29 +27,34 @@ var options = {
   reverseWhenNavigatingBackwards: true
 }
 
-var mySequence;
+var mySequence,
+    pauseButton = document.getElementById("pause"),
+    initButton = document.getElementById("init"),
+    destroyButton = document.getElementById("destroy");
 
 // Launch Sequence on the element, and with the options we specified above
-mySequence = sequence(sequenceElement, options);
+function init() {
+  if (mySequence === undefined) {
+    mySequence = sequence(sequenceElement, options);
 
-var pauseButton = document.getElementById("pause");
-var initButton = document.getElementById("init");
-var destroyButton = document.getElementById("destroy");
+    mySequence.paused = function() {
+      pauseButton.innerHTML = "Unpause";
+    }
 
-mySequence.paused = function() {
-  pauseButton.innerHTML = "Unpause";
+    mySequence.unpaused = function() {
+      pauseButton.innerHTML = "Pause";
+    }
+  }
 }
 
-mySequence.unpaused = function() {
-  pauseButton.innerHTML = "Pause";
-}
+init();
 
 initButton.addEventListener("click", function() {
-  mySequence = sequence(sequenceElement, options);
+  init();
 });
 
 destroyButton.addEventListener("click", function() {
-  
+
   if (mySequence !== undefined) {
     mySequence.destroy();
     mySequence = undefined;
