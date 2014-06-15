@@ -1371,14 +1371,9 @@ sequence.togglePause();
 
 Note: even if `autoPlay` is disabled in the options, autoPlay can still later be enabled by using the `togglePause()` method.
 
-#### `destroy(navigation, callback)`
+#### `destroy()`
 
-**Not yet available in v2 pre-alpha.**
-
-Remove Sequence from the element it is attached to, along with events and other related elements such as navigation.
-
-- `navigation` (optional): if false, Sequence won't remove navigation elements such as next and previous button. Navigation elements will be removed by default.
-- `callback` (optional): a callback to execute after the `.destroy()` function has finished. You can also use the public callback `.destroyed()`.
+Remove Sequence from the element it is attached to.
 
 ### <a id="properties">Properties</a>
 
