@@ -4,7 +4,7 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0-alpha.1
+ * @version 2.0.0-alpha.2
  * @license https://github.com/IanLunn/Sequence/blob/master/LICENSE
  * @copyright IanLunn
  */
@@ -1027,7 +1027,6 @@ function defineSequence(imagesLoaded, Hammer) {
 
         self.isAutoPlayActive = false;
         self.isPaused = (self.options.autoPlay === true) ? false: true;
-        self.isHardPaused = self.isPaused;
 
         // Should the unpause threshold be taken from the autoPlayThreshold or
         // has the developer defined an unpauseThreshold?
@@ -3138,8 +3137,7 @@ function defineSequence(imagesLoaded, Hammer) {
       self.canvas = getElementsByClassName(self.container, "sequence-canvas")[0];
       self.steps = getSteps(self.canvas);
 
-      self.containerWidth = self.container.offsetWidth;
-      self.containerHeight = self.container.offsetHeight;
+      self.isHardPaused = false;
 
       // Get number of steps
       self.noOfSteps = self.steps.length;
