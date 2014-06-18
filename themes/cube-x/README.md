@@ -1,10 +1,10 @@
-# Intro
+# Cube X
 
-> Intro slider to test canvas animation
+> A basic 3D cube that spins on the X axis
 
-Intro is powered by [Sequence.js](http://sequencejs.com/) - The open-source CSS animation framework.
+Cube X is powered by [Sequence.js](http://sequencejs.com/) - The open-source CSS animation framework.
 
-Author: [Ian Lunn](https://ianlunn.co.uk/)  
+Author: [Ian Lunn](https://ianlunn.co.uk)  
 Email: [hello@ianlunn.co.uk](mailto://hello@ianlunn.co.uk)  
 GitHub: [@IanLunn](https://github.com/IanLunn)  
 Twitter: [@IanLunn](https://twitter.com/IanLunn)  
@@ -15,21 +15,21 @@ Copyright (c) 2014 Ian Lunn
 
 ## Getting Started
 
-1. Move the `intro` directory to the same directory as the page you'd like the theme to appear on.
+1. Move the `cube-x` directory to the same directory as the page you'd like the theme to appear on.
 2. Add the stylesheet within the `<head></head>` tags on your page below existing stylesheets, using the following:
-`<link rel="stylesheet" href="intro/css/sequence-theme.intro.css" />`
+`<link rel="stylesheet" href="cube-x/css/sequence-theme.cube-x.css" />`
 3. From index.html in the downloaded theme, copy everything inside the <body></body> tags, then paste into the page you'd like the theme to appear on.
 4. Add a reference to the Sequence library, its third-party dependencies, and the theme options just before the closing `</body>` element on your page:
 ```javascript
 <script src="scripts/third-party/imagesloaded.pkgd.min.js"></script>
 <script src="scripts/third-party/hammer.min.js"></script>
 <script src="scripts/sequence.min.js"></script>
-<script src="scripts/sequence-theme.intro.js"></script>
+<script src="scripts/sequence-theme.cube-x.js"></script>
 ```
 5. From index.html in the downloaded theme, copy everything inside the <body></body> tags, then paste into the page you'd like the theme to appear on.
 6. Save your file and upload newly added/modified files to your web server. You're done!
 
-A theme's options can be changed in `scripts/sequence-theme.intro.js`. See Options in the [documentation](http://www.sequencejs.com/developers/documentation/).
+A theme's options can be changed in `scripts/sequence-theme.cube-x.js`. See Options in the [documentation](http://www.sequencejs.com/developers/documentation/).
 
 ## Support
 

@@ -16,6 +16,7 @@ The key philosophy for Sequence is to aid you in creating your animated applicat
 - Basic
 - Modern Slide In
 - Pop Slide
+- Cube X
 - Test Theme
 
 ## Features
@@ -28,6 +29,7 @@ Sequence is packed full of features:
 - No limitations on CSS or HTML you can use
 - Auto play
 - Animate canvas as well as content
+- Optimized for 60FPS animations
 - next/previous/pause buttons and pagination support
 - Preloader
 - Touch support
@@ -62,13 +64,10 @@ Where possible, `src/sequence.js` contains `// TODO` comments showing functional
 
 The following is a complete list of the work still needed to be carried out to reach a stable version ready for launch:
 
-1. Implement 2D/3D canvas animation
-- Clear all [listed bugs](https://github.com/IanLunn/Sequence/issues?milestone=11&state=open)
+1. Clear all [listed bugs](https://github.com/IanLunn/Sequence/issues?milestone=11&state=open)
 - keyNavigation should only work when Sequence has focus
 - Implement reverse animations for the `reverseWhenNavigatingBackwards` option
 - Remove event for hashChange when using IE
-- Implement ability to remove the Hammer event
-- Implement `destroy()`
 - Implement AMD/Require.js support
 - Make `_getAnimationMap.destroyClone()` IE7 compatible
 - Make `_ui.getElement()` IE7 compatible

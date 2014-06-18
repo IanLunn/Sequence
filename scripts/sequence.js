@@ -89,7 +89,7 @@ function defineSequence(imagesLoaded, Hammer) {
       navigationSkipThreshold: 250,
 
       // Fade a step when it has been skipped
-      fadeStepWhenSkipped: true,
+      fadeStepWhenSkipped: false,
 
       // How long the fade should take
       fadeStepTime: 500,
@@ -256,14 +256,14 @@ function defineSequence(imagesLoaded, Hammer) {
         "name": "rotateY",
         "unit": "deg"
       },
-      "sequenceRotateZ": {
+      "sequenceRotate": {
         "name": "rotateZ",
         "unit": "deg"
       },
-      // "sequenceScale": {
-      //   "name": "scale",
-      //   "unit": ""
-      // }
+      "sequenceScale": {
+        "name": "scale",
+        "unit": ""
+      }
     };
 
     /**
@@ -274,6 +274,9 @@ function defineSequence(imagesLoaded, Hammer) {
      * Build: http://modernizr.com/download/#-cssanimations-csstransitions-svg-prefixed-testprop-testallprops-domprefixes
      */
     var Modernizr=function(a,b,c){function x(a){i.cssText=a}function y(a,b){return x(prefixes.join(a+";")+(b||""))}function z(a,b){return typeof a===b}function A(a,b){return!!~(""+a).indexOf(b)}function B(a,b){for (var d in a){var e=a[d];if (!A(e,"-")&&i[e]!==c)return b=="pfx"?e:!0}return!1}function C(a,b,d){for (var e in a){var f=b[a[e]];if (f!==c)return d===!1?a[e]:z(f,"function")?f.bind(d||b):f}return!1}function D(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+m.join(d+" ")+d).split(" ");return z(b,"string")||z(b,"undefined")?B(e,b):(e=(a+" "+n.join(d+" ")+d).split(" "),C(e,b,c))}var d="2.8.2",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l="Webkit Moz O ms",m=l.split(" "),n=l.toLowerCase().split(" "),o={svg:"http://www.w3.org/2000/svg"},p={},q={},r={},s=[],t=s.slice,u,v={}.hasOwnProperty,w;!z(v,"undefined")&&!z(v.call,"undefined")?w=function(a,b){return v.call(a,b)}:w=function(a,b){return b in a&&z(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if (typeof c!="function")throw new TypeError;var d=t.call(arguments,1),e=function(){if (this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(t.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(t.call(arguments)))};return e}),p.cssanimations=function(){return D("animationName")},p.csstransitions=function(){return D("transition")},p.svg=function(){return!!b.createElementNS&&!!b.createElementNS(o.svg,"svg").createSVGRect};for (var E in p)w(p,E)&&(u=E.toLowerCase(),e[u]=p[E](),s.push((e[u]?"":"no-")+u));return e.addTest=function(a,b){if (typeof a=="object")for (var d in a)w(a,d)&&e.addTest(d,a[d]);else {a=a.toLowerCase();if (e[a]!==c)return e;b=typeof b=="function"?b():b,typeof enableClasses!="undefined"&&enableClasses&&(f.className+=" "+(b?"":"no-")+a),e[a]=b}return e},x(""),h=j=null,e._version=d,e._domPrefixes=n,e._cssomPrefixes=m,e.testProp=function(a){return B([a])},e.testAllProps=D,e.prefixed=function(a,b,c){return b?D(a,b,c):D(a,"pfx")},e}(this,window.document);
+
+    // Convert a prefixed transformOrigin to transform-origin
+    var transformOrigin = Modernizr.prefixed("transformOrigin").replace("mO", "m-o");
 
     /**
      * Is an object an array?
@@ -538,12 +541,12 @@ function defineSequence(imagesLoaded, Hammer) {
      * @return {Array} steps - The elements that make up Sequence's steps
      * @api private
      */
-    var getSteps = function(parent) {
+    function getSteps(parent) {
 
       var steps = [];
 
       // Get all of Sequence's elements and count them
-      var elements = parent[0].getElementsByTagName("*");
+      var elements = parent.getElementsByTagName("*");
       var elementsLength = elements.length;
 
       // Get the elements that have a parent with a class of "sequence-canvas"
@@ -558,6 +561,43 @@ function defineSequence(imagesLoaded, Hammer) {
       }
 
       return steps;
+    }
+
+    /**
+     * Take transform properties and convert them into a CSS string
+     *
+     * @param {Object} properties - The transform properties to convert to a string
+     * @param {Boolean} polar - Whether the rotate X/Y/Z properties should be reversed
+     * @return {String} The transform properties in a CSS string
+     * @api private
+     */
+    function propertiesToCss(properties, polar) {
+
+      var css = "",
+          value,
+          property,
+          propertyName,
+          unit;
+
+      css += "translateX(" + properties.sequenceX + "px) ";
+      css += "translateY(" + properties.sequenceY + "px) ";
+      css += "translateZ(" + properties.sequenceZ + "px) ";
+
+      // Add rotate X/Y/Z and reverse them if necessary
+      if (polar !== true) {
+
+        css += "rotateX(" + properties.sequenceRotateX + "deg) ";
+        css += "rotateY(" + properties.sequenceRotateY + "deg) ";
+        css += "rotateZ(" + properties.sequenceRotate + "deg) ";
+        css += "scale(" + properties.sequenceScale + ")";
+      } else {
+
+        css += "rotateZ(" + properties.sequenceRotate + "deg) ";
+        css += "rotateY(" + properties.sequenceRotateY + "deg) ";
+        css += "rotateX(" + properties.sequenceRotateX + "deg) ";
+      }
+
+      return css;
     }
 
     /* --- PUBLIC PROPERTIES/METHODS --- */
@@ -595,7 +635,7 @@ function defineSequence(imagesLoaded, Hammer) {
           // Clone Sequence so it can be quickly forced through each step
           // and get the canvas and each step
           this.clonedSequence = this.createClone(element);
-          this.clonedCanvas = getElementsByClassName(this.clonedSequence, "sequence-canvas");
+          this.clonedCanvas = getElementsByClassName(this.clonedSequence, "sequence-canvas")[0];
           this.clonedSteps = getSteps(this.clonedCanvas);
 
           // Get any non-animation class names applied to Sequence
@@ -629,16 +669,21 @@ function defineSequence(imagesLoaded, Hammer) {
        * Get transform properties from a steps data-attributes and return them
        * for later use.
        *
+       * @param {String} stepName - The Name of the step, "step1" for example
        * @param {HTMLElement} step - The step to get the properties from
        * @return {String} transformCss - The CSS string containing transform properties
        */
-      getTransformProperties: function(step) {
+      getTransformProperties: function(stepName, step) {
 
         var stepProperties = step.dataset,
             index,
             attribute,
             attributeReversed,
-            property;
+            property,
+            origins,
+            originX = 0,
+            originY = 0,
+            originZ = 0;
 
         // Default transforms
         var stepTransform = {
@@ -647,8 +692,8 @@ function defineSequence(imagesLoaded, Hammer) {
           "sequenceZ": 0,
           "sequenceRotateX": 0,
           "sequenceRotateY": 0,
-          "sequenceRotateZ": 0,
-          // "sequenceScale": 1
+          "sequenceRotate": 0,
+          "sequenceScale": 1
         };
 
         var canvasTransform = {
@@ -657,8 +702,8 @@ function defineSequence(imagesLoaded, Hammer) {
           "sequenceZ": 0,
           "sequenceRotateX": 0,
           "sequenceRotateY": 0,
-          "sequenceRotateZ": 0,
-          // "sequenceScale": 1
+          "sequenceRotate": 0,
+          "sequenceScale": 1
         };
 
         var styles = getComputedStyle(step, null);
@@ -672,21 +717,37 @@ function defineSequence(imagesLoaded, Hammer) {
             stepTransform[property] = attribute;
 
             if(property !== "sequenceScale") {
-              var attributeReversed = attribute - (attribute * 2);
+              var attributeReversed = attribute * -1;
             }else{
               var attributeReversed = 1 / attribute;
             }
-
 
             canvasTransform[property] = attributeReversed;
           }
         }
 
-        return {
-          "transformOrigin": styles[Modernizr.prefixed("transformOrigin")],
-          "stepTransform": stepTransform,
-          "canvasTransform": canvasTransform
+        // Add the offset left/top onto the X/Y coordinates
+        // (after making them polar)
+        canvasTransform.sequenceX += step.offsetLeft * -1;
+        canvasTransform.sequenceY += step.offsetTop * -1;
+
+        // Get the origins
+        origins = styles[Modernizr.prefixed("transformOrigin")].split(" ");
+        originX = parseFloat(origins[0]);
+        originY = parseFloat(origins[1]);
+
+        if(origins[2] !== undefined) {
+          originZ = parseFloat(origins[2]);
         }
+
+        this.animationMap[stepName].transformOrigin = {
+          "x": originX,
+          "y": originY,
+          "z": originZ
+        };
+
+        this.animationMap[stepName].stepTransform = stepTransform;
+        this.animationMap[stepName].canvasTransform = canvasTransform;
       },
 
       /**
@@ -695,19 +756,20 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       steps: function() {
 
-        var stepNo,
+        var stepName,
             clonedStepElement,
             realStepElement,
             clonedStepChildren,
             realStepChildren,
             noOfStepChildren,
-            transformProperties;
+            transformProperties,
+            transformCss;
 
         for (var i = 0; i < self.noOfSteps; i++) {
 
           // Get the step, step number (one-based),
           // the step's children and count them
-          stepNo = "step" + (i + 1);
+          stepName = "step" + (i + 1);
           clonedStepElement = this.clonedSteps[i];
           realStepElement = self.steps[i];
           clonedStepChildren = clonedStepElement.getElementsByTagName("*");
@@ -716,29 +778,28 @@ function defineSequence(imagesLoaded, Hammer) {
 
           // Set up an object where we'll save the step's phase properties
           // Save the step element for later manipulation
-          this.animationMap[stepNo] = {};
-          this.animationMap[stepNo].element = realStepElement;
+          this.animationMap[stepName] = {};
+          this.animationMap[stepName].element = realStepElement;
 
           // Get the transform properties from the data-attributes and apply the
           // transform to the step
-          transformProperties = this.getTransformProperties(realStepElement);
+          this.getTransformProperties(stepName, realStepElement);
 
-          this.animationMap[stepNo].transformOrigin = transformProperties.transformOrigin;
-          this.animationMap[stepNo].stepTransform = transformProperties.stepTransform;
-          this.animationMap[stepNo].canvasTransform = transformProperties.canvasTransform;
-
-          self._canvas.stepCss(realStepElement, this.animationMap, i + 1);
+          // Get the CSS string consisting of the transform properties and apply
+          transformCss = propertiesToCss(this.animationMap[stepName].stepTransform);
+          realStepElement.style[Modernizr.prefixed("transform")] = transformCss;
+          realStepElement.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
 
           // Add the step class to the sequence element
-          addClass(this.clonedSequence, stepNo);
+          addClass(this.clonedSequence, stepName);
 
           // Get the animations for this step's "animate-in"
           // and "animate-out" phases
-          this.phases("animate-in", stepNo, clonedStepElement, clonedStepChildren, realStepChildren, noOfStepChildren);
-          this.phases("animate-out", stepNo, clonedStepElement, clonedStepChildren, realStepChildren, noOfStepChildren);
+          this.phases("animate-in", stepName, clonedStepElement, clonedStepChildren, realStepChildren, noOfStepChildren);
+          this.phases("animate-out", stepName, clonedStepElement, clonedStepChildren, realStepChildren, noOfStepChildren);
 
           // Remove the step class now we're done with it
-          removeClass(this.clonedSequence, stepNo);
+          removeClass(this.clonedSequence, stepName);
         }
       },
 
@@ -746,13 +807,13 @@ function defineSequence(imagesLoaded, Hammer) {
        * Initiate the "animate-in" and "animate-out" phases for a Sequence step
        *
        * @param {String} phase - The phase "animate-in" or "animate-out"
-       * @param {Number} stepNo - The step number
+       * @param {Number} stepName - The step number
        * @param {Object} clonedStepElement - The cloned element associated with the step
        * @param {Array} clonedStepChildren - All of the cloned step's child elements
        * @param {Array} realStepChildren - All of the real step's child elements
        * @param {Number} noOfStepChildren - The number of step child elements
        */
-      phases: function(phase, stepNo, clonedStepElement, clonedStepChildren, realStepChildren, noOfStepChildren) {
+      phases: function(phase, stepName, clonedStepElement, clonedStepChildren, realStepChildren, noOfStepChildren) {
 
         // Where we'll save this phase's elements and computed duration
         var elements = [];
@@ -769,7 +830,7 @@ function defineSequence(imagesLoaded, Hammer) {
         addClass(clonedStepElement, phase);
 
         // Where we'll save this phase's properties
-        this.animationMap[stepNo][phase] = {};
+        this.animationMap[stepName][phase] = {};
 
         /**
          * Save the step's child element properties if it will animate in the
@@ -826,11 +887,11 @@ function defineSequence(imagesLoaded, Hammer) {
         removeClass(clonedStepElement, phase);
 
         // Save this phase's animated elements and maxium computed duration
-        this.animationMap[stepNo][phase]["elements"] = elements;
-        this.animationMap[stepNo][phase]["noOfElements"] = elements.length;
-        this.animationMap[stepNo][phase]["maxDuration"] = maxDuration;
-        this.animationMap[stepNo][phase]["maxDelay"] = maxDelay;
-        this.animationMap[stepNo][phase]["computedDuration"] = maxComputedDuration;
+        this.animationMap[stepName][phase]["elements"] = elements;
+        this.animationMap[stepName][phase]["noOfElements"] = elements.length;
+        this.animationMap[stepName][phase]["maxDuration"] = maxDuration;
+        this.animationMap[stepName][phase]["maxDelay"] = maxDelay;
+        this.animationMap[stepName][phase]["computedDuration"] = maxComputedDuration;
       },
 
       /**
@@ -915,7 +976,8 @@ function defineSequence(imagesLoaded, Hammer) {
 
         if (self.transitionsSupported === true) {
 
-          element.style.transition = duration + "ms opacity linear";
+          element.style[Modernizr.prefixed("transitionDuration")] = duration + "ms";
+          element.style[Modernizr.prefixed("transitionProperty")] = "opacity, " + Modernizr.prefixed("transform");
           element.style.opacity = 1;
         }else {
 
@@ -934,7 +996,8 @@ function defineSequence(imagesLoaded, Hammer) {
 
         if (self.transitionsSupported === true) {
 
-          element.style.transition = duration + "ms opacity linear";
+          element.style[Modernizr.prefixed("transitionDuration")] = duration + "ms";
+          element.style[Modernizr.prefixed("transitionProperty")] = "opacity, " + Modernizr.prefixed("transform");
           element.style.opacity = ".2";
         }else {
 
@@ -986,7 +1049,7 @@ function defineSequence(imagesLoaded, Hammer) {
           self.isPaused = false;
           this.start();
 
-          removeClass(self.element, "paused");
+          removeClass(self.container, "paused");
 
           // Callback
           self.unpaused(self);
@@ -1003,7 +1066,7 @@ function defineSequence(imagesLoaded, Hammer) {
           self.isPaused = true;
           this.stop();
 
-          addClass(self.element, "paused");
+          addClass(self.container, "paused");
 
           // Callback
           self.paused(self);
@@ -1062,85 +1125,37 @@ function defineSequence(imagesLoaded, Hammer) {
     self._canvas = {
 
       /**
+       * Get the canvas' transform-origins and the transform properties converted into
+       * a CSS string
+       *
+       * @param {Number} id -
+       * @return {Object} -
        *
        */
-      setupCss: function(properties) {
-
-        var transformCss = "",
-            value,
-            property,
-            propertyName,
-            unit;
-
-        for(property in properties) {
-          if (properties.hasOwnProperty(property) === true) {
-
-            // Skip and go to the next attribute if this one doesn't belong
-            // to Sequence
-            if(translateAttributes[property] === undefined) {
-              continue;
-            }
-
-            value = properties[property];
-            propertyName = translateAttributes[property].name;
-            unit = translateAttributes[property].unit;
-
-            transformCss += propertyName + "(" + value + unit + ") ";
-          }
-        }
-
-        return transformCss;
-      },
-
-      /**
-       *
-       */
-      stepCss: function(step, animationMap, id) {
-
-        var i,
-            transformProperties = "",
-            transformCss;
-
-        transformProperties = animationMap["step" + id].stepTransform;
-        transformCss = this.setupCss(transformProperties);
-
-        step.style[Modernizr.prefixed("transform")] = transformCss;
-        step.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
-      },
-
-      /**
-       *
-       */
-      canvasCss: function(canvas, id, position) {
+      getTransformCss: function(id) {
 
         var transformCss,
-            step = "step" + id,
-            transformOrigin = self.animationMap[step].transformOrigin,
-            canvasTransformProperties = self.animationMap[step].canvasTransform,
-            stepTransformProperties = self.animationMap[step].stepTransform;
+            transformScale,
+            stepName = "step" + id;
 
-        // Get the step's X and Y transform origins
-        var transformOrigins = transformOrigin.split(" "),
-            transformOriginX = parseFloat(transformOrigins[0].replace("px", "")),
-            transformOriginY = parseFloat(transformOrigins[1].replace("px", "")),
-            transformOriginZ = parseFloat(stepTransformProperties.sequenceZ);
+        var origin = self.animationMap[stepName].transformOrigin,
+            canvasTransformProperties = self.animationMap[stepName].canvasTransform,
+            stepTransformProperties = self.animationMap[stepName].stepTransform;
 
-            var oldX = canvasTransformProperties.sequenceRotateX;
-            var oldY = canvasTransformProperties.sequenceRotateY;
-            var oldZ = canvasTransformProperties.sequenceRotateZ;
-
-
-
-        transformOriginX += canvasTransformProperties.sequenceX - (canvasTransformProperties.sequenceX * 2);
-        transformOriginY += canvasTransformProperties.sequenceY - (canvasTransformProperties.sequenceY * 2);
+        // Get the step's X and Y transform origins, then flip the X/Y/Z
+        // values (positive to negative) and add them to the origins
+        var originX = origin.x + (canvasTransformProperties.sequenceX * -1),
+            originY = origin.y + (canvasTransformProperties.sequenceY * -1),
+            originZ = origin.z + (canvasTransformProperties.sequenceZ * -1);
 
         // Turn the transform properties into a CSS string
-        transformCss = this.setupCss(canvasTransformProperties);
+        transformCss = propertiesToCss(canvasTransformProperties, true);
 
-        // Apply the transform-origin, transition-property, and transform CSS
-        // properties.
-        canvas.style[Modernizr.prefixed("transformOrigin")] = transformOriginX + "px " + transformOriginY + "px " + transformOriginZ + "px";
-        canvas.style[Modernizr.prefixed("transform")] = transformCss;
+        return {
+          "origins": originX + "px " + originY + "px " + originZ + "px",
+          "string": transformCss,
+          "scale": canvasTransformProperties.sequenceScale
+        }
       },
 
       /**
@@ -1154,38 +1169,38 @@ function defineSequence(imagesLoaded, Hammer) {
         if (self.options.animateCanvas === true) {
 
           // Get the canvas element and step element to animate to
-          var canvas = self.canvas[0];
+          var canvas = self.canvas,
+              duration = 0,
+              transformCss;
 
-          // Get the current step element, its position, and reverse them
-          // (positive to negative and vice versa)
-          var step = self.steps[id - 1];
-          var stepX = step.offsetLeft * -1;
-          var stepY = step.offsetTop * -1;
-          var position = [stepX, stepY];
+          // Should the canvas animate?
+          if (animate === true && self._firstRun === false) {
+            duration = self.options.animateCanvasDuration;
+          }
 
-          if (self.options.animateCanvas === true) {
+          // Animate the canvas using CSS transitions
+          if (self.transitionsSupported === true) {
 
-            var duration = 0;
+            // Get the transform properties translate X/Y/Z, rotate X/Y/Z,
+            // scale, and transform-origin
+            transformCss = this.getTransformCss(id);
 
-            // Should the canvas animate?
-            if (animate === true && self._firstRun === false) {
-              duration = self.options.animateCanvasDuration;
-            }
+            // Apply the scale transform CSS to the screen
+            self.screen.style[Modernizr.prefixed("transitionDuration")] = duration + "ms";
+            self.screen.style[Modernizr.prefixed("transitionProperty")] = Modernizr.prefixed("transform");
+            self.screen.style[Modernizr.prefixed("transform")] = "scale(" + transformCss.scale + ")";
 
-            // Animate the canvas using CSS transitions
-            // Note: translate3d() is used to initiate hardware acceleration
-            if (self.transitionsSupported === true) {
-              canvas.style[Modernizr.prefixed("transition")] = duration + "ms";
-              // canvas.style[Modernizr.prefixed("transitionProperty")] = Modernizr.prefixed("transform") + " " + Modernizr.prefixed("transformOrigin");
+            // Apply the translate/rotate transform CSS to the canvas
+            canvas.style[Modernizr.prefixed("transitionDuration")] = duration + "ms";
+            canvas.style[Modernizr.prefixed("transitionProperty")] = Modernizr.prefixed("transform") + ", " + transformOrigin;
+            canvas.style[Modernizr.prefixed("transformOrigin")] = transformCss.origins;
+            canvas.style[Modernizr.prefixed("transform")] = transformCss.string;
+          }
 
-              this.canvasCss(canvas, id, position);
-            }
+          // Animate the canvas using JavaScript
+          else {
 
-            // Animate the canvas using JavaScript
-            else {
-
-              // TODO
-            }
+            // TODO
           }
         }
       }
@@ -1319,10 +1334,10 @@ function defineSequence(imagesLoaded, Hammer) {
         if (self.currentStepId !== undefined) {
 
           var stepToRemove = "step" + self.currentStepId;
-          addClass(self.element, stepToAdd);
-          removeClass(self.element, stepToRemove);
+          addClass(self.container, stepToAdd);
+          removeClass(self.container, stepToRemove);
         }else {
-          addClass(self.element, stepToAdd);
+          addClass(self.container, stepToAdd);
         }
       },
 
@@ -1344,7 +1359,7 @@ function defineSequence(imagesLoaded, Hammer) {
         for (var i = 0; i < stepProperties.noOfElements; i++) {
           var stepElements = stepProperties.elements[i];
 
-          stepElements.element.style.transition =
+          stepElements.element.style[Modernizr.prefixed("transition")] =
             stepDurations["animation"] + "ms "
             + stepDurations["delay"] + "ms "
             + _animation.reverseTimingFunction(stepElements.timingFunction);
@@ -1356,7 +1371,7 @@ function defineSequence(imagesLoaded, Hammer) {
           for (var i = 0; i < stepProperties.noOfElements; i++) {
             var stepElements = stepProperties.elements[i];
 
-            stepElements.element.style.transition = "";
+            stepElements.element.style[Modernizr.prefixed("transition")] = "";
           }
         }, stepDurations["total"]);
       },
@@ -1857,7 +1872,7 @@ function defineSequence(imagesLoaded, Hammer) {
           var stepProperties = stepElements[i];
 
           // Apply the transition-duration and transition-delay
-          stepProperties.element.style.transition = "0ms 0ms";
+          stepProperties.element.style[Modernizr.prefixed("transition")] = "0ms 0ms";
         }
 
         /**
@@ -1877,7 +1892,7 @@ function defineSequence(imagesLoaded, Hammer) {
           for (var i = 0; i < numberOfStepElements; i++) {
             var stepProperties = stepElements[i];
 
-            stepProperties.element.style.transition = "";
+            stepProperties.element.style[Modernizr.prefixed("transition")] = "";
           }
         }, domThreshold);
       },
@@ -2022,19 +2037,19 @@ function defineSequence(imagesLoaded, Hammer) {
         if (self.transitionsSupported === false) {
 
           // Add the "sequence-fallback" class to the Sequence element
-          addClass(self.element, "sequence-fallback");
+          addClass(self.container, "sequence-fallback");
 
           // Prevent steps from appearing outside of the Sequence element
-          self.element.style.overflow = "hidden";
-          self.element.style.whiteSpace = "nowrap";
+          self.container.style.overflow = "hidden";
+          self.container.style.whiteSpace = "nowrap";
 
           // Get the width of the canvas
-          this.canvasWidth = self.canvas[0].offsetWidth;
+          this.canvasWidth = self.canvas.offsetWidth;
 
           // Make the canvas 100% width/height
-          self.canvas[0].style.position = "relative";
-          self.canvas[0].style.width = "100%";
-          self.canvas[0].style.height = "100%";
+          self.canvas.style.position = "relative";
+          self.canvas.style.width = "100%";
+          self.canvas.style.height = "100%";
 
           // Make each step 100% width/height
           for (var i = 0; i < self.noOfSteps; i++) {
@@ -2081,7 +2096,7 @@ function defineSequence(imagesLoaded, Hammer) {
       moveCanvas: function(currentStepElement, nextStepElement, animate) {
 
         // Get the canvas element and step element to animate to
-        var canvas = self.canvas[0];
+        var canvas = self.canvas;
 
         // Get the X, Y positions of the current and next step
         var currentStepX = currentStepElement.offsetLeft;
@@ -2405,7 +2420,7 @@ function defineSequence(imagesLoaded, Hammer) {
         if (self.options.preloader !== false) {
 
           // Add a class of "sequence-preloading" to the Sequence element
-          addClass(self.element, "sequence-preloading");
+          addClass(self.container, "sequence-preloading");
 
           // Get the preloader
           self.preloader = self._ui.getElement("preloader", self.options.preloader);
@@ -2464,8 +2479,8 @@ function defineSequence(imagesLoaded, Hammer) {
         this.hideAndShowSteps("show");
 
         // Remove the "preloading" class and add the "preloaded" class
-        removeClass(self.element, "sequence-preloading");
-        addClass(self.element, "sequence-preloaded");
+        removeClass(self.container, "sequence-preloading");
+        addClass(self.container, "sequence-preloaded");
 
         // Hide the preloader
         this.hide();
@@ -2631,7 +2646,7 @@ function defineSequence(imagesLoaded, Hammer) {
           }
 
           // Add the preloader
-          self.element.insertBefore(self.preloader[0], null);
+          self.container.insertBefore(self.preloader[0], null);
         }
       },
 
@@ -2910,7 +2925,7 @@ function defineSequence(imagesLoaded, Hammer) {
            * Pause autoPlay only when the cursor is inside the boundaries of the
            * Sequence element
            */
-          handler = addEvent(self.element, "mousemove", function(e) {
+          handler = addEvent(self.container, "mousemove", function(e) {
 
             // Is the cursor inside the Sequence element?
             if (insideElement(this, e) === true) {
@@ -2922,7 +2937,9 @@ function defineSequence(imagesLoaded, Hammer) {
 
               // We're now inside the Sequence element
               previouslyInside = true;
-            }else {
+            }
+
+            else {
 
               // Unpause if the cursor was previously inside the Sequence element
               if (previouslyInside === true && self.isHardPaused === false && self.options.pauseOnHover === true) {
@@ -2934,12 +2951,13 @@ function defineSequence(imagesLoaded, Hammer) {
             }
           });
 
-          self.manageEvent.list["mousemove"].push({"element": self.element, "handler": handler});
+          self.manageEvent.list["mousemove"].push({"element": self.container, "handler": handler});
 
           /**
            * Unpause autoPlay when the cursor leaves the Sequence element
            */
-          handler = addEvent(self.element, "mouseleave", function(e) {
+          handler = addEvent(self.container, "mouseleave", function(e) {
+
             if (self.isHardPaused === false && self.options.pauseOnHover === true) {
               self._autoPlay.unpause();
             }
@@ -2948,7 +2966,7 @@ function defineSequence(imagesLoaded, Hammer) {
             previouslyInside = false;
           });
 
-          self.manageEvent.list["mouseleave"].push({"element": self.element, "handler": handler});
+          self.manageEvent.list["mouseleave"].push({"element": self.container, "handler": handler});
         },
 
         /**
@@ -3004,9 +3022,9 @@ function defineSequence(imagesLoaded, Hammer) {
             }
           };
 
-          self.hammerTime = Hammer(self.element, self.options.swipeHammerOptions).on("dragleft dragright release", handler);
+          self.hammerTime = Hammer(self.container, self.options.swipeHammerOptions).on("dragleft dragright release", handler);
 
-          self.manageEvent.list["Hammer"].push({"element": self.element, "handler": handler});
+          self.manageEvent.list["Hammer"].push({"element": self.container, "handler": handler});
         },
 
         /**
@@ -3047,6 +3065,21 @@ function defineSequence(imagesLoaded, Hammer) {
 
           // Events to be executed when the throttled window resize occurs
           function throttledEvents() {
+
+            var i,
+                step,
+                stepName;
+
+            // Work out the transform properties for each step again
+            for (i = 0; i < self.noOfSteps; i++) {
+
+              // Get the step and stepName
+              step = self.steps[i];
+              stepName = "step" + (i + 1);
+
+              // Get the transform properties from the data-attributes
+              self._getAnimationMap.getTransformProperties(stepName, step);
+            }
 
             /**
              * Snap to the currently active step
@@ -3098,12 +3131,15 @@ function defineSequence(imagesLoaded, Hammer) {
       // Merge developer options with defaults
       self.options = extend(defaults, options);
 
-      // Get the element Sequence is attached to, the canvas and it's steps
-      self.element = element;
-      self.canvas = getElementsByClassName(self.element, "sequence-canvas");
+      // Get the element Sequence is attached to, the screen,
+      // the canvas and it's steps
+      self.container = element;
+      self.screen = getElementsByClassName(self.container, "sequence-screen")[0];
+      self.canvas = getElementsByClassName(self.container, "sequence-canvas")[0];
       self.steps = getSteps(self.canvas);
 
-      self.canvasPreviousPosition = 0;
+      self.containerWidth = self.container.offsetWidth;
+      self.containerHeight = self.container.offsetHeight;
 
       // Get number of steps
       self.noOfSteps = self.steps.length;
@@ -3114,7 +3150,11 @@ function defineSequence(imagesLoaded, Hammer) {
       // Get Sequence's animation map (which elements will animate and their timings)
       self.animationMap = self._getAnimationMap.init(element);
 
-      self.canvas[0].style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
+      // Add transform-style: preserve-3d to the screen and canvas
+      self.screen.style.height = "100%";
+      self.screen.style.width = "100%";
+      self.screen.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
+      self.canvas.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
 
       // Remove the no-JS "animate-in" class from a step
       removeNoJsClass(self);
@@ -3176,14 +3216,14 @@ function defineSequence(imagesLoaded, Hammer) {
           goToFirstStep();
 
           self._animation.domDelay(function() {
-            self.ready();
+            self.ready(self);
           });
         });
       }else {
         goToFirstStep();
 
         self._animation.domDelay(function() {
-          self.ready();
+          self.ready(self);
         });
       }
     }
@@ -3224,11 +3264,12 @@ function defineSequence(imagesLoaded, Hammer) {
       // - the "paused" class from the container
       // - the step index class from the container
       removeClass(self.currentPaginationLink, "sequence-current");
-      removeClass(self.element, "paused");
-      removeClass(self.element, "step" + self.currentStepId);
+      removeClass(self.container, "paused");
+      removeClass(self.container, "step" + self.currentStepId);
 
       // Remove styles
-      self.canvas[0].removeAttribute("style");
+      self.screen.removeAttribute("style");
+      self.canvas.removeAttribute("style");
 
       // Remove styles from steps and snap them to their "animate-out" position
       for(i = 0; i < self.noOfSteps; i++) {

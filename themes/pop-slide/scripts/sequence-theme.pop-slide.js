@@ -24,7 +24,7 @@ var sequenceElement = document.getElementById("sequence");
 var options = {
   fadeStepWhenSkipped: false,
   animateCanvasDuration: 350,
-  autoPlay: true
+  autoPlay: false
 }
 
 // Launch Sequence on the element, and with the options we specified above

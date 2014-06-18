@@ -27,6 +27,7 @@
   font-family: sans-serif;
 }
 
+#sequence .sequence-screen,
 #sequence .sequence-canvas,
 #sequence .sequence-canvas > * {
   position: absolute;

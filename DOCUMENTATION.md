@@ -10,16 +10,17 @@ At any point in the documentation, if you [need support](#need-support), we'll d
 
 1. [Download Sequence](#download-sequence)
   - [Package Contents](#pakcage-contents)
-- [Creating a Theme](#creating-a-theme)
+- [Creating a Theme (Quick Start)](#creating-a-theme-quick-start)
   1. [Add Sequence](#add-sequence)
-  2. [Add HTML](#add-html)
-  3. [Add Content](#add-content)
-  4. [Setup a No-JavaScript Fallback](#setup-a-no-js-fallback)
-  5. [Add CSS](#add-css)
-- [How Sequence Works](#how-sequence-works)
-  - [Structure](#structure)
-  - [Animating](#animating)
-  - [Support for Legacy Browsers](#support-for-legacy-browsers)
+  - [Add HTML (Structure)](#add-html-structure)
+  - [Add Content](#add-content)
+  - [Setup a No-JavaScript Fallback](#setup-a-no-js-fallback)
+  - [Add CSS](#add-css)
+  - [Generating Themes with Yeoman](#generating-themes-with-yeoman)
+- [Animation](#animation)
+  - [Animating the Canvas](#animating-the-canvas)
+  - [Animating the Content](#animating-the-content)
+- [Support for Legacy Browsers](#support-for-legacy-browsers)
 - [Options](#options)
   - [General](#general)
   - [Canvas Animation](#canvas-animation)
@@ -67,9 +68,9 @@ Some directories and files in the package that you may want to familiarize yours
   **TBA**
 - Gruntfile.js: Provides a production environment. See [Using Grunt](#using-grunt)
 
-## Creating a Theme
+## Creating a Theme (Quick Start)
 
-Creating a theme consists of [adding Sequence's JavaScript](#add-sequence) and [HTML structure](#add-html) to the page, [adding your content](#add-content), and then animating the transitions between your content via CSS transitions.
+Creating a theme consists of [adding Sequence's JavaScript](#add-sequence) and [HTML structure](#add-html-structure) to the page, [adding your content](#add-content), and then animating the transitions between your content via CSS transitions.
 
 The following is a mini-tutorial that will set up a basic theme that you can build upon. This theme is included in the Sequence download package under `themes/basic` if you'd rather just reference it than follow along.
 
@@ -108,7 +109,7 @@ After the references to the files you just added, initiate an instance of Sequen
   var mySequence = sequence(sequenceElement, options);
 ```
 
-With this code, we've got the HTML element that Sequence will be attached to `<div id="sequence"></div>` (we'll [add the HTML](#add-html) in a moment), and then launched Sequence.
+With this code, we've got the HTML element that Sequence will be attached to `<div id="sequence"></div>` (we'll [add the HTML](#add-html-structure) in a moment), and then launched Sequence.
 
 We have saved an instance of Sequence into a variable (`var`) called `mySequence`. The variable name is entirely up to you and, if necessary, will allow you to interact with Sequence via custom JavaScript which is explained in [API](#api).
 
@@ -129,47 +130,89 @@ It is possible to place multiple instances of Sequence on the same page, like so
 
 Here the page will have two instances of Sequence, one attached to `<div id="sequence1"></div>`, the other `<div id="sequence2"></div>`.
 
-### Add HTML
+### Add HTML (Structure)
 
 Wherever you'd like Sequence to appear on your page, add Sequence’s simple HTML structure like so:
 
 ```html
 <div id="sequence">
-  <ul class="sequence-canvas">
-    <li>
-        <!-- Step 1 content here -->
-    </li>
-    <li>
-        <!-- Step 2 content here -->
-    </li>
-    <li>
-        <!-- Step 3 content here -->
-    </li>
-  </ul>
+  <div class="sequence-screen">
+    <ul class="sequence-canvas">
+      <li>
+          <!-- Step 1 content here -->
+      </li>
+      <li>
+          <!-- Step 2 content here -->
+      </li>
+      <li>
+          <!-- Step 3 content here -->
+      </li>
+    </ul>
+  </div>
 </div>
 ```
 
-Sequence's HTML structure consists of the containing element with an unique ID of your choosing, followed by its canvas (any element with the class of `sequence-canvas`), and then the elements that will act as Sequence's steps. Steps hold the content of your Sequence instance -- you can think of these as slides but we like the name *steps* better because Sequence can do a whole lot more than just slide!
+Sequence's HTML structure consists of:
 
-In this code example, we've used an unordered list `<ul>` for the canvas and `<li>` for the steps, but Sequence will allow you to use other elements too. For example, assuming you want to use `<section>` and `<article>`, the following code can be used:
+- A container (any element with an unique ID of your choosing)
+- A screen (any element with the class of `sequence-screen`)
+- A canvas (any element with the class of `sequence-canvas`)
+- Steps, which hold your content (think of these as slides -- we just like the name *steps* better because they do a whole lot more than just slide!)
+
+The container is useful for the following:
+
+- Applying a width and height
+- Centering the Sequence element on the page
+- Applying `overflow: hidden;` so no content appears outside of the container's boundaries
+- Adding additional Sequence elements such as navigation and pagination
+
+The screen sits inside the container and controls the scale of Sequence where necessary. If for example you double the scale of a step, when that step is navigated to, the screen will shrink by half so the step perfectly fits in the container. We'll do just that in [animating the canvas](#animating-the-canvas).
+
+The canvas sits inside the screen and holds the steps. Like the screen, the canvas automatically animates to show the step being navigated to, controlling the X/Y/Z and rotate positions. The canvas can be animated in 2D or 3D space. We'll do just that in [animating the canvas](#animating-the-canvas).
+
+You do not need to apply styles to the screen or canvas (although you may like to apply reset/normalize styles for better browser consistency).
+
+Note that when we refer to the canvas in the future, we mean both the screen *and* canvas (they basically work together to make sure the active step is always perfectly aligned in the container).
+
+The steps hold your content. When a step is navigated to, it is given the class `animate-in`, allowing you to animate a step's content to its "in" position. Then, when a step is navigated away from, the step is given an `animate-out` class so you can move any of its elements to an "out" position, as you see fit.
+
+When a step becomes active (one that is being viewed), it is given a higher `z-index` property than the others, so that the active step sits on top. This functionality can be changed via the `moveActiveStepToTop` option.
+
+In the code example above, we've used an unordered list `<ul>` for the canvas and `<li>` for the steps, but Sequence will allow you to use other elements too. For example, assuming you want to use `<section>` and `<article>`, the following code can be used:
 
 ```html
 <div id="sequence">
-  <section class="sequence-canvas">
-    <article>
-        <!-- Step 1 content here -->
-    </article>
-    <article>
-        <!-- Step 2 content here -->
-    </article>
-    <article>
-        <!-- Step 3 content here -->
-    </article>
-  </section>
+  <div class="sequence-screen">
+    <section class="sequence-canvas">
+      <article>
+          <!-- Step 1 content here -->
+      </article>
+      <article>
+          <!-- Step 2 content here -->
+      </article>
+      <article>
+          <!-- Step 3 content here -->
+      </article>
+    </section>
+  </div>
 </div>
 ```
 
 Sequence knows the canvas is whichever element you give the `sequence-canvas` and the steps are the canvas' immediate descendants, in this case, the `<article>` elements.
+
+You can layout your steps however you please. Unless you decide to disable the animateCanvas feature in [options](#animateCanvas), Sequence will automatically animate the screen and canvas to always show the active step. this means you can position your steps relative or absolute -- in a grid, in a 3D cube, in a random order, and so on -- and Sequence will move its screen and canvas accordingly so the active step always appears in the container. We'll look at laying out and [animating the canvas](#animating-the-canvas) later.
+
+#### Structure Examples
+
+The following examples show a relative and absolute (layered) structure.
+
+<img src="http://sequencejs.com/images/relative-layout.jpg" alt="An example of a relative layout" />
+
+In the above relative structure example, three steps are positioned side-by-side. When the user navigates between steps, Sequence will animate the canvas so the relevant step comes in to view. Shown is a basic side-by-side layout but this could also be a grid or other formation of layout.
+
+<img src="http://sequencejs.com/images/absolute-layout.jpg" alt="An example of an absolute layout" />
+
+An absolute or layered structure is when steps are all positioned in the same place and on top of one another. With this structure, the canvas doesn't need to animate between steps and only the content animates.
 
 ### Add Content
 
@@ -177,24 +220,26 @@ To add content to a step, simply place HTML within each step element:
 
 ```html
 <div id="sequence">
-  <ul class="sequence-canvas">
-    <li>
-      <h2>Powered by Sequence.js</h2>
-      <h3>The open-source CSS animation framework</h3>
-    </li>
-    <li>
-      <h2>Create Unique Animated Themes</h2>
-      <h3>For sliders, presentations, banners, accordions, and other step-based applications</h2>
-    </li>
-    <li>
-      <h2>No Restrictions, Endless Possibilities</h2>
-      <h3>Use the HTML and CSS syntax you're used to. No JavaScript knowledge required.</h3>
-    </li>
-  </ul>
+  <div class="sequence-screen">
+    <ul class="sequence-canvas">
+      <li>
+        <h2>Powered by Sequence.js</h2>
+        <h3>The open-source CSS animation framework</h3>
+      </li>
+      <li>
+        <h2>Create Unique Animated Themes</h2>
+        <h3>For sliders, presentations, banners, accordions, and other step-based applications</h2>
+      </li>
+      <li>
+        <h2>No Restrictions, Endless Possibilities</h2>
+        <h3>Use the HTML and CSS syntax you're used to. No JavaScript knowledge required.</h3>
+      </li>
+    </ul>
+  </div>
 </div>
 ```
 
-Beyond the initial structure of *containing element > canvas > steps*, there are no limitations to what elements you can use in your Sequence content. Add as many elements as you like, a `<video>` element, a gif, a plain old `<div>`, an embedded video...it is entirely up to you.
+Beyond the initial structure of *containing element > screen > canvas > steps*, there are no limitations to what elements you can use in your Sequence content. Add as many elements as you like, a `<video>` element, a gif, a plain old `<div>`, an embedded video...it is entirely up to you.
 
 In the above example, we've added `<h2>` and `<h3>` elements which we'll shortly animate via CSS.
 
@@ -204,24 +249,26 @@ In a small percentage of browsers, JavaScript may be disabled which is the techn
 
 ```html
 <div id="sequence">
-  <ul class="sequence-canvas">
-    <li class="animate-in">
-      <h2>Powered by Sequence.js</h2>
-      <h3>The open-source CSS animation framework</h3>
-    </li>
-    <li>
-      <h2>Create Unique Animated Themes</h2>
-      <h3>For sliders, presentations, banners, accordions, and other step-based applications</h2>
-    </li>
-    <li>
-      <h2>No Restrictions, Endless Possibilities</h2>
-      <h3>Use the HTML and CSS syntax you're used to. No JavaScript knowledge required.</h3>
-    </li>
-  </ul>
+  <div class="sequence-screen">
+    <ul class="sequence-canvas">
+      <li class="animate-in">
+        <h2>Powered by Sequence.js</h2>
+        <h3>The open-source CSS animation framework</h3>
+      </li>
+      <li>
+        <h2>Create Unique Animated Themes</h2>
+        <h3>For sliders, presentations, banners, accordions, and other step-based applications</h2>
+      </li>
+      <li>
+        <h2>No Restrictions, Endless Possibilities</h2>
+        <h3>Use the HTML and CSS syntax you're used to. No JavaScript knowledge required.</h3>
+      </li>
+    </ul>
+  </div>
 </div>
 ```
 
-Here you’ve nominated the first step to be displayed if JavaScript is disabled. We'll shortly define the `animate-in` class via CSS to tell the browser how to show that step's content when it is move to its `animate-in` position.
+Here you’ve nominated the first step to be displayed if JavaScript is disabled. We'll shortly define the `animate-in` class via CSS to tell the browser how to show that step's content when it is moved to its `animate-in` position.
 
 ### Add CSS
 
@@ -249,6 +296,7 @@ In the CSS file, add the following and save it:
 }
 
 /* Reset */
+#sequence .sequence-screen,
 #sequence .sequence-canvas,
 #sequence .sequence-canvas > * {
   margin: 0;
@@ -279,7 +327,7 @@ In the CSS file, add the following and save it:
 The CSS above adds a basic layout for the Sequence structure:
 
 - Makes the Sequence element 960px x 585px, centers it and prevents any content from overflowing its boundaries
-- Adds a mini-reset to the canvas and its steps for better browser consistency
+- Adds a mini-reset to the screen, canvas, and its steps for better browser consistency
 - Makes the steps sit side-by-side
 
 Now with this CSS in place, take a look at the web page containing the theme in a web browser.
@@ -289,6 +337,8 @@ If Sequence is set up correctly, when you press your keyboard's right arrow key,
 <img src="http://sequencejs.com/images/first-animation.gif" alt="First Animation" />
 
 That's cool, but not that impressive though, is it? Don't worry, this is just the very start of what Sequence is capable of - your imagination is the only limitation!
+
+As well as having Sequence automatically [animate the canvas](#canvas-animation) to always show the next step -- regardless of how you position it via CSS -- we can also [animate the content](#content-animation).
 
 Let's style our `<h2>` and `<h3>` element and then make them animate. Add the following to the CSS file and save it:
 
@@ -338,46 +388,91 @@ These are the very basics of how to begin animating with Sequence. We can add as
 
 To create some truly impressive and unique animated applications, keep reading to discover how Sequence works and how you can make best use of it, or if you'd rather, go take a look at some of Sequence's [pre-built themes](http://sequencejs.com/) for inspiration.
 
-### How Sequence Works
+#### Generating Themes with Yeoman
 
-Now we've setup the HTML, let's get to grips with how Sequence works so we can best make use of it.
+Sequence has a Yeoman available that allows for the quick setup of basic themes, that you can then build upon to create your own unique theme.
 
-#### Structure
+Head over to the [generator-sequence project](https://github.com/IanLunn/generator-sequence) for more information.
 
-The basic structure of Sequence is a container element, a canvas element with the class of `sequence-canvas`, such as `<ul class="sequence-canvas">` and steps, such as `<li>`.
+TODO: This section will be updated in the future with more info.
 
-The container is useful for the following:
+### Animation
 
-- Applying a width and height
-- Centering the Sequence element on the page
-- Applying `overflow: hidden;` so no content appears outside of the container's boundaries
-- Adding additional Sequence elements such as navigation and pagination
+Creating super cool animations is why we're really here, so let's get to it!
 
-As steps are navigated between, the container is given index class names such as `step1`, `step2`, and so on. These class names can be used to animate the canvas manually, if you so wish.
+Note: *When we speak of the canvas, we're referring to both the screen and canvas elements (they both work together to make sure the active step is always aligned in the container).*
 
-The canvas sits inside the container and holds the steps. If you choose to have Sequence animate the canvas (which it does by default), when the user navigates to a step, the canvas element will move, to show the relevant step.
+Both Sequence's [canvas](#animating-the-canvas) and [content](#animating-the-content) can be animated.
 
-The steps hold your content. When a step is navigated to, it is given the class `animate-in`, allowing you to animate a steps content into its "in" position. Then, when a step is navigated away from, the step is given an `animate-out` class so you can move any of its elements to an "out" position, as you see fit.
+#### Animating the Canvas
 
-When a step becomes active (is being viewed), it is given a higher `z-index` property than the others, so that the active step sits on top. This functionality can be changed via the `moveActiveStepToTop` option.
+By default, Sequence controls the animation of the canvas automatically via the `animateCanvas` [option](#animateCanvas) and the speed of animation via the `animateCanvasDuration` [option](#animateCanvasDuration).
 
-##### Relative vs Absolute (Layered) Structure
+Note: Should you wish to modify how the canvas animates or apply additional styles, the container is given class names that represent the active step. When step1 is active, the container will have the class of `step1`, and so on.
 
-There are two main ways in which we can structure Sequence, relative or absolute.
+Regardless of how you position steps, Sequence will find the offsetLeft and offsetTop (the final X/Y positions of an element after `top`, `margin`, `border` etc CSS properties are applied) then use these values to move the canvas so the current step is always shown within the container. Simply lay out steps as you wish -- using the CSS you are used to -- and Sequence will animate to an active step as necessary.
 
-In the [Creating a Theme](#creating-a-theme) mini-tutorial, we created a relative structure. This is suitable when you want to position steps relative to one another and have the canvas animate between them.
+There is one special condition to the above. A step should not be given a `transform` property via CSS. The `transform` property should instead be specified as data attributes applied to the step's HTML element. This is to work around current browser limitations.
 
-<img src="http://sequencejs.com/images/relative-layout.jpg" alt="An example of a relative layout" />
+##### Using Data Attributes to Transform Steps
 
-In the above relative structure example, three steps are positioned side-by-side. When the user navigates between steps, Sequence will animate the canvas so the relevant step comes in to view. Shown is a basic side-by-side layout but this could also be a grid or other formation of layout.
+The following shows a step element with transforms applied to it via data-attributes:
 
-<img src="http://sequencejs.com/images/absolute-layout.jpg" alt="An example of an absolute layout" />
+```html
+<li data-sequence-x="100" data-sequence-rotate-y="45" data-sequence-scale="2">
+  <!-- Step content here -->
+</li>
+```
 
-An absolute or layered structure is when steps are all positioned in the same place and on top of one another. With this structure, the canvas doesn't need to animate between steps and only the content animates.
+The above code example will translate (move) the step along the X axis by 100px, rotate it on the Y axis (in 3D space) by 45 degrees, and scale it by 2 (doubling its size). When Sequence navigates to this step, the canvas is given the CSS properties `transform: translateX(-100px) translateZ(0) rotateY(-45deg)` and the screen `transform: translateZ(0) scale(.5)`, causing the step to perfectly fit within the container.
 
-The long and short of choosing a structure is: use absolute (layered) if you don't want the canvas to animate. If you do, then go for relative.
+Note: although we didn't specify a `data-sequence-z` attribute above, it is nonetheless applied with a value of `0` to cause a browser to use hardware acceleration for its animations.
 
-### Animating
+A value doesn't require a unit identifier as translations are expected to represent pixels and rotations degrees.
+
+The following data attributes can be used to transform a step:
+
+###### `data-sequence-x`
+
+Translates (moves) the step by the given amount of pixels along the X axis (in 2D space, up-and-down).
+
+Equivalent of CSS property: `transform: translateX()`.
+
+###### `data-sequence-y`
+
+Translates (moves) the step by the given amount of pixels along the Y axis (in 2D space, side-to-side).
+
+Equivalent of CSS property: `transform: translateY()`.
+
+###### `data-sequence-z`
+
+Translates (moves) the step by the given amount of pixels along the Z axis (in 3D space, away and toward the user's eye).
+
+Equivalent of CSS property: `transform: translateZ()`.
+
+###### `data-sequence-rotate`
+
+Rotates the step clockwise around its origin (as specified by a `transform-origin` property) by the specified amount of degrees.
+
+Equivalent of CSS property: `transform: rotateZ()`.
+
+###### `data-sequence-rotate-x`
+
+Rotates the step clockwise around its origin (as specified by a `transform-origin` property) on the X axis in 3D space.
+
+Equivalent of CSS property: `transform: rotateX()`.
+
+###### `data-sequence-rotate-y`
+
+Rotates the step clockwise around its origin (as specified by a `transform-origin` property) on the Y axis in 3D space.
+
+Equivalent of CSS property: `transform: rotateY()`.
+
+###### `data-sequence-scale`
+
+Specifies a 2D scaling operation.
+
+#### Animating the Content
 
 When a Sequence step is navigated to and becomes active, it is given a class of `animate-in`. The previously active step is given a class of `animate-out`. Using these classes, we can animation the content of Sequence using [CSS transitions](https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Using_CSS_transitions).
 
@@ -385,20 +480,22 @@ Here we have a basic structure for a Sequence theme which we created in the mini
 
 ```html
 <div id="sequence">
-  <ul class="sequence-canvas">
-    <li class="animate-in">
-      <h2>Powered by Sequence.js</h2>
-      <h3>The open-source CSS animation framework</h3>
-    </li>
-    <li>
-      <h2>Create Unique Animated Themes</h2>
-      <h3>For sliders, presentations, banners, accordions, and other step-based applications</h2>
-    </li>
-    <li>
-      <h2>No Restrictions, Endless Possibilities</h2>
-      <h3>Use the HTML and CSS syntax you're used to. No JavaScript knowledge required.</h3>
-    </li>
-  </ul>
+  <div class="sequence-screen">
+    <ul class="sequence-canvas">
+      <li class="animate-in">
+        <h2>Powered by Sequence.js</h2>
+        <h3>The open-source CSS animation framework</h3>
+      </li>
+      <li>
+        <h2>Create Unique Animated Themes</h2>
+        <h3>For sliders, presentations, banners, accordions, and other step-based applications</h2>
+      </li>
+      <li>
+        <h2>No Restrictions, Endless Possibilities</h2>
+        <h3>Use the HTML and CSS syntax you're used to. No JavaScript knowledge required.</h3>
+      </li>
+    </ul>
+  </div>
 </div>
 ```
 
@@ -443,20 +540,22 @@ When a step is in its `animate-in` position, eventually it will need to be anima
 
 ```html
 <div id="sequence">
-  <ul class="sequence-canvas">
-    <li class="animate-out" style="z-index: 2;">
-      <h2>Powered by Sequence.js</h2>
-      <h3>The open-source CSS animation framework</h3>
-    </li>
-    <li class="animate-in" style="z-index: 3;">
-      <h2>Create Unique Animated Themes</h2>
-      <h3>For sliders, presentations, banners, accordions, and other step-based applications</h2>
-    </li>
-    <li>
-      <h2>No Restrictions, Endless Possibilities</h2>
-      <h3>Use the HTML and CSS syntax you're used to. No JavaScript knowledge required.</h3>
-    </li>
-  </ul>
+  <div class="sequence-screen">
+    <ul class="sequence-canvas">
+      <li class="animate-out" style="z-index: 2;">
+        <h2>Powered by Sequence.js</h2>
+        <h3>The open-source CSS animation framework</h3>
+      </li>
+      <li class="animate-in" style="z-index: 3;">
+        <h2>Create Unique Animated Themes</h2>
+        <h3>For sliders, presentations, banners, accordions, and other step-based applications</h2>
+      </li>
+      <li>
+        <h2>No Restrictions, Endless Possibilities</h2>
+        <h3>Use the HTML and CSS syntax you're used to. No JavaScript knowledge required.</h3>
+      </li>
+    </ul>
+  </div>
 </div>
 ```
 
@@ -606,8 +705,6 @@ Whether a step should be given a higher `z-index` than other steps whilst it is 
 ### <a id="canvas-animation">Canvas Animation</a>
 
 Canvas animation causes Sequence to automatically animate the canvas element to show the next step. Automatic animation consists of finding the next step's position and then directly animating to it.
-
-**Pre-alpha note**: Currently canvas animation will only get the `offsetLeft` and `offsetTop` of an element -- meaning you can't position steps using CSS transforms as yet. In the future, we plan to add the ability to transform steps via CSS so they can translate, rotate, and scale in 2D and 3D space. If you're familiar with manipulating 2D and 3D transform matrices, we're hiring a developer to implement this functionality. Please see the [description and contact details here](http://ianlunn.co.uk/transform-matrix-project/).
 
 If you'd like to customize how the canvas animates, set `animateCanvas` to `false`. Regardless of the `animateCanvas` option, the Sequence element is given a class representing the current step being viewed. `step1`, `step2`, and so on. These classes allow you to control canvas animation manually.
 
@@ -1108,14 +1205,16 @@ In the following example, when `hashTags` is enabled and the second step becomes
 
 ```html
 <div id="sequence">
-  <ul class="sequence-canvas">
-    <li id="intro">
-      <h2>Built using Sequence.js</h2>
-    </li>
-    <li id="second-step">
-      <h2>Super awesome!</h2>
-    </li>
-  </ul>
+  <div class="sequence-screen">
+    <ul class="sequence-canvas">
+      <li id="intro">
+        <h2>Built using Sequence.js</h2>
+      </li>
+      <li id="second-step">
+        <h2>Super awesome!</h2>
+      </li>
+    </ul>
+  </div>
 </div>
 ```
 
@@ -1132,11 +1231,13 @@ In the following example, when `hashTags` and `hashDataAttribute` are true, and 
 
 ```html
 <div id="sequence">
-  <ul class="sequence-canvas">
-    <li id="intro" data-sequence-hashtag="superAwesome">
-      <h2>Built using Sequence.js</h2>
-    </li>
-  </ul>
+  <div class="sequence-screen">
+    <ul class="sequence-canvas">
+      <li id="intro" data-sequence-hashtag="superAwesome">
+        <h2>Built using Sequence.js</h2>
+      </li>
+    </ul>
+  </div>
 </div>
 ```
 
@@ -1298,6 +1399,16 @@ image is loaded for "images/smiley.gif"
 progress: 1 of 4
 ```
 
+#### ready(sequence)
+Executed when Sequence is deemed to be ready. This is executed after the `preloaded()` callback, plus an additional 50 milliseconds as defined via the `domThreshold` private variable in sequence.js. This callback can be used when you need to be certain Sequence has completely finished setting itself up, preloading, and manipulating the DOM. The additional 50 milliseconds is enough time for all DOM manipulations to complete.
+
+- `sequence`: All properties and methods available to this instance
+
+#### destroyed(sequence)
+Executed when Sequence is destroyed (removed from the element it is attached to and all Sequence functionality stopped) via the `destroy()` method.
+
+- `sequence`: All properties and methods available to this instance
+
 ### <a id="methods">Methods</a>
 
 Public methods are the functions that Sequence utilises, made available for developers to extend and enhance their particular instance.
@@ -1373,7 +1484,7 @@ Note: even if `autoPlay` is disabled in the options, autoPlay can still later be
 
 #### `destroy()`
 
-Remove Sequence from the element it is attached to.
+Remove Sequence from the element it is attached to and stop all Sequence functionality.
 
 ### <a id="properties">Properties</a>
 

@@ -29,6 +29,7 @@
   padding: 0;
 }
 
+#sequence .sequence-screen,
 #sequence .sequence-canvas,
 #sequence .sequence-canvas > * {
   margin: 0;

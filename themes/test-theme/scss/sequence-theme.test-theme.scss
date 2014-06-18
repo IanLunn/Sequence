@@ -39,6 +39,7 @@ $sequenceHeight: 585px;
 
 
   // Reset the canvas and steps for more browser consistency
+  .sequence-screen,
   .sequence-canvas,
   .sequence-canvas > * {
     position: absolute;

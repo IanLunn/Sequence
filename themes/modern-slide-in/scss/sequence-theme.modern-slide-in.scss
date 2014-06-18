@@ -41,6 +41,7 @@ $maxHeight: 585px;
   padding: 0;
 
   // Reset the canvas and steps for more browser consistency
+  .sequence-screen,
   .sequence-canvas,
   .sequence-canvas > * {
     margin: 0;

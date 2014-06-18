@@ -1,10 +1,10 @@
 /*!
  * Theme Name: Basic
  * Version: 0.1.0
- * Theme URL: 
+ * Theme URL:
  *
  * A simple theme that slides side-to-side
- * 
+ *
  * Powered by Sequence.js - The open-source CSS animation framework.
  *
  * Author: Ian Lunn
@@ -41,6 +41,7 @@ $sequenceHeight: 585px;
   font-family: sans-serif;
 
   // Reset the canvas and steps for more browser consistency
+  .sequence-screen,
   .sequence-canvas,
   .sequence-canvas > * {
     margin: 0;
