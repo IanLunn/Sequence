@@ -1,16 +1,16 @@
 /*!
- * Theme Name: Basic
+ * Theme Name: Multiple Test
  * Version: 0.1.0
- * Theme URL:
+ * Theme URL: http://sequencejs.com/themes/multiple-test/
  *
- * A simple theme that slides side-to-side
+ * A theme to test multiple instances
  *
  * Powered by Sequence.js - The open-source CSS animation framework.
  *
  * Author: Ian Lunn
  * Author URL: https://ianlunn.co.uk/
  *
- * Basic Sequence Theme Copyright (c) Ian Lunn 2014
+ * Multiple Test Sequence Theme Copyright (c) Ian Lunn 2014
  * License: MIT http://opensource.org/licenses/MIT
  *
  * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
@@ -18,10 +18,10 @@
 
 @import "partials/mixins";
 
-$sequenceWidth: 960px;
-$sequenceHeight: 585px;
+$sequenceWidth: 600px;
+$sequenceHeight: 400px;
 
-#sequence {
+.sequence {
   position: relative;
 
   // Dimensions
@@ -66,10 +66,6 @@ $sequenceHeight: 585px;
       white-space: normal;
       text-align: center;
     }
-  }
-
-  button.sequence-current {
-    border: red solid 1px;
   }
 
   // Starting positions and default styles for content

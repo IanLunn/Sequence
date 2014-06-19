@@ -156,11 +156,11 @@ function defineSequence(imagesLoaded, Hammer) {
       /* --- Keyboard --- */
 
       // Can the user navigate between steps by pressing keyboard buttons?
-      keyNavigation: true,
+      keyNavigation: false,
 
       // When numeric keys 1 - 9 are pressed, Sequence will navigate to the
       // corresponding step
-      numericKeysGoToSteps: true,
+      numericKeysGoToSteps: false,
 
       // Events to run when the user presses the left/right keys
       keyEvents: {
@@ -1255,6 +1255,9 @@ function defineSequence(imagesLoaded, Hammer) {
 
         if (self.options.navigationSkip === true) {
 
+          // Start the navigation skip threshold
+          self.navigationSkipThresholdActive = true;
+
           // Count the number of steps currently animating
           var activeStepsLength = self.animationMap["stepsAnimating"];
 
@@ -1265,9 +1268,6 @@ function defineSequence(imagesLoaded, Hammer) {
 
           // Are there steps currently animating that need to be faded out?
           if (activeStepsLength !== 0) {
-
-            // Start the navigation skip threshold
-            self.navigationSkipThresholdActive = true;
 
             // If a step is waiting to animate in based on the phaseThreshold,
             // cancel it
@@ -1525,6 +1525,8 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // Callback
         self.currentPhaseStarted(self);
+
+        self._pagination.update();
       },
 
       /**
@@ -1547,8 +1549,6 @@ function defineSequence(imagesLoaded, Hammer) {
         if (hashTagNav === undefined) {
           self._hashTags.update();
         }
-
-        self._pagination.update();
 
         // Callback
         self.nextPhaseStarted(self);
@@ -2177,38 +2177,42 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       update: function() {
 
-        if (self.pagination.length > 0) {
+        // Count how many pagination elements there are
+        var paginationLength = self.pagination.length;
+
+        if (paginationLength > 0) {
+
+          var i,
+              j,
+              id = self.currentStepId -1,
+              currentPaginationLink,
+              currentPaginationLinksLength;
 
           // Remove the "sequence-current" class from a previous pagination link
           // if there is one
-          if (self.currentPaginationLink !== undefined) {
-            removeClass(self.currentPaginationLink, "sequence-current");
-          }
+          if (self.currentPaginationLinks !== undefined) {
 
-          // Zero-base the currentStepId
-          var id = self.currentStepId - 1;
+            currentPaginationLinksLength = self.currentPaginationLinks.length;
 
-          // When we'll save the pagination links
-          var paginationLinks = [];
+            for (var i = 0; i < currentPaginationLinksLength; i++) {
 
-          // Get the pagination child elements and count them
-          var childElements = self.pagination[0].childNodes;
-          var childElementsLength = childElements.length;
-
-          // Get each top level pagination link
-          for (var i = 0; i < childElementsLength; i++) {
-            var child = childElements[i];
-            if (child.nodeType === 1) {
-              paginationLinks.push(child);
+              currentPaginationLink = self.currentPaginationLinks[i];
+              removeClass(currentPaginationLink, "sequence-current");
             }
           }
 
-          // Get the pagination link that corresponds with the current ID
-          self.currentPaginationLink = paginationLinks[id];
+          // Where we'll save the current pagination links
+          self.currentPaginationLinks = [];
 
-          // Add the "sequence-current" class to the new pagination link
-          if(self.currentPaginationLink !== undefined) {
-            addClass(self.currentPaginationLink, "sequence-current");
+          // Get the current pagination link from each pagination element,
+          // add the "sequence-current" class to them, then save them for later
+          // for when they need to have the "sequence-current" class removed
+          for (j = 0; j < paginationLength; j++) {
+
+            currentPaginationLink = self.paginationLinks[j][id];
+            self.currentPaginationLinks.push(currentPaginationLink);
+
+            addClass(currentPaginationLink, "sequence-current");
           }
         }
       }
@@ -2864,22 +2868,56 @@ function defineSequence(imagesLoaded, Hammer) {
           // Count the number of elements being added
           var elementLength = elements.length,
               handler,
-              element;
+              element,
+              id,
+              i,
+              j,
+              childElement,
+              childElements,
+              childElementsLength;
+
+          // Where we'll save pagination links
+          self.paginationLinks = {};
 
           // Add a click event for each element
-          for (var i = 0; i < elementLength; i++) {
+          for (i = 0; i < elementLength; i++) {
             element = elements[i];
 
             handler = addEvent(element, "click", function(e, element) {
 
               // Get the ID of the clicked pagination link
-              var id = getPaginationIndex(this, e.target);
+              id = getPaginationIndex(this, e.target);
 
               // Go to the clicked pagination ID
               self.goTo(id);
             });
 
             self.manageEvent.list["click"].push({"element": element, "handler": handler});
+
+            /**
+             * Now get the links from each pagination element
+             * (any top level elements)
+             */
+
+            // Get the paginations elements and count them
+            childElements = element.childNodes;
+            childElementsLength = childElements.length;
+
+            // Where we'll save the pagination links
+            var paginationLinks = [];
+
+            // Get each top level pagination link and add it to the array
+            for (j = 0; j < childElementsLength; j++) {
+
+              childElement = childElements[j];
+
+              if (childElement.nodeType === 1) {
+                paginationLinks.push(childElement);
+              }
+            }
+
+            // Save the pagination element and its links
+            self.paginationLinks[i] = paginationLinks;
           }
         },
 
@@ -3417,17 +3455,17 @@ function defineSequence(imagesLoaded, Hammer) {
       }
 
       // Get the next and current steps, and their elements
-      var currentStep = "step" + self.currentStepId;
-      var nextStep = "step" + id;
-      var currentStepElement = self.animationMap[currentStep].element;
-      var nextStepElement = self.animationMap[nextStep].element;
-
-      // Move the active step to the top (via a higher z-index)
-      self._animation.moveActiveStepToTop(currentStepElement, nextStepElement);
+      var currentStep = "step" + self.currentStepId,
+          nextStep = "step" + id,
+          currentStepElement = self.animationMap[currentStep].element,
+          nextStepElement = self.animationMap[nextStep].element;
 
       // Determine how often goTo() can be used based on navigationSkipThreshold
       // and manage step fading accordingly
       self._animation.manageNavigationSkip(id, direction, currentStep, nextStep, nextStepElement);
+
+      // Move the active step to the top (via a higher z-index)
+      self._animation.moveActiveStepToTop(currentStepElement, nextStepElement);
 
       // Sequence is now animating
       self.isActive = true;

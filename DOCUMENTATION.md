@@ -1104,14 +1104,14 @@ Keyboard options enable the user to navigate to steps using specific keyboard bu
 #### `keyNavigation`
 
 - Type: true/false
-- Default: `true`
+- Default: `false`
 
 Whether to allow the user to navigate between steps using the left/right arrow keys, and/or numeric keys.
 
 #### `numericKeysGoToSteps`
 
 - Type: true/false
-- Default: `true`
+- Default: `false`
 
 Whether Sequence should go to a specific step when the user presses a numeric key. Pressing 1 goes to step 1, 2 to step 2, and so on.
 
