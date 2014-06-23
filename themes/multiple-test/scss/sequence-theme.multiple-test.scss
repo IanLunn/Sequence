@@ -21,6 +21,14 @@
 $sequenceWidth: 600px;
 $sequenceHeight: 400px;
 
+.sequence-pagination .sequence-current {
+  border: red solid 1px;
+}
+
+.sequence-pause.sequence-paused {
+  border: red solid 1px;
+}
+
 .sequence {
   position: relative;
 

@@ -22,10 +22,7 @@ var sequenceElement = document.getElementById("sequence");
 // Place your Sequence options here to override defaults
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
-  animateCanvas: false,
-  cycle: false,
-  autoPlay: false,
-  pauseOnHover: false
+  animateCanvas: false
 }
 
 // Launch Sequence on the element, and with the options we specified above

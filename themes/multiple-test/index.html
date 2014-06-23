@@ -8,31 +8,73 @@
 </head>
 <body>
 
+  <h1>Multiple instance testing</h1>
+
+  <p>These instances test to make sure:</p>
+  <ul>
+    <li>multiple sliders work together</li>
+    <li>UI elements within a slider should only control that slider</li>
+    <li>UI elements outside of sliders, should control all sliders</li>
+    <li>Multiple UI elements can belong to one slider. (Slider 1 has elements on each of its slides)</li>
+    <li>Multiple pagination in slider 1 should correctly update (a red border around the revelant link in each slide)</li>
+  </ul>
+
+  <!-- Global Nav Buttons -->
+  <button class="sequence-prev">Prev</button>
+  <button id="pause3" class="sequence-pause">Pause</button>
+  <button class="sequence-next">Next</button>
+
+  <div class="sequence-pagination">
+    <button>1</button>
+    <button>2</button>
+    <button>3</button>
+  </div>
+
   <div id="sequence1" class="sequence">
-
-    <button class="sequence-prev">Prev</button>
-    <button id="pause1" class="sequence-pause">Pause</button>
-    <button class="sequence-next">Next</button>
-
-    <div class="sequence-pagination">
-      <button>1</button>
-      <button>2</button>
-      <button>3</button>
-    </div>
 
     <div class="sequence-screen">
       <ul class="sequence-canvas">
         <li>
           <h2>Powered by Sequence.js</h2>
           <h3>The open-source CSS animation framework</h3>
+
+          <button rel="sequence1" class="sequence-prev">Prev</button>
+          <button rel="sequence1" id="pause1" class="sequence-pause">Pause</button>
+          <button rel="sequence1" class="sequence-next">Next</button>
+
+          <div rel="sequence1" class="sequence-pagination">
+            <button>1</button>
+            <button>2</button>
+            <button>3</button>
+          </div>
         </li>
         <li>
           <h2>Create Unique Animated Themes</h2>
           <h3>For sliders, presentations, banners, accordions, and other step-based applications</h2>
+
+            <button rel="sequence1" class="sequence-prev">Prev</button>
+            <button rel="sequence1" id="pause1" class="sequence-pause">Pause</button>
+            <button rel="sequence1" class="sequence-next">Next</button>
+
+            <div rel="sequence1" class="sequence-pagination">
+              <button>1</button>
+              <button>2</button>
+              <button>3</button>
+            </div>
         </li>
         <li>
           <h2>No Restrictions, Endless Possibilities</h2>
           <h3>Use the HTML and CSS syntax you're used to. No JavaScript knowledge required.</h3>
+
+          <button rel="sequence1" class="sequence-prev">Prev</button>
+          <button rel="sequence1" id="pause1" class="sequence-pause">Pause</button>
+          <button rel="sequence1" class="sequence-next">Next</button>
+
+          <div rel="sequence1" class="sequence-pagination">
+            <button>1</button>
+            <button>2</button>
+            <button>3</button>
+          </div>
         </li>
       </ul>
     </div>
@@ -40,11 +82,11 @@
 
   <div id="sequence2" class="sequence">
 
-    <button class="sequence-prev">Prev</button>
-    <button id="pause2" class="sequence-pause">Pause</button>
-    <button class="sequence-next">Next</button>
+    <button rel="sequence2" class="sequence-prev">Prev</button>
+    <button rel="sequence2" id="pause2" class="sequence-pause">Pause</button>
+    <button rel="sequence2" class="sequence-next">Next</button>
 
-    <div class="sequence-pagination">
+    <div rel="sequence2" class="sequence-pagination">
       <button>1</button>
       <button>2</button>
       <button>3</button>
@@ -68,9 +110,20 @@
     </div>
   </div>
 
+  <!-- Global Nav Buttons -->
+  <!-- <button class="sequence-prev">Prev</button>
+  <button id="pause4" class="sequence-pause">Pause</button>
+  <button class="sequence-next">Next</button>
+
+  <div class="sequence-pagination">
+    <button>1</button>
+    <button>2</button>
+    <button>3</button>
+  </div> -->
+
   <script src="../../scripts/third-party/imagesloaded.pkgd.min.js"></script>
   <script src="../../scripts/third-party/hammer.min.js"></script>
-  <script src="../../scripts/sequence.min.js"></script>
+  <script src="../../scripts/sequence.js"></script>
   <script src="scripts/sequence-theme.multiple-test.js"></script>
 </body>
 </html>

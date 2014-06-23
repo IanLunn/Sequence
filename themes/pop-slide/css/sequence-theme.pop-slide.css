@@ -1,5 +1,3 @@
-@import url(http://fonts.googleapis.com/css?family=Dosis:600,700);
-
 /*!
  * Theme Name: Pop Slide
  * Version: 0.1.0
@@ -17,6 +15,8 @@
  *
  * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
  */
+
+@import url(http://fonts.googleapis.com/css?family=Dosis:600,700);
 
 #sequence {
   position: relative;

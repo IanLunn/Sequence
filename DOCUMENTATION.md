@@ -9,12 +9,12 @@ At any point in the documentation, if you [need support](#need-support), we'll d
 ## Table of Contents
 
 1. [Download Sequence](#download-sequence)
-  - [Package Contents](#pakcage-contents)
+  - [Package Contents](#package-contents)
 - [Creating a Theme (Quick Start)](#creating-a-theme-quick-start)
   1. [Add Sequence](#add-sequence)
   - [Add HTML (Structure)](#add-html-structure)
   - [Add Content](#add-content)
-  - [Setup a No-JavaScript Fallback](#setup-a-no-js-fallback)
+  - [Setup a No-JavaScript Fallback](#setup-a-no-javascript-fallback)
   - [Add CSS](#add-css)
   - [Generating Themes with Yeoman](#generating-themes-with-yeoman)
 - [Animation](#animation)
@@ -26,13 +26,14 @@ At any point in the documentation, if you [need support](#need-support), we'll d
   - [Canvas Animation](#canvas-animation)
   - [Autoplay](#autoplay)
   - [Navigation Skipping](#navigation-skipping)
-  - [Next/Previous Buttons](#next-previous-buttons)
-  - [Pause](#pause)
-  - [Pagination](#pagination)
-  - [Preloader](#preloader)
+  - [User Interface](#user-interface)
+    - [Next/Previous Buttons](#next-and-previous-buttons)
+    - [Pause](#pause)
+    - [Pagination Links](#pagination-links)
+    - [Preloader](#preloader)
   - [Keyboard](#keyboard)
   - [Touch Swipe](#touch-swipe)
-  - [Hash Tag](#hash-tag)
+  - [Hash Tag](#hash-tags)
   - [Fallback Theme for Legacy Browsers](#fallback-theme-for-legacy-browsers)
 - [API](#api)
   - [Callbacks](#callbacks)
@@ -65,8 +66,13 @@ Some directories and files in the package that you may want to familiarize yours
 - src:
   - `sequence.js`: Development version of Sequence
 - themes:
-  **TBA**
-- Gruntfile.js: Provides a production environment. See [Using Grunt](#using-grunt)
+  - Basic - A basic slider that moves side to side
+  - Modern Slide In - A minimalist theme for showcasing products
+  - Pop Slide - A colourful slider with highlighted pagination
+  - Cube X - A basic 3D cube that spins on the X axis
+  - Test Theme - Used for Testing Sequence.js and its API
+  - Multiple Test Theme - A theme to test multiple instances of Sequence
+- `Gruntfile.js`: Provides a production environment. See [Using Grunt](#using-grunt)
 
 ## Creating a Theme (Quick Start)
 
@@ -702,7 +708,7 @@ Whether a step should be given a higher `z-index` than other steps whilst it is 
 - `true`: an active step will be given a `z-index` value the same as the number of steps in the Sequence instance (bringing it to the top) and the previous step will be given a `z-index` value one less than the number of steps in the Sequence instance.
 - `false`: steps will not have a `z-index` applied to them.
 
-### <a id="canvas-animation">Canvas Animation</a>
+### Canvas Animation
 
 Canvas animation causes Sequence to automatically animate the canvas element to show the next step. Automatic animation consists of finding the next step's position and then directly animating to it.
 
@@ -733,7 +739,7 @@ There are two reasons you may want to disabled `animateCanvas`:
 
 The amount of time it should take the canvas to automatically animate to the next step.
 
-### <a id="autoplay-options">Autoplay Options</a>
+### Autoplay
 
 AutoPlay causes Sequence to automatically navigate to the next step every X amount of milliseconds. AutoPlay by default is paused when the user hovers over the Sequence element and can also be paused/unpaused via the [API](#api).
 
@@ -766,7 +772,7 @@ The direction in which Sequence's `autoPlay` should navigate.
 - `1`: Sequence will navigate forwards, from step to step
 - `-1`: Sequence will navigate backwards, from step to step
 
-### <a id="navigation-skipping-options">Navigation Skipping Options</a>
+### Navigation Skipping
 
 Navigation skipping controls whether a step can be navigated to whilst another is actively animating and how to most gracefully deal with skipped steps when enabled.
 
@@ -814,7 +820,36 @@ How quickly a step should fade out when skipped (in milliseconds).
 
 Whether the user can change the direction of navigation during steps animating (if navigating forward, the user can only skip forwards when other steps are animating but not backwards, and vice versa).
 
-### <a id="nextprevious-button-options">Next/Previous Button Options</a>
+### User Interface
+
+Sequence has many options that allow you to customize the elements that allow the user to interact with Sequence.
+
+The element types that can be added include:
+
+- [Next/Previous](#next-and-previous-buttons)
+- [Pause](#pause)
+- [Pagination](#pagination-links)
+- [Preloader](#preloader)
+
+Multiples of the same user interface type can be used, if you wish to have a next button in each step for example.
+
+When using multiple instances of Sequence, note that user interface elements by default will control all Sequence instances. A next button for example will control every instance of Sequence on the page. Should you wish to have an UI element only control one instance of Sequence, please use a `rel` attribute on the UI element, with a value the same as the `id` for the Sequence instance you want the UI element to control. For example:
+
+```html
+<div rel="sequence1" class="sequence-next">Next →</div>
+
+<div id="sequence1">
+  <!-- additional code removed for brevity -->
+</div>
+
+<div id="sequence2">
+  <!-- additional code removed for brevity -->
+</div>
+```
+
+In the above code example, we have two instances of Sequence on the page. With an attribute of `rel="sequence1"` applied to a next button, only `<div id="sequence1">` will go to its next slide when the next button is clicked. Likewise, should we change the attribute to `rel="sequence2"`, the second Sequence instance `<div id="sequence2">` will navigate to its next slide. If the `rel` attribute is removed entirely, both instances will go to the next slide. This applies to all UI elements regardless of their position on the page -- they can be within or outside of Sequence elements.
+
+#### Next and Previous Buttons
 
 Next and previous buttons allow the user to navigate between steps.
 
@@ -826,12 +861,16 @@ By default, these buttons are enabled, however, Sequence doesn't automatically a
 
 Any element can be used as a next/previous button, as long as it is given the specified selector and is clickable.
 
-#### `nextButton`
+##### `nextButton`
 
 - Type: true/false or a CSS selector
 - Default: `true`
 
 Defines a button that when clicked, causes the current step to animate out and the next to animate in.
+
+```html
+<div class="sequence-next">Next</div>
+```
 
 - `true`: Use a next button with the default CSS selector (`.sequence-next`)
 - `false`: Don't use a next button
@@ -839,12 +878,16 @@ Defines a button that when clicked, causes the current step to animate out and t
 
 Note: the button must be added to the HTML manually.
 
-#### `prevButton`
+##### `prevButton`
 
 - Type: true/false or a CSS selector
 - Default: `true`
 
 Defines a button that when clicked, causes the current step to animate out and the previous to animate in.
+
+```html
+<div class="sequence-prev">Previous</div>
+```
 
 - `true`: Use a previous button with the default CSS selector (`.sequence-prev`)
 - `false`: Don't use a previous button
@@ -852,7 +895,7 @@ Defines a button that when clicked, causes the current step to animate out and t
 
 Note: the button must be added to the HTML manually.
 
-### <a id="pause-options">Pause Options</a>
+#### Pause
 
 Sequence's pause options apply when `autoPlay` is set to `true`. Pausing Sequence will prevent `autoPlay` from continuing, until it is unpaused again. Pause and unpause can be manipulated via the [API](#api).
 
@@ -866,7 +909,7 @@ Any element can be used as a pause button, as long as it is given the specified 
 
 Note: Sequence can either be soft paused or hard paused. Soft pause is used internally and still allows the `pauseOnHover` option to pause/unpause autoPlay when the Sequence element is hovered over (assuming this option is set to `true`). When Hard paused the `pauseOnHover` option will have no effect. Think of hard pause as stopping autoPlay altogether, until it is explicitly started again either via the user pressing a pause button or via use of `.pause()`, `.togglePause()` from the [API](#api).
 
-#### `pauseButton`
+##### `pauseButton`
 
 - Type: true/false or a CSS selector
 - Default: `true`
@@ -880,7 +923,7 @@ Defines a button that when clicked, pauses the autoPlay feature.
 
 Note: the button must be added to the HTML manually.
 
-#### `unpauseThreshold`
+##### `unpauseThreshold`
 
 - Type: a number representing time in milliseconds
 - Default: same value as `autoPlayThreshold`
@@ -890,7 +933,7 @@ The time Sequence should wait before starting autoPlay again once the user unpau
 
 If you want Sequence to immediately navigate to the next step when unpaused, set this to `0`. This may be a good idea when your Sequence instance has no visual representation of being unpaused because the next step will immediately be navigated to and the user will see their interaction with the page had an immediate effect.
 
-#### `pauseOnHover`
+##### `pauseOnHover`
 
 - Type: true/false
 - Default: `true`
@@ -900,11 +943,11 @@ Whether autoPlay should pause when the user hovers over Sequence. autoPlay will 
 
 Note: The user is only deemed to be hovering over Sequence when their cursor is within the containing element's boundaries.
 
-### <a id="pagination-options">Pagination Options</a>
+#### Pagination Links
 
 Pagination allows for a list of links that represents each step within Sequence. These links can be clicked to navigate to the relevant step.
 
-#### `pagination`
+##### `pagination`
 
 - Type: true/false or a CSS selector
 - Default: `true`
@@ -959,13 +1002,13 @@ CSS:
 
 Note: the pagination elements must be added to the HTML manually.
 
-### <a id="preloader-options">Preloader Options</a>
+#### Preloader
 
 Sequence's preloader allows the ability to hide content or display some form of loading indicator until your chosen content has loaded.
 
 Sequence relies on the third-party [imagesLoaded](https://github.com/desandro/imagesloaded/) to determine when images have loaded.
 
-#### `preloader`
+##### `preloader`
 
 - Type: true/false or a CSS selector
 - Default: `false`
@@ -1055,7 +1098,7 @@ CSS:
 
 **Note**: Vendor prefixes are omitted from the above CSS for brevity.
 
-#### `preloadTheseSteps`
+##### `preloadTheseSteps`
 
 - Type: An integer array containing a list of step numbers
 - Default: `[1]`
@@ -1069,7 +1112,7 @@ The following example will load all images in steps 1 and 2:
 preloadTheseSteps: [1, 2]
 ```
 
-#### `preloadTheseImages`
+##### `preloadTheseImages`
 
 - Type: A string array containing a list of image sources
 - Default: `[]`
@@ -1086,7 +1129,7 @@ The following example will load all images in step 1 (via the `preloadTheseSteps
     "css/images/background.png"
 	]
 
-#### `hideStepsUntilPreloaded`
+##### `hideStepsUntilPreloaded`
 
 - Type: true/false
 - Default: `true`
@@ -1097,7 +1140,7 @@ Specify whether steps should be hidden during preloading and then shown afterwar
 - `true`: Hide steps until preloaded
 - `false`: Don't hide steps during preloading
 
-### <a id="keyboard-options">Keyboard Options</a>
+### Keyboard
 
 Keyboard options enable the user to navigate to steps using specific keyboard buttons.
 
@@ -1136,7 +1179,7 @@ When the left button is pressed, the Sequence event `self.prev()` is initiated. 
 - `false`: No keyboard events
 
 
-### <a id="touch-swipe-options">Touch Swipe Options</a>
+### Touch Swipe
 
 Touch swipe capabilities are powered via the third-party library [Hammer.js](http://eightmedia.github.io/hammer.js/).
 
@@ -1185,7 +1228,7 @@ Default options:
 
 The Hammer events used by Sequence are `dragleft dragright release`.
 
-### <a id="hash-tag-options">Hash Tag Options</a>
+### Hash Tags
 
 When enabled, the hash tag options will append a hash tag to a page's URL, reflecting the currently active slide's `id` or `data-sequence-hashtag` attribute.
 
@@ -1252,7 +1295,7 @@ Whether the hash tag should be changed when the first step becomes active.
 - `true`: The hash tag will change as soon as Sequence is initiated
 - `false`: The hash tag will not change when the first step becomes active but will change for every other step after that
 
-### <a id="fallback-theme-for-legacy-browsers">Fallback Theme for Legacy Browsers</a>
+### Fallback Theme for Legacy Browsers
 
 The fallback theme options control Sequence when it is being viewed in browsers that do not support CSS transitions. Please see [caniuse.com for CSS3 transition browser compatibility](http://caniuse.com/#search=transitions).
 
@@ -1291,11 +1334,11 @@ The layout to be used when in fallback mode.
 - `"basic"`: Layout each step in one row using inline-block
 - `"custom"`: Assume the developer defined layout is to be used and don't layout the steps in any way.
 
-## <a id="api">API</a>
+## API
 
 Sequence's API allows you to use its [properties](#properties), [methods](#methods) and [callbacks](#callbacks) to extend its functionality.
 
-### <a id="callbacks">Callbacks</a>
+### Callbacks
 
 Callbacks allow you to execute custom JavaScript functions at specific key points during Sequence's operation. For example, callbacks are executed every time Sequence is paused/unpaused, allowing you to change the text of a pause button.
 

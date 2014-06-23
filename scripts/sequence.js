@@ -24,7 +24,7 @@ function defineSequence(imagesLoaded, Hammer) {
   var Sequence = (function(element, options) {
 
     // Prevent an element from have multiple instances of Sequence applied to it
-    if(element.dataset.sequence === "true") {
+    if (element.dataset.sequence === "true") {
       return;
     }
 
@@ -226,7 +226,6 @@ function defineSequence(imagesLoaded, Hammer) {
       }
     }
 
-
     // See Sequence._animation.domDelay() for an explanation of this
     var domThreshold = 50;
 
@@ -354,6 +353,15 @@ function defineSequence(imagesLoaded, Hammer) {
       }
     }
 
+    function toArray(obj) {
+      var array = [];
+      // iterate backwards ensuring that length is an UInt32
+      for (var i = obj.length >>> 0; i--;) {
+        array[i] = obj[i];
+      }
+      return array;
+    }
+
     /**
      * Get an element by its class name
      *
@@ -436,26 +444,60 @@ function defineSequence(imagesLoaded, Hammer) {
     /**
      * Add a class to an element
      *
-     * @param {Object} el - The element to add a class to
+     * @param {Object} elements - The element to add a class to
      * @param {String} name - The class to add
      * @api private
      */
-    function addClass(el, name) {
-      if (!hasClass(el, name) === true) {
-        el.className += (el.className ? ' ': '') + name;
+    function addClass(elements, name) {
+
+      var element,
+          elementsLength = elements.length,
+          i;
+
+      // If only one element is defined, turn it into a nodelist so it'll pass
+      // through the for loop
+      if (isArray(elements) === false) {
+        elementsLength = 1;
+        elements = [elements];
+      }
+
+      for (i = 0; i < elementsLength; i++) {
+
+        element = elements[i];
+
+        if (hasClass(element, name) === false) {
+          element.className += (element.className ? ' ': '') + name;
+        }
       }
     }
 
     /**
      * Remove a class from an element
      *
-     * @param {Object} el - The element to remove a class from
+     * @param {Object} elements - The element to remove a class from
      * @param {String} name - The class to remove
      * @api private
      */
-    function removeClass(el, name) {
-      if (hasClass(el, name) === true) {
-        el.className = el.className.replace(new RegExp('(\\s|^)' + name + '(\\s|$)'),' ').replace(/^\s+|\s+$/g, '');
+    function removeClass(elements, name) {
+
+      var element,
+          elementsLength = elements.length,
+          i;
+
+      // If only one element is defined, turn it into a nodelist so it'll pass
+      // through the for loop
+      if (isArray(elements) === false) {
+        elementsLength = 1;
+        elements = [elements];
+      }
+
+      for (i = 0; i < elementsLength; i++) {
+
+        element = elements[i];
+
+        if (hasClass(element, name) === true) {
+          element.className = element.className.replace(new RegExp('(\\s|^)' + name + '(\\s|$)'),' ').replace(/^\s+|\s+$/g, '');
+        }
       }
     }
 
@@ -485,33 +527,33 @@ function defineSequence(imagesLoaded, Hammer) {
     };
 
     /**
-     * Get the index of a clicked pagination item
+     * Determine if an element has a specified parent, and if so, return the index
+     * number for the element.
      *
      * The index is taken from the top level elements witint a pagination
      * element. This function will iterate through each parent until it
      * reaches the top level, then get all top level elements and determine
      * the index of the chosen top level.
      *
-     * @param {Object} paginationElement - The parent element that pagiation links belong to
-     * @param {Object} target - The parent above the previous target
+     * @param {Object} parent - The parent element that the child should be within
+     * @param {Object} target - The child element to test if it has the parent
      * @param {Object} previousTarget - The element that was previously checked to determine if it was top level
      * @api private
      */
-    function getPaginationIndex(paginationElement, target, previousTarget) {
+    function hasParent(parent, target, previousTarget) {
 
-      // If we've iterated through too many elements and reached <body>, give up!
       if (target.localName === "body") {
-        return;
+        return false;
       }
 
       // We're at the pagination parent
-      if (paginationElement === target) {
+      if (parent === target) {
 
         if (previousTarget !== undefined) {
 
           // Get the top level element clicked and all top level elements
           var topLevel = previousTarget;
-          var allTopLevel = paginationElement.getElementsByTagName(topLevel.localName);
+          var allTopLevel = parent.getElementsByTagName(topLevel.localName);
 
           // Count the number of top level elements
           var i = allTopLevel.length;
@@ -530,9 +572,9 @@ function defineSequence(imagesLoaded, Hammer) {
       // Not yet at the pagination parent element, iterate again
       else {
         var previousTarget = target;
-        return getPaginationIndex(paginationElement, target.parentNode, previousTarget);
+        return hasParent(parent, target.parentNode, previousTarget);
       }
-    };
+    }
 
     /**
      * Get Sequence's steps
@@ -716,7 +758,7 @@ function defineSequence(imagesLoaded, Hammer) {
             var attribute = stepProperties[property];
             stepTransform[property] = attribute;
 
-            if(property !== "sequenceScale") {
+            if (property !== "sequenceScale") {
               var attributeReversed = attribute * -1;
             }else{
               var attributeReversed = 1 / attribute;
@@ -736,7 +778,7 @@ function defineSequence(imagesLoaded, Hammer) {
         originX = parseFloat(origins[0]);
         originY = parseFloat(origins[1]);
 
-        if(origins[2] !== undefined) {
+        if (origins[2] !== undefined) {
           originZ = parseFloat(origins[2]);
         }
 
@@ -946,24 +988,44 @@ function defineSequence(imagesLoaded, Hammer) {
        * @return {Boolean | HTMLElement} option - True if using the default
        *                                          element, else an HTMLElement
        */
-      getElement: function(type, option) {
+      getElements: function(type, option) {
 
         // TODO - change querySelectorAll to something IE7 compatible
 
-        var element;
+        var element,
+            elements,
+            elementsLength,
+            relatedElements = [],
+            rel,
+            i;
 
         // Get the element being used
         if (option === true) {
 
-          // Default element
-          element = document.querySelectorAll(this.defaultElements[type]);
-        }else {
+          // Default elements
+          elements = document.querySelectorAll(this.defaultElements[type]);
+        } else {
 
-          // Custom element
-          element = document.querySelectorAll(option);
+          // Custom elements
+          elements = document.querySelectorAll(option);
         }
 
-        return element;
+        elementsLength = elements.length;
+
+        // Does the element control this instance of Sequence? We're looking
+        // for either a global element or one with a rel attribute the same
+        // as this instances ID
+        for (i = 0; i < elementsLength; i++) {
+
+          element = elements[i];
+          rel = element.getAttribute("rel");
+
+          if (rel === null || rel === self.container.getAttribute("id")) {
+            relatedElements.push(element);
+          }
+        }
+
+        return relatedElements;
       },
 
       /**
@@ -1048,7 +1110,8 @@ function defineSequence(imagesLoaded, Hammer) {
           self.isPaused = false;
           this.start();
 
-          removeClass(self.container, "paused");
+          removeClass(self.container, "sequence-paused");
+          removeClass(self.pauseButton, "sequence-paused");
 
           // Callback
           self.unpaused(self);
@@ -1065,7 +1128,8 @@ function defineSequence(imagesLoaded, Hammer) {
           self.isPaused = true;
           this.stop();
 
-          addClass(self.container, "paused");
+          addClass(self.container, "sequence-paused");
+          addClass(self.pauseButton, "sequence-paused");
 
           // Callback
           self.paused(self);
@@ -2173,6 +2237,39 @@ function defineSequence(imagesLoaded, Hammer) {
     self._pagination = {
 
       /**
+       * Get the links from each pagination element (any top level elements)
+       *
+       * @param {HTMLElement} element - The pagination element
+       * @param {String} rel - Which Sequence element the pagination relates to (if any)
+       * @param {Number} i - The number of the pagination element
+       */
+      getLinks: function(element, rel, i) {
+
+        var childElement,
+            childElements,
+            childElementsLength,
+            paginationLinks = [],
+            j;
+
+        // Get the pagination's link elements and count them
+        childElements = element.childNodes;
+        childElementsLength = childElements.length;
+
+        // Get each top level pagination link and add it to the array
+        for (j = 0; j < childElementsLength; j++) {
+
+          childElement = childElements[j];
+
+          if (childElement.nodeType === 1) {
+            paginationLinks.push(childElement);
+          }
+        }
+
+        // Save the pagination element and its links
+        self.paginationLinks.push(paginationLinks);
+      },
+
+      /**
        * Update the pagination to activate the relevant link
        */
       update: function() {
@@ -2184,7 +2281,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
           var i,
               j,
-              id = self.currentStepId -1,
+              id = self.currentStepId - 1,
               currentPaginationLink,
               currentPaginationLinksLength;
 
@@ -2426,7 +2523,7 @@ function defineSequence(imagesLoaded, Hammer) {
           addClass(self.container, "sequence-preloading");
 
           // Get the preloader
-          self.preloader = self._ui.getElement("preloader", self.options.preloader);
+          self.preloader = self._ui.getElements("preloader", self.options.preloader);
 
           // Add the preloader element if necessary
           _preload.append();
@@ -2730,20 +2827,20 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // If being used, get the next button(s) and set up the events
         if (self.options.nextButton !== false) {
-          self.nextButton = self._ui.getElement("nextButton", self.options.nextButton);
-          this.add.button(self.nextButton, self.next);
+          self.nextButton = self._ui.getElements("nextButton", self.options.nextButton);
+          this.add.button(self.nextButton, "nav", self.next);
         }
 
         // If being used, get the next button(s) and set up the events
         if (self.options.prevButton !== false) {
-          self.prevButton = self._ui.getElement("prevButton", self.options.prevButton);
-          this.add.button(self.prevButton, self.prev);
+          self.prevButton = self._ui.getElements("prevButton", self.options.prevButton);
+          this.add.button(self.prevButton, "nav", self.prev);
         }
 
         // If being used, get the pause button(s) and set up the events
         if (self.options.pauseButton !== false) {
-          self.pauseButton = self._ui.getElement("pauseButton", self.options.pauseButton);
-          this.add.button(self.pauseButton, self.togglePause);
+          self.pauseButton = self._ui.getElements("pauseButton", self.options.pauseButton);
+          this.add.button(self.pauseButton, "nav", self.togglePause);
         }
 
         // If being used, set up the pauseOnHover event
@@ -2751,8 +2848,11 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // If being used, get the pagination element(s) and set up the events
         if (self.options.pagination !== false) {
-          self.pagination = self._ui.getElement("pagination", self.options.pagination);
-          this.add.pagination(self.pagination);
+
+          self.paginationLinks = [];
+
+          self.pagination = self._ui.getElements("pagination", self.options.pagination);
+          this.add.button(self.pagination, "pagination");
         }
       },
 
@@ -2834,90 +2934,73 @@ function defineSequence(imagesLoaded, Hammer) {
         },
 
         /**
-         * Add next buttons
+         * Add next/prev/pause buttons
          *
          * @param {Array} elements - The element or elements acting as the next button
+         * @param {String} type - The type of button being added - "nav" or "pagination"
          * @param {Function} callback - Function to execute when the button is clicked
          */
-        button: function(elements, callback) {
-
-          // Count the number of elements being added
-          var elementLength = elements.length,
-              handler,
-              element;
-
-          // Add a click event for each element
-          for (var i = 0; i < elementLength; i++) {
-            element = elements[i];
-
-            handler = addEvent(element, "click", function(e) {
-              callback();
-            });
-
-            self.manageEvent.list["click"].push({"element": element, "handler": handler});
-          }
-        },
-
-        /**
-         * Add pagination
-         *
-         * @param {Array} elements - The element or elements acting as pagination
-         */
-        pagination: function(elements) {
+        button: function(elements, type, callback) {
 
           // Count the number of elements being added
           var elementLength = elements.length,
               handler,
               element,
+              rel,
               id,
-              i,
-              j,
-              childElement,
-              childElements,
-              childElementsLength;
+              i;
 
-          // Where we'll save pagination links
-          self.paginationLinks = {};
+          // Set up a click event for navigation elements
+          if (type === "nav") {
+
+            var buttonEvent = function() {
+              handler = addEvent(element, "click", function(e) {
+                callback();
+              });
+            }
+          }
+
+          // Set up a click event for pagination
+          else {
+
+            var buttonEvent = function(element, rel, i) {
+              handler = addEvent(element, "click", function(e, element) {
+
+                // Get the ID of the clicked pagination link
+                id = hasParent(this, e.target);
+
+                // Go to the clicked pagination ID
+                self.goTo(id);
+              });
+
+              // Get the pagination links
+              self._pagination.getLinks(element, rel, i);
+            }
+          }
 
           // Add a click event for each element
           for (i = 0; i < elementLength; i++) {
             element = elements[i];
 
-            handler = addEvent(element, "click", function(e, element) {
+            // Does the button control a specific Sequence instance?
+            rel = element.getAttribute("rel");
 
-              // Get the ID of the clicked pagination link
-              id = getPaginationIndex(this, e.target);
+            // The button controls one Sequence instance
+            // (defined via the rel attribute)
+            if (rel === self.container.getAttribute("id") && element.dataset.sequence !== "true") {
 
-              // Go to the clicked pagination ID
-              self.goTo(id);
-            });
-
-            self.manageEvent.list["click"].push({"element": element, "handler": handler});
-
-            /**
-             * Now get the links from each pagination element
-             * (any top level elements)
-             */
-
-            // Get the paginations elements and count them
-            childElements = element.childNodes;
-            childElementsLength = childElements.length;
-
-            // Where we'll save the pagination links
-            var paginationLinks = [];
-
-            // Get each top level pagination link and add it to the array
-            for (j = 0; j < childElementsLength; j++) {
-
-              childElement = childElements[j];
-
-              if (childElement.nodeType === 1) {
-                paginationLinks.push(childElement);
-              }
+              element.dataset.sequence = true;
+              buttonEvent(element, rel, i);
             }
 
-            // Save the pagination element and its links
-            self.paginationLinks[i] = paginationLinks;
+            // The button controls all Sequence instances
+            else if (rel === null && element.dataset.sequence !== "true") {
+              buttonEvent(element, rel, i);
+            }
+
+            // Save the element and its handler for later, should it need to
+            // be removed
+            self.manageEvent.list["click"].push({"element": element, "handler": handler});
           }
         },
 
@@ -3296,11 +3379,11 @@ function defineSequence(imagesLoaded, Hammer) {
       }
 
       // Remove classes:
-      // - the "sequence-current" class from the active pagination link
-      // - the "paused" class from the container
+      // - the "sequence-current" class from the active pagination links
+      // - the "sequence-paused" class from the container
       // - the step index class from the container
-      removeClass(self.currentPaginationLink, "sequence-current");
-      removeClass(self.container, "paused");
+      removeClass(self.currentPaginationLinks, "sequence-current");
+      removeClass(self.container, "sequence-paused");
       removeClass(self.container, "step" + self.currentStepId);
 
       // Remove styles
@@ -3308,7 +3391,7 @@ function defineSequence(imagesLoaded, Hammer) {
       self.canvas.removeAttribute("style");
 
       // Remove styles from steps and snap them to their "animate-out" position
-      for(i = 0; i < self.noOfSteps; i++) {
+      for (i = 0; i < self.noOfSteps; i++) {
         step = self.steps[i];
 
         step.removeAttribute("style");

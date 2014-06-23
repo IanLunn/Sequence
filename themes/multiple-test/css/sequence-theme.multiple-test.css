@@ -16,6 +16,14 @@
  * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
  */
 
+.sequence-pagination .sequence-current {
+  border: red solid 1px;
+}
+
+.sequence-pause.sequence-paused {
+  border: red solid 1px;
+}
+
 .sequence {
   position: relative;
   height: 400px;
