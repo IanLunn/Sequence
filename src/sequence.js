@@ -2337,6 +2337,9 @@ function defineSequence(imagesLoaded, Hammer) {
           var correspondingStepId,
               newHashTag;
 
+          // Does the browser support pushstate?
+          self.hasPushstate = !!(window.history && history.pushState);
+
           // Get the current hashTag
           newHashTag = location.hash.replace("#!", "");
 
@@ -2410,6 +2413,7 @@ function defineSequence(imagesLoaded, Hammer) {
        *
        * - hashTags are being used and this isn't the first run
        * - hashTags are being used, this is the first run, and the first hash change is allowed in the options
+       * - the current step has a hashTag
        */
       update: function() {
 
@@ -2424,13 +2428,18 @@ function defineSequence(imagesLoaded, Hammer) {
             // Get the current hashTag
             self.currentHashTag = self.stepHashTags[hashTagId];
 
-            // Add the hashTag to the URL
-            if (history.pushState) {
-              history.pushState(null, null, "#!" + self.currentHashTag);
+            if(self.currentHashtag !== "") {
+
+              // Add the hashTag to the URL
+              if (self.hasPushstate === true) {
+                history.pushState(null, null, "#!" + self.currentHashTag);
+              }
+              else {
+                location.hash = "#!" + self.currentHashTag;
+              }
             }
-            else {
-              location.hash = "#!" + self.currentHashTag;
-            }
+
+
         }
       },
 

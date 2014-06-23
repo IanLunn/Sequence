@@ -24,7 +24,9 @@ var sequenceElement = document.getElementById("sequence");
 var options = {
   animateCanvas: false,
   phaseThreshold: false,
-  reverseWhenNavigatingBackwards: true
+  reverseWhenNavigatingBackwards: true,
+  hashTags: true,
+  keyNavigation: true
 }
 
 var mySequence,

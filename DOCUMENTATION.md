@@ -690,13 +690,15 @@ Whether there should be a delay between a step animating out and the next animat
 
 #### `reverseWhenNavigatingBackwards`
 
-- Type: true/false
-- Default: `false`
+**Note**: not yet implemented.
 
-Whether animations should be reversed when a user navigates backwards by clicking a previous button/swiping/pressing the left key.
+~~- Type: true/false~~
+~~- Default: `false`~~
 
-- `true`: when navigating backwards, Sequence will animate the preceding step from its "animate-out" position to its "animate-in" position (creating a reversed animation).
-- `false`: when navigating backwards, Sequence will animate the preceding step from its "start" position to its "animate-in" position (as it does when navigating forwards).
+~~Whether animations should be reversed when a user navigates backwards by clicking a previous button/swiping/pressing the left key.~~
+
+~~- `true`: when navigating backwards, Sequence will animate the preceding step from its "animate-out" position to its "animate-in" position (creating a reversed animation).~~
+~~- `false`: when navigating backwards, Sequence will animate the preceding step from its "start" position to its "animate-in" position (as it does when navigating forwards).~~
 
 #### `moveActiveStepToTop`
 
