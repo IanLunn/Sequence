@@ -13,11 +13,12 @@ The key philosophy for Sequence is to aid you in creating your animated applicat
 
 ## Demo Themes
 
-- Basic
-- Modern Slide In
-- Pop Slide
-- Cube X
-- Test Theme
+- Basic - A basic slider that moves side to side
+- Modern Slide In - A minimalist theme for showcasing products
+- Pop Slide - A colourful slider with highlighted pagination
+- Cube X - A basic 3D cube that spins on the X axis
+- Test Theme - Used for Testing Sequence.js and its API
+- Multiple Test Theme - A theme to test multiple instances of Sequence
 
 ## Features
 
@@ -65,7 +66,6 @@ Where possible, `src/sequence.js` contains `// TODO` comments showing functional
 The following is a complete list of the work still needed to be carried out to reach a stable version ready for launch:
 
 1. Clear all [listed bugs](https://github.com/IanLunn/Sequence/issues?milestone=11&state=open)
-- keyNavigation should only work when Sequence has focus
 - Implement reverse animations for the `reverseWhenNavigatingBackwards` option
 - Remove event for hashChange when using IE
 - Implement AMD/Require.js support
