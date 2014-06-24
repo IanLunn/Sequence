@@ -1,7 +1,7 @@
 /*!
  * Theme Name: Basic
  * Version: 0.1.0
- * Theme URL:
+ * Theme URL: http://sequencejs.com/themes/basic/
  *
  * A simple theme that slides side-to-side
  *
@@ -22,7 +22,10 @@ var sequenceElement = document.getElementById("sequence");
 // Place your Sequence options here to override defaults
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
-  keyNavigation: true
+  keyNavigation: true,
+  autoPlay: false,
+  phaseThreshold: 500,
+  // pauseOnHover: false
 }
 
 // Launch Sequence on the element, and with the options we specified above

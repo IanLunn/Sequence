@@ -559,7 +559,7 @@ function defineSequence(imagesLoaded, Hammer) {
           var i = allTopLevel.length;
 
           // Which top level element was clicked?
-          while(i--) {
+          while (i--) {
             if (topLevel === allTopLevel[i]) {
 
               // One-base the index and return it
@@ -1088,7 +1088,6 @@ function defineSequence(imagesLoaded, Hammer) {
       init: function() {
 
         self.isAutoPlayActive = false;
-        self.isPaused = (self.options.autoPlay === true) ? false: true;
 
         // Should the unpause threshold be taken from the autoPlayThreshold or
         // has the developer defined an unpauseThreshold?
@@ -1105,9 +1104,10 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       unpause: function() {
 
-        if (self.isPaused === true) {
+        if(self.options.autoPlay === true) {
 
           self.isPaused = false;
+
           this.start();
 
           removeClass(self.container, "sequence-paused");
@@ -1123,17 +1123,15 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       pause: function() {
 
-        if (self.isPaused === false) {
+        self.isPaused = true;
 
-          self.isPaused = true;
-          this.stop();
+        this.stop();
 
-          addClass(self.container, "sequence-paused");
-          addClass(self.pauseButton, "sequence-paused");
+        addClass(self.container, "sequence-paused");
+        addClass(self.pauseButton, "sequence-paused");
 
-          // Callback
-          self.paused(self);
-        }
+        // Callback
+        self.paused(self);
       },
 
       /**
@@ -1152,7 +1150,6 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // autoPlay is now active
         self.isAutoPlayActive = true;
-        self.options.autoPlay = true;
 
         // Clear the previous autoPlayTimer
         clearTimeout(self.autoPlayTimer);
@@ -1174,7 +1171,6 @@ function defineSequence(imagesLoaded, Hammer) {
       stop: function() {
 
         self.isAutoPlayActive = false;
-        self.options.autoPlay = false;
 
         clearTimeout(self.autoPlayTimer);
       }
@@ -2428,7 +2424,7 @@ function defineSequence(imagesLoaded, Hammer) {
             // Get the current hashTag
             self.currentHashTag = self.stepHashTags[hashTagId];
 
-            if(self.currentHashtag !== "") {
+            if (self.currentHashtag !== "") {
 
               // Add the hashTag to the URL
               if (self.hasPushstate === true) {
@@ -2807,6 +2803,7 @@ function defineSequence(imagesLoaded, Hammer) {
       list: {
         "load": [],
         "click": [],
+        "touchstart": [],
         "mousemove": [],
         "mouseleave": [],
         "Hammer": [],
@@ -3033,14 +3030,11 @@ function defineSequence(imagesLoaded, Hammer) {
            */
           var insideElement = function(element, cursor) {
 
-            // Get the boundaries of the Sequence element
-            var elementLeft = element.offsetLeft;
-            var elementRight = elementLeft + element.clientWidth;
-            var elementTop = element.offsetTop;
-            var elementBottom = elementTop + element.clientHeight;
+            // Get the elements boundaries
+            var rect = element.getBoundingClientRect();
 
             // Return true if inside the boundaries of the Sequence element
-            if (cursor.clientX >= elementLeft && cursor.clientX <= elementRight && cursor.clientY >= elementTop && cursor.clientY <= elementBottom) {
+            if (cursor.clientX >= rect.left && cursor.clientX <= rect.right && cursor.clientY >= rect.top && cursor.clientY <= rect.bottom) {
               return true;
             }else {
               return false;
@@ -3048,7 +3042,20 @@ function defineSequence(imagesLoaded, Hammer) {
           }
 
           var previouslyInside = false,
+              touchHandler,
               handler;
+
+          /**
+           * Determine when the user touches the container. This is so we can
+           * disable the use of pauseOnHover for touches, but not for mousemove
+           */
+          touchHandler = addEvent(self.container, "touchstart", function(e) {
+
+            self.isTouched = true;
+          });
+
+          self.manageEvent.list["touchstart"].push({"element": self.container, "handler": touchHandler});
+
 
           /**
            * Pause autoPlay only when the cursor is inside the boundaries of the
@@ -3056,27 +3063,39 @@ function defineSequence(imagesLoaded, Hammer) {
            */
           handler = addEvent(self.container, "mousemove", function(e) {
 
+            // If the user touched the container, don't pause - pauseOnHover
+            // should only occur when a mouse cursor is used
+            if (self.isTouched === true) {
+              self.isTouched = false;
+              return;
+            }
+
             // Is the cursor inside the Sequence element?
             if (insideElement(this, e) === true) {
 
               // Pause if the cursor was previously outside the Sequence element
-              if (previouslyInside === false && self.options.pauseOnHover === true) {
+              if (self.options.pauseOnHover === true) {
                 self._autoPlay.pause();
               }
 
               // We're now inside the Sequence element
-              previouslyInside = true;
+              self.isMouseOver = true;
             }
 
             else {
 
               // Unpause if the cursor was previously inside the Sequence element
-              if (previouslyInside === true && self.isHardPaused === false && self.options.pauseOnHover === true) {
+              if (
+                self.options.autoPlay === true
+                && self.options.pauseOnHover === true
+                && self.isMouseOver === true
+                && self.isHardPaused === false
+              ) {
                 self._autoPlay.unpause();
               }
 
               // We're now outside the Sequence element
-              previouslyInside = false;
+              self.isMouseOver = false;
             }
           });
 
@@ -3087,12 +3106,15 @@ function defineSequence(imagesLoaded, Hammer) {
            */
           handler = addEvent(self.container, "mouseleave", function(e) {
 
-            if (self.isHardPaused === false && self.options.pauseOnHover === true) {
+            if (
+              self.options.pauseOnHover === true
+              && self.isHardPaused === false
+            ) {
               self._autoPlay.unpause();
             }
 
             // We're now outside the Sequence element
-            previouslyInside = false;
+            self.isMouseOver = false;
           });
 
           self.manageEvent.list["mouseleave"].push({"element": self.container, "handler": handler});
@@ -3268,6 +3290,7 @@ function defineSequence(imagesLoaded, Hammer) {
       self.steps = getSteps(self.canvas);
 
       self.isHardPaused = false;
+      self.isPaused = (self.options.autoPlay === true) ? false : true;
 
       // Get number of steps
       self.noOfSteps = self.steps.length;
@@ -3483,6 +3506,7 @@ function defineSequence(imagesLoaded, Hammer) {
      */
     self.pause = function() {
 
+      self.options.autoPlay = false;
       self.isHardPaused = true;
       self._autoPlay.pause();
     }
@@ -3494,6 +3518,7 @@ function defineSequence(imagesLoaded, Hammer) {
      */
     self.unpause = function() {
 
+      self.options.autoPlay = true;
       self.isHardPaused = false;
       self._autoPlay.unpause();
     }

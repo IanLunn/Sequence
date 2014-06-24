@@ -23,7 +23,8 @@ var sequenceElement = document.getElementById("sequence");
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
   animateCanvas: false,
-  phaseThreshold: false,
+  autoPlay: false,
+  phaseThreshold: 500,
   reverseWhenNavigatingBackwards: true,
   hashTags: true,
   keyNavigation: true
