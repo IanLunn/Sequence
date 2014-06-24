@@ -23,7 +23,7 @@ var sequenceElement = document.getElementById("sequence");
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
   autoPlay: false,
-  phaseThreshold: 500
+  // phaseThreshold: 500
 }
 
 // Launch Sequence on the element, and with the options we specified above

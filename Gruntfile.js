@@ -25,6 +25,7 @@ module.exports = function(grunt) {
         files: [
           {src: ['src/sequence.js'], dest: 'scripts/sequence.js'},
           {src: ['bower_components/hammerjs/hammer.min.js'], dest: 'scripts/third-party/hammer.min.js'},
+          {src: ['bower_components/hammerjs/hammer.min.map'], dest: 'scripts/third-party/hammer.min.map'},
         ]
       }
     },
