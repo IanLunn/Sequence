@@ -18,8 +18,12 @@
 
 @import "partials/mixins";
 
-$sequenceWidth: 960px;
-$sequenceHeight: 585px;
+$sequenceWidth: 500px;
+$sequenceHeight: 300px;
+
+.sequence-current {
+  border: red solid 1px;
+}
 
 #sequence {
   position: relative;

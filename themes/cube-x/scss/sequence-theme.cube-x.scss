@@ -148,6 +148,10 @@ body {
   // Animate in positions for content
   .animate-in {
 
+    .button {
+      @include prefixed(transform, translateX(0));
+    }
+
     .button,
     h2,
     h3 {
@@ -157,6 +161,10 @@ body {
 
   // Animate out positions for content
   .animate-out {
+
+    .button {
+      @include prefixed(transform, translateX(0));
+    }
 
     .button,
     h2,

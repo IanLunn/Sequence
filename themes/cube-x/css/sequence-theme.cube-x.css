@@ -143,12 +143,24 @@ body {
   transform: translate3d(0, 220px, 0);
 }
 
+#sequence .animate-in .button {
+  -webkit-transform: translateX(0);
+  -ms-transform: translateX(0);
+  transform: translateX(0);
+}
+
 #sequence .animate-in .button,
 #sequence .animate-in h2,
 #sequence .animate-in h3 {
   -webkit-transform: translate3d(0, 0, 0);
   -ms-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
+}
+
+#sequence .animate-out .button {
+  -webkit-transform: translateX(0);
+  -ms-transform: translateX(0);
+  transform: translateX(0);
 }
 
 #sequence .animate-out .button,

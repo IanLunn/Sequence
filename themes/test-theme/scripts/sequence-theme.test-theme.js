@@ -25,7 +25,7 @@ var options = {
   animateCanvas: false,
   autoPlay: false,
   phaseThreshold: 500,
-  reverseWhenNavigatingBackwards: true,
+  // reverseWhenNavigatingBackwards: true,
   hashTags: true,
   keyNavigation: true
 }

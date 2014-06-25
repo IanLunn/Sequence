@@ -20,7 +20,7 @@ At any point in the documentation, if you [need support](#need-support), we'll d
 - [Animation](#animation)
   - [Animating the Canvas](#animating-the-canvas)
   - [Animating the Content](#animating-the-content)
-- [Support for Legacy Browsers](#support-for-legacy-browsers)
+- [Browser Support and Fallback Mode](#browser-support-and-fallback-mode)
 - [Options](#options)
   - [General](#general)
   - [Canvas Animation](#canvas-animation)
@@ -34,7 +34,7 @@ At any point in the documentation, if you [need support](#need-support), we'll d
   - [Keyboard](#keyboard)
   - [Touch Swipe](#touch-swipe)
   - [Hash Tag](#hash-tags)
-  - [Fallback Theme for Legacy Browsers](#fallback-theme-for-legacy-browsers)
+  - [Fallback Mode](#fallback-mode)
 - [API](#api)
   - [Callbacks](#callbacks)
   - [Methods](#methods)
@@ -418,7 +418,9 @@ Note: Should you wish to modify how the canvas animates or apply additional styl
 
 Regardless of how you position steps, Sequence will find the offsetLeft and offsetTop (the final X/Y positions of an element after `top`, `margin`, `border` etc CSS properties are applied) then use these values to move the canvas so the current step is always shown within the container. Simply lay out steps as you wish -- using the CSS you are used to -- and Sequence will animate to an active step as necessary.
 
-There is one special condition to the above. A step should not be given a `transform` property via CSS. The `transform` property should instead be specified as data attributes applied to the step's HTML element. This is to work around current browser limitations.
+There is one special condition to the above. A step should not be given a `transform` property via CSS. The `transform` property should instead be specified as [data attributes](#using-data-attributes-to-transform-steps) applied to the step's HTML element. This is to work around current browser limitations.
+
+**Browser Support**: The latest versions of all major desktop browsers support 2D transforms. However, Internet Explorer versions 11 and below do not support the CSS property `transform-style: preserve-3d`. Should you use Sequence's 3D via the data-attributes `data-sequence-z`, `data-sequence-rotate-x`, and `data-sequence-rotate-y`, Sequence will cause these browsers to go into [fallback mode](#browser-support-and-fallback-mode).
 
 ##### Using Data Attributes to Transform Steps
 
@@ -571,19 +573,33 @@ This process is applied to each step as and when that step becomes active.
 
 When the last step is active, if the `cycle` option is enabled (which it is be default), Sequence will remove the `animate-in` class from step 3, and add `animate-out`. Then, step 1 has the `animate-out` class removed (resetting its elements back to their starting positions), and adds `animate-in` again.
 
-### Support for Legacy Browsers
+## Browser Support and Fallback Mode
 
-As Sequence is powered entirely by CSS transitions and some older browsers still in use today don't support these features, Sequence takes extra measures to ensure content is still viewable.
+Sequence aims to work fully in the latest versions of all major browsers that support CSS transitions and transforms, as well as older browsers that don't (Internet Explorer 7 - 9) via a fallback mode.
 
-When Sequence is launched, it tests to see if the browser supports CSS transitions, if it doesn't then fallback mode is activated.
+Please see the complete [list of supported browsers](https://github.com/IanLunn/Sequence/wiki/Sequence-v2-Browser-Support).
 
-In fallback mode, Sequence gives all steps a class of `animate-in` and will then restructure the canvas and steps so that they sit side-by-side, much like a traditional slider. When the user navigates between steps, the canvas is animated and moved to the relevant step. This way, the user still gets to see all of the content available in your Sequence theme, just without so many fancy effects. Animation of the canvas is controlled via JavaScript.
+In fallback mode, Sequence gives all steps a class of `animate-in` and will then restructure the canvas and steps so that they sit side-by-side, much like a traditional slider. When the user navigates between steps, the canvas is animated and moved to the relevant step. This way, the user still gets to see all of the content available in your Sequence theme, just without so many fancy effects. Where available, animation of the canvas is controlled via CSS transforms, otherwise JavaScript.
+
+Internet Explorer versions 10 and 11 *do* support transitions and 2D transforms but they do not fully support 3D transforms. When [animating the canvas](#animating-the-canvas) by using 3D related data-attributes `data-sequence-z`, `data-sequence-rotate-x`, and `data-sequence-rotate-y` these browsers will rely on fallback mode.
+
+The [`require3d` option](#require3d) will determine whether a theme requires the browser to support 3D transforms automatically, but can be overridden where necessary.
+
+When in fallback mode, the Sequence container is given a class of `sequence-fallback` to allow you to change styles for a fallback theme accordingly.
+
+The [Fallback Mode has two options](#fallback-mode) which allow you to change the [speed](#speed) of navigation between steps, and its [layout](#layout).
+
+Please see feature support for each individual property on [caniuse.com](http://caniuse.com/):
+
+- [CSS Transitions](http://caniuse.com/#search=transitions)
+- [CSS Transforms](http://caniuse.com/#search=transforms)
+- [CSS 3D Transforms (Note only partial support for IE10 and IE11)](http://caniuse.com/#feat=transforms3d)
 
 ## Options
 
 Sequence comes with many options that allow you to easily control its features and how it behaves.
 
-As explained in Initiate Sequence, each instance of Sequence can be passed developer defined options that override Sequence’s defaults. Options are stored in an object passed to the `sequence()` function, like so:
+As explained in [Add Sequence](#add-sequence), each instance of Sequence can be passed options that override Sequence’s defaults. [Options](#options) are stored in an object passed to the `sequence()` function, like so:
 
 ```html
 <script>
@@ -710,6 +726,15 @@ Whether a step should be given a higher `z-index` than other steps whilst it is 
 - `true`: an active step will be given a `z-index` value the same as the number of steps in the Sequence instance (bringing it to the top) and the previous step will be given a `z-index` value one less than the number of steps in the Sequence instance.
 - `false`: steps will not have a `z-index` applied to them.
 
+#### `require3d`
+
+- Type: true/false or the string `"auto"`
+- Default: `"auto"`
+
+As described in [Animating the Canvas](#animating-the-canvas), the canvas can have 3D transforms applied to it. All modern browsers except for Internet Explorer 10 and 11 have full support for 3D transforms. The `require3d` option by default is set to `"auto"` which will allow Sequence to determine whether the browser supports 3D transforms, and if not, cause the browser to rely on [fallback mode](#browser-support-and-fallback-mode) instead.
+
+Should you wish to override this setting, you can set `require3d` to `true` or `false`.
+
 ### Canvas Animation
 
 Canvas animation causes Sequence to automatically animate the canvas element to show the next step. Automatic animation consists of finding the next step's position and then directly animating to it.
@@ -777,6 +802,8 @@ The direction in which Sequence's `autoPlay` should navigate.
 ### Navigation Skipping
 
 Navigation skipping controls whether a step can be navigated to whilst another is actively animating and how to most gracefully deal with skipped steps when enabled.
+
+**Browser Support**: When in [fallback mode](#browser-support-and-fallback-mode) (used by browsers that don't have support for CSS transforms and transitions), navigation skipping is not allowed, regardless of the following options.
 
 #### `navigationSkip`
 
@@ -1297,11 +1324,11 @@ Whether the hash tag should be changed when the first step becomes active.
 - `true`: The hash tag will change as soon as Sequence is initiated
 - `false`: The hash tag will not change when the first step becomes active but will change for every other step after that
 
-### Fallback Theme for Legacy Browsers
+### Fallback Mode
 
-The fallback theme options control Sequence when it is being viewed in browsers that do not support CSS transitions. Please see [caniuse.com for CSS3 transition browser compatibility](http://caniuse.com/#search=transitions).
+The fallback mode is used when a browser does not fully support the features used by Sequence. For a more detailed description, please see [Browser Support](#browser-support-and-fallback-mode).
 
-Fallback theme options are included in the options of each instance of Sequence, like so:
+Fallback mode options are included in the options of each instance of Sequence, like so:
 
 ```javascript
 <script>
@@ -1318,14 +1345,16 @@ Fallback theme options are included in the options of each instance of Sequence,
 </script>
 ```
 
-#### `speed`
+Note: When using 3D transforms to animate the canvas, please also see the [`require3d` option](#require3d) in the [General category](#general) which determines whether non 3D supporting browsers (Internet Explorer 10 and 11) should utilize the fallback theme along with browsers that don't support CSS transforms and transitions.
+
+##### `speed`
 
 - Type: a number representing milliseconds
 - Default: `500`
 
 The speed at which steps should transition between one another when in fallback mode.
 
-#### `layout`
+##### `layout`
 
 - Type: a string - `"auto"` | `"basic"` | `"custom"`
 - Default: `"auto"`

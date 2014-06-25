@@ -24,6 +24,7 @@ var sequenceElement = document.getElementById("sequence");
 var options = {
   autoPlay: false,
   // phaseThreshold: 500
+  keyNavigation: true
 }
 
 // Launch Sequence on the element, and with the options we specified above

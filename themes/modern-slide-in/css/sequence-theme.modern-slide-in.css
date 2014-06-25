@@ -39,9 +39,10 @@
   list-style: none;
 }
 
-#sequence .sequence-canvas {
-  position: relative;
+#sequence .sequence-screen {
   max-width: 960px;
+  overflow: hidden;
+  position: relative;
   display: block;
   margin: 0 auto;
 }
@@ -307,6 +308,7 @@
   }
 
   #sequence .title h3 {
+    display: block;
     font-family: 'Source Sans Pro', sans-serif;
     font-size: 1.3em;
     -webkit-transform: translate3d(120px, 0, 0);
