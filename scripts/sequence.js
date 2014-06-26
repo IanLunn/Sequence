@@ -294,7 +294,10 @@ function defineSequence(imagesLoaded, Hammer) {
     var Modernizr=function(a,b,c){function z(a){i.cssText=a}function A(a,b){return z(l.join(a+";")+(b||""))}function B(a,b){return typeof a===b}function C(a,b){return!!~(""+a).indexOf(b)}function D(a,b){for(var d in a){var e=a[d];if(!C(e,"-")&&i[e]!==c)return b=="pfx"?e:!0}return!1}function E(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:B(f,"function")?f.bind(d||b):f}return!1}function F(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+n.join(d+" ")+d).split(" ");return B(b,"string")||B(b,"undefined")?D(e,b):(e=(a+" "+o.join(d+" ")+d).split(" "),E(e,b,c))}var d="2.8.2",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l=" -webkit- -moz- -o- -ms- ".split(" "),m="Webkit Moz O ms",n=m.split(" "),o=m.toLowerCase().split(" "),p={svg:"http://www.w3.org/2000/svg"},q={},r={},s={},t=[],u=t.slice,v,w=function(a,c,d,e){var h,i,j,k,l=b.createElement("div"),m=b.body,n=m||b.createElement("body");if(parseInt(d,10))while(d--)j=b.createElement("div"),j.id=e?e[d]:g+(d+1),l.appendChild(j);return h=["&#173;",'<style id="s',g,'">',a,"</style>"].join(""),l.id=g,(m?l:n).innerHTML+=h,n.appendChild(l),m||(n.style.background="",n.style.overflow="hidden",k=f.style.overflow,f.style.overflow="hidden",f.appendChild(n)),i=c(l,a),m?l.parentNode.removeChild(l):(n.parentNode.removeChild(n),f.style.overflow=k),!!i},x={}.hasOwnProperty,y;!B(x,"undefined")&&!B(x.call,"undefined")?y=function(a,b){return x.call(a,b)}:y=function(a,b){return b in a&&B(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=u.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(u.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(u.call(arguments)))};return e}),q.cssanimations=function(){return F("animationName")},q.csstransforms=function(){return!!F("transform")},q.csstransitions=function(){return F("transition")},q.svg=function(){return!!b.createElementNS&&!!b.createElementNS(p.svg,"svg").createSVGRect};for(var G in q)y(q,G)&&(v=G.toLowerCase(),e[v]=q[G](),t.push((e[v]?"":"no-")+v));return e.addTest=function(a,b){if(typeof a=="object")for(var d in a)y(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,typeof enableClasses!="undefined"&&enableClasses&&(f.className+=" "+(b?"":"no-")+a),e[a]=b}return e},z(""),h=j=null,e._version=d,e._prefixes=l,e._domPrefixes=o,e._cssomPrefixes=n,e.testProp=function(a){return D([a])},e.testAllProps=F,e.testStyles=w,e.prefixed=function(a,b,c){return b?F(a,b,c):F(a,"pfx")},e}(this,window.document);
 
     // Convert a prefixed transformOrigin to transform-origin
-    var transformOrigin = Modernizr.prefixed("transformOrigin").replace("mO", "m-o");
+    var transformOrigin = Modernizr.prefixed("transformOrigin");
+    if (transformOrigin !== false) {
+      transformOrigin = transformOrigin.replace("mO", "m-o");
+    }
 
     /**
      * Is an object an array?
@@ -398,7 +401,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
       // Browser doesn't support getElementsByClassName
       else {
-        return(function getElementsByClass(searchClass,node) {
+        return(function getElementsByClass(searchClass, node) {
           if (node === null)
             node = document;
             var classElements = [],
@@ -590,7 +593,7 @@ function defineSequence(imagesLoaded, Hammer) {
       }
 
       return dataAttributes;
-    };
+    }
 
     /**
      * Does a theme require full CSS 3D support? This will return true when the
@@ -845,6 +848,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
         var stepTransform = {},
             canvasTransform = {},
+            stepAttributes,
             index,
             attribute,
             attributeReversed,
@@ -855,7 +859,13 @@ function defineSequence(imagesLoaded, Hammer) {
             originY = 0,
             originZ = 0;
 
-        var stepAttributes = dataAttributes[stepName];
+        if (dataAttributes !== undefined) {
+          stepAttributes = dataAttributes[stepName];
+        }
+
+        else {
+          stepAttributes = self.animationMap[stepName].dataAttributes;
+        }
 
         // Default transforms
         stepTransform = {
@@ -866,7 +876,7 @@ function defineSequence(imagesLoaded, Hammer) {
           "sequenceRotateY": 0,
           "sequenceRotate": 0,
           "sequenceScale": 1
-        };
+        }
 
         canvasTransform = {
           "sequenceX": 0,
@@ -876,7 +886,7 @@ function defineSequence(imagesLoaded, Hammer) {
           "sequenceRotateY": 0,
           "sequenceRotate": 0,
           "sequenceScale": 1
-        };
+        }
 
         // Get the computed styles for the step
         styles = getComputedStyle(step, null);
@@ -917,8 +927,9 @@ function defineSequence(imagesLoaded, Hammer) {
           "x": originX,
           "y": originY,
           "z": originZ
-        };
+        }
 
+        this.animationMap[stepName].dataAttributes = stepAttributes;
         this.animationMap[stepName].stepTransform = stepTransform;
         this.animationMap[stepName].canvasTransform = canvasTransform;
       },
@@ -3432,7 +3443,7 @@ function defineSequence(imagesLoaded, Hammer) {
               stepName = "step" + (i + 1);
 
               // Get the transform properties from the data-attributes
-              self._getAnimationMap.getTransformProperties(stepName, step, self.dataAttributes);
+              self._getAnimationMap.getTransformProperties(stepName, step);
             }
 
             /**
@@ -3511,14 +3522,14 @@ function defineSequence(imagesLoaded, Hammer) {
       self.noOfSteps = self.steps.length;
 
       // Get the data attributes used on each step
-      self.dataAttributes = self._getAnimationMap.dataAttributes();
+      dataAttributes = self._getAnimationMap.dataAttributes();
 
       // Find out what properties the browser supports and whether we need to go
       // into fallback mode
-      self._animation.propertySupport(self.dataAttributes);
+      self._animation.propertySupport(dataAttributes);
 
       // Get Sequence's animation map (which elements will animate and their timings)
-      self.animationMap = self._getAnimationMap.init(element, self.dataAttributes);
+      self.animationMap = self._getAnimationMap.init(element, dataAttributes);
 
       // Set up the canvas and screen with the necessary CSS properties
       self._canvas.setup();
@@ -3994,4 +4005,4 @@ function defineSequence(imagesLoaded, Hammer) {
   return Sequence;
 }
 
-sequence = defineSequence(imagesLoaded, Hammer);
+var sequence = defineSequence(imagesLoaded, Hammer);
