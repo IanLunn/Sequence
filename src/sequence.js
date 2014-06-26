@@ -4,7 +4,7 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0-alpha.4
+ * @version 2.0.0-alpha.5
  * @license https://github.com/IanLunn/Sequence/blob/master/LICENSE
  * @copyright IanLunn
  */
@@ -3432,7 +3432,7 @@ function defineSequence(imagesLoaded, Hammer) {
               stepName = "step" + (i + 1);
 
               // Get the transform properties from the data-attributes
-              self._getAnimationMap.getTransformProperties(stepName, step);
+              self._getAnimationMap.getTransformProperties(stepName, step, self.dataAttributes);
             }
 
             /**
@@ -3511,14 +3511,14 @@ function defineSequence(imagesLoaded, Hammer) {
       self.noOfSteps = self.steps.length;
 
       // Get the data attributes used on each step
-      dataAttributes = self._getAnimationMap.dataAttributes();
+      self.dataAttributes = self._getAnimationMap.dataAttributes();
 
       // Find out what properties the browser supports and whether we need to go
       // into fallback mode
-      self._animation.propertySupport(dataAttributes);
+      self._animation.propertySupport(self.dataAttributes);
 
       // Get Sequence's animation map (which elements will animate and their timings)
-      self.animationMap = self._getAnimationMap.init(element, dataAttributes);
+      self.animationMap = self._getAnimationMap.init(element, self.dataAttributes);
 
       // Set up the canvas and screen with the necessary CSS properties
       self._canvas.setup();
