@@ -24,7 +24,7 @@ var sequenceElement = document.getElementById("sequence");
 var options = {
   autoPlay: false,
   animateCanvas: false,
-  phaseThreshold: 500
+  phaseThreshold: false
 }
 
 // Launch Sequence on the element, and with the options we specified above

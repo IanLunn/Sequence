@@ -27,7 +27,8 @@ var options = {
   phaseThreshold: 500,
   // reverseWhenNavigatingBackwards: true,
   hashTags: true,
-  keyNavigation: true
+  keyNavigation: true,
+  fadeStepWhenSkipped: true
 }
 
 var mySequence,

@@ -57,6 +57,11 @@ function defineSequence(imagesLoaded, Hammer) {
       // Should the active step be given a higher z-index?
       moveActiveStepToTop: true,
 
+      // Does the theme need the browser to support 3D transforms? Sequence will
+      // determine this automatically unless you change the following value to
+      // true or false
+      require3d: "auto",
+
 
       /* --- Canvas Animation --- */
 
@@ -205,8 +210,6 @@ function defineSequence(imagesLoaded, Hammer) {
 
       /* --- Fallback Theme --- */
 
-      requires3d: false,
-
       // Settings to use when the browser doesn't support CSS transitions
       fallback: {
 
@@ -234,6 +237,20 @@ function defineSequence(imagesLoaded, Hammer) {
     // Throttle the window resize event
     // see self.manageEvent.add.resizeThrottle()
     var resizeThreshold = 100;
+
+    // Does the theme require full CSS 3D support?
+    var requires3d = false;
+
+    // Data attributes currently supported by Sequence
+    var supportedDataAttributes = [
+      "data-sequence-x",
+      "data-sequence-y",
+      "data-sequence-z",
+      "data-sequence-rotate-x",
+      "data-sequence-rotate-y",
+      "data-sequence-rotate",
+      "data-sequence-scale"
+    ];
 
     // Translate step data-attributes to a CSS property and unit
     var translateAttributes = {
@@ -272,9 +289,9 @@ function defineSequence(imagesLoaded, Hammer) {
      * internally to prevent conflicts with other Modernizr builds.
      *
      * Modernizr 2.8.2 (Custom Build) | MIT & BSD
-     * Build: http://modernizr.com/download/#-cssanimations-csstransitions-svg-prefixed-testprop-testallprops-domprefixes
+     * Build: http://modernizr.com/download/#-cssanimations-csstransforms-csstransitions-svg-prefixed-teststyles-testprop-testallprops-prefixes-domprefixes
      */
-    var Modernizr=function(a,b,c){function x(a){i.cssText=a}function y(a,b){return x(prefixes.join(a+";")+(b||""))}function z(a,b){return typeof a===b}function A(a,b){return!!~(""+a).indexOf(b)}function B(a,b){for (var d in a){var e=a[d];if (!A(e,"-")&&i[e]!==c)return b=="pfx"?e:!0}return!1}function C(a,b,d){for (var e in a){var f=b[a[e]];if (f!==c)return d===!1?a[e]:z(f,"function")?f.bind(d||b):f}return!1}function D(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+m.join(d+" ")+d).split(" ");return z(b,"string")||z(b,"undefined")?B(e,b):(e=(a+" "+n.join(d+" ")+d).split(" "),C(e,b,c))}var d="2.8.2",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l="Webkit Moz O ms",m=l.split(" "),n=l.toLowerCase().split(" "),o={svg:"http://www.w3.org/2000/svg"},p={},q={},r={},s=[],t=s.slice,u,v={}.hasOwnProperty,w;!z(v,"undefined")&&!z(v.call,"undefined")?w=function(a,b){return v.call(a,b)}:w=function(a,b){return b in a&&z(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if (typeof c!="function")throw new TypeError;var d=t.call(arguments,1),e=function(){if (this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(t.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(t.call(arguments)))};return e}),p.cssanimations=function(){return D("animationName")},p.csstransitions=function(){return D("transition")},p.svg=function(){return!!b.createElementNS&&!!b.createElementNS(o.svg,"svg").createSVGRect};for (var E in p)w(p,E)&&(u=E.toLowerCase(),e[u]=p[E](),s.push((e[u]?"":"no-")+u));return e.addTest=function(a,b){if (typeof a=="object")for (var d in a)w(a,d)&&e.addTest(d,a[d]);else {a=a.toLowerCase();if (e[a]!==c)return e;b=typeof b=="function"?b():b,typeof enableClasses!="undefined"&&enableClasses&&(f.className+=" "+(b?"":"no-")+a),e[a]=b}return e},x(""),h=j=null,e._version=d,e._domPrefixes=n,e._cssomPrefixes=m,e.testProp=function(a){return B([a])},e.testAllProps=D,e.prefixed=function(a,b,c){return b?D(a,b,c):D(a,"pfx")},e}(this,window.document);
+    var Modernizr=function(a,b,c){function z(a){i.cssText=a}function A(a,b){return z(l.join(a+";")+(b||""))}function B(a,b){return typeof a===b}function C(a,b){return!!~(""+a).indexOf(b)}function D(a,b){for(var d in a){var e=a[d];if(!C(e,"-")&&i[e]!==c)return b=="pfx"?e:!0}return!1}function E(a,b,d){for(var e in a){var f=b[a[e]];if(f!==c)return d===!1?a[e]:B(f,"function")?f.bind(d||b):f}return!1}function F(a,b,c){var d=a.charAt(0).toUpperCase()+a.slice(1),e=(a+" "+n.join(d+" ")+d).split(" ");return B(b,"string")||B(b,"undefined")?D(e,b):(e=(a+" "+o.join(d+" ")+d).split(" "),E(e,b,c))}var d="2.8.2",e={},f=b.documentElement,g="modernizr",h=b.createElement(g),i=h.style,j,k={}.toString,l=" -webkit- -moz- -o- -ms- ".split(" "),m="Webkit Moz O ms",n=m.split(" "),o=m.toLowerCase().split(" "),p={svg:"http://www.w3.org/2000/svg"},q={},r={},s={},t=[],u=t.slice,v,w=function(a,c,d,e){var h,i,j,k,l=b.createElement("div"),m=b.body,n=m||b.createElement("body");if(parseInt(d,10))while(d--)j=b.createElement("div"),j.id=e?e[d]:g+(d+1),l.appendChild(j);return h=["&#173;",'<style id="s',g,'">',a,"</style>"].join(""),l.id=g,(m?l:n).innerHTML+=h,n.appendChild(l),m||(n.style.background="",n.style.overflow="hidden",k=f.style.overflow,f.style.overflow="hidden",f.appendChild(n)),i=c(l,a),m?l.parentNode.removeChild(l):(n.parentNode.removeChild(n),f.style.overflow=k),!!i},x={}.hasOwnProperty,y;!B(x,"undefined")&&!B(x.call,"undefined")?y=function(a,b){return x.call(a,b)}:y=function(a,b){return b in a&&B(a.constructor.prototype[b],"undefined")},Function.prototype.bind||(Function.prototype.bind=function(b){var c=this;if(typeof c!="function")throw new TypeError;var d=u.call(arguments,1),e=function(){if(this instanceof e){var a=function(){};a.prototype=c.prototype;var f=new a,g=c.apply(f,d.concat(u.call(arguments)));return Object(g)===g?g:f}return c.apply(b,d.concat(u.call(arguments)))};return e}),q.cssanimations=function(){return F("animationName")},q.csstransforms=function(){return!!F("transform")},q.csstransitions=function(){return F("transition")},q.svg=function(){return!!b.createElementNS&&!!b.createElementNS(p.svg,"svg").createSVGRect};for(var G in q)y(q,G)&&(v=G.toLowerCase(),e[v]=q[G](),t.push((e[v]?"":"no-")+v));return e.addTest=function(a,b){if(typeof a=="object")for(var d in a)y(a,d)&&e.addTest(d,a[d]);else{a=a.toLowerCase();if(e[a]!==c)return e;b=typeof b=="function"?b():b,typeof enableClasses!="undefined"&&enableClasses&&(f.className+=" "+(b?"":"no-")+a),e[a]=b}return e},z(""),h=j=null,e._version=d,e._prefixes=l,e._domPrefixes=o,e._cssomPrefixes=n,e.testProp=function(a){return D([a])},e.testAllProps=F,e.testStyles=w,e.prefixed=function(a,b,c){return b?F(a,b,c):F(a,"pfx")},e}(this,window.document);
 
     // Convert a prefixed transformOrigin to transform-origin
     var transformOrigin = Modernizr.prefixed("transformOrigin").replace("mO", "m-o");
@@ -515,7 +532,7 @@ function defineSequence(imagesLoaded, Hammer) {
      */
     function removeNoJsClass(self) {
 
-      if (self.transitionsSupported === false) {
+      if (self.inFallbackMode === true) {
         return;
       }
 
@@ -550,10 +567,12 @@ function defineSequence(imagesLoaded, Hammer) {
           i,
           dataAttributes = {};
 
+      // Get attributes from the dataset in modern browsers
       if (element.dataset !== undefined) {
         dataAttributes = element.dataset;
       }
 
+      // Get attributes via a loop if dataset isn't supported
       else {
 
         for (i = 0; i < attributesLength; i++) {
@@ -572,6 +591,38 @@ function defineSequence(imagesLoaded, Hammer) {
 
       return dataAttributes;
     };
+
+    /**
+     * Does a theme require full CSS 3D support? This will return true when the
+     * canvas is given one of the following data attributes:
+     *
+     * - data-sequence-z
+     * - data-sequence-rotate-x
+     * - data-sequence-rotate-y
+     *
+     * @param {Object} dataAttributes - The data attributes applied to each step
+     * @return {Boolean} requires3d - Whether 3D is required
+     * @api private
+     */
+    function is3dRequired(dataAttributes) {
+
+      // Convert the step properties to a text string so we can easily check if
+      // it contains one of the 3D transforms
+      var dataAttributesToText = JSON.stringify(dataAttributes);
+
+      if (
+        requires3d === false
+        && (
+          dataAttributesToText.indexOf("sequenceZ") > -1
+          || dataAttributesToText.indexOf("sequenceRotateX") > -1
+          || dataAttributesToText.indexOf("sequenceRotateY") > -1
+        )) {
+
+        requires3d = true;
+      }
+
+      return requires3d;
+    }
 
     /**
      * Determine if an element has a specified parent, and if so, return the index
@@ -712,14 +763,15 @@ function defineSequence(imagesLoaded, Hammer) {
        * Start getting the animation map.
        *
        * @param {HTMLElement} element - the Sequence element
+       * @param {Object} dataAttributes - The data attributes applied to steps
        * @return {Object}
        */
-      init: function(element) {
+      init: function(element, dataAttributes) {
 
         // Where we'll save the animations
         this.animationMap = {};
 
-        if (self.transitionsSupported === true) {
+        if (self.inFallbackMode === false) {
 
           // Clone Sequence so it can be quickly forced through each step
           // and get the canvas and each step
@@ -734,7 +786,7 @@ function defineSequence(imagesLoaded, Hammer) {
           this.animationMap["stepsAnimating"] = 0;
 
           // Initiate each Sequence step on the cloned Sequence
-          this.steps();
+          this.steps(dataAttributes);
 
           // Remove the Sequence clone now we've got the animation map
           this.destroyClone(this.clonedSequence);
@@ -755,6 +807,33 @@ function defineSequence(imagesLoaded, Hammer) {
       },
 
       /**
+       * Get step properties from the data attributes. We'll use dataset for
+       * modern browsers but older browsers require a loop through each
+       * data-attribute specified in the array
+       *
+       * @return {Object} dataAttributes - The data attributes for each step
+       */
+      dataAttributes: function() {
+
+        var i,
+            step,
+            stepName,
+            dataAttributes = {};
+
+        for (i = 0; i < self.noOfSteps; i++) {
+
+          step = self.steps[i];
+          stepName = "step" + (i + 1);
+
+          var stepAttributes = getDataAttributes(step, supportedDataAttributes);
+
+          dataAttributes[stepName] = stepAttributes;
+        }
+
+        return dataAttributes;
+      },
+
+      /**
        * Get transform properties from a steps data-attributes and return them
        * for later use.
        *
@@ -762,10 +841,9 @@ function defineSequence(imagesLoaded, Hammer) {
        * @param {HTMLElement} step - The step to get the properties from
        * @return {String} transformCss - The CSS string containing transform properties
        */
-      getTransformProperties: function(stepName, step) {
+      getTransformProperties: function(stepName, step, dataAttributes) {
 
-        var stepProperties = {},
-            stepTransform = {},
+        var stepTransform = {},
             canvasTransform = {},
             index,
             attribute,
@@ -777,20 +855,7 @@ function defineSequence(imagesLoaded, Hammer) {
             originY = 0,
             originZ = 0;
 
-        /**
-         * Get step properties from the data attributes. We'll use dataset for
-         * modern browsers but older browsers require a loop through each
-         * data-attribute specified in the array
-         */
-        stepProperties = getDataAttributes(step, [
-          "data-sequence-x",
-          "data-sequence-y",
-          "data-sequence-z",
-          "data-sequence-rotate-x",
-          "data-sequence-rotate-y",
-          "data-sequence-rotate",
-          "data-sequence-scale"
-        ]);
+        var stepAttributes = dataAttributes[stepName];
 
         // Default transforms
         stepTransform = {
@@ -817,11 +882,11 @@ function defineSequence(imagesLoaded, Hammer) {
         styles = getComputedStyle(step, null);
 
         // Set up the transform CSS for each data-attribute used
-        for (property in stepProperties) {
+        for (property in stepAttributes) {
 
-          if (stepProperties.hasOwnProperty(property) === true) {
+          if (stepAttributes.hasOwnProperty(property) === true) {
 
-            attribute = stepProperties[property];
+            attribute = stepAttributes[property];
             stepTransform[property] = attribute;
 
             if (property !== "sequenceScale") {
@@ -862,7 +927,7 @@ function defineSequence(imagesLoaded, Hammer) {
        * Initiate each Sequence step on the cloned Sequence and apply CSS
        * transforms from data-attributes, where specified
        */
-      steps: function() {
+      steps: function(dataAttributes) {
 
         var stepName,
             clonedStepElement,
@@ -871,9 +936,10 @@ function defineSequence(imagesLoaded, Hammer) {
             realStepChildren,
             noOfStepChildren,
             transformProperties,
-            transformCss;
+            transformCss,
+            i;
 
-        for (var i = 0; i < self.noOfSteps; i++) {
+        for (i = 0; i < self.noOfSteps; i++) {
 
           // Get the step, step number (one-based),
           // the step's children and count them
@@ -891,12 +957,15 @@ function defineSequence(imagesLoaded, Hammer) {
 
           // Get the transform properties from the data-attributes and apply the
           // transform to the step
-          this.getTransformProperties(stepName, realStepElement);
+          this.getTransformProperties(stepName, realStepElement, dataAttributes);
 
           // Get the CSS string consisting of the transform properties and apply
           transformCss = propertiesToCss(this.animationMap[stepName].stepTransform);
           realStepElement.style[Modernizr.prefixed("transform")] = transformCss;
-          realStepElement.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
+
+          if (self.requires3d === true) {
+            realStepElement.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
+          }
 
           // Add the step class to the sequence element
           addClass(this.clonedSequence, stepName);
@@ -1107,9 +1176,11 @@ function defineSequence(imagesLoaded, Hammer) {
           element.style[Modernizr.prefixed("transitionDuration")] = duration + "ms";
           element.style[Modernizr.prefixed("transitionProperty")] = "opacity, " + Modernizr.prefixed("transform");
           element.style.opacity = 1;
-        }else {
+        }
 
-         // TODO - make the step fade out using JS
+        else {
+
+         self._animationFallback.animate(element, "opacity", "", 0, 1, duration);
         }
       },
 
@@ -1126,10 +1197,12 @@ function defineSequence(imagesLoaded, Hammer) {
 
           element.style[Modernizr.prefixed("transitionDuration")] = duration + "ms";
           element.style[Modernizr.prefixed("transitionProperty")] = "opacity, " + Modernizr.prefixed("transform");
-          element.style.opacity = ".2";
-        }else {
+          element.style.opacity = 0;
+        }
 
-         // TODO - make the step fade out using JS
+        else {
+
+         self._animationFallback.animate(element, "opacity", "", 1, 0, duration);
         }
 
         if (callback !== undefined) {
@@ -1170,7 +1243,7 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       unpause: function() {
 
-        if(self.options.autoPlay === true) {
+        if (self.options.autoPlay === true) {
 
           self.isPaused = false;
 
@@ -1284,6 +1357,21 @@ function defineSequence(imagesLoaded, Hammer) {
       },
 
       /**
+       * Setup the canvas and screen ready to be animated
+       */
+      setup: function() {
+
+        // Add transform-style: preserve-3d to the screen and canvas
+        self.screen.style.height = "100%";
+        self.screen.style.width = "100%";
+
+        if (self.requires3d === true) {
+          self.screen.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
+          self.canvas.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
+        }
+      },
+
+      /**
        * Move the canvas to show a specific step
        *
        * @param {Number} id - The ID of the step to move to
@@ -1304,7 +1392,7 @@ function defineSequence(imagesLoaded, Hammer) {
           }
 
           // Animate the canvas using CSS transitions
-          if (self.transitionsSupported === true) {
+          if (self.inFallbackMode === false) {
 
             // Get the transform properties translate X/Y/Z, rotate X/Y/Z,
             // scale, and transform-origin
@@ -1321,11 +1409,6 @@ function defineSequence(imagesLoaded, Hammer) {
             canvas.style[Modernizr.prefixed("transformOrigin")] = transformCss.origins;
             canvas.style[Modernizr.prefixed("transform")] = transformCss.string;
           }
-        }
-
-        // Animate the canvas using JavaScript
-        if (self.transitionsSupported === false) {
-
         }
       }
     }
@@ -1369,7 +1452,7 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       manageNavigationSkip: function(id, direction, currentStep, nextStep, nextStepElement) {
 
-        if (self.transitionsSupported === false) {
+        if (self.inFallbackMode === true) {
           return;
         }
 
@@ -1740,7 +1823,7 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       getStepDurations: function(nextStepId, nextStep, currentStep, direction) {
 
-        if (self.transitionsSupported === false) {
+        if (self.inFallbackMode === true) {
           return;
         }
 
@@ -1980,7 +2063,7 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       resetInheritedSpeed: function(step, phase) {
 
-        if (self.transitionsSupported === false) {
+        if (self.inFallbackMode === true) {
           return;
         }
 
@@ -2067,7 +2150,7 @@ function defineSequence(imagesLoaded, Hammer) {
         }
 
         // If a direction wasn't defined, work out the best one to use
-        if (self.options.reverseWhenNavigatingBackwards === true || self.transitionsSupported === false) {
+        if (self.options.reverseWhenNavigatingBackwards === true || self.inFallbackMode === true) {
 
           if (direction === undefined && self.options.cycle === true) {
             direction = _animation.getShortestDirection(id, self.currentStepId, self.noOfSteps);
@@ -2085,13 +2168,45 @@ function defineSequence(imagesLoaded, Hammer) {
       },
 
       /**
-       * Determine what properties the browser supports. Currently tests
-       * transitions and animations
+       * Determine what properties the browser supports. Currently tests:
+       *
+       * - transitions
+       * - transform-style: preserve-3d
+       * - animations
+       *
+       * @param {Object} dataAttributes - The data attributes used on steps
        */
-      propertySupport: function() {
+      propertySupport: function(dataAttributes) {
 
         self.transitionsSupported = false;
         self.animationsSupported = false;
+        self.transformStyleSupported = false;
+        self.inFallbackMode = false;
+
+        // Does the browser support transform-style: preserve-3d?
+        Modernizr.addTest('csstransformspreserve3d', function () {
+
+          var prop = Modernizr.prefixed('transformStyle');
+          var val = 'preserve-3d';
+          var computedStyle;
+          if (!prop) return false;
+
+          prop = prop.replace(/([A-Z])/g, function(str,m1){ return '-' + m1.toLowerCase(); }).replace(/^ms-/,'-ms-');
+
+          Modernizr.testStyles('#modernizr{' + prop + ':' + val + ';}', function (el, rule) {
+            computedStyle = window.getComputedStyle ? getComputedStyle(el, null).getPropertyValue(prop) : '';
+          });
+
+          return (computedStyle === val);
+        });
+
+        // Does the theme require 3D support?
+        self.requires3d = is3dRequired(dataAttributes);
+
+        // Is transform-style: preserve-3d supported?
+        if (Modernizr.csstransformspreserve3d === true) {
+          self.transformStyleSupported = true;
+        }
 
         // Are transitions supported?
         if (Modernizr.csstransitions === true) {
@@ -2102,7 +2217,21 @@ function defineSequence(imagesLoaded, Hammer) {
         if (Modernizr.cssanimations === true) {
           self.animationsSupported = true;
         }
-      },
+
+
+        // If the theme uses 3D transforms but they're not fully supported,
+        // use fallback mode
+        if (
+          self.transitionsSupported === false
+          || (
+            self.transformStyleSupported === false
+            && self.requires3d === true
+            && self.options.require3d !== false
+          )
+        ) {
+          self.inFallbackMode = true;
+        }
+      }
     }
 
     /**
@@ -2158,7 +2287,7 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       setupCanvas: function(id) {
 
-        if (self.transitionsSupported === false) {
+        if (self.inFallbackMode === true) {
 
           // Add the "sequence-fallback" class to the Sequence element
           addClass(self.container, "sequence-fallback");
@@ -2203,10 +2332,7 @@ function defineSequence(imagesLoaded, Hammer) {
             // custom one?
             var layoutOption = self.options.fallback.layout;
 
-            if (
-              layoutOption === "auto"
-              || layoutOption === "basic"
-            ) {
+            if (layoutOption === "auto" || layoutOption === "basic") {
 
               step.style.display = "inline-block";
               step.style.position = "relative";
@@ -3365,6 +3491,7 @@ function defineSequence(imagesLoaded, Hammer) {
       var id,
           prevStep,
           prevStepId,
+          dataAttributes,
           goToFirstStep;
 
       // Merge developer options with defaults
@@ -3383,17 +3510,18 @@ function defineSequence(imagesLoaded, Hammer) {
       // Get number of steps
       self.noOfSteps = self.steps.length;
 
-      // Find out what properties the browser supports and add classes to Sequence
-      self._animation.propertySupport();
+      // Get the data attributes used on each step
+      dataAttributes = self._getAnimationMap.dataAttributes();
+
+      // Find out what properties the browser supports and whether we need to go
+      // into fallback mode
+      self._animation.propertySupport(dataAttributes);
 
       // Get Sequence's animation map (which elements will animate and their timings)
-      self.animationMap = self._getAnimationMap.init(element);
+      self.animationMap = self._getAnimationMap.init(element, dataAttributes);
 
-      // Add transform-style: preserve-3d to the screen and canvas
-      self.screen.style.height = "100%";
-      self.screen.style.width = "100%";
-      self.screen.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
-      self.canvas.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
+      // Set up the canvas and screen with the necessary CSS properties
+      self._canvas.setup();
 
       // Remove the no-JS "animate-in" class from a step
       removeNoJsClass(self);
@@ -3647,7 +3775,7 @@ function defineSequence(imagesLoaded, Hammer) {
         || id === self.currentStepId
         || (self.options.navigationSkip === false && self.isActive === true)
         || (self.options.navigationSkip === true && self.navigationSkipThresholdActive === true && hashTagNav === undefined)
-        || (self.transitionsSupported === false && self.isActive === true && hashTagNav === undefined)
+        || (self.inFallbackMode === true && self.isActive === true && hashTagNav === undefined)
         || (self.options.preventReverseSkipping === true && self.direction !== direction && self.isActive === true)
       ) {
         return false;
@@ -3682,7 +3810,7 @@ function defineSequence(imagesLoaded, Hammer) {
       // Change the step number on the Sequence element
       self._animation.changeStep(id);
 
-      if (self.transitionsSupported === true) {
+      if (self.inFallbackMode === false) {
 
         // Animate the canvas
         self._canvas.move(id, true);

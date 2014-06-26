@@ -579,13 +579,24 @@ Sequence aims to work fully in the latest versions of all major browsers that su
 
 Please see the complete [list of supported browsers](https://github.com/IanLunn/Sequence/wiki/Sequence-v2-Browser-Support).
 
-In fallback mode, Sequence gives all steps a class of `animate-in` and will then restructure the canvas and steps so that they sit side-by-side, much like a traditional slider. When the user navigates between steps, the canvas is animated and moved to the relevant step. This way, the user still gets to see all of the content available in your Sequence theme, just without so many fancy effects. Where available, animation of the canvas is controlled via CSS transforms, otherwise JavaScript.
+In fallback mode, Sequence gives all steps a class of `animate-in` and will then restructure the canvas and steps so that they sit side-by-side, much like a traditional slider. When the user navigates between steps, the canvas is animated and moved to the relevant step. This way, the user still gets to see all of the content available in your Sequence theme, just without so many fancy effects. Animation of the canvas is controlled via JavaScript when in fallback mode.
 
-Internet Explorer versions 10 and 11 *do* support transitions and 2D transforms but they do not fully support 3D transforms. When [animating the canvas](#animating-the-canvas) by using 3D related data-attributes `data-sequence-z`, `data-sequence-rotate-x`, and `data-sequence-rotate-y` these browsers will rely on fallback mode.
+When in fallback mode, the Sequence container is given a class of `sequence-fallback` to allow you to change styles for a fallback theme accordingly and HTML structure is given the following styles via JavaScript:
 
-The [`require3d` option](#require3d) will determine whether a theme requires the browser to support 3D transforms automatically, but can be overridden where necessary.
+```html
+<div id="sequence" style="white-space: nowrap;">
 
-When in fallback mode, the Sequence container is given a class of `sequence-fallback` to allow you to change styles for a fallback theme accordingly.
+  <div class="sequence-screen" style="overflow: hidden;">
+    <ul class="sequence-canvas" style="position: relative; width: 100%; height: 100%;">
+      <li style="width: 100%; height: 100%; white-space: normal; display: inline-block; position: relative;">
+        <!-- Step 1 content here -->
+      </li>
+    </ul>
+  </div>
+</div>
+```
+
+In the above code example, `display: inline-block;` and `position: relative;` are only applied if self.options.fallback.layout is set to `"auto"` or `"basic"`.
 
 The [Fallback Mode has two options](#fallback-mode) which allow you to change the [speed](#speed) of navigation between steps, and its [layout](#layout).
 
@@ -594,6 +605,12 @@ Please see feature support for each individual property on [caniuse.com](http://
 - [CSS Transitions](http://caniuse.com/#search=transitions)
 - [CSS Transforms](http://caniuse.com/#search=transforms)
 - [CSS 3D Transforms (Note only partial support for IE10 and IE11)](http://caniuse.com/#feat=transforms3d)
+
+### 3D Support
+
+Internet Explorer versions 10 and 11 support transitions and 2D transforms but they do not fully support 3D transforms. When [animating the canvas](#animating-the-canvas) by using 3D related data-attributes `data-sequence-z`, `data-sequence-rotate-x`, and `data-sequence-rotate-y` these browsers will rely on fallback mode as well.
+
+The [`require3d` option](#require3d) will determine whether a theme requires the browser to support 3D transforms automatically based on the use of the above mentioned data attributes. Should you need to override this or force Internet Explorer 10 and 11 into fallback mode due to using 3D transforms elsewhere, you can set `require3d` to `true` or `false`.
 
 ## Options
 
@@ -1483,7 +1500,7 @@ Executed when Sequence is destroyed (removed from the element it is attached to 
 
 - `sequence`: All properties and methods available to this instance
 
-### <a id="methods">Methods</a>
+### Methods
 
 Public methods are the functions that Sequence utilises, made available for developers to extend and enhance their particular instance.
 
@@ -1560,7 +1577,7 @@ Note: even if `autoPlay` is disabled in the options, autoPlay can still later be
 
 Remove Sequence from the element it is attached to and stop all Sequence functionality.
 
-### <a id="properties">Properties</a>
+### Properties
 
 Properties can be used to get certain information about the state of Sequence, for example, the ID of the current step.
 
@@ -1607,6 +1624,18 @@ Returns whether the browser supports CSS animations.
 
 Returns the HTML element used as Sequence's canvas.
 
+#### `container`
+
+- Type: HTMLElement
+
+Returns the HTML element used as Sequence's container.
+
+#### `currentPaginationLinks`
+
+- Type: HTMLElement Array
+
+Returns an array of the currently active HTML pagination elements
+
 #### `canvasPreviousPosition`
 
 - Type: Array
@@ -1628,12 +1657,6 @@ Returns a number representing the direction Sequence is last navigated in.
 - `1`: Forward
 - `-1`: Reverse
 
-#### `element`
-
-- Type: HTMLElement
-
-Returns the HTML element used as Sequence's container.
-
 #### `elementsAnimating`
 
 - Type: Array
@@ -1645,6 +1668,12 @@ Returns an array containing the HTML elements currently being animated by Sequen
 - Type: Object
 
 Returns an object containing the Hammer event when the `swipeNavigation` option is enabled.
+
+#### `inFallbackMode`
+
+- Type: True/False
+
+Returns true if Sequence is in [fallback mode](#browser-support-and-fallback-mode).
 
 #### `isActive`
 
@@ -1705,6 +1734,13 @@ Returns Sequence's options - defaults combined with developer defined options.
 
 Returns an array containing the HTML elements used as Sequence's pagination.
 
+#### `paginationLinks`
+
+- Type: Array
+- Dependencies: `pagination: true` | `pagination: <CSS Selector>`
+
+Returns an array containing the HTML elements used as Sequence's individual pagination links.
+
 #### `pauseButton`
 
 - Type: Array
@@ -1725,12 +1761,23 @@ Returns an array containing the HTML elements used as Sequence's previous button
 
 Returns a number representing the step that was previously being viewed (the one before `currentStepId`).
 
+#### `screen`
+
+- Type: HTMLElement
+
+Returns the HTML element used as Sequence's screen.
+
 #### `steps`
 
 - Type: Array
 
 Returns an array containing the HTML elements used as Sequence's steps.
 
+#### `transformStyleSupported`
+
+- Type: true/false
+
+Returns whether the browser supports CSS `transform-style: preserve-3d`.
 
 #### `transitionsSupported`
 

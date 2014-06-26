@@ -71,47 +71,15 @@ The following is a complete list of the work still needed to be carried out to r
 - Implement AMD/Require.js support
 - Make `_getAnimationMap.destroyClone()` IE7 compatible
 - Make `_ui.getElement()` IE7 compatible
-- Implement fallback functionality for `_ui.show()` and `_ui.hide()` when the browser doesn't support CSS transitions
-- Implement fallback functionality for `_animation.moveCanvas()` when the browser doesn't support CSS transitions
 - Implement `_animation.stepSkipped()` functionality to stop a step from animating when it is skipped
-- Browser/Device Test - Sequence v2 has been developed in Firefox on a Mac. No other browsers/devices have been tested yet
+- Browser/Device Test - [See browser testing so far here](https://github.com/IanLunn/Sequence/wiki/Sequence-v2-Browser-Support)
 - [Improve Yeoman generator for Sequence](https://github.com/IanLunn/generator-sequence/issues) themes
 
 ## Browser Support
 
 When Sequence reaches beta, we aim to support current versions of all major desktop browsers, and older versions of Internet Explorer 7 onwards.
 
-The pre-alpha version has been tested and is working on the following platforms and browsers:
-
-### Mac OS X 10.9.3
-
-- Mozilla Firefox 30
-- Google Chrome 35
-- Apple Safari 7.0.4
-- Opera 22
-
-### Windows 7
-
-- Internet Explorer 11
-- ~~Internet Explorer 10~~
-- ~~Internet Explorer 9~~
-- ~~Internet Explorer 8~~
-
-### Windows Vista
-
-- ~~Internet Explorer 7~~
-
-### Apple iOS 7.1.1 (iPad & iPhone)
-
-- Apple Safari
-- Google Chrome 35
-
-### Android 4.4.2 (Nexus 7)
-
-- Firefox 23
-- Google Chrome 33
-
-
+[See the ever-growing browser support list](https://github.com/IanLunn/Sequence/wiki/Sequence-v2-Browser-Support)
 
 ## Premium Theme Partnership
 
