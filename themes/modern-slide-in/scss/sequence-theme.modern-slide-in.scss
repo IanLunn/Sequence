@@ -40,6 +40,10 @@ $maxHeight: 585px;
   margin: 0 auto;
   padding: 0;
 
+  .sequence-preloader {
+    background: #D9D9D9;
+  }
+
   // Reset the canvas and steps for more browser consistency
   .sequence-screen,
   .sequence-canvas,
@@ -51,18 +55,16 @@ $maxHeight: 585px;
     list-style: none;
   }
 
+  .sequence-canvas > * {
+    position: absolute;
+  }
+
   .sequence-screen {
     max-width: $maxWidth;
     overflow: hidden;
     position: relative;
     display: block;
     margin: 0 auto;
-  }
-
-  // Layer each step in the same position
-  .sequence-canvas > * {
-    position: absolute;
-    font-size: 0; /* Prevent 4px gap between inline-block elements */
   }
 
   // Styles for next/previous buttons and pagination
@@ -92,6 +94,7 @@ $maxHeight: 585px;
       font: 0/0 a;
       text-shadow: none;
       color: transparent;
+      *text-indent: -9999px;
     }
 
     .sequence-next {
@@ -160,6 +163,8 @@ $maxHeight: 585px;
     &:before {
       content: "";
       display: inline-block;
+      *display: inline;
+      zoom: 1;
       vertical-align: middle;
       height: 100%;
       width: 0;
@@ -170,6 +175,8 @@ $maxHeight: 585px;
       font-size: 22px;
       font-size: 1.4rem;
       display: inline-block;
+      *display: inline;
+      zoom: 1;
       width: 98%;
       vertical-align: middle;
       text-align: center;
@@ -243,6 +250,8 @@ $maxHeight: 585px;
       content: "";
       height: 100%;
       display: inline-block;
+      *display: inline;
+      zoom: 1;
       vertical-align: middle;
     }
 
@@ -250,6 +259,8 @@ $maxHeight: 585px;
     .model,
     .title {
       display: inline-block;
+      *display: inline;
+      zoom: 1;
       vertical-align: middle;
       height: auto;
       margin: 0 5% 0 2.5%;
@@ -280,6 +291,8 @@ $maxHeight: 585px;
       h2,
       h3 {
         display: inline-block;
+        *display: inline;
+        zoom: 1;
         width: auto;
         margin: 0;
         opacity: 0;
@@ -329,9 +342,10 @@ $maxHeight: 585px;
 
     .pagination-container {
       position: absolute;
+      left: 0;
+      right: 0;
       z-index: 10;
       bottom: 5px;
-      width: 100%;
       pointer-events: none;
     }
 
@@ -344,6 +358,8 @@ $maxHeight: 585px;
 
       li {
         display: inline-block;
+        *display: inline;
+        zoom: 1;
         list-style: none;
         margin: 0 10px;
         padding: 0;
@@ -384,6 +400,8 @@ $maxHeight: 585px;
 
       br {
         display: inline-block;
+        *display: inline;
+        zoom: 1;
       }
     }
   }

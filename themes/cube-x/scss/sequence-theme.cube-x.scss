@@ -35,7 +35,7 @@ body {
   max-width: $sequenceWidth;
 
   // Hide anything that goes beyond the boundaries of the Sequence container
-  /* overflow: hidden; */
+  // overflow: hidden;
 
   // Center the Sequence container on the page
   margin: 0 auto;
@@ -58,18 +58,26 @@ body {
     list-style: none;
   }
 
+  &.sequence-fallback .sequence-canvas {
+    overflow: hidden;
+  }
+
   .nav {
     margin-top: 10px;
     text-align: center;
 
     > * {
       display: inline-block;
+      *display: inline;
+      zoom: 1;
       vertical-align: middle;
     }
 
     .sequence-pagination li {
       cursor: pointer;
       display: inline-block;
+      *display: inline;
+      zoom: 1;
       padding: 8px;
       background: #66D9E8;
       color: white;
@@ -92,6 +100,7 @@ body {
     height: 100%;
     width: 100%;
     overflow: hidden;
+    background: #66CFE8;
     background: rgba(102, 217, 232, .8);
     color: white;
     font-size: 0;
@@ -102,12 +111,16 @@ body {
     &:before {
       content: "";
       display: inline-block;
+      *display: inline;
+      zoom: 1;
       vertical-align: middle;
       height: 100%;
     }
 
     .title {
       display: inline-block;
+      *display: inline;
+      zoom: 1;
       vertical-align: middle;
       width: 92%;
       padding: 0 4%;

@@ -45,10 +45,11 @@
 
 #sequence .sequence-canvas > * {
   display: inline-block;
+  *display: inline;
+  zoom: 1;
   vertical-align: top;
   width: 100%;
   height: 100%;
-  white-space: normal;
   text-align: center;
 }
 

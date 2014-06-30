@@ -24,7 +24,7 @@ var sequenceElement = document.getElementById("sequence");
 var options = {
   keyNavigation: true,
   autoPlay: false,
-  phaseThreshold: 500,
+  phaseThreshold: 500
   // pauseOnHover: false
 }
 

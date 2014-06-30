@@ -23,7 +23,7 @@ var sequenceElement = document.getElementById("sequence");
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
   animateCanvas: false,
-  autoPlay: false,
+  autoPlay: true,
   phaseThreshold: 500,
   // reverseWhenNavigatingBackwards: true,
   hashTags: true,
@@ -35,6 +35,20 @@ var mySequence,
     pauseButton = document.getElementById("pause"),
     initButton = document.getElementById("init"),
     destroyButton = document.getElementById("destroy");
+
+function addEvent(obj, type, fn) {
+
+  if (obj.attachEvent) {
+
+    obj['e'+type+fn] = fn;
+    obj[type+fn] = function(){obj['e'+type+fn]( window.event );}
+    obj.attachEvent('on'+type, obj[type+fn]);
+  } else {
+    obj.addEventListener(type, fn, false);
+  }
+
+  return fn;
+}
 
 // Launch Sequence on the element, and with the options we specified above
 function init() {
@@ -53,12 +67,11 @@ function init() {
 
 init();
 
-initButton.addEventListener("click", function() {
+addEvent(initButton, "click", function() {
   init();
 });
 
-destroyButton.addEventListener("click", function() {
-
+addEvent(destroyButton, "click", function() {
   if (mySequence !== undefined) {
     mySequence.destroy();
     mySequence = undefined;

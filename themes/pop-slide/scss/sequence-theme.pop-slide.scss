@@ -46,23 +46,30 @@ $sequenceHeight: 400px;
     z-index: 10;
     bottom: 10px;
     left: 0;
+    right: 0;
     padding: 0;
-    width: 100%;
+    margin: 0;
     font-size: 0;
-    font-family: 'Dosis', sans-serif;
     font-weight: 600;
     text-align: center;
 
-    li {
+    > * {
       position: relative;
       display: inline-block;
+      *display: inline;
+      zoom: 1;
 
       width: 40px;
       height: 40px;
       margin: 0 1%;
       cursor: pointer;
-      // padding: 10px 1%;
       background: #512A5E;
+
+      // Image replacement
+      border: 0;
+      font: 0/0 a;
+      text-shadow: none;
+      color: transparent;
 
       &.sequence-current {
         background: #F7DB15;
@@ -71,6 +78,7 @@ $sequenceHeight: 400px;
   }
 
   // Reset the canvas and steps for more browser consistency
+  .sequence-screen,
   .sequence-canvas,
   .sequence-canvas > * {
     margin: 0;
@@ -91,6 +99,8 @@ $sequenceHeight: 400px;
     > * {
       position: relative;
       display: inline-block;
+      *display: inline;
+      zoom: 1;
       vertical-align: top;
       width: 100%;
       height: 100%;
@@ -101,23 +111,23 @@ $sequenceHeight: 400px;
       background-position: 50%;
     }
 
-    li:nth-child(1) {
+    .step1 {
       background-image: url("../images/kaki-king.jpg");
     }
 
-    li:nth-child(2) {
+    .step2 {
       background-image: url("../images/micky-green.jpg");
     }
 
-    li:nth-child(3) {
+    .step3 {
       background-image: url("../images/scampi.jpg");
     }
 
-    li:nth-child(4) {
+    .step4 {
       background-image: url("../images/puggy.jpg");
     }
 
-    li:nth-child(5) {
+    .step5 {
       background-image: url("../images/god-speed-you-black-emperor.jpg");
     }
   }
@@ -141,6 +151,8 @@ $sequenceHeight: 400px;
   // Starting positions and default styles for content
   .title {
     display: inline-block;
+    *display: inline;
+    zoom: 1;
     position: absolute;
     bottom: 70px;
     left: 50%;
@@ -187,17 +199,24 @@ $sequenceHeight: 400px;
   #sequence {
 
     .sequence-pagination {
-      li {
+
+      > * {
         position: relative;
         display: inline-block;
+        *display: inline;
+        zoom: 1;
         vertical-align: bottom;
         list-style: none;
         width: 14%;
+        *width: 12%;
         height: auto;
         margin: 0 1%;
         padding: 10px 1%;
         cursor: pointer;
         border-bottom: black solid 4px;
+
+        font-family: 'Dosis', sans-serif;
+        line-height: 16px;
         font-size: 14px;
         font-size: 1rem;
         font-weight: bold;
@@ -233,6 +252,7 @@ $sequenceHeight: 400px;
     .title {
       width: 35%;
       top: 20px;
+      left: auto;
       right: 20px;
       margin-left: auto;
       bottom: auto;
@@ -247,6 +267,8 @@ $sequenceHeight: 400px;
         right: -10px;
         bottom: -10px;
         display: inline-block;
+        *display: inline;
+        zoom: 1;
       }
 
       h2 {

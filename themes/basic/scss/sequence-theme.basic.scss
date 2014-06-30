@@ -60,10 +60,11 @@ $sequenceHeight: 585px;
     // Make the steps the same size as the container and sit side-by-side
     > * {
       display: inline-block;
+      *display: inline;
+      zoom: 1;
       vertical-align: top;
       width: 100%;
       height: 100%;
-      white-space: normal;
       text-align: center;
     }
   }

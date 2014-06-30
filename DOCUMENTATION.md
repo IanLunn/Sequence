@@ -414,7 +414,7 @@ Both Sequence's [canvas](#animating-the-canvas) and [content](#animating-the-con
 
 By default, Sequence controls the animation of the canvas automatically via the `animateCanvas` [option](#animateCanvas) and the speed of animation via the `animateCanvasDuration` [option](#animateCanvasDuration).
 
-Note: Should you wish to modify how the canvas animates or apply additional styles, the container is given class names that represent the active step. When step1 is active, the container will have the class of `step1`, and so on.
+Note: Should you wish to modify how the canvas animates or apply additional styles, the container is given class names that represent the active step, prefixed with `sequence-`. For example, when step1 is active, the container will have the class of `sequence-step1`, and so on.
 
 Regardless of how you position steps, Sequence will find the offsetLeft and offsetTop (the final X/Y positions of an element after `top`, `margin`, `border` etc CSS properties are applied) then use these values to move the canvas so the current step is always shown within the container. Simply lay out steps as you wish -- using the CSS you are used to -- and Sequence will animate to an active step as necessary.
 
@@ -579,16 +579,16 @@ Sequence aims to work fully in the latest versions of all major browsers that su
 
 Please see the complete [list of supported browsers](https://github.com/IanLunn/Sequence/wiki/Sequence-v2-Browser-Support).
 
-In fallback mode, Sequence gives all steps a class of `animate-in` and will then restructure the canvas and steps so that they sit side-by-side, much like a traditional slider. When the user navigates between steps, the canvas is animated and moved to the relevant step. This way, the user still gets to see all of the content available in your Sequence theme, just without so many fancy effects. Animation of the canvas is controlled via JavaScript when in fallback mode.
+In fallback mode, Sequence gives all steps a class of `animate-in` and will make each step `position: absolute`. When the user navigates between steps, the step's `left` position will be animated, the current step to `-100%` or `100%` (depending on the direction of navigation) and the next to `0` -- much like a traditional slider. This way, the user still gets to see all of the content available in your Sequence theme, just without so many fancy effects. In fallback mode, animation is controlled via JavaScript.
 
 When in fallback mode, the Sequence container is given a class of `sequence-fallback` to allow you to change styles for a fallback theme accordingly and HTML structure is given the following styles via JavaScript:
 
 ```html
-<div id="sequence" style="white-space: nowrap;">
+<div id="sequence">
 
-  <div class="sequence-screen" style="overflow: hidden;">
-    <ul class="sequence-canvas" style="position: relative; width: 100%; height: 100%;">
-      <li style="width: 100%; height: 100%; white-space: normal; display: inline-block; position: relative;">
+  <div class="sequence-screen" style="overflow: hidden; width: 100%; height: 100%;">
+    <ul class="sequence-canvas" style="width: 100%; height: 100%;">
+      <li style="position: absolute; width: 100%; height: 100%;">
         <!-- Step 1 content here -->
       </li>
     </ul>
@@ -596,11 +596,9 @@ When in fallback mode, the Sequence container is given a class of `sequence-fall
 </div>
 ```
 
-In the above code example, `display: inline-block;` and `position: relative;` are only applied if self.options.fallback.layout is set to `"auto"` or `"basic"`.
+Speed of animation in [Fallback Mode](#fallback-mode) is controlled via the [speed option](#speed).
 
-The [Fallback Mode has two options](#fallback-mode) which allow you to change the [speed](#speed) of navigation between steps, and its [layout](#layout).
-
-Please see feature support for each individual property on [caniuse.com](http://caniuse.com/):
+Please see browser support for each individual property on [caniuse.com](http://caniuse.com/):
 
 - [CSS Transitions](http://caniuse.com/#search=transitions)
 - [CSS Transforms](http://caniuse.com/#search=transforms)
@@ -756,7 +754,7 @@ Should you wish to override this setting, you can set `require3d` to `true` or `
 
 Canvas animation causes Sequence to automatically animate the canvas element to show the next step. Automatic animation consists of finding the next step's position and then directly animating to it.
 
-If you'd like to customize how the canvas animates, set `animateCanvas` to `false`. Regardless of the `animateCanvas` option, the Sequence element is given a class representing the current step being viewed. `step1`, `step2`, and so on. These classes allow you to control canvas animation manually.
+If you'd like to customize how the canvas animates, set `animateCanvas` to `false`. Regardless of the `animateCanvas` option, the Sequence element is given a class representing the current step being viewed. `sequence-step1`, `sequence-step2`, and so on. These classes allow you to control canvas animation manually.
 
 **Browser Support**: In modern browsers, animation is powered by CSS transitions and JavaScript in non-supporting browsers.
 
@@ -773,7 +771,7 @@ Whether Sequence should automatically control the canvas animation when a step i
 There are two reasons you may want to disabled `animateCanvas`:
 
 1. You don't need the canvas to animate because its steps are layered on top of each other using `position: absolute;`.
-2. You want to manually control the canvas animation. When step 1 is viewed, the Sequence element will be given the class of `step1`, and so on. Using these classes you can control animation manually using either CSS3 or JavaScript via Sequence's [API](#api).
+2. You want to manually control the canvas animation. When step 1 is viewed, the Sequence element will be given the class of `seuence-step1`, and so on. Using these classes you can control animation manually using either CSS3 or JavaScript via Sequence's [API](#api).
 
 #### `animateCanvasDuration`
 
@@ -909,7 +907,7 @@ Any element can be used as a next/previous button, as long as it is given the sp
 
 ##### `nextButton`
 
-- Type: true/false or a CSS selector
+- Type: true/false or a class/ID selector
 - Default: `true`
 
 Defines a button that when clicked, causes the current step to animate out and the next to animate in.
@@ -920,13 +918,13 @@ Defines a button that when clicked, causes the current step to animate out and t
 
 - `true`: Use a next button with the default CSS selector (`.sequence-next`)
 - `false`: Don't use a next button
-- CSS Selector: Use a next button but change the default selector to something of your own liking.
+- class/ID selector: Use a next button but change the default selector to a class/ID selector of you liking
 
 Note: the button must be added to the HTML manually.
 
 ##### `prevButton`
 
-- Type: true/false or a CSS selector
+- Type: true/false or a class/ID selector
 - Default: `true`
 
 Defines a button that when clicked, causes the current step to animate out and the previous to animate in.
@@ -937,7 +935,7 @@ Defines a button that when clicked, causes the current step to animate out and t
 
 - `true`: Use a previous button with the default CSS selector (`.sequence-prev`)
 - `false`: Don't use a previous button
-- CSS Selector: Use a previous button but change the default selector to something of your own liking.
+- class/ID selector: Use a previous button but change the default selector to a class/ID selector of you liking
 
 Note: the button must be added to the HTML manually.
 
@@ -957,7 +955,7 @@ Note: Sequence can either be soft paused or hard paused. Soft pause is used inte
 
 ##### `pauseButton`
 
-- Type: true/false or a CSS selector
+- Type: true/false or a class/ID selector
 - Default: `true`
 - Dependencies: `autoPlay: true`
 
@@ -965,7 +963,7 @@ Defines a button that when clicked, pauses the autoPlay feature.
 
 - `true`: Use a pause button with the default CSS selector (`.sequence-pause`)
 - `false`: Don't use a pause button
-- CSS Selector: Use a pause button but change the default selector to something of your own liking.
+- class/ID selector: Use a pause button but change the default selector to a class/ID selector of you liking
 
 Note: the button must be added to the HTML manually.
 
@@ -995,7 +993,7 @@ Pagination allows for a list of links that represents each step within Sequence.
 
 ##### `pagination`
 
-- Type: true/false or a CSS selector
+- Type: true/false or a class/ID selector
 - Default: `true`
 
 Pagination associates immediate descendant elements within the pagination selector (`.sequence-pagination` by default) to each Sequence step. If `pagination` is `true`, the following HTML can be included in your document to act as pagination:
@@ -1044,7 +1042,7 @@ CSS:
 
 - `true`: Use pagination with the default CSS selector (`.sequence-pagination`)
 - `false`: Don't use pagination
-- CSS Selector: Use pagination but change the default selector to something of your own liking.
+- class/ID selector: Use pagination but change the default selector to a class/ID selector of you liking
 
 Note: the pagination elements must be added to the HTML manually.
 
@@ -1054,14 +1052,16 @@ Sequence's preloader allows the ability to hide content or display some form of 
 
 Sequence relies on the third-party [imagesLoaded](https://github.com/desandro/imagesloaded/) to determine when images have loaded.
 
+**Browser Support**: [imagesLoaded](https://github.com/desandro/imagesloaded/) does not support Internet Explorer 7 due to its lack of [querySelectorAll](http://caniuse.com/#feat=queryselector) functionality. As such, Sequence's preloader will not operate when viewed in Internet Explorer 7.
+
 ##### `preloader`
 
-- Type: true/false or a CSS selector
+- Type: true/false or a class/ID selector
 - Default: `false`
 
 - `true`: Append the default preloader element with the CSS selector (`.sequence-preloader`) to the Sequence element, and add the preloader styles to `<head></head>`
 - `false`: Don't use a preloader
-- CSS Selector: Use a preloader but change the default selector to something of your own liking and don't use default styles, use your own instead.
+- class/ID selector: Use a preloader but change the default selector to a class/ID selector of you liking
 
 When the preloader is being used, the Sequence element is give a class of `sequence-preloading` during the preloading phase, then `sequence-preloaded` when preloading is complete.
 
@@ -1105,6 +1105,10 @@ CSS:
 ```css
   .sequence-preloader {
     position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     z-index: 9999;
     height: 100%;
     width: 100%;
@@ -1229,6 +1233,8 @@ When the left button is pressed, the Sequence event `self.prev()` is initiated. 
 
 Touch swipe capabilities are powered via the third-party library [Hammer.js](http://eightmedia.github.io/hammer.js/).
 
+**Browser Support**: [Hammer.js](http://eightmedia.github.io/hammer.js/) does not support Internet Explorer 7 and 8 due to its lack of `addEventListener` functionality. As such, Sequence's touch swipe functionality will not operate when viewed in Internet Explorer 7 and 8.
+
 #### `swipeNavigation`
 
 - Type: true/false
@@ -1351,8 +1357,7 @@ Fallback mode options are included in the options of each instance of Sequence, 
 <script>
   var options = {
     fallback: {
-      speed: 500,
-      layout: "auto"
+      speed: 500
     }
   };
 
@@ -1370,17 +1375,6 @@ Note: When using 3D transforms to animate the canvas, please also see the [`requ
 - Default: `500`
 
 The speed at which steps should transition between one another when in fallback mode.
-
-##### `layout`
-
-- Type: a string - `"auto"` | `"basic"` | `"custom"`
-- Default: `"auto"`
-
-The layout to be used when in fallback mode.
-
-- `"auto"`: Sequence will detect the best layout to use based on the `animateCanvas` option. If `animateCanvas `is false, the "basic" layout will be used. If `animateCanvas` is true, the "custom" layout is used
-- `"basic"`: Layout each step in one row using inline-block
-- `"custom"`: Assume the developer defined layout is to be used and don't layout the steps in any way.
 
 ## API
 

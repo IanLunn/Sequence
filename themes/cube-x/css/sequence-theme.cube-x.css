@@ -26,7 +26,6 @@ body {
   height: 400px;
   width: 100%;
   max-width: 400px;
-  /* overflow: hidden; */
   margin: 0 auto;
   padding: 0;
   border: black solid 2px;
@@ -45,6 +44,10 @@ body {
   list-style: none;
 }
 
+#sequence.sequence-fallback .sequence-canvas {
+  overflow: hidden;
+}
+
 #sequence .nav {
   margin-top: 10px;
   text-align: center;
@@ -52,12 +55,16 @@ body {
 
 #sequence .nav > * {
   display: inline-block;
+  *display: inline;
+  zoom: 1;
   vertical-align: middle;
 }
 
 #sequence .nav .sequence-pagination li {
   cursor: pointer;
   display: inline-block;
+  *display: inline;
+  zoom: 1;
   padding: 8px;
   background: #66D9E8;
   color: white;
@@ -79,6 +86,7 @@ body {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  background: #66CFE8;
   background: rgba(102, 217, 232, 0.8);
   color: white;
   font-size: 0;
@@ -92,12 +100,16 @@ body {
 #sequence .sequence-canvas > *:before {
   content: "";
   display: inline-block;
+  *display: inline;
+  zoom: 1;
   vertical-align: middle;
   height: 100%;
 }
 
 #sequence .sequence-canvas > * .title {
   display: inline-block;
+  *display: inline;
+  zoom: 1;
   vertical-align: middle;
   width: 92%;
   padding: 0 4%;

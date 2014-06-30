@@ -23,8 +23,9 @@ var sequenceElement = document.getElementById("sequence");
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
   autoPlay: false,
-  animateCanvas: false,
-  phaseThreshold: false
+  animateCanvas: true,
+  phaseThreshold: false,
+  preloader: true
 }
 
 // Launch Sequence on the element, and with the options we specified above

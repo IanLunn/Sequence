@@ -34,28 +34,35 @@
   z-index: 10;
   bottom: 10px;
   left: 0;
+  right: 0;
   padding: 0;
-  width: 100%;
+  margin: 0;
   font-size: 0;
-  font-family: 'Dosis', sans-serif;
   font-weight: 600;
   text-align: center;
 }
 
-#sequence .sequence-pagination li {
+#sequence .sequence-pagination > * {
   position: relative;
   display: inline-block;
+  *display: inline;
+  zoom: 1;
   width: 40px;
   height: 40px;
   margin: 0 1%;
   cursor: pointer;
   background: #512A5E;
+  border: 0;
+  font: 0/0 a;
+  text-shadow: none;
+  color: transparent;
 }
 
-#sequence .sequence-pagination li.sequence-current {
+#sequence .sequence-pagination > *.sequence-current {
   background: #F7DB15;
 }
 
+#sequence .sequence-screen,
 #sequence .sequence-canvas,
 #sequence .sequence-canvas > * {
   margin: 0;
@@ -74,6 +81,8 @@
 #sequence .sequence-canvas > * {
   position: relative;
   display: inline-block;
+  *display: inline;
+  zoom: 1;
   vertical-align: top;
   width: 100%;
   height: 100%;
@@ -84,23 +93,23 @@
   background-position: 50%;
 }
 
-#sequence .sequence-canvas li:nth-child(1) {
+#sequence .sequence-canvas .step1 {
   background-image: url("../images/kaki-king.jpg");
 }
 
-#sequence .sequence-canvas li:nth-child(2) {
+#sequence .sequence-canvas .step2 {
   background-image: url("../images/micky-green.jpg");
 }
 
-#sequence .sequence-canvas li:nth-child(3) {
+#sequence .sequence-canvas .step3 {
   background-image: url("../images/scampi.jpg");
 }
 
-#sequence .sequence-canvas li:nth-child(4) {
+#sequence .sequence-canvas .step4 {
   background-image: url("../images/puggy.jpg");
 }
 
-#sequence .sequence-canvas li:nth-child(5) {
+#sequence .sequence-canvas .step5 {
   background-image: url("../images/god-speed-you-black-emperor.jpg");
 }
 
@@ -121,6 +130,8 @@
 
 #sequence .title {
   display: inline-block;
+  *display: inline;
+  zoom: 1;
   position: absolute;
   bottom: 70px;
   left: 50%;
@@ -161,17 +172,22 @@
 }
 
 @media only screen and (min-width: 640px) {
-  #sequence .sequence-pagination li {
+  #sequence .sequence-pagination > * {
     position: relative;
     display: inline-block;
+    *display: inline;
+    zoom: 1;
     vertical-align: bottom;
     list-style: none;
     width: 14%;
+    *width: 12%;
     height: auto;
     margin: 0 1%;
     padding: 10px 1%;
     cursor: pointer;
     border-bottom: black solid 4px;
+    font-family: 'Dosis', sans-serif;
+    line-height: 16px;
     font-size: 14px;
     font-size: 1rem;
     font-weight: bold;
@@ -192,7 +208,7 @@
     transition-property: width;
   }
 
-  #sequence .sequence-pagination li.sequence-current {
+  #sequence .sequence-pagination > *.sequence-current {
     width: 24%;
     background: #512A5E;
     border-bottom-color: #F7DB15;
@@ -207,6 +223,7 @@
   #sequence .title {
     width: 35%;
     top: 20px;
+    left: auto;
     right: 20px;
     margin-left: auto;
     bottom: auto;
@@ -226,6 +243,8 @@
     right: -10px;
     bottom: -10px;
     display: inline-block;
+    *display: inline;
+    zoom: 1;
   }
 
   #sequence .title h2 {

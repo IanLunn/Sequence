@@ -29,6 +29,10 @@
   padding: 0;
 }
 
+#sequence .sequence-preloader {
+  background: #D9D9D9;
+}
+
 #sequence .sequence-screen,
 #sequence .sequence-canvas,
 #sequence .sequence-canvas > * {
@@ -39,18 +43,16 @@
   list-style: none;
 }
 
+#sequence .sequence-canvas > * {
+  position: absolute;
+}
+
 #sequence .sequence-screen {
   max-width: 960px;
   overflow: hidden;
   position: relative;
   display: block;
   margin: 0 auto;
-}
-
-#sequence .sequence-canvas > * {
-  position: absolute;
-  font-size: 0;
-  /* Prevent 4px gap between inline-block elements */
 }
 
 #sequence .navigation {
@@ -79,6 +81,7 @@
   font: 0/0 a;
   text-shadow: none;
   color: transparent;
+  *text-indent: -9999px;
 }
 
 #sequence .navigation .sequence-next {
@@ -161,6 +164,8 @@
 #sequence .title:before {
   content: "";
   display: inline-block;
+  *display: inline;
+  zoom: 1;
   vertical-align: middle;
   height: 100%;
   width: 0;
@@ -171,6 +176,8 @@
   font-size: 22px;
   font-size: 1.4rem;
   display: inline-block;
+  *display: inline;
+  zoom: 1;
   width: 98%;
   vertical-align: middle;
   text-align: center;
@@ -238,12 +245,16 @@
     content: "";
     height: 100%;
     display: inline-block;
+    *display: inline;
+    zoom: 1;
     vertical-align: middle;
   }
 
   #sequence .model,
   #sequence .title {
     display: inline-block;
+    *display: inline;
+    zoom: 1;
     vertical-align: middle;
     height: auto;
     margin: 0 5% 0 2.5%;
@@ -282,6 +293,8 @@
   #sequence .title h2,
   #sequence .title h3 {
     display: inline-block;
+    *display: inline;
+    zoom: 1;
     width: auto;
     margin: 0;
     opacity: 0;
@@ -336,9 +349,10 @@
 
   #sequence .pagination-container {
     position: absolute;
+    left: 0;
+    right: 0;
     z-index: 10;
     bottom: 5px;
-    width: 100%;
     pointer-events: none;
   }
 
@@ -352,6 +366,8 @@
 
   #sequence .sequence-pagination li {
     display: inline-block;
+    *display: inline;
+    zoom: 1;
     list-style: none;
     margin: 0 10px;
     padding: 0;
@@ -401,6 +417,8 @@
 
   #sequence .title br {
     display: inline-block;
+    *display: inline;
+    zoom: 1;
   }
 }
 
