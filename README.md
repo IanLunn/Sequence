@@ -67,12 +67,8 @@ The following is a complete list of the work still needed to be carried out to r
 
 1. Clear all [listed bugs](https://github.com/IanLunn/Sequence/issues?milestone=11&state=open)
 - Implement reverse animations for the `reverseWhenNavigatingBackwards` option
-- Remove event for hashChange when using IE
 - Implement AMD/Require.js support
-- Make `_getAnimationMap.destroyClone()` IE7 compatible
-- Make `_ui.getElement()` IE7 compatible
-- Implement `_animation.stepSkipped()` functionality to stop a step from animating when it is skipped
-- Browser/Device Test - [See browser testing so far here](https://github.com/IanLunn/Sequence/wiki/Sequence-v2-Browser-Support)
+- Implement `_animation.stepSkipped()` functionality to stop a step from 
 - [Improve Yeoman generator for Sequence](https://github.com/IanLunn/generator-sequence/issues) themes
 
 ## Browser Support
