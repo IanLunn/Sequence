@@ -21,7 +21,7 @@ function defineSequence(imagesLoaded, Hammer) {
    * @return {Object} self - Properties and methods available to this instance
    * @api public
    */
-  var Sequence = (function(element, options) {
+  var Sequence = (function (element, options) {
 
     // Prevent an element from have multiple instances of Sequence applied to it
     if (element.getAttribute("data-sequence") === "true") {
@@ -61,6 +61,9 @@ function defineSequence(imagesLoaded, Hammer) {
       // determine this automatically unless you change the following value to
       // true or false
       require3d: "auto",
+
+      // is a transform-origin-z workaround required for Webkit based browsers?
+      transformOriginWorkaround: true,
 
 
       /* --- Canvas Animation --- */
@@ -169,8 +172,8 @@ function defineSequence(imagesLoaded, Hammer) {
 
       // Events to run when the user presses the left/right keys
       keyEvents: {
-        left: function(sequence) {sequence.prev()},
-        right: function(sequence) {sequence.next()}
+        left: function(sequence) {sequence.prev();},
+        right: function(sequence) {sequence.next();}
       },
 
 
@@ -181,8 +184,8 @@ function defineSequence(imagesLoaded, Hammer) {
 
       // Events to run when the user swipes in a particular direction
       swipeEvents: {
-        left: function(sequence) {sequence.next()},
-        right: function(sequence) {sequence.prev()},
+        left: function(sequence) {sequence.next();},
+        right: function(sequence) {sequence.prev();},
         up: false,
         down: false
       },
@@ -216,7 +219,7 @@ function defineSequence(imagesLoaded, Hammer) {
         // The speed to transition between steps
         speed: 500
       }
-    }
+    };
 
     // See Sequence._animation.domDelay() for an explanation of this
     var domThreshold = 50;
@@ -1451,7 +1454,16 @@ function defineSequence(imagesLoaded, Hammer) {
             // Apply the scale transform CSS to the screen
             self.screen.style[Modernizr.prefixed("transitionDuration")] = duration + "ms";
             self.screen.style[Modernizr.prefixed("transitionProperty")] = Modernizr.prefixed("transform");
-            self.screen.style[Modernizr.prefixed("transform")] = "scale(" + transformCss.scale + ")";
+
+
+            if (self.transformOriginSupported === true) {
+              self.screen.style[Modernizr.prefixed("transform")] = "scale(" + transformCss.scale + ")";
+            }
+
+            // Workaround for Webkit bug
+            else {
+              self.screen.style[Modernizr.prefixed("transform")] = "translateZ(" + transformCss.origins.split(" ")[2] + ") scale(" + transformCss.scale + ")";
+            }
 
             // Apply the translate/rotate transform CSS to the canvas
             canvas.style[Modernizr.prefixed("transitionDuration")] = duration + "ms";
@@ -2231,6 +2243,7 @@ function defineSequence(imagesLoaded, Hammer) {
         self.transitionsSupported = false;
         self.animationsSupported = false;
         self.transformStyleSupported = false;
+        self.transformOriginSupported = true;
         self.inFallbackMode = false;
 
         // Does the browser support transform-style: preserve-3d?
@@ -2250,12 +2263,49 @@ function defineSequence(imagesLoaded, Hammer) {
           return (computedStyle === val);
         });
 
+
+
+
+
+
         // Does the theme require 3D support?
         self.requires3d = is3dRequired(dataAttributes);
 
-        // Is transform-style: preserve-3d supported?
-        if (Modernizr.csstransformspreserve3d === true) {
-          self.transformStyleSupported = true;
+        // Additional tests when 3D is required
+        if (self.requires3d === true) {
+
+          // Is transform-style: preserve-3d supported?
+          if (Modernizr.csstransformspreserve3d === true) {
+            self.transformStyleSupported = true;
+          }
+
+          /**
+           * Determine if the browser has the transform-origin-z bug (should only
+           * be in Webkit based browsers and not Blink).
+           *
+           * This feature detection is far from perfect and may return false
+           * positives in the future. If this is the case, the workaround can be
+           * disabled/enabled via the transformOriginWorkaround option.
+           *
+           * As the workaround will only be enabled when transformOrigin is prefixed
+           * with -webkit-, we hope that when the prefix is removed, so too is the
+           * bug and the world can rest happy knowing this function will be made
+           * redundant.
+           *
+           * Use the transformOrigin workaround if:
+           *
+           * - The workaround is enabled in options
+           * - Uses the -webkit- prefix for transformOrigin
+           * - The browser is not Blink (separate Blink from WebKit)
+           */
+          if (
+            self.options.transformOriginWorkaround === true
+            && Modernizr.prefixed("transformOrigin") === "WebkitTransformOrigin"
+            && !(window.chrome && 'CSS' in window)
+
+          ) {
+            self.transformOriginSupported = false;
+          }
         }
 
         // Are transitions supported?

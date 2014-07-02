@@ -750,6 +750,17 @@ As described in [Animating the Canvas](#animating-the-canvas), the canvas can ha
 
 Should you wish to override this setting, you can set `require3d` to `true` or `false`.
 
+#### `transformOriginWorkaround`
+
+- Type: true/false
+- Default: `true`
+
+In Webkit based browsers (Apple Safari and any browser on iOS), there is currently
+a [bug](https://bugs.webkit.org/show_bug.cgi?id=88587) that affects `transform-origin-z` which Sequence uses when 3D transforms
+are applied to the canvas.
+
+To workaround this bug, Sequence uses feature detection to determine if the bug exists. Unfortunately, the feature detection isn't as accurate as required and potentially in the future when the bug is fixed, the workaround could still apply, breaking what was fixed. If this is the case, the `transformOriginWorkaround` should be set to `false` both for individual themes and as the default in `sequence.js`.
+
 ### Canvas Animation
 
 Canvas animation causes Sequence to automatically animate the canvas element to show the next step. Automatic animation consists of finding the next step's position and then directly animating to it.

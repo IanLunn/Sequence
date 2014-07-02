@@ -1,10 +1,10 @@
-# Cube X
+# 3d Stack
 
-> A basic 3D cube that spins on the X axis
+> A 3D theme that moves slides in from the distance and out toward the viewer
 
-Cube X is powered by [Sequence.js](http://sequencejs.com/) - The open-source CSS animation framework.
+3d Stack is powered by [Sequence.js](http://sequencejs.com/) - The open-source CSS animation framework.
 
-Author: [Ian Lunn](https://ianlunn.co.uk)  
+Author: [Ian Lunn](https://ianlunn.co.uk/)  
 Email: [hello@ianlunn.co.uk](mailto://hello@ianlunn.co.uk)  
 GitHub: [@IanLunn](https://github.com/IanLunn)  
 Twitter: [@IanLunn](https://twitter.com/IanLunn)  
@@ -15,21 +15,21 @@ Copyright (c) 2014 Ian Lunn
 
 ## Getting Started
 
-1. Move the `cube-x` directory to the same directory as the page you'd like the theme to appear on.
+1. Move the `3d-stack` directory to the same directory as the page you'd like the theme to appear on.
 2. Add the stylesheet within the `<head></head>` tags on your page below existing stylesheets, using the following:
-`<link rel="stylesheet" href="cube-x/css/sequence-theme.cube-x.css" />`
+`<link rel="stylesheet" href="3d-stack/css/sequence-theme.3d-stack.css" />`
 3. From index.html in the downloaded theme, copy everything inside the <body></body> tags, then paste into the page you'd like the theme to appear on.
 4. Add a reference to the Sequence library, its third-party dependencies, and the theme options just before the closing `</body>` element on your page:
 ```javascript
 <script src="scripts/third-party/imagesloaded.pkgd.min.js"></script>
 <script src="scripts/third-party/hammer.min.js"></script>
 <script src="scripts/sequence.min.js"></script>
-<script src="scripts/sequence-theme.cube-x.js"></script>
+<script src="scripts/sequence-theme.3d-stack.js"></script>
 ```
 5. From index.html in the downloaded theme, copy everything inside the <body></body> tags, then paste into the page you'd like the theme to appear on.
 6. Save your file and upload newly added/modified files to your web server. You're done!
 
-A theme's options can be changed in `scripts/sequence-theme.cube-x.js`. See Options in the [documentation](http://www.sequencejs.com/developers/documentation/).
+A theme's options can be changed in `scripts/sequence-theme.3d-stack.js`. See Options in the [documentation](http://www.sequencejs.com/developers/documentation/).
 
 ## Support
 

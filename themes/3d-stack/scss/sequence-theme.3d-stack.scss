@@ -1,0 +1,86 @@
+/*!
+ * Theme Name: 3d Stack
+ * Version: 0.1.0
+ * Theme URL: http://sequencejs.com/themes/3d-stack/
+ *
+ * A 3D theme that moves slides in from the distance and out toward the viewer
+ *
+ * Powered by Sequence.js - The open-source CSS animation framework.
+ *
+ * Author: Ian Lunn
+ * Author URL: https://ianlunn.co.uk/
+ *
+ * 3d Stack Sequence Theme Copyright (c) Ian Lunn 2014
+ * License: MIT http://opensource.org/licenses/MIT
+ *
+ * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
+ */
+
+@import "partials/mixins";
+
+$sequenceWidth: 960px;
+$sequenceHeight: 585px;
+
+#sequence {
+  position: relative;
+
+  // Dimensions
+  height: $sequenceHeight;
+  width: 100%;
+  max-width: $sequenceWidth;
+
+  // Hide anything that goes beyond the boundaries of the Sequence container
+  overflow: hidden;
+
+  // Center the Sequence container on the page
+  margin: 0 auto;
+  padding: 0;
+
+  // Some basic styles
+  border: black solid 2px;
+  font-family: sans-serif;
+
+  @include prefixed(perspective, 600px);
+
+  @include prefixed(transition-duration, 1s);
+  @include prefixed(transition-property, background-color);
+
+  // Reset the canvas and steps for more browser consistency
+  .sequence-screen,
+  .sequence-canvas,
+  .sequence-canvas > * {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &.sequence-step1 {
+    background: blue;
+  }
+
+  &.sequence-step2 {
+    background: green;
+  }
+
+  &.sequence-step3 {
+    background: orange;
+  }
+
+  .sequence-canvas > * {
+    color: white;
+    @include prefixed(transition-duration, 1s);
+  }
+
+  // Animate in positions for content
+  .animate-in {
+    opacity: 1;
+  }
+
+  // Animate out positions for content
+  .animate-out {
+    opacity: 0;
+  }
+}

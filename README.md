@@ -1,11 +1,11 @@
-Sequence v2 (Pre-alpha) [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=IanLunn&url=https://github.com/IanLunn/Sequence&title=Sequence&language=english&tags=github&category=software)
+Sequence v2 (Alpha) [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=IanLunn&url=https://github.com/IanLunn/Sequence&title=Sequence&language=english&tags=github&category=software)
 =====================
 
 ## The CSS Animation Framework
 
 *Pre-alpha warning: Sequence.js v2 is not yet ready for production and is only made available for testing and development. Many features are yet to be implemented and those that have are yet to be tested. If you're looking for a production ready version, checkout [Sequence v1](http://sequencejs.com/).*
 
-Sequence allows you to create your own unique animated themes for sliders, presentations, banners, accordions, and other step-based applications.
+Sequence - An animation framework for creating sliders, presentations, banners, accordions, and other step-based applications.
 
 ## Philosophy
 
@@ -68,7 +68,7 @@ The following is a complete list of the work still needed to be carried out to r
 1. Clear all [listed bugs](https://github.com/IanLunn/Sequence/issues?milestone=11&state=open)
 - Implement reverse animations for the `reverseWhenNavigatingBackwards` option
 - Implement AMD/Require.js support
-- Implement `_animation.stepSkipped()` functionality to stop a step from 
+- Implement `_animation.stepSkipped()` functionality to stop a step from
 - [Improve Yeoman generator for Sequence](https://github.com/IanLunn/generator-sequence/issues) themes
 
 ## Browser Support
