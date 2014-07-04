@@ -1,16 +1,18 @@
 {
-  "name": "Sequence",
-  "version": "2.0.0-alpha.5",
-  "description": "The CSS Animation Framework",
+  "name": "sequencejs",
+  "description": "CSS animation framework for creating responsive sliders, presentations, banners, and other step-based applications.",
+  "version": "2.0.0-beta.1",
+  "main": "scripts/sequence.min.js",
   "license": "MIT",
-  "homepage": "https://github.com/IanLunn/Sequence",
-
+  "homepage": "http://sequencejs.com/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IanLunn/Sequence.git"
+  },
+  "bugs": "https://github.com/IanLunn/Sequence/issues",
   "authors": [
     "Ian Lunn <hello@ianlunn.co.uk>"
   ],
-
-  "main": "scripts/sequence.min.js",
-
   "keywords": [
     "sequence",
     "sequence.js",
@@ -24,9 +26,7 @@
     "animation framework",
     "css animation"
   ],
-
   "license": "MIT",
-
   "ignore": [
     "**/.*",
     "node_modules",
@@ -34,7 +34,6 @@
     "test",
     "tests"
   ],
-
   "dependencies": {
     "hammerjs": "1.1.3",
     "imagesloaded": "3.1.5"

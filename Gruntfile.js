@@ -20,6 +20,16 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
+    jshint: {
+      ignore_warning: {
+        options: {
+          '284': true,
+        },
+        src: ['src/sequence.js'],
+      },
+      all: ['src/sequence.js']
+    },
+
     copy: {
       main: {
         files: [
@@ -29,15 +39,6 @@ module.exports = function(grunt) {
         ]
       }
     },
-
-    jsdoc: {
-			dist : {
-				src: ['src/**/*.js'],
-				options: {
-					destination: 'doc'
-				}
-			}
-		},
 
     version: {
 			js: {
@@ -341,11 +342,6 @@ module.exports = function(grunt) {
     'autoprefixer',
     'cssmin',
     'uglify'
-  ]);
-
-  // Setup documentation
-  grunt.registerTask('doc', [
-    'jsdoc'
   ]);
 
   // Compile themes into zip files for distribution (used internally)

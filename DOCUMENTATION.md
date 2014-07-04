@@ -46,12 +46,18 @@ At any point in the documentation, if you [need support](#need-support), we'll d
 
 ## Download Sequence
 
-[Download Sequence here](https://github.com/IanLunn/Sequence/archive/v2.zip)
+- [Download Sequence](https://github.com/IanLunn/Sequence/archive/v2.zip)
 
-Or if you have [Bower](http://bower.io/) installed, use the following command:
+Sequence can also be installed using the [Bower](http://bower.io/) command:
 
 ```
 bower install sequencejs
+```
+
+or [NPM](https://www.npmjs.org/):
+
+```
+npm install sequencejs
 ```
 
 ### Package Contents
@@ -135,6 +141,8 @@ It is possible to place multiple instances of Sequence on the same page, like so
 ```
 
 Here the page will have two instances of Sequence, one attached to `<div id="sequence1"></div>`, the other `<div id="sequence2"></div>`.
+
+Tip: When Sequence is initiated, it is given a class of `sequence-active`. You may like to use this class to override styles originally applied in case JavaScript is disbaled in the browser.
 
 ### Add HTML (Structure)
 

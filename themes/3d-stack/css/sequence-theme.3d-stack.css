@@ -59,7 +59,12 @@
 }
 
 #sequence .sequence-canvas > * {
+  opacity: 0;
+}
+
+#sequence.sequence-active .sequence-canvas > * {
   color: white;
+  opacity: 1;
   -webkit-transition-duration: 1s;
   transition-duration: 1s;
 }

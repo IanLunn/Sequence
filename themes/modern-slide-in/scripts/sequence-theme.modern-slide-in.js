@@ -1,6 +1,6 @@
 /*!
  * Theme Name: Modern Slide In
- * Version: 0.2.0
+ * Version: 2.0.0
  * Theme URL: http://www.sequencejs.com/themes/modern-slide-in/
  *
  * A minimalist theme for showcasing products.
@@ -22,8 +22,7 @@ var sequenceElement = document.getElementById("sequence");
 // Place your Sequence options here to override defaults
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
-  autoPlay: false,
-  animateCanvas: true,
+  animateCanvas: false,
   phaseThreshold: false,
   preloader: true
 }

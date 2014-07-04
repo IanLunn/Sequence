@@ -69,8 +69,14 @@ $sequenceHeight: 585px;
     background: orange;
   }
 
+  // Hide all steps in case JavaScript is disabled (only the one with animate-in will be visible)
   .sequence-canvas > * {
+    opacity: 0;
+  }
+
+  &.sequence-active .sequence-canvas > * {
     color: white;
+    opacity: 1;
     @include prefixed(transition-duration, 1s);
   }
 

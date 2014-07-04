@@ -1,13 +1,11 @@
 # Modern Slide In
 
-> A minimalist theme for showcasing products.
+> A minimalist theme for showcasing products
 
-Modern Slide In is powered by [Sequence.js](http://sequencejs.com/) - The open-source CSS animation framework.
+Modern Slide In is powered by [Sequence.js](http://sequencejs.com/) - CSS animation framework for creating responsive sliders, presentations, banners, and other step-based applications.
 
 Author: [Ian Lunn](https://ianlunn.co.uk/)  
-Email: [hello@ianlunn.co.uk](mailto://hello@ianlunn.co.uk)  
-GitHub: [@IanLunn](https://github.com/IanLunn)  
-Twitter: [@IanLunn](https://twitter.com/IanLunn)  
+Email: [hello@ianlunn.co.uk](mailto://hello@ianlunn.co.uk)
 
 License: [MIT](http://opensource.org/licenses/MIT)
 
@@ -52,7 +50,7 @@ Sequence themes are made available under their own licenses. Please respect them
 
 ## Release History
 
-### v0.2.0
+### v2.0.0
 *04/06/2014*
 
 - Built from ground-up to work with Sequence v2

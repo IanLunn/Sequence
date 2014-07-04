@@ -1,6 +1,6 @@
 /*!
  * Theme Name: Modern Slide In
- * Version: 0.2.0
+ * Version: 2.0.0
  * Theme URL: http://www.sequencejs.com/themes/modern-slide-in/
  *
  * A minimalist theme for showcasing products.
@@ -27,6 +27,8 @@
   overflow: hidden;
   margin: 0 auto;
   padding: 0;
+  /* Fallback styles */
+  /* Hide navigation when JS is disabled */
 }
 
 #sequence .sequence-preloader {
@@ -47,12 +49,36 @@
   position: absolute;
 }
 
+#sequence.sequence-fallback .sequence-screen {
+  max-width: 1280px;
+}
+
+#sequence.sequence-fallback .sequence-pagination li {
+  position: relative;
+}
+
+#sequence.sequence-fallback .sequence-next:hover,
+#sequence.sequence-fallback .sequence-prev:hover,
+#sequence.sequence-fallback .sequence-pagination li:hover {
+  top: -4px;
+}
+
 #sequence .sequence-screen {
   max-width: 960px;
   overflow: hidden;
   position: relative;
   display: block;
   margin: 0 auto;
+}
+
+#sequence .navigation,
+#sequence .pagination-container {
+  display: none;
+}
+
+#sequence.sequence-active .navigation,
+#sequence.sequence-active .pagination-container {
+  display: block;
 }
 
 #sequence .navigation {
@@ -193,7 +219,6 @@
 }
 
 #sequence .title h2 {
-  margin-bottom: .4em;
   padding: .2em 1%;
   font-family: 'Oxygen', sans-serif;
   color: white;
