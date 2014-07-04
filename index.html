@@ -2,31 +2,45 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-
-	<title></title>
-
-	<meta name="description" content="">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-	<link href="css/styles.css" rel="stylesheet" media="all">
-
+	<title>Sequence.js - Intro Theme</title>
+	<link href="css/demo.css" rel="stylesheet" media="all">
+  <link href="css/sequence-theme.intro.css" rel="stylesheet" media="all">
+  <!--[if lt IE 9]>
+    <script src="scripts/respond.min.js"></script>
+  <![endif]-->
 </head>
 <body>
+	<div id="sequence">
 
-	<p>Sequence v2 is currently in pre-alpha. This page will eventually be fleshed out with an intro slider and lots more useful info.</p>
+    <div class="navigation">
+      <button class="sequence-prev">Previous</button>
+      <button class="sequence-next">Next</button>
+    </div>
 
-	<p>For now, check out the demo themes or head to the <a href="DOCUMENTATION.md">documentation</a> to create your own:</p>
+    <div id="sequence">
+	    <div class="sequence-screen">
+	      <ul class="sequence-canvas">
+	        <li>
+	          <h2>Powered by Sequence.js</h2>
+	          <h3>The open-source CSS animation framework</h3>
+	        </li>
+	        <li>
+	          <h2>Create Unique Animated Themes</h2>
+	          <h3>For sliders, presentations, banners, accordions, and other step-based applications</h3>
+	        </li>
+	        <li>
+	          <h2>No Restrictions, Endless Possibilities</h2>
+	          <h3>Use the HTML and CSS syntax you're used to. No JavaScript knowledge required.</h3>
+	        </li>
+	      </ul>
+	    </div>
+	  </div>
 
-	<ul>
-		<li><a href="themes/basic/" title="Basic Sequence Theme">Basic</a></li>
-		<li><a href="themes/modern-slide-in/" title="Modern Slide In Sequence Theme">Modern Slide In</a></li>
-		<li><a href="themes/pop-slide/" title="Pop Slide Sequence Theme">Pop Slide</a></li>
-		<li><a href="themes/cube-x/" title="Cube X Sequence Theme">Cube X</a></li>
-		<li><a href="themes/test-theme/" title="Test Theme Sequence Theme">Test Theme</a></li>
-		<li><a href="themes/multiple-test/" title="Multiple Test Theme Sequence Theme">Multiple Test Theme</a></li>
-	</ul>
-
-	<p><a href="https://github.com/IanLunn/Sequence/tree/v2">Sequence.js on GitHub</a></p>
-
+  <script src="scripts/imagesloaded.pkgd.min.js"></script>
+  <script src="scripts/hammer.min.js"></script>
+  <script src="scripts/sequence.js"></script>
+  <script src="scripts/sequence-theme.intro.js"></script>
 </body>
 </html>

@@ -1800,7 +1800,34 @@ Returns whether the browser supports CSS transitions.
 
 ## Using Grunt
 
-// TODO
+The Sequence project uses [Grunt](http://gruntjs.com/) to automate useful tasks. With Grunt installed (see Grunt's [Getting Started](http://gruntjs.com/getting-started)), use the following command to install Sequence's project dependencies:
+
+```
+npm install
+```
+
+Once Sequence's project dependencies have installed you can use the commands `grunt`, `grunt run`, `grunt jshint`.
+
+### `grunt`
+
+This is the default command that will start a development environment with the following automated tasks:
+
+- Starts a [livereload](http://livereload.com/) session that will reload your browser whenever a file is changed (be sure to install [livereload](http://livereload.com/))
+- Opens your browser and navigates to `http://localhost:8000/`
+- Sets up a *watch* task to run the following sub-tasks:
+  - Update the version number in `sequence.js` and `bower.json` when changed in `package.json`
+  - Copy `src/sequence.js` to the `scripts` directory and create an uglify (minified) copy as `scripts/sequence.min.js`
+  - Process any `.scss` files found in the `scss` directory, autoprefix them and then copy to `css` and minify
+
+You only need to run `grunt` per each development session as the *watch* task will continue to operate as you modify files.
+
+### `grunt run`
+
+The `grunt run` command is a manual version of the *watch* sub tasks listed for the `grunt` command.
+
+### `grunt jshint`
+
+The `grunt jshint` command will run a command line version of [JSHint](http://www.jshint.com/about/) that suggests improvements that can be made in `src/sequence.js`.
 
 ## Need Support?
 

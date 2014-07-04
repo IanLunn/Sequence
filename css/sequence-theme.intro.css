@@ -1,97 +1,95 @@
 /*!
- * Theme Name: Multiple Test
+ * Theme Name: Basic
  * Version: 0.1.0
- * Theme URL: http://sequencejs.com/themes/multiple-test/
+ * Theme URL:
  *
- * A theme to test multiple instances
+ * A simple theme that slides side-to-side
  *
  * Powered by Sequence.js - The open-source CSS animation framework.
  *
  * Author: Ian Lunn
  * Author URL: https://ianlunn.co.uk/
  *
- * Multiple Test Sequence Theme Copyright (c) Ian Lunn 2014
+ * Basic Sequence Theme Copyright (c) Ian Lunn 2014
  * License: MIT http://opensource.org/licenses/MIT
  *
  * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
  */
-
-.sequence-pagination .sequence-current {
-  border: red solid 1px;
-}
-
-.sequence-pause.sequence-paused {
-  border: red solid 1px;
-}
-
-.sequence {
+#sequence {
   position: relative;
-  height: 400px;
+  height: 585px;
   width: 100%;
-  max-width: 600px;
+  max-width: 960px;
   overflow: hidden;
   margin: 0 auto;
   padding: 0;
   border: black solid 2px;
   font-family: sans-serif;
 }
-
-.sequence .sequence-screen,
-.sequence .sequence-canvas,
-.sequence .sequence-canvas > * {
+#sequence .sequence-screen,
+#sequence .sequence-canvas,
+#sequence .sequence-canvas > * {
   margin: 0;
   padding: 0;
   list-style: none;
 }
-
-.sequence .sequence-canvas {
+#sequence .sequence-canvas {
   position: absolute;
   height: 100%;
   width: 100%;
   white-space: nowrap;
 }
-
-.sequence .sequence-canvas > * {
+#sequence .sequence-canvas > * {
   display: inline-block;
+  *display: inline;
+  zoom: 1;
   vertical-align: top;
   width: 100%;
   height: 100%;
-  white-space: normal;
   text-align: center;
 }
-
-.sequence h2,
-.sequence h3 {
+#sequence button.sequence-current {
+  border: red solid 1px;
+}
+#sequence h2,
+#sequence h3 {
   display: block;
   opacity: 0;
   -webkit-transition-duration: 0.5s;
+  -moz-transition-duration: 0.5s;
+  -ms-transition-duration: 0.5s;
+  -o-transition-duration: 0.5s;
   transition-duration: 0.5s;
 }
-
-.sequence h2 {
+#sequence h2 {
   -webkit-transform: translate(0, -20px);
+  -moz-transform: translate(0, -20px);
   -ms-transform: translate(0, -20px);
+  -o-transform: translate(0, -20px);
   transform: translate(0, -20px);
 }
-
-.sequence h3 {
+#sequence h3 {
   -webkit-transform: translate(0, 20px);
+  -moz-transform: translate(0, 20px);
   -ms-transform: translate(0, 20px);
+  -o-transform: translate(0, 20px);
   transform: translate(0, 20px);
 }
-
-.sequence .animate-in h2,
-.sequence .animate-in h3 {
+#sequence .animate-in h2,
+#sequence .animate-in h3 {
   opacity: 1;
   -webkit-transform: translate(0, 0);
+  -moz-transform: translate(0, 0);
   -ms-transform: translate(0, 0);
+  -o-transform: translate(0, 0);
   transform: translate(0, 0);
 }
-
-.sequence .animate-out h2,
-.sequence .animate-out h3 {
+#sequence .animate-out h2,
+#sequence .animate-out h3 {
   opacity: 1;
   -webkit-transform: translate(0, 0);
+  -moz-transform: translate(0, 0);
   -ms-transform: translate(0, 0);
+  -o-transform: translate(0, 0);
   transform: translate(0, 0);
 }

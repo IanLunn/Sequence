@@ -5,7 +5,4 @@ node_modules
 tmp
 .tmp
 bower_components
-packaged-themes
-premium-themes
-text-files
 tests

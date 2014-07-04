@@ -21,12 +21,6 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     jshint: {
-      ignore_warning: {
-        options: {
-          '284': true,
-        },
-        src: ['src/sequence.js'],
-      },
       all: ['src/sequence.js']
     },
 
@@ -34,8 +28,9 @@ module.exports = function(grunt) {
       main: {
         files: [
           {src: ['src/sequence.js'], dest: 'scripts/sequence.js'},
-          {src: ['bower_components/hammerjs/hammer.min.js'], dest: 'scripts/third-party/hammer.min.js'},
-          {src: ['bower_components/hammerjs/hammer.min.map'], dest: 'scripts/third-party/hammer.min.map'},
+          {src: ['bower_components/hammerjs/hammer.min.js'], dest: 'scripts/hammer.min.js'},
+          {src: ['bower_components/imagesloaded/imagesloaded.pkgd.min.js'], dest: 'scripts/imagesloaded.pkgd.min.js'},
+          {src: ['bower_components/respond/dest/respond.min.js'], dest: 'scripts/respond.min.js'}
         ]
       }
     },
@@ -55,11 +50,6 @@ module.exports = function(grunt) {
 			}
 		},
 
-    /*
-     * Get each theme's SCSS file and process it
-     * SRC:  themes/<theme-name>/scss/sequence-js-theme.<theme-name>.scss
-     * DEST: themes/<theme-name>/css/sequence-js-theme.<theme-name>.css
-     */
     sass: {
 
       options: {
@@ -69,32 +59,8 @@ module.exports = function(grunt) {
       main: {
         expand: true,
         flatten: true,
-        src: ['scss/styles.scss'],
+        src: ['scss/*.scss'],
         dest: 'css/',
-        ext: '.css',
-        extDot: 'last',
-        rename: function(dest, src) {
-          return dest + src.replace("scss", "css");
-        }
-      },
-
-      themes: {
-        expand: true,
-        cwd: 'themes/',
-        src: ['**/*.scss', '!**/partials/*.scss'],
-        dest: 'themes/',
-        ext: '.css',
-        extDot: 'last',
-        rename: function(dest, src) {
-          return dest + src.replace("scss", "css");
-        }
-      },
-
-      premium_themes: {
-        expand: true,
-        cwd: 'premium-themes/',
-        src: ['**/*.scss', '!**/partials/*.scss'],
-        dest: 'premium-themes/',
         ext: '.css',
         extDot: 'last',
         rename: function(dest, src) {
@@ -104,7 +70,7 @@ module.exports = function(grunt) {
     },
 
     /*
-     * Auto prefix each themes CSS file
+     * Auto prefix CSS file
      */
     autoprefixer: {
       options: {
@@ -112,20 +78,12 @@ module.exports = function(grunt) {
       },
 
       main: {
-        src: 'css/styles.css'
-      },
-
-      themes: {
-        src: 'themes/*/css/*.css'
-      },
-
-      premium_themes: {
-        src: 'premium-themes/*/css/*.css'
-      },
+        src: ['css/styles.css']
+      }
     },
 
     /*
-     * Minify each themes CSS file
+     * Minify CSS
      */
     cssmin: {
 
@@ -134,24 +92,6 @@ module.exports = function(grunt) {
         cwd: 'css/',
         src: ['styles.css', '!styles.min.css'],
         dest: 'css/',
-        ext: '.min.css',
-        extDot: 'last'
-      },
-
-      themes: {
-        expand: true,
-        cwd: 'themes/',
-        src: ['*/css/*.css', '!*/css/*.min.css'],
-        dest: 'themes/',
-        ext: '.min.css',
-        extDot: 'last'
-      },
-
-      premium_themes: {
-        expand: true,
-        cwd: 'premium-themes/',
-        src: ['*/css/*.css', '!*/css/*.min.css'],
-        dest: 'premium-themes/',
         ext: '.min.css',
         extDot: 'last'
       }
@@ -172,31 +112,7 @@ module.exports = function(grunt) {
 				files: {
 					'scripts/sequence.min.js': ['src/sequence.js']
 				}
-			},
-
-      themes: {
-        files: [{
-          expand: true,
-          cwd: 'themes/',
-          src: ['*/scripts/*.js', '!*/scripts/*.min.js'],
-          dest: 'themes/',
-          rename: function(dest, src) {
-            return dest + src.replace(".js", ".min.js");
-          }
-        }]
-      },
-
-      premium_themes: {
-        files: [{
-          expand: true,
-          cwd: 'premium-themes/',
-          src: ['*/scripts/*.js', '!*/scripts/*.min.js'],
-          dest: 'premium-themes/',
-          rename: function(dest, src) {
-            return dest + src.replace(".js", ".min.js");
-          }
-        }]
-      }
+			}
 		},
 
     connect: {
@@ -238,54 +154,25 @@ module.exports = function(grunt) {
       },
 
       // Uglify sequence.js
-      main_js: {
+      js_sequence: {
         files: ['src/sequence.js'],
-        tasks: ['uglify:main', 'copy:main'],
+        tasks: ['uglify', 'copy'],
+        options: {
+          spawn: false
+        }
+      },
+
+      js: {
+        files: ['scripts/*.js'],
         options: {
           spawn: false
         }
       },
 
       // Process SASS, autoprefix, and minify main CSS
-      main_css: {
+      scss: {
         files: ['scss/*.scss'],
-        tasks: ['sass:main', 'autoprefixer:main', 'cssmin:main'],
-        options: {
-          spawn: false
-        }
-      },
-
-      // Uglify free themes
-      themes_js: {
-        files: ['themes/*/scripts/*.js', 'tests/test-themes/*/scripts/*.js'],
-        tasks: ['uglify:themes'],
-        options: {
-          spawn: false
-        }
-      },
-
-      // Process SASS, autoprefix, and minify theme CSS
-      themes_css: {
-        files: ['themes/*/scss/*.scss', 'tests/test-themes/*/scss/*.scss'],
-        tasks: ['sass:themes', 'autoprefixer:themes', 'cssmin:themes'],
-        options: {
-          spawn: false
-        }
-      },
-
-      // Uglify premium themes
-      premium_themes_js: {
-        files: ['premium-themes/*/scripts/*.js'],
-        tasks: ['uglify:premium_themes'],
-        options: {
-          spawn: false
-        }
-      },
-
-      // Process SASS, autoprefix, and minify premium theme CSS
-      premium_themes_css: {
-        files: ['premium-themes/*/scss/*.scss'],
-        tasks: ['sass:premium_themes', 'autoprefixer:premium_themes', 'cssmin:premium_themes'],
+        tasks: ['sass:main', 'autoprefixer', 'cssmin'],
         options: {
           spawn: false
         }
@@ -293,33 +180,10 @@ module.exports = function(grunt) {
 
       // Refresh the page when .html pages are changed
       html: {
-        files: ['*.html', 'themes/*/*.html', 'premium-themes/*/*.html', 'tests/**/*.html'],
+        files: ['*.html', 'tests/**/*.html'],
         options: {
           spawn: false
         }
-      }
-    },
-
-    // Compile themes into zip files for distribution (used internally)
-    package_sequence_themes: {
-      themes: {
-        options: {
-          type: 'free'
-        },
-        expand: true,
-        cwd: 'themes',
-        src: ['*'],
-        dest: 'packaged-themes/free/'
-      },
-
-      premium_themes: {
-        options: {
-          type: 'premium'
-        },
-        expand: true,
-        cwd: 'premium-themes',
-        src: ['*'],
-        dest: 'packaged-themes/premium/'
       }
     }
   });
@@ -335,17 +199,11 @@ module.exports = function(grunt) {
 
   // Manual compile
   grunt.registerTask('run', [
-    'version:js',
-    'version:json',
-    'copy:main',
+    'version',
+    'copy',
     'sass',
     'autoprefixer',
     'cssmin',
     'uglify'
-  ]);
-
-  // Compile themes into zip files for distribution (used internally)
-  grunt.registerTask('package-themes', [
-    'package_sequence_themes'
   ]);
 };
