@@ -1287,15 +1287,15 @@ When the user swipes left, the Sequence event `self.prev()` is initiated. `self.
 #### `swipeHammerOptions`
 
 - Type: An object
-- Default: `{prevent_mouseevents: true, drag_min_distance: 10, stop_browser_behavior: false}`
+- Default: `{preventMouse: true, dragMinDistance: 10, stopBrowserBehavior: false}`
 
 Options to be used in the third-party Hammer.js library that powers touch functionality. See the [Hammer.js Wiki](https://github.com/EightMedia/hammer.js/wiki/Getting-Started#gesture-options) for a complete list of options.
 
 Default options:
 
-- `prevent_mouseevents` is enabled to stop a mouse cursor from triggering touch events on a desktop computer
-- `drag_min_distance` is set to 10. This is minimum drag distance the user must swipe prior to a swipe function being executed
-- `stop_browser_behavior` set to `false` will allow the user to select text within a Hammer enabled Sequence element.
+- `preventMouse` is enabled to stop a mouse cursor from triggering touch events on a desktop computer
+- `dragMinDistance` is set to 10. This is minimum drag distance the user must swipe prior to a swipe function being executed
+- `stopBrowserBehavior` set to `false` will allow the user to select text within a Hammer enabled Sequence element.
 
 The Hammer events used by Sequence are `dragleft dragright release`.
 

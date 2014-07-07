@@ -194,9 +194,9 @@ function defineSequence(imagesLoaded, Hammer) {
 
       // Options to supply the third-party Hammer library See: https://github.com/EightMedia/hammer.js/wiki/Getting-Started
       swipeHammerOptions: {
-        prevent_mouseevents: true,
-        drag_min_distance: 10,
-        stop_browser_behavior: false
+        preventMouse: true,
+        dragMinDistance: 10,
+        stopBrowserBehavior: false
       },
 
 
