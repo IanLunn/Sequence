@@ -126,3 +126,5 @@ Bitcoin contributions may be sent to the following address:
 <a href="bitcoin:1KEbFvcXL8m6LogG2wjSUFz2xH6PeN6jRd?label=Sequence.js%20Development"><img src="http://ianlunn.co.uk/images/btc-donate.jpg" /></a>
 <p>1KEbFvcXL8m6LogG2wjSUFz2xH6PeN6jRd</p>
 </div>
+
+[![Analytics](https://ga-beacon.appspot.com/UA-11991680-6/sequence)](https://github.com/ianlunn/sequence)
