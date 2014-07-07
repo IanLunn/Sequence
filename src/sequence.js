@@ -3448,7 +3448,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
                 // Execute the swipe event if the user swipes more than the
                 // drag_min_distance option
-                if (Math.abs(e.gesture.deltaX) >= self.hammerTime.options.drag_min_distance || Math.abs(e.gesture.deltaY) >= self.hammerTime.options.drag_min_distance) {
+                if (Math.abs(e.gesture.deltaX) >= self.hammerTime.options.dragMinDistance || Math.abs(e.gesture.deltaY) >= self.hammerTime.options.dragMinDistance) {
 
                   switch(e.gesture.direction) {
 
