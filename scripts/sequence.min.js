@@ -1,6 +1,8 @@
 /*
  * Sequence
- * The CSS3 Animation Framework
+ *
+ * The open-source CSS animation framework for creating responsive sliders,
+ * presentations, banners, and other step-based applications.
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
