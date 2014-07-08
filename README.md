@@ -12,7 +12,7 @@ See the [introduction](http://ianlunn.github.io/Sequence/) and [pre-made themes]
 - Supported on mobile, tablet and desktop devices
 - No limitations on CSS or HTML you can use
 - Animate canvas and content
-- 60FPS animations
+- Support for 60FPS animations
 - Auto play
 - next/previous/pause buttons and pagination support
 - Touch support via [Hammer.js](http://eightmedia.github.io/hammer.js/)
@@ -20,7 +20,7 @@ See the [introduction](http://ianlunn.github.io/Sequence/) and [pre-made themes]
 - Hash tag support
 - Keyboard navigation
 - API for custom functionality
-- Top quality documentation
+- Top quality [documentation](https://github.com/IanLunn/Sequence/wiki/Documentation)
 - Supports all major browsers with a fallback mode for legacy browsers ([detailed browser support](https://github.com/IanLunn/Sequence/wiki/Sequence-v2-Browser-Support))
 - [Yeoman generator](https://github.com/IanLunn/generator-sequence) available for quick scaffolding of themes
 
@@ -46,7 +46,7 @@ Head to the [showcase](https://github.com/IanLunn/Sequence/wiki/Showcase) to see
 
 ## Getting Started
 
-To get started [download](https://github.com/IanLunn/Sequence#download) Sequence and then head to the [documentation](https://github.com/IanLunn/Sequence/blob/master/DOCUMENTATION.md). If you'd like to contribute to Sequence's development, please see the [contributing](https://github.com/IanLunn/Sequence/blob/master/contributing.md) guidelines.
+To get started [download](https://github.com/IanLunn/Sequence#download) Sequence and then head to the [documentation](https://github.com/IanLunn/Sequence/wiki/Documentation). If you'd like to contribute to Sequence's development, please see the [contributing](https://github.com/IanLunn/Sequence/blob/master/contributing.md) guidelines.
 
 ### Download
 
