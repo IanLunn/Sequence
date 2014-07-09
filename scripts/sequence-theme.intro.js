@@ -1,16 +1,16 @@
 /*!
- * Theme Name: Basic
+ * Theme Name: Intro
  * Version: 0.1.0
- * Theme URL: http://sequencejs.com/themes/basic/
+ * Theme URL: http://sequencejs.com/themes/intro/
  *
- * A simple theme that slides side-to-side
+ * Theme used to demonstrate Sequence
  *
- * Powered by Sequence.js - The open-source CSS animation framework.
+ * Powered by Sequence.js - The open-source CSS animation framework for creating responsive sliders, presentations, banners, and other step-based applications.
  *
  * Author: Ian Lunn
- * Author URL: https://ianlunn.co.uk/
+ * Author URL: http://ianlunn.co.uk/
  *
- * Basic Sequence Theme Copyright (c) Ian Lunn 2014
+ * Intro Sequence Theme Copyright (c) Ian Lunn 2014
  * License: MIT http://opensource.org/licenses/MIT
  *
  * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
@@ -23,9 +23,8 @@ var sequenceElement = document.getElementById("sequence");
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
   keyNavigation: true,
-  autoPlay: false,
-  phaseThreshold: 500
-  // pauseOnHover: false
+  pauseOnHover: false,
+  autoPlayThreshold: 3000
 }
 
 // Launch Sequence on the element, and with the options we specified above

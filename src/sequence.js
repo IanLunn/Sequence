@@ -3880,6 +3880,9 @@ function defineSequence(imagesLoaded, Hammer) {
 
       var phaseThreshold = 0;
 
+      // Clear the previous autoPlayTimer
+      clearTimeout(self.autoPlayTimer);
+
       // Save the latest direction
       self.direction = direction;
 
