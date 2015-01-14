@@ -6,7 +6,7 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0-beta.1
+ * @version 2.0.0-alpha.6
  * @license https://github.com/IanLunn/Sequence/blob/master/LICENSE
  * @copyright Ian Lunn 2014
  */
@@ -26,12 +26,12 @@ function defineSequence(imagesLoaded, Hammer) {
   var Sequence = (function (element, options) {
 
     // Prevent an element from have multiple instances of Sequence applied to it
-    if (element.getAttribute("data-sequence") === "true") {
+    if (element.getAttribute("data-seq-enabled") === "true") {
       return;
     }
 
     // The element now has Sequence attached to it
-    element.setAttribute("data-sequence", true);
+    element.setAttribute("data-seq-enabled", true);
 
     /* --- PRIVATE VARIABLES/FUNCTIONS --- */
 
@@ -113,7 +113,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
       // Use next and previous buttons? You can also specify a CSS selector to
       // change what element acts as the button. If true, the element uses
-      // classes of "sequence-next" and "sequence-prev"
+      // classes of "seq-next" and "seq-prev"
       nextButton: true,
       prevButton: true,
 
@@ -122,7 +122,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
       // Use a pause button? You can also specify a CSS selector to
       // change what element acts as the button. If true, the element uses the
-      // class of "sequence-pause"
+      // class of "seq-pause"
       pauseButton: true,
 
       // Amount of time to wait until autoPlay starts again after being unpaused
@@ -136,7 +136,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
       // Use pagination? You can also specify a CSS selector to
       // change what element acts as pagination. If true, the element uses the
-      // class of "sequence-pagination"
+      // class of "seq-pagination"
       pagination: true,
 
 
@@ -144,7 +144,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
       // You can also specify a CSS selector to
       // change what element acts as the preloader. If true, the element uses
-      // the class of "sequence-preloader"
+      // the class of "seq-preloader"
       preloader: false,
 
       // Preload all images from specific steps
@@ -206,7 +206,7 @@ function defineSequence(imagesLoaded, Hammer) {
       // step being shown?
       hashTags: false,
 
-      // Get the hashTag from an ID or data-sequence-hashtag attribute?
+      // Get the hashTag from an ID or data-seq-hashtag attribute?
       hashDataAttribute: false,
 
       // Should the hash change on the first step?
@@ -235,42 +235,42 @@ function defineSequence(imagesLoaded, Hammer) {
 
     // Data attributes currently supported by Sequence
     var supportedDataAttributes = [
-      "data-sequence-x",
-      "data-sequence-y",
-      "data-sequence-z",
-      "data-sequence-rotate-x",
-      "data-sequence-rotate-y",
-      "data-sequence-rotate",
-      "data-sequence-scale"
+      "data-seq-x",
+      "data-seq-y",
+      "data-seq-z",
+      "data-seq-rotate-x",
+      "data-seq-rotate-y",
+      "data-seq-rotate",
+      "data-seq-scale"
     ];
 
     // Translate step data-attributes to a CSS property and unit
     var translateAttributes = {
-      "sequenceX": {
+      "seqX": {
         "name": "translateX",
         "unit": "px"
       },
-      "sequenceY": {
+      "seqY": {
         "name": "translateY",
         "unit": "px"
       },
-      "sequenceZ": {
+      "seqZ": {
         "name": "translateZ",
         "unit": "px"
       },
-      "sequenceRotateX": {
+      "seqRotateX": {
         "name": "rotateX",
         "unit": "deg"
       },
-      "sequenceRotateY": {
+      "seqRotateY": {
         "name": "rotateY",
         "unit": "deg"
       },
-      "sequenceRotate": {
+      "seqRotate": {
         "name": "rotateZ",
         "unit": "deg"
       },
-      "sequenceScale": {
+      "seqScale": {
         "name": "scale",
         "unit": ""
       }
@@ -360,6 +360,9 @@ function defineSequence(imagesLoaded, Hammer) {
       return a;
     }
 
+    /**
+     *
+     */
     function getStyle(el, cssprop) {
 
       // IE
@@ -569,7 +572,7 @@ function defineSequence(imagesLoaded, Hammer) {
      */
     function removeNoJsClass(self) {
 
-      if (self.inFallbackMode === true) {
+      if (self.isFallbackMode === true) {
         return;
       }
 
@@ -644,9 +647,9 @@ function defineSequence(imagesLoaded, Hammer) {
      * Does a theme require full CSS 3D support? This will return true when the
      * canvas is given one of the following data attributes:
      *
-     * - data-sequence-z
-     * - data-sequence-rotate-x
-     * - data-sequence-rotate-y
+     * - data-seq-z
+     * - data-seq-rotate-x
+     * - data-seq-rotate-y
      *
      * @param {Object} dataAttributes - The data attributes applied to each step
      * @return {Boolean} requires3d - Whether 3D is required
@@ -659,7 +662,7 @@ function defineSequence(imagesLoaded, Hammer) {
         var stepAttributes = dataAttributes[step];
 
         if (
-          requires3d === false && (stepAttributes.hasOwnProperty("sequenceZ") === true || stepAttributes.hasOwnProperty("sequenceRotateX") === true || stepAttributes.hasOwnProperty("sequenceRotateY") === true)) {
+          requires3d === false && (stepAttributes.hasOwnProperty("seqZ") === true || stepAttributes.hasOwnProperty("seqRotateX") === true || stepAttributes.hasOwnProperty("seqRotateY") === true)) {
           return true;
         }
       }
@@ -732,13 +735,13 @@ function defineSequence(imagesLoaded, Hammer) {
           elementsLength = elements.length,
           i;
 
-      // Get the elements that have a parent with a class of "sequence-canvas"
+      // Get the elements that have a parent with a class of "seq-canvas"
       for (i = 0; i < elementsLength; i++) {
 
         element = elements[i];
         parent = element.parentNode;
 
-        if (hasClass(parent, "sequence-canvas") === true) {
+        if (hasClass(parent, "seq-canvas") === true) {
           steps.push(element);
         }
       }
@@ -762,22 +765,22 @@ function defineSequence(imagesLoaded, Hammer) {
           propertyName,
           unit;
 
-      css += "translateX(" + properties.sequenceX + "px) ";
-      css += "translateY(" + properties.sequenceY + "px) ";
-      css += "translateZ(" + properties.sequenceZ + "px) ";
+      css += "translateX(" + properties.seqX + "px) ";
+      css += "translateY(" + properties.seqY + "px) ";
+      css += "translateZ(" + properties.seqZ + "px) ";
 
       // Add rotate X/Y/Z and reverse them if necessary
       if (polar !== true) {
 
-        css += "rotateX(" + properties.sequenceRotateX + "deg) ";
-        css += "rotateY(" + properties.sequenceRotateY + "deg) ";
-        css += "rotateZ(" + properties.sequenceRotate + "deg) ";
-        css += "scale(" + properties.sequenceScale + ")";
+        css += "rotateX(" + properties.seqRotateX + "deg) ";
+        css += "rotateY(" + properties.seqRotateY + "deg) ";
+        css += "rotateZ(" + properties.seqRotate + "deg) ";
+        css += "scale(" + properties.seqScale + ")";
       } else {
 
-        css += "rotateZ(" + properties.sequenceRotate + "deg) ";
-        css += "rotateY(" + properties.sequenceRotateY + "deg) ";
-        css += "rotateX(" + properties.sequenceRotateX + "deg) ";
+        css += "rotateZ(" + properties.seqRotate + "deg) ";
+        css += "rotateY(" + properties.seqRotateY + "deg) ";
+        css += "rotateX(" + properties.seqRotateX + "deg) ";
       }
 
       return css;
@@ -814,12 +817,12 @@ function defineSequence(imagesLoaded, Hammer) {
         // Where we'll save the animations
         this.animationMap = {};
 
-        if (self.inFallbackMode === false) {
+        if (self.isFallbackMode === false) {
 
           // Clone Sequence so it can be quickly forced through each step
           // and get the canvas and each step
           this.clonedSequence = this.createClone(element);
-          this.clonedCanvas = getElementsByClassName(this.clonedSequence, "sequence-canvas")[0];
+          this.clonedCanvas = getElementsByClassName(this.clonedSequence, "seq-canvas")[0];
           this.clonedSteps = getSteps(this.clonedCanvas);
 
           // Get any non-animation class names applied to Sequence
@@ -910,23 +913,23 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // Default transforms
         stepTransform = {
-          "sequenceX": 0,
-          "sequenceY": 0,
-          "sequenceZ": 0,
-          "sequenceRotateX": 0,
-          "sequenceRotateY": 0,
-          "sequenceRotate": 0,
-          "sequenceScale": 1
+          "seqX": 0,
+          "seqY": 0,
+          "seqZ": 0,
+          "seqRotateX": 0,
+          "seqRotateY": 0,
+          "seqRotate": 0,
+          "seqScale": 1
         };
 
         canvasTransform = {
-          "sequenceX": 0,
-          "sequenceY": 0,
-          "sequenceZ": 0,
-          "sequenceRotateX": 0,
-          "sequenceRotateY": 0,
-          "sequenceRotate": 0,
-          "sequenceScale": 1
+          "seqX": 0,
+          "seqY": 0,
+          "seqZ": 0,
+          "seqRotateX": 0,
+          "seqRotateY": 0,
+          "seqRotate": 0,
+          "seqScale": 1
         };
 
         // Get the computed styles for the step
@@ -940,7 +943,7 @@ function defineSequence(imagesLoaded, Hammer) {
             attribute = stepAttributes[property];
             stepTransform[property] = attribute;
 
-            if (property !== "sequenceScale") {
+            if (property !== "seqScale") {
               attributeReversed = attribute * -1;
             }else{
               attributeReversed = 1 / attribute;
@@ -952,8 +955,8 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // Add the offset left/top onto the X/Y coordinates
         // (after making them polar)
-        canvasTransform.sequenceX += step.offsetLeft * -1;
-        canvasTransform.sequenceY += step.offsetTop * -1;
+        canvasTransform.seqX += step.offsetLeft * -1;
+        canvasTransform.seqY += step.offsetTop * -1;
 
         // Get the transform origins
         transformOrigins = getStyle(step, [Modernizr.prefixed("transformOrigin")]);
@@ -1172,11 +1175,11 @@ function defineSequence(imagesLoaded, Hammer) {
 
       // Default UI elements
       defaultElements: {
-        "nextButton" : "sequence-next",
-        "prevButton" : "sequence-prev",
-        "pauseButton": "sequence-pause",
-        "pagination" : "sequence-pagination",
-        "preloader"  : "sequence-preloader"
+        "nextButton" : "seq-next",
+        "prevButton" : "seq-prev",
+        "pauseButton": "seq-pause",
+        "pagination" : "seq-pagination",
+        "preloader"  : "seq-preloader"
       },
 
       /**
@@ -1321,8 +1324,8 @@ function defineSequence(imagesLoaded, Hammer) {
 
           this.start();
 
-          removeClass(self.container, "sequence-paused");
-          removeClass(self.pauseButton, "sequence-paused");
+          removeClass(self.container, "seq-paused");
+          removeClass(self.pauseButton, "seq-paused");
 
           // Callback
           self.unpaused(self);
@@ -1338,8 +1341,8 @@ function defineSequence(imagesLoaded, Hammer) {
 
         this.stop();
 
-        addClass(self.container, "sequence-paused");
-        addClass(self.pauseButton, "sequence-paused");
+        addClass(self.container, "seq-paused");
+        addClass(self.pauseButton, "seq-paused");
 
         // Callback
         self.paused(self);
@@ -1414,9 +1417,9 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // Get the step's X and Y transform origins, then flip the X/Y/Z
         // values (positive to negative) and add them to the origins
-        var originX = origin.x + (canvasTransformProperties.sequenceX * -1),
-            originY = origin.y + (canvasTransformProperties.sequenceY * -1),
-            originZ = origin.z + (canvasTransformProperties.sequenceZ * -1);
+        var originX = origin.x + (canvasTransformProperties.seqX * -1),
+            originY = origin.y + (canvasTransformProperties.seqY * -1),
+            originZ = origin.z + (canvasTransformProperties.seqZ * -1);
 
         // Turn the transform properties into a CSS string
         transformCss = propertiesToCss(canvasTransformProperties, true);
@@ -1424,7 +1427,7 @@ function defineSequence(imagesLoaded, Hammer) {
         return {
           "origins": originX + "px " + originY + "px " + originZ + "px",
           "string": transformCss,
-          "scale": canvasTransformProperties.sequenceScale
+          "scale": canvasTransformProperties.seqScale
         };
       },
 
@@ -1464,7 +1467,7 @@ function defineSequence(imagesLoaded, Hammer) {
           }
 
           // Animate the canvas using CSS transitions
-          if (self.inFallbackMode === false) {
+          if (self.isFallbackMode === false) {
 
             // Get the transform properties translate X/Y/Z, rotate X/Y/Z,
             // scale, and transform-origin
@@ -1533,7 +1536,7 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       manageNavigationSkip: function(id, direction, currentStep, nextStep, nextStepElement) {
 
-        if (self.inFallbackMode === true) {
+        if (self.isFallbackMode === true) {
           return;
         }
 
@@ -1616,12 +1619,12 @@ function defineSequence(imagesLoaded, Hammer) {
       changeStep: function(id) {
 
         // Get the step to add
-        var stepToAdd = "sequence-step" + id;
+        var stepToAdd = "seq-step" + id;
 
         // Add the new step and remove the previous
         if (self.currentStepId !== undefined) {
 
-          var stepToRemove = "sequence-step" + self.currentStepId;
+          var stepToRemove = "seq-step" + self.currentStepId;
           addClass(self.container, stepToAdd);
           removeClass(self.container, stepToRemove);
         }else {
@@ -1901,7 +1904,7 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       getStepDurations: function(nextStepId, nextStep, currentStep, direction) {
 
-        if (self.inFallbackMode === true) {
+        if (self.isFallbackMode === true) {
           return;
         }
 
@@ -2141,7 +2144,7 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       resetInheritedSpeed: function(step, phase) {
 
-        if (self.inFallbackMode === true) {
+        if (self.isFallbackMode === true) {
           return;
         }
 
@@ -2228,7 +2231,7 @@ function defineSequence(imagesLoaded, Hammer) {
         }
 
         // If a direction wasn't defined, work out the best one to use
-        if (self.options.reverseWhenNavigatingBackwards === true || self.inFallbackMode === true) {
+        if (self.options.reverseWhenNavigatingBackwards === true || self.isFallbackMode === true) {
 
           if (direction === undefined && self.options.cycle === true) {
             direction = _animation.getShortestDirection(id, self.currentStepId, self.noOfSteps);
@@ -2260,7 +2263,7 @@ function defineSequence(imagesLoaded, Hammer) {
         self.animationsSupported = false;
         self.transformStyleSupported = false;
         self.transformOriginSupported = true;
-        self.inFallbackMode = false;
+        self.isFallbackMode = false;
 
         // Does the browser support transform-style: preserve-3d?
         Modernizr.addTest('csstransformspreserve3d', function () {
@@ -2333,7 +2336,7 @@ function defineSequence(imagesLoaded, Hammer) {
         // If the theme uses 3D transforms but they're not fully supported,
         // use fallback mode
         if (self.transitionsSupported === false || (self.transformStyleSupported === false && self.requires3d === true && self.options.require3d !== false)) {
-          self.inFallbackMode = true;
+          self.isFallbackMode = true;
         }
       }
     };
@@ -2391,10 +2394,10 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       setupCanvas: function(id) {
 
-        if (self.inFallbackMode === true) {
+        if (self.isFallbackMode === true) {
 
-          // Add the "sequence-fallback" class to the Sequence element
-          addClass(self.container, "sequence-fallback");
+          // Add the "seq-fallback" class to the Sequence element
+          addClass(self.container, "seq-fallback");
 
           // Prevent steps from appearing outside of the Sequence screen
           self.screen.style.overflow = "hidden";
@@ -2571,7 +2574,7 @@ function defineSequence(imagesLoaded, Hammer) {
               currentPaginationLinksLength,
               paginationLength = self.pagination.length;
 
-          // Remove the "sequence-current" class from a previous pagination link
+          // Remove the "seq-current" class from a previous pagination link
           // if there is one
           if (self.currentPaginationLinks !== undefined) {
 
@@ -2580,7 +2583,7 @@ function defineSequence(imagesLoaded, Hammer) {
             for (i = 0; i < currentPaginationLinksLength; i++) {
 
               currentPaginationLink = self.currentPaginationLinks[i];
-              removeClass(currentPaginationLink, "sequence-current");
+              removeClass(currentPaginationLink, "seq-current");
             }
           }
 
@@ -2588,14 +2591,14 @@ function defineSequence(imagesLoaded, Hammer) {
           self.currentPaginationLinks = [];
 
           // Get the current pagination link from each pagination element,
-          // add the "sequence-current" class to them, then save them for later
-          // for when they need to have the "sequence-current" class removed
+          // add the "seq-current" class to them, then save them for later
+          // for when they need to have the "seq-current" class removed
           for (j = 0; j < paginationLength; j++) {
 
             currentPaginationLink = self.paginationLinks[j][id];
             self.currentPaginationLinks.push(currentPaginationLink);
 
-            addClass(currentPaginationLink, "sequence-current");
+            addClass(currentPaginationLink, "seq-current");
           }
         }
       }
@@ -2685,7 +2688,7 @@ function defineSequence(imagesLoaded, Hammer) {
         // Get each steps hashtag
         for (var i = 0; i < self.noOfSteps; i++) {
 
-          elementHashTag = (self.options.hashDataAttribute === false) ? self.steps[i].id: self.steps[i].getAttribute("data-sequence-hashtag");
+          elementHashTag = (self.options.hashDataAttribute === false) ? self.steps[i].id: self.steps[i].getAttribute("data-seq-hashtag");
 
           // Add the hashtag to an array
           stepHashTags.push(elementHashTag);
@@ -2810,8 +2813,8 @@ function defineSequence(imagesLoaded, Hammer) {
 
         if (self.options.preloader !== false) {
 
-          // Add a class of "sequence-preloading" to the Sequence element
-          addClass(self.container, "sequence-preloading");
+          // Add a class of "seq-preloading" to the Sequence element
+          addClass(self.container, "seq-preloading");
 
           // Get the preloader
           self.preloader = self._ui.getElements("preloader", self.options.preloader);
@@ -2870,8 +2873,8 @@ function defineSequence(imagesLoaded, Hammer) {
         this.hideAndShowSteps("show");
 
         // Remove the "preloading" class and add the "preloaded" class
-        removeClass(self.container, "sequence-preloading");
-        addClass(self.container, "sequence-preloaded");
+        removeClass(self.container, "seq-preloading");
+        addClass(self.container, "seq-preloaded");
 
         // Hide the preloader
         this.hide();
@@ -2882,7 +2885,7 @@ function defineSequence(imagesLoaded, Hammer) {
       /**
        * Sequence's default preloader styles and animation for the preloader icon
        */
-     defaultStyles: '.sequence-preloader {position: absolute;z-index: 9999;height: 100%;width: 100%;top: 0;left:0;right:0;bottom:0;}.sequence-preloader .preload .circle {position: relative;top: -50%;display: inline-block;height: 12px;width: 12px;fill: #ff9442;}.preload {position: relative;top: 50%;display: block;height: 12px;width: 48px;margin: -6px auto 0 auto;}.preload-complete {opacity: 0;visibility: hidden;'+Modernizr.prefixed("transition")+': .5s;}.preload.fallback .circle {float: left;margin-right: 4px;background-color: #ff9442;border-radius: 6px;}',
+     defaultStyles: '.seq-preloader {position: absolute;z-index: 9999;height: 100%;width: 100%;top: 0;left:0;right:0;bottom:0;}.seq-preloader .preload .circle {position: relative;top: -50%;display: inline-block;height: 12px;width: 12px;fill: #ff9442;}.preload {position: relative;top: 50%;display: block;height: 12px;width: 48px;margin: -6px auto 0 auto;}.preload-complete {opacity: 0;visibility: hidden;'+Modernizr.prefixed("transition")+': .5s;}.preload.fallback .circle {float: left;margin-right: 4px;background-color: #ff9442;border-radius: 6px;}',
 
       /**
        * Add the preloader's styles to the <head></head>
@@ -3024,7 +3027,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
           // Set up the preloader container
           self.preloader = document.createElement("div");
-          self.preloader.className = "sequence-preloader";
+          self.preloader.className = "seq-preloader";
 
           self.preloader = [self.preloader];
 
@@ -3300,14 +3303,14 @@ function defineSequence(imagesLoaded, Hammer) {
 
             // The button controls one Sequence instance
             // (defined via the rel attribute)
-            if (rel === self.container.id && element.getAttribute("data-sequence") !== "true") {
+            if (rel === self.container.id && element.getAttribute("data-seq-enabled") !== "true") {
 
-              element.setAttribute("data-sequence", true);
+              element.setAttribute("data-seq-enabled", true);
               buttonEvent(element, rel, i);
             }
 
             // The button controls all Sequence instances
-            else if (rel === null && element.getAttribute("data-sequence") !== "true") {
+            else if (rel === null && element.getAttribute("data-seq-enabled") !== "true") {
 
               buttonEvent(element, rel, i);
             }
@@ -3598,11 +3601,11 @@ function defineSequence(imagesLoaded, Hammer) {
       // Get the element Sequence is attached to, the screen,
       // the canvas and it's steps
       self.container = element;
-      self.screen = getElementsByClassName(self.container, "sequence-screen")[0];
-      self.canvas = getElementsByClassName(self.container, "sequence-canvas")[0];
+      self.screen = getElementsByClassName(self.container, "seq-screen")[0];
+      self.canvas = getElementsByClassName(self.container, "seq-canvas")[0];
       self.steps = getSteps(self.canvas);
 
-      addClass(self.container, "sequence-active");
+      addClass(self.container, "seq-active");
 
       self.isHardPaused = false;
       self.isPaused = (self.options.autoPlay === true) ? false : true;
@@ -3730,14 +3733,14 @@ function defineSequence(imagesLoaded, Hammer) {
       }
 
       // Remove classes:
-      // - the "sequence-current" class from the active pagination links
-      // - the "sequence-paused" class from the container
+      // - the "seq-current" class from the active pagination links
+      // - the "seq-paused" class from the container
       // - the step index class from the container
-      // - the "sequence-active" class from the container
-      removeClass(self.currentPaginationLinks, "sequence-current");
-      removeClass(self.container, "sequence-paused");
-      removeClass(self.container, "sequence-step" + self.currentStepId);
-      removeClass(self.container, "sequence-active");
+      // - the "seq-active" class from the container
+      removeClass(self.currentPaginationLinks, "seq-current");
+      removeClass(self.container, "seq-paused");
+      removeClass(self.container, "seq-step" + self.currentStepId);
+      removeClass(self.container, "seq-active");
 
       // Remove styles
       self.screen.removeAttribute("style");
@@ -3759,7 +3762,7 @@ function defineSequence(imagesLoaded, Hammer) {
       addClass(lastStep, "animate-in");
 
       // Allow the same element to have Sequence initated on it in the future
-      element.setAttribute("data-sequence", false);
+      element.setAttribute("data-seq-enabled", false);
 
       // Callback
       self.destroyed(self);
@@ -3874,7 +3877,7 @@ function defineSequence(imagesLoaded, Hammer) {
        * - preventReverseSkipping is enabled and the user is trying to navigate
            in a different direction to the one already active
        */
-      if (id === undefined || id < 1 || id > self.noOfSteps || id === self.currentStepId || (self.options.navigationSkip === false && self.isActive === true) || (self.options.navigationSkip === true && self.navigationSkipThresholdActive === true && hashTagNav === undefined) || (self.inFallbackMode === true && self.isActive === true && hashTagNav === undefined) || (self.options.preventReverseSkipping === true && self.direction !== direction && self.isActive === true)) {
+      if (id === undefined || id < 1 || id > self.noOfSteps || id === self.currentStepId || (self.options.navigationSkip === false && self.isActive === true) || (self.options.navigationSkip === true && self.navigationSkipThresholdActive === true && hashTagNav === undefined) || (self.isFallbackMode === true && self.isActive === true && hashTagNav === undefined) || (self.options.preventReverseSkipping === true && self.direction !== direction && self.isActive === true)) {
         return false;
       }
 
@@ -3910,7 +3913,7 @@ function defineSequence(imagesLoaded, Hammer) {
       // Change the step number on the Sequence element
       self._animation.changeStep(id);
 
-      if (self.inFallbackMode === false) {
+      if (self.isFallbackMode === false) {
 
         // Animate the canvas
         self._canvas.move(id, true);
@@ -4079,6 +4082,18 @@ function defineSequence(imagesLoaded, Hammer) {
     self.destroyed = function(self) {
 
       // console.log("goodbye!");
+    };
+
+    /**
+    * Make some of Sequence's helper functions public
+    *
+    * addClass() / removeClass() etc can be useful for custom theme code
+    */
+    self._utils = {
+        addClass: addClass,
+        removeClass: removeClass,
+        addEvent: addEvent,
+        removeEvent: removeEvent
     };
 
 

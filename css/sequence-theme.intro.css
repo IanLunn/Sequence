@@ -26,20 +26,20 @@
   border: black solid 2px;
   font-family: sans-serif;
 }
-#sequence .sequence-screen,
-#sequence .sequence-canvas,
-#sequence .sequence-canvas > * {
+#sequence .seq-screen,
+#sequence .seq-canvas,
+#sequence .seq-canvas > * {
   margin: 0;
   padding: 0;
   list-style: none;
 }
-#sequence .sequence-canvas {
+#sequence .seq-canvas {
   position: absolute;
   height: 100%;
   width: 100%;
   white-space: nowrap;
 }
-#sequence .sequence-canvas > * {
+#sequence .seq-canvas > * {
   display: inline-block;
   vertical-align: top;
   width: 100%;
