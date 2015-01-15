@@ -187,17 +187,11 @@ function defineSequence(imagesLoaded, Hammer) {
       // Events to run when the user swipes in a particular direction
       swipeEvents: {
         left: function(sequence) {sequence.next();},
-        right: function(sequence) {sequence.prev();},
-        up: false,
-        down: false
+        right: function(sequence) {sequence.prev();}
       },
 
-      // Options to supply the third-party Hammer library See: https://github.com/EightMedia/hammer.js/wiki/Getting-Started
-      swipeHammerOptions: {
-        preventMouse: true,
-        dragMinDistance: 10,
-        stopBrowserBehavior: false
-      },
+      // Options to supply the third-party Hammer library See: http://hammerjs.github.io/recognizer-swipe/
+      swipeHammerOptions: {},
 
 
       /* --- hashTags --- */
@@ -3176,7 +3170,7 @@ function defineSequence(imagesLoaded, Hammer) {
             if (self.manageEvent.list.hammer.length > 0 && document.querySelectorAll !== undefined) {
 
               var handler = self.manageEvent.list.hammer[0].handler;
-              self.hammerTime.off("dragleft dragright release", handler);
+              self.hammerTime.off("swipeleft swiperight", handler);
             }
           break;
 
@@ -3438,50 +3432,22 @@ function defineSequence(imagesLoaded, Hammer) {
 
           var handler = function(e) {
 
-            switch(e.type) {
+            switch(e.direction) {
 
-                // Prevent the browser scrolling will dragging left and right
-              case "dragleft":
-              case "dragright":
-                e.gesture.preventDefault();
+              case 2:
+                self.options.swipeEvents.left(self);
               break;
 
-              // Execute a swipe event when the user releases their finger
-              case "release":
-
-                // Execute the swipe event if the user swipes more than the
-                // drag_min_distance option
-                if (Math.abs(e.gesture.deltaX) >= self.hammerTime.options.dragMinDistance || Math.abs(e.gesture.deltaY) >= self.hammerTime.options.dragMinDistance) {
-
-                  switch(e.gesture.direction) {
-
-                    case "left":
-                      self.options.swipeEvents.left(self);
-                    break;
-
-                    case "right":
-                      self.options.swipeEvents.right(self);
-                    break;
-
-                    case "up":
-                      if (self.options.swipeEvents.up !== false) {
-                        self.options.swipeEvents.up(self);
-                      }
-                    break;
-
-                    case "down":
-                      if (self.options.swipeEvents.down !== false) {
-                        self.options.swipeEvents.down(self);
-                      }
-                    break;
-                  }
-                }
-
+              case 4:
+                self.options.swipeEvents.right(self);
               break;
             }
           };
 
-          self.hammerTime = new Hammer(self.container, self.options.swipeHammerOptions).on("dragleft dragright release", handler);
+          self.hammerTime = new Hammer(self.container).on("swipe", handler);
+
+          // Set Hammer's Swipe options
+          self.hammerTime.get("swipe").set(self.options.swipeHammerOptions);
 
           self.manageEvent.list.hammer.push({"element": self.container, "handler": handler});
         },

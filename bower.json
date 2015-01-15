@@ -1,7 +1,7 @@
 {
   "name": "sequencejs",
   "description": "CSS animation framework for creating responsive sliders, presentations, banners, and other step-based applications.",
-  "version": "2.0.0-beta.1",
+  "version": "2.0.0-alpha.6",
   "main": "scripts/sequence.min.js",
   "license": "MIT",
   "homepage": "http://sequencejs.com/",
@@ -35,7 +35,7 @@
     "tests"
   ],
   "dependencies": {
-    "hammerjs": "1.1.3",
+    "hammerjs": "2.0.4",
     "imagesloaded": "3.1.5",
     "respond": "^1.4.2"
   }

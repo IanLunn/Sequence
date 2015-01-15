@@ -187,17 +187,11 @@ function defineSequence(imagesLoaded, Hammer) {
       // Events to run when the user swipes in a particular direction
       swipeEvents: {
         left: function(sequence) {sequence.next();},
-        right: function(sequence) {sequence.prev();},
-        up: false,
-        down: false
+        right: function(sequence) {sequence.prev();}
       },
 
-      // Options to supply the third-party Hammer library See: https://github.com/EightMedia/hammer.js/wiki/Getting-Started
-      swipeHammerOptions: {
-        preventMouse: true,
-        dragMinDistance: 10,
-        stopBrowserBehavior: false
-      },
+      // Options to supply the third-party Hammer library See: http://hammerjs.github.io/recognizer-swipe/
+      swipeHammerOptions: {},
 
 
       /* --- hashTags --- */
@@ -223,7 +217,7 @@ function defineSequence(imagesLoaded, Hammer) {
       }
     };
 
-    // See Sequence._animation.domDelay() for an explanation of this
+    // See sequence._animation.domDelay() for an explanation of this
     var domThreshold = 50;
 
     // Throttle the window resize event
@@ -246,31 +240,31 @@ function defineSequence(imagesLoaded, Hammer) {
 
     // Translate step data-attributes to a CSS property and unit
     var translateAttributes = {
-      "seqX": {
+      "sequenceX": {
         "name": "translateX",
         "unit": "px"
       },
-      "seqY": {
+      "sequenceY": {
         "name": "translateY",
         "unit": "px"
       },
-      "seqZ": {
+      "sequenceZ": {
         "name": "translateZ",
         "unit": "px"
       },
-      "seqRotateX": {
+      "sequenceRotateX": {
         "name": "rotateX",
         "unit": "deg"
       },
-      "seqRotateY": {
+      "sequenceRotateY": {
         "name": "rotateY",
         "unit": "deg"
       },
-      "seqRotate": {
+      "sequenceRotate": {
         "name": "rotateZ",
         "unit": "deg"
       },
-      "seqScale": {
+      "sequenceScale": {
         "name": "scale",
         "unit": ""
       }
@@ -765,22 +759,22 @@ function defineSequence(imagesLoaded, Hammer) {
           propertyName,
           unit;
 
-      css += "translateX(" + properties.seqX + "px) ";
-      css += "translateY(" + properties.seqY + "px) ";
-      css += "translateZ(" + properties.seqZ + "px) ";
+      css += "translateX(" + properties.sequenceX + "px) ";
+      css += "translateY(" + properties.sequenceY + "px) ";
+      css += "translateZ(" + properties.sequenceZ + "px) ";
 
       // Add rotate X/Y/Z and reverse them if necessary
       if (polar !== true) {
 
-        css += "rotateX(" + properties.seqRotateX + "deg) ";
-        css += "rotateY(" + properties.seqRotateY + "deg) ";
-        css += "rotateZ(" + properties.seqRotate + "deg) ";
-        css += "scale(" + properties.seqScale + ")";
+        css += "rotateX(" + properties.sequenceRotateX + "deg) ";
+        css += "rotateY(" + properties.sequenceRotateY + "deg) ";
+        css += "rotateZ(" + properties.sequenceRotate + "deg) ";
+        css += "scale(" + properties.sequenceScale + ")";
       } else {
 
-        css += "rotateZ(" + properties.seqRotate + "deg) ";
-        css += "rotateY(" + properties.seqRotateY + "deg) ";
-        css += "rotateX(" + properties.seqRotateX + "deg) ";
+        css += "rotateZ(" + properties.sequenceRotate + "deg) ";
+        css += "rotateY(" + properties.sequenceRotateY + "deg) ";
+        css += "rotateX(" + properties.sequenceRotateX + "deg) ";
       }
 
       return css;
@@ -913,23 +907,23 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // Default transforms
         stepTransform = {
-          "seqX": 0,
-          "seqY": 0,
-          "seqZ": 0,
-          "seqRotateX": 0,
-          "seqRotateY": 0,
-          "seqRotate": 0,
-          "seqScale": 1
+          "sequenceX": 0,
+          "sequenceY": 0,
+          "sequenceZ": 0,
+          "sequenceRotateX": 0,
+          "sequenceRotateY": 0,
+          "sequenceRotate": 0,
+          "sequenceScale": 1
         };
 
         canvasTransform = {
-          "seqX": 0,
-          "seqY": 0,
-          "seqZ": 0,
-          "seqRotateX": 0,
-          "seqRotateY": 0,
-          "seqRotate": 0,
-          "seqScale": 1
+          "sequenceX": 0,
+          "sequenceY": 0,
+          "sequenceZ": 0,
+          "sequenceRotateX": 0,
+          "sequenceRotateY": 0,
+          "sequenceRotate": 0,
+          "sequenceScale": 1
         };
 
         // Get the computed styles for the step
@@ -943,7 +937,7 @@ function defineSequence(imagesLoaded, Hammer) {
             attribute = stepAttributes[property];
             stepTransform[property] = attribute;
 
-            if (property !== "seqScale") {
+            if (property !== "sequenceScale") {
               attributeReversed = attribute * -1;
             }else{
               attributeReversed = 1 / attribute;
@@ -955,8 +949,8 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // Add the offset left/top onto the X/Y coordinates
         // (after making them polar)
-        canvasTransform.seqX += step.offsetLeft * -1;
-        canvasTransform.seqY += step.offsetTop * -1;
+        canvasTransform.sequenceX += step.offsetLeft * -1;
+        canvasTransform.sequenceY += step.offsetTop * -1;
 
         // Get the transform origins
         transformOrigins = getStyle(step, [Modernizr.prefixed("transformOrigin")]);
@@ -1417,9 +1411,9 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // Get the step's X and Y transform origins, then flip the X/Y/Z
         // values (positive to negative) and add them to the origins
-        var originX = origin.x + (canvasTransformProperties.seqX * -1),
-            originY = origin.y + (canvasTransformProperties.seqY * -1),
-            originZ = origin.z + (canvasTransformProperties.seqZ * -1);
+        var originX = origin.x + (canvasTransformProperties.sequenceX * -1),
+            originY = origin.y + (canvasTransformProperties.sequenceY * -1),
+            originZ = origin.z + (canvasTransformProperties.sequenceZ * -1);
 
         // Turn the transform properties into a CSS string
         transformCss = propertiesToCss(canvasTransformProperties, true);
@@ -1427,7 +1421,7 @@ function defineSequence(imagesLoaded, Hammer) {
         return {
           "origins": originX + "px " + originY + "px " + originZ + "px",
           "string": transformCss,
-          "scale": canvasTransformProperties.seqScale
+          "scale": canvasTransformProperties.sequenceScale
         };
       },
 
@@ -3176,7 +3170,7 @@ function defineSequence(imagesLoaded, Hammer) {
             if (self.manageEvent.list.hammer.length > 0 && document.querySelectorAll !== undefined) {
 
               var handler = self.manageEvent.list.hammer[0].handler;
-              self.hammerTime.off("dragleft dragright release", handler);
+              self.hammerTime.off("swipeleft swiperight", handler);
             }
           break;
 
@@ -3303,14 +3297,14 @@ function defineSequence(imagesLoaded, Hammer) {
 
             // The button controls one Sequence instance
             // (defined via the rel attribute)
-            if (rel === self.container.id && element.getAttribute("data-seq-enabled") !== "true") {
+            if (rel === self.container.id && element.getAttribute("data-sequence") !== "true") {
 
-              element.setAttribute("data-seq-enabled", true);
+              element.setAttribute("data-sequence", true);
               buttonEvent(element, rel, i);
             }
 
             // The button controls all Sequence instances
-            else if (rel === null && element.getAttribute("data-seq-enabled") !== "true") {
+            else if (rel === null && element.getAttribute("data-sequence") !== "true") {
 
               buttonEvent(element, rel, i);
             }
@@ -3438,50 +3432,22 @@ function defineSequence(imagesLoaded, Hammer) {
 
           var handler = function(e) {
 
-            switch(e.type) {
+            switch(e.direction) {
 
-                // Prevent the browser scrolling will dragging left and right
-              case "dragleft":
-              case "dragright":
-                e.gesture.preventDefault();
+              case 2:
+                self.options.swipeEvents.left(self);
               break;
 
-              // Execute a swipe event when the user releases their finger
-              case "release":
-
-                // Execute the swipe event if the user swipes more than the
-                // drag_min_distance option
-                if (Math.abs(e.gesture.deltaX) >= self.hammerTime.options.dragMinDistance || Math.abs(e.gesture.deltaY) >= self.hammerTime.options.dragMinDistance) {
-
-                  switch(e.gesture.direction) {
-
-                    case "left":
-                      self.options.swipeEvents.left(self);
-                    break;
-
-                    case "right":
-                      self.options.swipeEvents.right(self);
-                    break;
-
-                    case "up":
-                      if (self.options.swipeEvents.up !== false) {
-                        self.options.swipeEvents.up(self);
-                      }
-                    break;
-
-                    case "down":
-                      if (self.options.swipeEvents.down !== false) {
-                        self.options.swipeEvents.down(self);
-                      }
-                    break;
-                  }
-                }
-
+              case 4:
+                self.options.swipeEvents.right(self);
               break;
             }
           };
 
-          self.hammerTime = new Hammer(self.container, self.options.swipeHammerOptions).on("dragleft dragright release", handler);
+          self.hammerTime = new Hammer(self.container).on("swipe", handler);
+
+          // Set Hammer's Swipe options
+          self.hammerTime.get("swipe").set(self.options.swipeHammerOptions);
 
           self.manageEvent.list.hammer.push({"element": self.container, "handler": handler});
         },
@@ -3762,7 +3728,7 @@ function defineSequence(imagesLoaded, Hammer) {
       addClass(lastStep, "animate-in");
 
       // Allow the same element to have Sequence initated on it in the future
-      element.setAttribute("data-seq-enabled", false);
+      element.setAttribute("data-sequence", false);
 
       // Callback
       self.destroyed(self);
