@@ -6,9 +6,9 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0-alpha.6
+ * @version 2.0.0-alpha.7
  * @license https://github.com/IanLunn/Sequence/blob/master/LICENSE
- * @copyright Ian Lunn 2014
+ * @copyright Ian Lunn 2015
  */
 
 function defineSequence(imagesLoaded, Hammer) {
@@ -240,31 +240,31 @@ function defineSequence(imagesLoaded, Hammer) {
 
     // Translate step data-attributes to a CSS property and unit
     var translateAttributes = {
-      "sequenceX": {
+      "seqX": {
         "name": "translateX",
         "unit": "px"
       },
-      "sequenceY": {
+      "seqY": {
         "name": "translateY",
         "unit": "px"
       },
-      "sequenceZ": {
+      "seqZ": {
         "name": "translateZ",
         "unit": "px"
       },
-      "sequenceRotateX": {
+      "seqRotateX": {
         "name": "rotateX",
         "unit": "deg"
       },
-      "sequenceRotateY": {
+      "seqRotateY": {
         "name": "rotateY",
         "unit": "deg"
       },
-      "sequenceRotate": {
+      "seqRotate": {
         "name": "rotateZ",
         "unit": "deg"
       },
-      "sequenceScale": {
+      "seqScale": {
         "name": "scale",
         "unit": ""
       }
@@ -759,22 +759,22 @@ function defineSequence(imagesLoaded, Hammer) {
           propertyName,
           unit;
 
-      css += "translateX(" + properties.sequenceX + "px) ";
-      css += "translateY(" + properties.sequenceY + "px) ";
-      css += "translateZ(" + properties.sequenceZ + "px) ";
+      css += "translateX(" + properties.seqX + "px) ";
+      css += "translateY(" + properties.seqY + "px) ";
+      css += "translateZ(" + properties.seqZ + "px) ";
 
       // Add rotate X/Y/Z and reverse them if necessary
       if (polar !== true) {
 
-        css += "rotateX(" + properties.sequenceRotateX + "deg) ";
-        css += "rotateY(" + properties.sequenceRotateY + "deg) ";
-        css += "rotateZ(" + properties.sequenceRotate + "deg) ";
-        css += "scale(" + properties.sequenceScale + ")";
+        css += "rotateX(" + properties.seqRotateX + "deg) ";
+        css += "rotateY(" + properties.seqRotateY + "deg) ";
+        css += "rotateZ(" + properties.seqRotate + "deg) ";
+        css += "scale(" + properties.seqScale + ")";
       } else {
 
-        css += "rotateZ(" + properties.sequenceRotate + "deg) ";
-        css += "rotateY(" + properties.sequenceRotateY + "deg) ";
-        css += "rotateX(" + properties.sequenceRotateX + "deg) ";
+        css += "rotateZ(" + properties.seqRotate + "deg) ";
+        css += "rotateY(" + properties.seqRotateY + "deg) ";
+        css += "rotateX(" + properties.seqRotateX + "deg) ";
       }
 
       return css;
@@ -907,23 +907,23 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // Default transforms
         stepTransform = {
-          "sequenceX": 0,
-          "sequenceY": 0,
-          "sequenceZ": 0,
-          "sequenceRotateX": 0,
-          "sequenceRotateY": 0,
-          "sequenceRotate": 0,
-          "sequenceScale": 1
+          "seqX": 0,
+          "seqY": 0,
+          "seqZ": 0,
+          "seqRotateX": 0,
+          "seqRotateY": 0,
+          "seqRotate": 0,
+          "seqScale": 1
         };
 
         canvasTransform = {
-          "sequenceX": 0,
-          "sequenceY": 0,
-          "sequenceZ": 0,
-          "sequenceRotateX": 0,
-          "sequenceRotateY": 0,
-          "sequenceRotate": 0,
-          "sequenceScale": 1
+          "seqX": 0,
+          "seqY": 0,
+          "seqZ": 0,
+          "seqRotateX": 0,
+          "seqRotateY": 0,
+          "seqRotate": 0,
+          "seqScale": 1
         };
 
         // Get the computed styles for the step
@@ -937,7 +937,7 @@ function defineSequence(imagesLoaded, Hammer) {
             attribute = stepAttributes[property];
             stepTransform[property] = attribute;
 
-            if (property !== "sequenceScale") {
+            if (property !== "seqScale") {
               attributeReversed = attribute * -1;
             }else{
               attributeReversed = 1 / attribute;
@@ -949,8 +949,8 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // Add the offset left/top onto the X/Y coordinates
         // (after making them polar)
-        canvasTransform.sequenceX += step.offsetLeft * -1;
-        canvasTransform.sequenceY += step.offsetTop * -1;
+        canvasTransform.seqX += step.offsetLeft * -1;
+        canvasTransform.seqY += step.offsetTop * -1;
 
         // Get the transform origins
         transformOrigins = getStyle(step, [Modernizr.prefixed("transformOrigin")]);
@@ -1411,9 +1411,9 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // Get the step's X and Y transform origins, then flip the X/Y/Z
         // values (positive to negative) and add them to the origins
-        var originX = origin.x + (canvasTransformProperties.sequenceX * -1),
-            originY = origin.y + (canvasTransformProperties.sequenceY * -1),
-            originZ = origin.z + (canvasTransformProperties.sequenceZ * -1);
+        var originX = origin.x + (canvasTransformProperties.seqX * -1),
+            originY = origin.y + (canvasTransformProperties.seqY * -1),
+            originZ = origin.z + (canvasTransformProperties.seqZ * -1);
 
         // Turn the transform properties into a CSS string
         transformCss = propertiesToCss(canvasTransformProperties, true);
@@ -1421,7 +1421,7 @@ function defineSequence(imagesLoaded, Hammer) {
         return {
           "origins": originX + "px " + originY + "px " + originZ + "px",
           "string": transformCss,
-          "scale": canvasTransformProperties.sequenceScale
+          "scale": canvasTransformProperties.seqScale
         };
       },
 
@@ -3297,14 +3297,14 @@ function defineSequence(imagesLoaded, Hammer) {
 
             // The button controls one Sequence instance
             // (defined via the rel attribute)
-            if (rel === self.container.id && element.getAttribute("data-sequence") !== "true") {
+            if (rel === self.container.id && element.getAttribute("data-seq") !== "true") {
 
-              element.setAttribute("data-sequence", true);
+              element.setAttribute("data-seq", true);
               buttonEvent(element, rel, i);
             }
 
             // The button controls all Sequence instances
-            else if (rel === null && element.getAttribute("data-sequence") !== "true") {
+            else if (rel === null && element.getAttribute("data-seq") !== "true") {
 
               buttonEvent(element, rel, i);
             }
@@ -3728,7 +3728,7 @@ function defineSequence(imagesLoaded, Hammer) {
       addClass(lastStep, "animate-in");
 
       // Allow the same element to have Sequence initated on it in the future
-      element.setAttribute("data-sequence", false);
+      element.setAttribute("data-seq-enabled", false);
 
       // Callback
       self.destroyed(self);
