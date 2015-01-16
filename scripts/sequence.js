@@ -3170,7 +3170,7 @@ function defineSequence(imagesLoaded, Hammer) {
             if (self.manageEvent.list.hammer.length > 0 && document.querySelectorAll !== undefined) {
 
               var handler = self.manageEvent.list.hammer[0].handler;
-              self.hammerTime.off("swipeleft swiperight", handler);
+              self.hammerTime.off("swipe", [handler]);
             }
           break;
 
