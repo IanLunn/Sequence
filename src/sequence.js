@@ -54,7 +54,7 @@ function defineSequence(imagesLoaded, Hammer) {
       phaseThreshold: true,
 
       // Should animations be reversed when navigating backwards?
-      reverseWhenNavigatingBackwards: false,
+      reverseWhenNavigatingBackwards: true,
 
       // Should the active step be given a higher z-index?
       moveActiveStepToTop: true,

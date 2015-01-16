@@ -10,10 +10,10 @@ var wait = function() {
 
 describe("Get UI elements - sequence._ui.getElements()", function() {
 
-  it("should get a default element (.sequence-next)", function() {
+  it("should get a default element (.seq-next)", function() {
 
     var nextButton = mySequence._ui.getElements("nextButton", true);
-    var expectedNextButton = document.querySelectorAll(".sequence-next");
+    var expectedNextButton = document.querySelectorAll(".seq-next");
 
     expect(nextButton).toEqual([expectedNextButton[0]]);
   });

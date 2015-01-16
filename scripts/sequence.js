@@ -6,7 +6,7 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0-alpha.7
+ * @version 2.0.0-alpha.6
  * @license https://github.com/IanLunn/Sequence/blob/master/LICENSE
  * @copyright Ian Lunn 2015
  */
@@ -54,7 +54,7 @@ function defineSequence(imagesLoaded, Hammer) {
       phaseThreshold: true,
 
       // Should animations be reversed when navigating backwards?
-      reverseWhenNavigatingBackwards: false,
+      reverseWhenNavigatingBackwards: true,
 
       // Should the active step be given a higher z-index?
       moveActiveStepToTop: true,
