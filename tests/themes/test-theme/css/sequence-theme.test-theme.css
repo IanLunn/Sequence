@@ -52,6 +52,12 @@
   transition-duration: .5s;
 }
 
+#sequence .boxb {
+  top: 200px;
+  -webkit-transition-delay: 1s;
+  transition-delay: 1s;
+}
+
 #sequence .animate-in .box {
   left: 50%;
   margin-left: -50px;

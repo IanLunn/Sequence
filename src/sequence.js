@@ -1633,18 +1633,21 @@ function defineSequence(imagesLoaded, Hammer) {
        * @param {Number} phase - The animation phase "animate-in" or "animate-out"
        * @return {Object} stepDurations - How long a step will animate for,
        *                                  including animation, delay, and total
+       * @return {Number} minDelay - The lowest delay applied to an element
        */
-      reverseProperties: function(step, phase, stepDurations) {
+      reverseProperties: function(step, phase, stepDurations, minDelay) {
 
-        var _animation = this;
-
-        var stepProperties = self.animationMap[step][phase];
+        var _animation = this,
+            stepProperties = self.animationMap[step][phase];
 
         // Apply the transition properties to each element
         for (var i = 0; i < stepProperties.noOfElements; i++) {
           var stepElements = stepProperties.elements[i];
 
-          stepElements.element.style[Modernizr.prefixed("transition")] = stepDurations.animation + "ms " + stepDurations.delay + "ms " + _animation.reverseTimingFunction(stepElements.timingFunction);
+          // Reverse the delay
+          var delay = stepDurations.delay + (stepProperties.maxDelay - stepElements.delay) - minDelay;
+
+          stepElements.element.style[Modernizr.prefixed("transition")] = stepDurations.animation + "ms " + delay + "ms " + _animation.reverseTimingFunction(stepElements.timingFunction);
         }
 
         // Remove transition properties from each element once it has finished
@@ -1706,11 +1709,14 @@ function defineSequence(imagesLoaded, Hammer) {
         // Snap the step to the "animate-out" phase
         addClass(nextStepElement, "animate-out");
 
+        // Get the minimum delay so it can be removed from all delays when reversing
+        var minDelay = (stepDurations.currentPhase.delay < stepDurations.nextPhase.delay) ? stepDurations.currentPhase.delay : stepDurations.nextPhase.delay;
+
         _animation.domDelay(function() {
 
           // Reverse properties for both the current and next steps
-          _animation.reverseProperties(currentStep, "animate-out", stepDurations.currentPhase);
-          _animation.reverseProperties(nextStep, "animate-in", stepDurations.nextPhase);
+          _animation.reverseProperties(currentStep, "animate-in", stepDurations.currentPhase, minDelay);
+          _animation.reverseProperties(nextStep, "animate-out", stepDurations.nextPhase, minDelay);
 
           // Make the current step transition to "animate-start"
           removeClass(currentStepElement, "animate-in");
@@ -1907,26 +1913,29 @@ function defineSequence(imagesLoaded, Hammer) {
         durations.nextPhase = {};
 
         // How long the phase will animate (not including delays)
-        // How long the phase will be delayed
-        // The total duration of the phase (animation + delay)
         durations.currentPhase.animation = 0;
-        durations.currentPhase.delay = 0;
-        durations.currentPhase.total = 0;
         durations.nextPhase.animation = 0;
+
+        // How long the phase will be delayed
+        durations.currentPhase.delay = 0;
         durations.nextPhase.delay = 0;
+
+        // The total duration of the phase (animation + delay)
+        durations.currentPhase.total = 0;
         durations.nextPhase.total = 0;
 
         // The time the next phase should wait before being set to "animate-in"
-        // The total time it'll take for both phases to finish
         durations.nextPhaseThreshold = 0;
+
+        // The total time it'll take for both phases to finish
         durations.stepTotal = 0;
 
-        var nextPhaseDuration = 0;
-        var currentPhaseDuration = 0;
+        var nextPhaseDuration = 0,
+            currentPhaseDuration = 0;
 
         // Where we'll save the delays
-        var nextDelay = 0;
-        var currentDelay = 0;
+        var nextDelay = 0,
+            currentDelay = 0;
 
         var phaseThreshold = self.options.phaseThreshold;
 
@@ -1953,7 +1962,6 @@ function defineSequence(imagesLoaded, Hammer) {
           if (phaseThreshold !== true) {
 
             // Add the delay to whichever element animates for the shortest period
-
             var reverseThreshold = self.animationMap[currentStep]["animate-in"].maxDuration - self.animationMap[nextStep]["animate-out"].maxDuration;
             if (reverseThreshold > 0) {
               nextDelay = reverseThreshold;

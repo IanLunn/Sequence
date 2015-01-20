@@ -23,12 +23,12 @@ var sequenceElement = document.getElementById("sequence");
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
   animateCanvas: false,
-  autoPlay: true,
-  phaseThreshold: 500,
-  // reverseWhenNavigatingBackwards: true,
+  autoPlay: false,
+  phaseThreshold: false,
   hashTags: true,
   keyNavigation: true,
-  fadeStepWhenSkipped: true
+  fadeStepWhenSkipped: true,
+  startingStepId: 3
 }
 
 var mySequence,
