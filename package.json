@@ -1,7 +1,7 @@
 {
   "name": "sequencejs",
   "description": "CSS animation framework for creating responsive sliders, presentations, banners, and other step-based applications.",
-  "version": "2.0.0-alpha.6",
+  "version": "2.0.0-alpha.8",
   "main": "scripts/sequence.min.js",
   "license": "MIT",
   "author": "Ian Lunn",

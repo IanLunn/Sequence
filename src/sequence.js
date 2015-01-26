@@ -6,12 +6,12 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0-alpha.7
+ * @version 2.0.0-alpha.8
  * @license https://github.com/IanLunn/Sequence/blob/master/LICENSE
  * @copyright Ian Lunn 2015
  */
 
-function defineSequence(imagesLoaded, Hammer) {
+function defineSequence() {
 
   'use strict';
 
@@ -1030,7 +1030,7 @@ function defineSequence(imagesLoaded, Hammer) {
           }
 
           // Add the step class to the sequence element
-          addClass(this.clonedSequence, stepName);
+          addClass(this.clonedSequence, "seq-" + stepName);
 
           // Get the animations for this step's "animate-in"
           // and "animate-out" phases
@@ -1038,7 +1038,7 @@ function defineSequence(imagesLoaded, Hammer) {
           this.phases("animate-out", stepName, clonedStepElement, clonedStepChildren, realStepChildren, noOfStepChildren);
 
           // Remove the step class now we're done with it
-          removeClass(this.clonedSequence, stepName);
+          removeClass(this.clonedSequence, "seq-" + stepName);
         }
       },
 
@@ -1619,6 +1619,7 @@ function defineSequence(imagesLoaded, Hammer) {
         if (self.currentStepId !== undefined) {
 
           var stepToRemove = "seq-step" + self.currentStepId;
+
           addClass(self.container, stepToAdd);
           removeClass(self.container, stepToRemove);
         }else {
@@ -3452,12 +3453,14 @@ function defineSequence(imagesLoaded, Hammer) {
             }
           };
 
-          self.hammerTime = new Hammer(self.container).on("swipe", handler);
+          if(typeof Hammer === "function") {
+            self.hammerTime = new Hammer(self.container).on("swipe", handler);
 
-          // Set Hammer's Swipe options
-          self.hammerTime.get("swipe").set(self.options.swipeHammerOptions);
+              // Set Hammer's Swipe options
+              self.hammerTime.get("swipe").set(self.options.swipeHammerOptions);
 
-          self.manageEvent.list.hammer.push({"element": self.container, "handler": handler});
+              self.manageEvent.list.hammer.push({"element": self.container, "handler": handler});
+          }
         },
 
         /**
@@ -3506,6 +3509,10 @@ function defineSequence(imagesLoaded, Hammer) {
             var i,
                 step,
                 stepName;
+
+            var dataAttributes = self._getAnimationMap.dataAttributes();
+
+            self.animationMap = self._getAnimationMap.init(self.container, dataAttributes);
 
             // Work out the transform properties for each step again
             for (i = 0; i < self.noOfSteps; i++) {
@@ -3655,9 +3662,10 @@ function defineSequence(imagesLoaded, Hammer) {
       };
 
       // Set up preloading if required, then go to the first step
-      if (self.options.preloader !== false && document.querySelectorAll !== undefined) {
+      if (self.options.preloader !== false && document.querySelectorAll !== undefined && typeof imagesLoaded === "function") {
 
         self._preload.init(function() {
+
           goToFirstStep();
 
           self._animation.domDelay(function() {
@@ -3918,16 +3926,12 @@ function defineSequence(imagesLoaded, Hammer) {
     /**
      * Callback executed when autoPlay is paused
      */
-    self.paused = function(self) {
-
-    };
+    self.paused = function(self) {};
 
     /**
      * Callback executed when autoPlay is unpaused
      */
-    self.unpaused = function(self) {
-
-    };
+    self.unpaused = function(self) {};
 
     /**
      * Callback executed when a step animation starts
@@ -3936,10 +3940,7 @@ function defineSequence(imagesLoaded, Hammer) {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.animationStarted = function(id, self) {
-
-      // console.log("started", id);
-    };
+    self.animationStarted = function(id, self) {};
 
     /**
      * Callback executed when a step animation finishes
@@ -3948,10 +3949,7 @@ function defineSequence(imagesLoaded, Hammer) {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.animationFinished = function(id, self) {
-
-      // console.log("finished", id);
-    };
+    self.animationFinished = function(id, self) {};
 
     /**
      * Callback executed when the current phase starts animating
@@ -3959,10 +3957,7 @@ function defineSequence(imagesLoaded, Hammer) {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.currentPhaseStarted = function(self) {
-
-      // console.log("currentstarted");
-    };
+    self.currentPhaseStarted = function(self) {};
 
     /**
      * Callback executed when the current phase finishes animating
@@ -3970,10 +3965,7 @@ function defineSequence(imagesLoaded, Hammer) {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.currentPhaseEnded = function(self) {
-
-      // console.log("currentended")
-    };
+    self.currentPhaseEnded = function(self) {};
 
     /**
      * Callback executed when the next phase starts animating
@@ -3981,10 +3973,7 @@ function defineSequence(imagesLoaded, Hammer) {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.nextPhaseStarted = function(self) {
-
-      // console.log("nextstarted");
-    };
+    self.nextPhaseStarted = function(self) {};
 
     /**
      * Callback executed when the next phase finishes animating
@@ -3992,10 +3981,7 @@ function defineSequence(imagesLoaded, Hammer) {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.nextPhaseEnded = function(self) {
-
-      // console.log("nextended")
-    };
+    self.nextPhaseEnded = function(self) {};
 
     /**
      * When the throttled window resize event occurs
@@ -4003,10 +3989,7 @@ function defineSequence(imagesLoaded, Hammer) {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.throttledResize = function(self) {
-
-      // console.log("throttleResized")
-    };
+    self.throttledResize = function(self) {};
 
     /**
      * Callback executed when preloading has finished
@@ -4014,10 +3997,7 @@ function defineSequence(imagesLoaded, Hammer) {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.preloaded = function(self) {
-
-      // console.log("preloaded");
-    };
+    self.preloaded = function(self) {};
 
     /**
      * Callback executed every time an image to be preloaded returns a status
@@ -4029,11 +4009,7 @@ function defineSequence(imagesLoaded, Hammer) {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.preloadProgress = function(result, src, progress, length, self) {
-
-      // console.log( "image is " + result + " for " + src );
-      // console.log("progress: " + progress + " of " + length);
-    };
+    self.preloadProgress = function(result, src, progress, length, self) {};
 
     /**
      * Callback executed when Sequence is ready to be interacted with
@@ -4042,10 +4018,7 @@ function defineSequence(imagesLoaded, Hammer) {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.ready = function(self) {
-
-      // console.log("ready");
-    };
+    self.ready = function(self) {};
 
     /**
      * Callback executed when Sequence has finished being destroyed via .destroy()
@@ -4053,10 +4026,7 @@ function defineSequence(imagesLoaded, Hammer) {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.destroyed = function(self) {
-
-      // console.log("goodbye!");
-    };
+    self.destroyed = function(self) {};
 
     /**
     * Make some of Sequence's helper functions public
@@ -4083,4 +4053,4 @@ function defineSequence(imagesLoaded, Hammer) {
   return Sequence;
 }
 
-var sequence = defineSequence(imagesLoaded, Hammer);
+var sequence = defineSequence();
