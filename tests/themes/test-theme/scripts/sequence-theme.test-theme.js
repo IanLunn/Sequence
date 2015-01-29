@@ -24,11 +24,9 @@ var sequenceElement = document.getElementById("sequence");
 var options = {
   animateCanvas: false,
   autoPlay: false,
-  phaseThreshold: false,
-  hashTags: true,
-  keyNavigation: true,
-  fadeStepWhenSkipped: true,
-  startingStepId: 3
+  // phaseThreshold: false,
+  hashTags: false,
+  keyNavigation: true
 }
 
 var mySequence,

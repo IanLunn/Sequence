@@ -6,7 +6,7 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0-alpha.8
+ * @version 2.0.0-pre.1
  * @license https://github.com/IanLunn/Sequence/blob/master/LICENSE
  * @copyright Ian Lunn 2015
  */
@@ -99,7 +99,7 @@ function defineSequence() {
       navigationSkipThreshold: 250,
 
       // Fade a step when it has been skipped
-      fadeStepWhenSkipped: false,
+      fadeStepWhenSkipped: true,
 
       // How long the fade should take
       fadeStepTime: 500,
@@ -811,37 +811,14 @@ function defineSequence() {
         // Where we'll save the animations
         this.animationMap = {};
 
-        if (self.isFallbackMode === false) {
+        for (var i = 1; i <= self.noOfSteps; i++) {
 
-          // Clone Sequence so it can be quickly forced through each step
-          // and get the canvas and each step
-          this.clonedSequence = this.createClone(element);
-          this.clonedCanvas = getElementsByClassName(this.clonedSequence, "seq-canvas")[0];
-          this.clonedSteps = getSteps(this.clonedCanvas);
-
-          // Get any non-animation class names applied to Sequence
-          this.originalClasses = this.clonedSequence.className;
-
-          // Where we'll save how many steps are animating
-          this.animationMap.stepsAnimating = 0;
-
-          // Initiate each Sequence step on the cloned Sequence
-          this.steps(dataAttributes);
-
-          // Remove the Sequence clone now we've got the animation map
-          this.destroyClone(this.clonedSequence);
+          this.animationMap["step" + i] = {};
+          this.animationMap["step" + i].isAnimating = false;
         }
 
-        // CSS transitions aren't supported, just return the step elements
-        else {
-
-          for (var i = 0; i < self.noOfSteps; i++) {
-
-            var step = "step" + (i + 1);
-            this.animationMap[step] = {};
-            this.animationMap[step].element = self.steps[i];
-          }
-        }
+        // Where we'll save how many steps are animating
+        this.animationMap.stepsAnimating = 0;
 
         return this.animationMap;
       },
@@ -976,187 +953,6 @@ function defineSequence() {
         this.animationMap[stepName].dataAttributes = stepAttributes;
         this.animationMap[stepName].stepTransform = stepTransform;
         this.animationMap[stepName].canvasTransform = canvasTransform;
-      },
-
-      /**
-       * Initiate each Sequence step on the cloned Sequence and apply CSS
-       * transforms from data-attributes, where specified
-       */
-      steps: function(dataAttributes) {
-
-        var stepName,
-            clonedStepElement,
-            realStepElement,
-            clonedStepChildren,
-            realStepChildren,
-            noOfStepChildren,
-            transformProperties,
-            transformCss,
-            i;
-
-        for (i = 0; i < self.noOfSteps; i++) {
-
-          // Get the step, step number (one-based),
-          // the step's children and count them
-          stepName = "step" + (i + 1);
-          clonedStepElement = this.clonedSteps[i];
-          realStepElement = self.steps[i];
-          clonedStepChildren = clonedStepElement.getElementsByTagName("*");
-          realStepChildren = realStepElement.getElementsByTagName("*");
-          noOfStepChildren = clonedStepChildren.length;
-
-          // Set up an object where we'll save the step's phase properties
-          // Save the step element for later manipulation
-          this.animationMap[stepName] = {};
-          this.animationMap[stepName].element = realStepElement;
-
-          // Get the transform properties from the data-attributes and apply the
-          // transform to the step
-          this.getTransformProperties(stepName, realStepElement, dataAttributes);
-
-          // Get the CSS string consisting of the transform properties and apply
-          transformCss = propertiesToCss(this.animationMap[stepName].stepTransform);
-
-          // Apply the transform CSS
-          realStepElement.style[Modernizr.prefixed("transition")] = "0ms 0ms";
-          realStepElement.style[Modernizr.prefixed("transform")] = transformCss;
-
-          self._animation.domDelay(function() {
-            realStepElement.style[Modernizr.prefixed("transition")] = "";
-          });
-
-          if (self.requires3d === true) {
-            realStepElement.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
-          }
-
-          // Add the step class to the sequence element
-          addClass(this.clonedSequence, "seq-" + stepName);
-
-          // Get the animations for this step's "animate-in"
-          // and "animate-out" phases
-          this.phases("animate-in", stepName, clonedStepElement, clonedStepChildren, realStepChildren, noOfStepChildren);
-          this.phases("animate-out", stepName, clonedStepElement, clonedStepChildren, realStepChildren, noOfStepChildren);
-
-          // Remove the step class now we're done with it
-          removeClass(this.clonedSequence, "seq-" + stepName);
-        }
-      },
-
-      /**
-       * Initiate the "animate-in" and "animate-out" phases for a Sequence step
-       *
-       * @param {String} phase - The phase "animate-in" or "animate-out"
-       * @param {Number} stepName - The step number
-       * @param {Object} clonedStepElement - The cloned element associated with the step
-       * @param {Array} clonedStepChildren - All of the cloned step's child elements
-       * @param {Array} realStepChildren - All of the real step's child elements
-       * @param {Number} noOfStepChildren - The number of step child elements
-       */
-      phases: function(phase, stepName, clonedStepElement, clonedStepChildren, realStepChildren, noOfStepChildren) {
-
-        // Where we'll save this phase's elements and computed duration
-        var elements = [];
-        var maxDuration;
-        var maxDelay;
-        var maxComputedDuration;
-        var element,
-            realElement,
-            styles,
-            elementNo,
-            elementProperties = {};
-
-        // Add the phase class to the current step
-        addClass(clonedStepElement, phase);
-
-        // Where we'll save this phase's properties
-        this.animationMap[stepName][phase] = {};
-
-        /**
-         * Save the step's child element properties if it will animate in the
-         * phase being tested
-         */
-        for (elementNo = 0; elementNo < noOfStepChildren; elementNo++) {
-
-          // Get the cloned element being tested and the real element to be saved
-          element = clonedStepChildren[elementNo];
-          realElement = realStepChildren[elementNo];
-
-          // Get the element's styles
-          // styles = getComputedStyle(element, null) || element.currentStyle;
-          elementProperties = {};
-
-          // Get the element's transition-duration and transition-delay, then
-          // calculate the computed duration
-          var transitionDuration = convertTimeToMs(getStyle(element, Modernizr.prefixed("transitionDuration")));
-          var transitionDelay = convertTimeToMs(getStyle(element, Modernizr.prefixed("transitionDelay")));
-          var transitionTimingFunction = getStyle(element, Modernizr.prefixed("transitionTimingFunction"));
-          var computedDuration = transitionDuration + transitionDelay;
-
-          /**
-           * Will the element animate in this phase?
-           *
-           * If the element from the cloned Sequence will animate in this phase,
-           * add the equivalent real element to the list of elements that will
-           * animate, and its duration and delay.
-           */
-          if (computedDuration !== 0) {
-
-            elementProperties.element = realElement;
-            elementProperties.duration = transitionDuration;
-            elementProperties.delay = transitionDelay;
-            elementProperties.timingFunction = transitionTimingFunction;
-            elements.push(elementProperties);
-
-            if (maxDuration === undefined || transitionDuration > maxDuration) {
-              maxDuration = transitionDuration;
-            }
-
-            if (maxDelay === undefined || transitionDelay > maxDelay) {
-              maxDelay = transitionDelay;
-            }
-
-            // Save the computed duration if it's the longest one yet
-            if (maxComputedDuration === undefined || computedDuration > maxComputedDuration) {
-              maxComputedDuration = computedDuration;
-            }
-          }
-        }
-
-        // Remove the phase class from the current step
-        removeClass(clonedStepElement, phase);
-
-        // Save this phase's animated elements and maxium computed duration
-        this.animationMap[stepName][phase].elements = elements;
-        this.animationMap[stepName][phase].noOfElements = elements.length;
-        this.animationMap[stepName][phase].maxDuration = maxDuration;
-        this.animationMap[stepName][phase].maxDelay = maxDelay;
-        this.animationMap[stepName][phase].computedDuration = maxComputedDuration;
-      },
-
-      /**
-       * Clone an instance of Sequence to get the animation map from
-       *
-       * @param {Object} element - The Sequence element to clone
-       * @return {Object} The cloned element
-       */
-      createClone: function(element) {
-
-        var clonedSequence = element.cloneNode(true);
-        clonedSequence.style.display = "none";
-        clonedSequence.id = "sequence";
-        element.parentNode.insertBefore(clonedSequence, element);
-
-        return clonedSequence;
-      },
-
-      /**
-       * Destroy a cloned Sequence element
-       *
-       * @param {Object} element - The cloned element to destroy
-       */
-      destroyClone: function(element) {
-
-        element.parentNode.removeChild(element);
       }
     };
 
@@ -1499,22 +1295,64 @@ function defineSequence() {
     self._animation = {
 
       /**
+       * Get the properties of a phase, it's ID, element, and animated elements
+       */
+      getPhaseProperties: function(id) {
+
+        var currentStep = self.currentStepId,
+            nextStep = id,
+            currentStepElement = self.steps[currentStep - 1],
+            nextStepElement = self.steps[nextStep - 1],
+            currentStepAnimatedElements = currentStepElement.querySelectorAll("*[data-seq]"),
+            nextStepAnimatedElements = nextStepElement.querySelectorAll("*[data-seq]");
+
+        return {
+          current: {
+            id: currentStep,
+            stepElement: currentStepElement,
+            animatedElements: currentStepAnimatedElements
+          },
+          next: {
+            id: nextStep,
+            stepElement: nextStepElement,
+            animatedElements: nextStepAnimatedElements
+          }
+        };
+      },
+
+      /**
+       * When a new step is started, remove the previous steps transitionend
+       * events.
+       */
+      removePreviousStepTransitionEnd: function(activePhases) {
+
+        if (activePhases !== undefined) {
+          removeEvent(activePhases.current.stepElement, "transitionend", activePhases.current.transitionEnd);
+          delete activePhases.current.transitionEnd;
+
+          removeEvent(activePhases.next.stepElement, "transitionend", activePhases.next.transitionEnd);
+          delete activePhases.next.transitionEnd;
+        }
+      },
+
+      /**
        * If the moveActiveStepToTop option is being used, move the next step
        * to the top (via a z-index equivalent to the number of steps), and the
        * current step to the bottom
        *
-       * @param {HTMLElement} currentStepElement - The current step to be moved off the top
-       * @param {HTMLElement} nextStepElement - The next step to be moved to the top
+       * @param {HTMLElement} currentElement - The current step to be moved off the top
+       * @param {HTMLElement} nextElement - The next step to be moved to the top
        */
-      moveActiveStepToTop: function(currentStepElement, nextStepElement) {
+      moveActiveStepToTop: function(currentElement, nextElement) {
 
         if (self.options.moveActiveStepToTop === true) {
 
-          var prevStepElement = self.animationMap["step" + self.prevStepId].element;
+          // var prevStepElement = self.animationMap["step" + self.prevStepId].element;
+          var prevStepElement = self.steps[self.prevStepId - 1];
 
           prevStepElement.style.zIndex = 1;
-          currentStepElement.style.zIndex = self.noOfSteps - 1;
-          nextStepElement.style.zIndex = self.noOfSteps;
+          currentElement.style.zIndex = self.noOfSteps - 1;
+          nextElement.style.zIndex = self.noOfSteps;
         }
       },
 
@@ -1524,20 +1362,18 @@ function defineSequence() {
        *
        * @param {Number} id - The ID of the step Sequence is trying to go to
        * @param {Number} direction - The direction Sequence is trying to go
-       * @param {String} currentStep - The current step that is active
-       * @param {String} nextStep - The next step to become active
-       * @param {HTMLObject} nextStepElement -  The element that is to become the next step
        */
-      manageNavigationSkip: function(id, direction, currentStep, nextStep, nextStepElement) {
+      manageNavigationSkip: function(id, direction) {
 
         if (self.isFallbackMode === true) {
           return;
         }
 
-        var _animation = this;
+        var _animation = this,
+            phases = self.animationMap.activePhases;
 
         // Show the next step again
-        self._ui.show(nextStepElement, 0);
+        self._ui.show(phases.next.stepElement, 0);
 
         if (self.options.navigationSkip === true) {
 
@@ -1545,15 +1381,21 @@ function defineSequence() {
           self.navigationSkipThresholdActive = true;
 
           // Count the number of steps currently animating
-          var activeStepsLength = self.animationMap.stepsAnimating;
+          var activeStepsLength = self.animationMap.stepsAnimating,
+              i,
+              step,
+              stepProperties,
+              stepElement;
 
           // Add the steps to the list of active steps
-          self.animationMap[currentStep].isAnimating = true;
-          self.animationMap[nextStep].isAnimating = true;
+          self.animationMap["step" + phases.current.id].isAnimating = true;
+          self.animationMap["step" + phases.next.id].isAnimating = true;
           self.animationMap.stepsAnimating += 2;
 
           // Are there steps currently animating that need to be faded out?
           if (activeStepsLength !== 0) {
+
+            phases.current.skipped = true;
 
             // If a step is waiting to animate in based on the phaseThreshold,
             // cancel it
@@ -1565,13 +1407,14 @@ function defineSequence() {
 
               // Fade all elements that are animating
               // (not including the current one)
-              for (var i = 1; i <= self.noOfSteps; i++) {
+              for (i = 1; i <= self.noOfSteps; i++) {
 
-                var step = "step" + i;
-                var stepProperties = self.animationMap[step];
+                step = "step" + i;
+                stepProperties = self.animationMap[step];
 
                 if (stepProperties.isAnimating === true && i !== id) {
-                  var stepElement = stepProperties.element;
+                  stepElement = self.steps[i - 1];
+
                   self._animation.stepSkipped(direction, step, stepElement);
                 }
               }
@@ -1628,21 +1471,83 @@ function defineSequence() {
       },
 
       /**
+       * Go forward to the next step
+       *
+       * @param {Number} id - The ID of the next step
+       * @param {String} nextStep - The name of the next step
+       * @param {HTMLElement} nextStepElement - The element that is the next step
+       * @param {String} currentStep - The name of the current step
+       * @param {HTMLElement} currentStepElement - The element that is the current step
+       * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
+       */
+      forward: function(id, activePhases, hashTagNav) {
+
+        var _animation = this;
+
+        // Snap the step to the "animate-start" phase
+        removeClass(activePhases.next.stepElement, "animate-out");
+
+        _animation.domDelay(function() {
+          // Make the current step transition to "animate-out"
+          addClass(activePhases.current.stepElement, "animate-out");
+          removeClass(activePhases.current.stepElement, "animate-in");
+
+          // Make the next step transition to "animate-in"
+          _animation.startAnimateIn(id, 1, activePhases, hashTagNav);
+        });
+      },
+
+      /**
+       * Go in reverse to the next step
+       *
+       * @param {Number} id - The ID of the next step
+       * @param {String} nextStep - The name of the next step
+       * @param {HTMLElement} nextStepElement - The element that is the next step
+       * @param {String} currentStep - The name of the current step
+       * @param {HTMLElement} currentStepElement - The element that is the current step
+       * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
+       */
+      reverse: function(id, activePhases, hashTagNav) {
+
+        var _animation = this;
+
+        // Snap the step to the "animate-out" phase
+        addClass(activePhases.next.stepElement, "animate-out");
+
+        // Get the minimum delay so it can be removed from all delays when reversing
+        // var minDelay = (stepDurations.currentPhase.delay < stepDurations.nextPhase.delay) ? stepDurations.currentPhase.delay : stepDurations.nextPhase.delay;
+        var minDelay = 0;
+
+        _animation.domDelay(function() {
+
+          // Reverse properties for both the current and next steps
+          _animation.reverseProperties(activePhases.current.id, "animate-in", minDelay);
+          // _animation.reverseProperties(activePhases.nextStep, "animate-out", stepDurations.nextPhase, minDelay);
+
+          // Make the current step transition to "animate-start"
+          removeClass(activePhases.current.stepElement, "animate-in");
+
+          // Make the next step transition to "animate-in"
+          // _animation.startAnimateIn(id, -1, activePhases, stepDurations, hashTagNav);
+        });
+      },
+
+      /**
        * Apply the reversed properties to all animatable elements within a step
        *
        * @param {String} step - The step that the elements we'll override belong to
        * @param {Number} phase - The animation phase "animate-in" or "animate-out"
-       * @return {Object} stepDurations - How long a step will animate for,
-       *                                  including animation, delay, and total
        * @return {Number} minDelay - The lowest delay applied to an element
        */
-      reverseProperties: function(step, phase, stepDurations, minDelay) {
+      reverseProperties: function(step, phase, minDelay) {
 
         var _animation = this,
-            stepProperties = self.animationMap[step][phase];
+            stepElement = self.steps[step - 1],
+            stepChildren = stepElement.querySelectorAll("*"),
+            i;
 
         // Apply the transition properties to each element
-        for (var i = 0; i < stepProperties.noOfElements; i++) {
+        for (i = 0; i < stepProperties.noOfElements; i++) {
           var stepElements = stepProperties.elements[i];
 
           // Reverse the delay
@@ -1663,71 +1568,6 @@ function defineSequence() {
       },
 
       /**
-       * Go forward to the next step
-       *
-       * @param {Number} id - The ID of the next step
-       * @param {String} nextStep - The name of the next step
-       * @param {HTMLElement} nextStepElement - The element that is the next step
-       * @param {String} currentStep - The name of the current step
-       * @param {HTMLElement} currentStepElement - The element that is the current step
-       * @param {Object} stepDurations - How long a step will animate for,
-       *                                 including animation, delay, and total
-       * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
-       */
-      forward: function(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav) {
-
-        var _animation = this;
-
-        // Snap the step to the "animate-start" phase
-        removeClass(nextStepElement, "animate-out");
-
-        _animation.domDelay(function() {
-          // Make the current step transition to "animate-out"
-          addClass(currentStepElement, "animate-out");
-          removeClass(currentStepElement, "animate-in");
-
-          // Make the next step transition to "animate-in"
-          _animation.startAnimateIn(id, 1, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav);
-        });
-      },
-
-      /**
-       * Go in reverse to the next step
-       *
-       * @param {Number} id - The ID of the next step
-       * @param {String} nextStep - The name of the next step
-       * @param {HTMLElement} nextStepElement - The element that is the next step
-       * @param {String} currentStep - The name of the current step
-       * @param {HTMLElement} currentStepElement - The element that is the current step
-       * @param {Object} stepDurations - How long a step will animate for,
-       *                                 including animation, delay, and total
-       * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
-       */
-      reverse: function(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav) {
-
-        var _animation = this;
-
-        // Snap the step to the "animate-out" phase
-        addClass(nextStepElement, "animate-out");
-
-        // Get the minimum delay so it can be removed from all delays when reversing
-        var minDelay = (stepDurations.currentPhase.delay < stepDurations.nextPhase.delay) ? stepDurations.currentPhase.delay : stepDurations.nextPhase.delay;
-
-        _animation.domDelay(function() {
-
-          // Reverse properties for both the current and next steps
-          _animation.reverseProperties(currentStep, "animate-in", stepDurations.currentPhase, minDelay);
-          _animation.reverseProperties(nextStep, "animate-out", stepDurations.nextPhase, minDelay);
-
-          // Make the current step transition to "animate-start"
-          removeClass(currentStepElement, "animate-in");
-
-          // Make the next step transition to "animate-in"
-          _animation.startAnimateIn(id, -1, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav);
-        });
-      },
-
-      /**
        * Start the next step's "animate-in" phase
        *
        * @param {Number} id - The ID of the next step
@@ -1736,42 +1576,43 @@ function defineSequence() {
        * @param {HTMLElement} nextStepElement - The element that is the next step
        * @param {String} currentStep - The name of the current step
        * @param {HTMLElement} currentStepElement - The element that is the current step
-       * @param {Object} stepDurations - How long a step will animate for,
-       *                                 including animation, delay, and total
        * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
        */
-      startAnimateIn: function(id, direction, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav) {
+      startAnimateIn: function(id, direction, activePhases, hashTagNav) {
 
         var _animation = this;
-
-        var currentPhaseDuration = 0,
-            nextPhaseDuration = 0,
-            nextPhaseThreshold = 0,
-            stepDurationTotal = 0;
 
         // The next ID is now the current ID
         self.prevStepId = self.currentStepId;
         self.currentStepId = id;
 
-        // Callback
-        self.animationStarted(id, self);
-        _animation._currentPhaseStarted();
-
         // When should the "animate-in" phase start and how long until the step
         // completely finishes animating?
         if (self._firstRun === false) {
-          currentPhaseDuration = stepDurations.currentPhase.total;
-          nextPhaseDuration = stepDurations.nextPhase.total;
-          nextPhaseThreshold = stepDurations.nextPhaseThreshold;
-          stepDurationTotal = stepDurations.stepTotal;
 
-          // Start the "animate-in" phase
-          self.phaseThresholdTimer = setTimeout(function() {
+          if (activePhases.current.skipped === true) {
+            self.currentPhaseEnded();
+          }
 
-            _animation._nextPhaseStarted(hashTagNav);
-            addClass(nextStepElement, "animate-in");
-            removeClass(nextStepElement, "animate-out");
-          }, nextPhaseThreshold);
+          // Callback
+          self.animationStarted(id, self);
+          _animation._currentPhaseStarted();
+
+          if (self.options.phaseThreshold !== true) {
+            // Start the "animate-in" phase
+            self.phaseThresholdTimer = setTimeout(function() {
+              _animation._nextPhaseStarted(hashTagNav);
+              addClass(activePhases.next.stepElement, "animate-in");
+              removeClass(activePhases.next.stepElement, "animate-out");
+            }, self.options.phaseThreshold);
+          }
+
+          self.animationMap.stepsAnimating = 2;
+
+          // Wait for the current and next phases to end
+          _animation._waitForPhaseEnd(activePhases.current.stepElement, "current", _animation._currentPhaseEnded);
+
+          _animation._waitForPhaseEnd(activePhases.next.stepElement, "next", _animation._nextPhaseEnded);
         }
 
         // This is the first run
@@ -1781,31 +1622,29 @@ function defineSequence() {
           if (self.options.startingStepAnimatesIn === false) {
 
             // Set the first step's speed to 0 to have it immediately snap into place
-            _animation.resetInheritedSpeed(nextStep, "animate-in");
+            _animation.resetInheritedSpeed(activePhases.next.id, "animate-in");
+
+            self.animationMap.stepsAnimating = 0;
+            self.isActive = false;
           }
 
           // Animate the first step into place
           else {
 
-            // The step duration total is the same as the next phase's total animation
-            nextPhaseDuration = stepDurations.nextPhase.total;
-            stepDurationTotal = nextPhaseDuration;
+            _animation._nextPhaseStarted(hashTagNav);
+
+            self.animationMap.stepsAnimating = 1;
+
+            // Wait for the next phase to end
+            _animation._waitForPhaseEnd(activePhases.next.stepElement, "next", _animation._nextPhaseEnded);
           }
 
           // We're now done with the first run
           // Add the "animate-in" class to the next step
-          _animation._nextPhaseStarted(hashTagNav);
           self._firstRun = false;
-          addClass(nextStepElement, "animate-in");
-          removeClass(nextStepElement, "animate-out");
+          addClass(activePhases.next.stepElement, "animate-in");
+          removeClass(activePhases.next.stepElement, "animate-out");
         }
-
-        // Wait for the current and next phases to end
-        _animation.phaseEnded(currentPhaseDuration, currentStep, _animation._currentPhaseEnded);
-        _animation.phaseEnded(nextPhaseDuration, nextStep, _animation._nextPhaseEnded);
-
-        // Wait for the step (both phases) to finish animating
-        _animation.stepEnded(id, stepDurationTotal);
       },
 
       /**
@@ -1823,6 +1662,16 @@ function defineSequence() {
        * When the current phase finishes animating
        */
       _currentPhaseEnded: function() {
+
+        // Start the next phase when the current phase finishes if
+        // phaseThreshold is true
+        if (self.options.phaseThreshold === true) {
+
+          var nextStepElement = self.animationMap.activePhases.next.stepElement;
+          self._animation._nextPhaseStarted();
+          addClass(nextStepElement, "animate-in");
+          removeClass(nextStepElement, "animate-out");
+        }
 
         // Callback
         self.currentPhaseEnded(self);
@@ -1854,178 +1703,107 @@ function defineSequence() {
       },
 
       /**
-       * When a phase's animations have completely finished
+       * Wait for the step (both phases) to finish animating
+       */
+      _hasStepEnded: function(phasesAnimating) {
+
+        if (phasesAnimating === 0) {
+
+          self._animation.stepEnded();
+        }
+      },
+
+      /**
+       * When a phase's (animate-in or animate-out) animations have completely finished
        *
-       * @param {Number} stepDurationTotal - The amount of time before the step finishes animating
-       * @param {String} step - The name of the step that ended
+       * @param {HTMLObject} stepElement - The step element
        * @param {Function} callback - A function to execute when the phase ends
        */
-      phaseEnded: function(stepDurationTotal, step, callback) {
+      _waitForPhaseEnd: function(stepElement, phase, callback) {
 
-        self.phaseEndedTimer = setTimeout(function() {
+        // Get the active phases and their elements to watch for a transitionend
+        var activePhases = self.animationMap.activePhases,
+            activePhase = activePhases[phase],
+            watchedElements = activePhase.animatedElements,
+            watchedElementsLength = watchedElements.length,
+            el,
+            i;
 
-          self.animationMap[step].isAnimating = false;
+        activePhase.callback = callback;
+        activePhase.elementsAnimated = 0;
+
+        // Remove data-seq-animated from watched elements in previous
+        // runs of waitForPhaseEnd()
+        for (i = 0; i < watchedElementsLength; i++) {
+          el = watchedElements[i];
+
+          delete el.dataset.phase;
+          delete el.dataset.seqAnimated;
+
+          // Which phase does this element belong to (current/next)?
+          el.dataset.phase = phase;
+        }
+
+        // If the phase was skipped and it should fade, consider it as finished
+        if (activePhase.skipped === true && self.options.fadeStepWhenSkipped === true) {
+          activePhase.skipped = false;
+
+          self._animation._currentPhaseEnded();
           self.animationMap.stepsAnimating -= 1;
+          self._animation._hasStepEnded(self.animationMap.stepsAnimating);
 
-          // Callback
-          callback();
-        }, stepDurationTotal);
+          return;
+        }
+
+        /**
+         * Wait for the current and next phases to end
+         *
+         * An element will return at least one "transitionend" depending on
+         * how many of its properties transition. To make sure an element is
+         * only declared as having finished transitioning, it is given a data
+         * attribute. Each time a transitionend occurs, we check to see if the
+         * number of transitionends for each element correlates with the number
+         * of elements we expect to have transitioned via the data-seq attribute
+         */
+
+         activePhase.transitionEnd = addEvent(stepElement, "transitionend", function(e) {
+
+          el = e.target;
+          phase = self.animationMap.activePhases[el.dataset.phase];
+
+          if (el.dataset.seqAnimated === undefined) {
+            el.dataset.seqAnimated = true;
+            phase.elementsAnimated++;
+
+            // When all elements have finished animating
+            if (phase.elementsAnimated === phase.animatedElements.length) {
+
+              self.animationMap.stepsAnimating -= 1;
+              phase.callback();
+              phase.skipped = false;
+
+              self._animation._hasStepEnded(self.animationMap.stepsAnimating);
+
+              // Remove the transitionend event now we're done with it
+              removeEvent(phase.stepElement, "transitionend", phase.transitionEnd);
+              delete phase.transitionEnd;
+            }
+          }
+        });
       },
 
       /**
        * When a step's animations have completely finished
-       *
-       * @param {Number} id - The ID of the step that ended
-       * @param {Number} stepDurationTotal - The amount of time before the step finishes animating
        */
-      stepEnded: function(id, stepDurationTotal) {
+      stepEnded: function() {
 
-        self.stepEndedTimer = setTimeout(function() {
+          // Start autoPlay again
           self._autoPlay.init();
 
           self.isActive = false;
 
           // Callback
-          self.animationFinished(id, self);
-        }, stepDurationTotal);
-      },
-
-      /**
-       * Determine how long a step's phases will animate for
-       *
-       * Note: the first time sequence.goTo() is run, the step duration
-       * will always be the longest computed duration from the "animate-in"
-       * phase, as the "animate-out" phase is immediately snapped into place.
-       *
-       * @param {Number} nextStepId - The ID of the next step
-       * @param {String} nextStep - The step that will be animated-in
-       * @param {String} currentStep - The step that will be animated-out
-       * @param {Number} direction - The direction of navigation
-       * @return {Number} stepDuration - The time the step will take to animate
-       */
-      getStepDurations: function(nextStepId, nextStep, currentStep, direction) {
-
-        if (self.isFallbackMode === true) {
-          return;
-        }
-
-        var durations = {};
-        durations.currentPhase = {};
-        durations.nextPhase = {};
-
-        // How long the phase will animate (not including delays)
-        durations.currentPhase.animation = 0;
-        durations.nextPhase.animation = 0;
-
-        // How long the phase will be delayed
-        durations.currentPhase.delay = 0;
-        durations.nextPhase.delay = 0;
-
-        // The total duration of the phase (animation + delay)
-        durations.currentPhase.total = 0;
-        durations.nextPhase.total = 0;
-
-        // The time the next phase should wait before being set to "animate-in"
-        durations.nextPhaseThreshold = 0;
-
-        // The total time it'll take for both phases to finish
-        durations.stepTotal = 0;
-
-        var nextPhaseDuration = 0,
-            currentPhaseDuration = 0;
-
-        // Where we'll save the delays
-        var nextDelay = 0,
-            currentDelay = 0;
-
-        var phaseThreshold = self.options.phaseThreshold;
-
-        // Navigating forwards
-        if (direction === 1) {
-          currentPhaseDuration = self.animationMap[currentStep]["animate-out"].computedDuration;
-          nextPhaseDuration = self.animationMap[nextStep]["animate-in"].computedDuration;
-        }
-
-        // Navigating in reverse
-        else {
-
-          /**
-           * Does a phase require a delay to make it perfectly reverse in
-           * synchronisation with the other phase?
-           *
-           * Example: When navigating forward, if the current phase in step 1
-           * animates out over 3 seconds, and the next phase in step 2 animates
-           * in over 1 second, when reversed, step 2 animating back to its start
-           * position should be given a 2 (3 - 1) second delay to create a perfect
-           * reversal of animation.
-           *
-           */
-          if (phaseThreshold !== true) {
-
-            // Add the delay to whichever element animates for the shortest period
-            var reverseThreshold = self.animationMap[currentStep]["animate-in"].maxDuration - self.animationMap[nextStep]["animate-out"].maxDuration;
-            if (reverseThreshold > 0) {
-              nextDelay = reverseThreshold;
-            }else {
-              currentDelay = Math.abs(reverseThreshold);
-            }
-          }
-
-          currentPhaseDuration = self.animationMap[currentStep]["animate-in"].maxDuration;
-          nextPhaseDuration = self.animationMap[nextStep]["animate-out"].maxDuration;
-
-          // Reverse CSS defined delays
-          nextDelay += self.animationMap[currentStep]["animate-in"].maxDelay;
-          currentDelay += self.animationMap[nextStep]["animate-out"].maxDelay;
-        }
-
-        var currentPhaseDurationTotal = currentPhaseDuration + currentDelay;
-        var nextPhaseDurationTotal = nextPhaseDuration + nextDelay;
-
-        durations.currentPhase.animation = currentPhaseDuration;
-        durations.currentPhase.delay = currentDelay;
-        durations.currentPhase.total = currentPhaseDurationTotal;
-        durations.nextPhase.animation = nextPhaseDuration;
-        durations.nextPhase.delay = nextDelay;
-
-        // When should "animate-in" start and how long does a step last for?
-        switch(phaseThreshold) {
-
-          case false:
-            // The next phase should be set to "animate-in" immediately
-            // The step ends whenever the longest phase has finished
-            durations.nextPhase.total = nextPhaseDurationTotal;
-            if (currentPhaseDurationTotal > nextPhaseDurationTotal) {
-              durations.stepTotal = currentPhaseDurationTotal;
-            }else {
-              durations.stepTotal = nextPhaseDurationTotal;
-            }
-          break;
-
-          case true:
-            // The next phase should start only once the current phase has finished
-            // The step ends once both phases have finished
-            durations.nextPhaseThreshold = currentPhaseDurationTotal;
-            durations.nextPhase.total = currentPhaseDurationTotal + nextPhaseDurationTotal;
-            durations.stepTotal = currentPhaseDurationTotal + nextPhaseDurationTotal;
-          break;
-
-          default:
-            // The next phase should be set to "animate-in" after a specific time
-            // The step ends whenever the longest phase has finished (including
-            // the phaseThreshold time)
-            durations.nextPhaseThreshold = phaseThreshold;
-            var nextPhaseDurationIncThreshold = nextPhaseDurationTotal + phaseThreshold;
-            durations.nextPhase.total = nextPhaseDurationIncThreshold;
-
-            if (currentPhaseDurationTotal > nextPhaseDurationIncThreshold) {
-              durations.stepTotal = currentPhaseDurationTotal;
-            }else {
-              durations.stepTotal = nextPhaseDurationIncThreshold;
-            }
-        }
-
-        return durations;
+          self.animationEnded(self.prevStepId, self);
       },
 
       /**
@@ -2151,19 +1929,20 @@ function defineSequence() {
           return;
         }
 
-        var _animation = this;
+        var _animation = this,
+            el,
+            i;
 
         // Get the step's elements and count them
-        var stepElements = self.animationMap[step][phase].elements;
-        var numberOfStepElements = self.animationMap[step][phase].noOfElements;
+        var stepElements = self.steps[step - 1].querySelectorAll("*"),
+            numberOfStepElements = stepElements.length;
 
         // Temporarily apply a transition-duration and transition-delay to each
-        // element.
-        for (var i = 0; i < numberOfStepElements; i++) {
-          var stepProperties = stepElements[i];
+        // element we need to track.
+        for (i = 0; i < numberOfStepElements; i++) {
+          el = stepElements[i];
 
-          // Apply the transition-duration and transition-delay
-          stepProperties.element.style[Modernizr.prefixed("transition")] = "0ms 0ms";
+            el.style[Modernizr.prefixed("transition")] = "0ms 0ms";
         }
 
         /**
@@ -2180,10 +1959,12 @@ function defineSequence() {
         // element now it has been manipulated; allowing for the inherited styles
         // to take effect again.
         setTimeout(function() {
-          for (var i = 0; i < numberOfStepElements; i++) {
-            var stepProperties = stepElements[i];
+          for (i = 0; i < numberOfStepElements; i++) {
+            el = stepElements[i];
 
-            stepProperties.element.style[Modernizr.prefixed("transition")] = "";
+            // if (el.dataset.seq === "" || el.dataset.seq === "true") {
+              el.style[Modernizr.prefixed("transition")] = "";
+            // }
           }
         }, domThreshold);
       },
@@ -2518,7 +2299,7 @@ function defineSequence() {
         }
 
         // Wait for the step (both phases) to finish animating
-        self._animation.stepEnded(id, self.options.fallback.speed);
+        self._animation.stepEnded();
         self._pagination.update();
       }
     };
@@ -3512,7 +3293,7 @@ function defineSequence() {
 
             var dataAttributes = self._getAnimationMap.dataAttributes();
 
-            self.animationMap = self._getAnimationMap.init(self.container, dataAttributes);
+            // self.animationMap = self._getAnimationMap.init(self.container, dataAttributes);
 
             // Work out the transform properties for each step again
             for (i = 0; i < self.noOfSteps; i++) {
@@ -3590,6 +3371,7 @@ function defineSequence() {
 
       self.isHardPaused = false;
       self.isPaused = (self.options.autoPlay === true) ? false : true;
+      self.isActive = false;
 
       // Get number of steps
       self.noOfSteps = self.steps.length;
@@ -3640,7 +3422,7 @@ function defineSequence() {
 
       // Get the previous step and next step
       self.currentStepId = self.prevStepId;
-      prevStep = "step" + self.prevStepId;
+      prevStep = self.prevStepId;
 
       // If the browser doesn't support CSS transitions, setup the fallback
       self._animationFallback.setupCanvas(id);
@@ -3863,7 +3645,8 @@ function defineSequence() {
         return false;
       }
 
-      var phaseThreshold = 0;
+      var phaseThreshold = 0,
+          activePhases;
 
       // Clear the previous autoPlayTimer
       clearTimeout(self.autoPlayTimer);
@@ -3876,18 +3659,18 @@ function defineSequence() {
         phaseThreshold = self.options.phaseThreshold;
       }
 
-      // Get the next and current steps, and their elements
-      var currentStep = "step" + self.currentStepId,
-          nextStep = "step" + id,
-          currentStepElement = self.animationMap[currentStep].element,
-          nextStepElement = self.animationMap[nextStep].element;
+      // Remove any transitionend events from the previous step
+      self._animation.removePreviousStepTransitionEnd(self.animationMap.activePhases);
+
+      // Get the step number, element, and its animated elements (child nodes)
+      activePhases = self.animationMap.activePhases = self._animation.getPhaseProperties(id);
 
       // Determine how often goTo() can be used based on navigationSkipThreshold
       // and manage step fading accordingly
-      self._animation.manageNavigationSkip(id, direction, currentStep, nextStep, nextStepElement);
+      self._animation.manageNavigationSkip(id, direction);
 
       // Move the active step to the top (via a higher z-index)
-      self._animation.moveActiveStepToTop(currentStepElement, nextStepElement);
+      self._animation.moveActiveStepToTop(activePhases.current.stepElement, activePhases.next.stepElement);
 
       // Sequence is now animating
       self.isActive = true;
@@ -3901,23 +3684,20 @@ function defineSequence() {
         self._canvas.move(id, true);
 
         // Reset the next step's elements durations to 0ms so it can be snapped into place
-        self._animation.resetInheritedSpeed(nextStep, "animate-out");
+        self._animation.resetInheritedSpeed(activePhases.next.id, "animate-out");
 
-        // Determine how long the phases will last for, as well as the total length of the step
-        var stepDurations = self._animation.getStepDurations(id, nextStep, currentStep, direction);
-
-        // Are we moving the phases forward or in reverse?
+        // Are we moving the active phases forward or in reverse?
         if (direction === 1) {
-          self._animation.forward(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav);
+          self._animation.forward(id, activePhases, hashTagNav);
         }else {
-          self._animation.reverse(id, nextStep, nextStepElement, currentStep, currentStepElement, stepDurations, hashTagNav);
+          self._animation.reverse(id, activePhases, hashTagNav);
         }
       }
 
       // Use fallback animation
       else {
 
-        self._animationFallback.goTo(id, currentStep, currentStepElement, nextStep, nextStepElement, direction, hashTagNav);
+        self._animationFallback.goTo(id, activePhases, direction, hashTagNav);
       }
     };
 
@@ -3949,7 +3729,10 @@ function defineSequence() {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.animationFinished = function(id, self) {};
+    self.animationEnded = function(id, self) {
+
+      console.log("Animation ended")
+    };
 
     /**
      * Callback executed when the current phase starts animating
@@ -3957,7 +3740,10 @@ function defineSequence() {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.currentPhaseStarted = function(self) {};
+    self.currentPhaseStarted = function(self) {
+
+      console.log("Current phase started");
+    };
 
     /**
      * Callback executed when the current phase finishes animating
@@ -3965,7 +3751,10 @@ function defineSequence() {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.currentPhaseEnded = function(self) {};
+    self.currentPhaseEnded = function(self) {
+
+      console.log("Current phase ended");
+    };
 
     /**
      * Callback executed when the next phase starts animating
@@ -3973,7 +3762,10 @@ function defineSequence() {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.nextPhaseStarted = function(self) {};
+    self.nextPhaseStarted = function(self) {
+
+      console.log("Next phase started");
+    };
 
     /**
      * Callback executed when the next phase finishes animating
@@ -3981,7 +3773,10 @@ function defineSequence() {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.nextPhaseEnded = function(self) {};
+    self.nextPhaseEnded = function(self) {
+
+      console.log("Next phase ended");
+    };
 
     /**
      * When the throttled window resize event occurs
@@ -4018,7 +3813,10 @@ function defineSequence() {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.ready = function(self) {};
+    self.ready = function(self) {
+
+      // console.log("Ready");
+    };
 
     /**
      * Callback executed when Sequence has finished being destroyed via .destroy()

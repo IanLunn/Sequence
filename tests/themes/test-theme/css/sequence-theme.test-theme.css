@@ -48,14 +48,25 @@
   width: 100px;
   border: red solid 1px;
   left: 100%;
-  -webkit-transition-duration: .5s;
-  transition-duration: .5s;
+  -webkit-transition-duration: 2s;
+  transition-duration: 2s;
 }
 
 #sequence .boxb {
   top: 200px;
+  /*-webkit-transition-delay: 1s;*/
+  /*transition-delay: 1s;*/
+}
+
+#sequence .boxc {
+  top: 100px;
   -webkit-transition-delay: 1s;
   transition-delay: 1s;
+}
+
+#sequence #step1 .box {
+  /*-webkit-transition-delay: 2s;*/
+  /*transition-delay: 2s;*/
 }
 
 #sequence .animate-in .box {
@@ -66,4 +77,12 @@
 #sequence .animate-out .box {
   left: 0;
   margin-left: -100px;
+}
+
+
+@media only screen and (max-width: 900px) {
+  #sequence .box {
+    -webkit-transition-duration: 5s;
+    transition-duration: 5s;
+  }
 }
