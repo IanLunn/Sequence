@@ -1332,7 +1332,7 @@ function defineSequence() {
        */
       manageNavigationSkip: function(id, direction) {
 
-        if (self.isFallbackMode === true) {
+        if (self.isFallbackMode === true || self.animationMap.activePhases === undefined) {
           return;
         }
 
@@ -1348,11 +1348,12 @@ function defineSequence() {
           self.navigationSkipThresholdActive = true;
 
           // Count the number of steps currently animating
-          var activeStepsLength = self.animationMap.stepsAnimating,
+          var stepsAnimatingLength = self.animationMap.stepsAnimating,
               i,
               step,
               stepProperties,
-              stepElement;
+              stepElement,
+              stepId;
 
           // Add the steps to the list of active steps
           self.animationMap["step" + phases.current.stepId].isAnimating = true;
@@ -1364,17 +1365,14 @@ function defineSequence() {
             self.animationMap.stepsAnimating += 2;
           }
 
-
           // Are there steps currently animating that need to be faded out?
-          if (activeStepsLength !== 0) {
-
-            phases.current.skipped = true;
+          if (stepsAnimatingLength !== 0) {
 
             // If a step is waiting to animate in based on the phaseThreshold,
             // cancel it
             clearTimeout(self.phaseThresholdTimer);
 
-            // Fade a step out if the user navigates to another prior to its
+            // Fade a step if the user navigates to another prior to its
             // animation finishing
             if (self.options.fadeStepWhenSkipped === true) {
 
@@ -1385,12 +1383,25 @@ function defineSequence() {
                 step = "step" + i;
                 stepProperties = self.animationMap[step];
 
+                // Deal with the steps that were skipped whilst still animating
                 if (stepProperties.isAnimating === true && i !== id) {
                   stepElement = self.steps[i - 1];
+                  stepId = i;
 
-                  self._animation.stepSkipped(direction, step, stepElement);
+                  self._animation.stepSkipped(direction, stepId, step, stepElement);
                 }
               }
+
+              phases.prevStepId = self.prevStepId;
+              phases.currentStepId = self.currentStepId;
+
+              setTimeout(function() {
+
+                // Callbacks
+                self._animation._currentPhaseEnded(phases.prevStepId);
+                self._animation._nextPhaseEnded(phases.currentStepId);
+                self.animationEnded(phases.currentStepId, self);
+              }, self.options.fadeStepTime);
             }
           }
 
@@ -1410,12 +1421,14 @@ function defineSequence() {
        * @param {String} step - The step that was skipped
        * @param {HTMLElement} stepElement - The step element that was skipped
        */
-      stepSkipped: function(direction, step, stepElement) {
+      stepSkipped: function(direction, stepId, step, stepElement) {
 
         var phase = (direction === 1) ? "animate-out": "animate-in";
 
         // Fade the step out
         self._ui.hide(stepElement, self.options.fadeStepTime, function() {
+
+          self.animationMap.stepsAnimating--;
 
           // Stop the skipped element from animating
           // TODO
@@ -1454,7 +1467,7 @@ function defineSequence() {
        * before the next step should start animating in
        * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
        */
-      forward: function(id, activePhases, phaseThresholdTime, hashTagNav) {
+      forward: function(id, activePhases, phaseThresholdTime, ignorePhaseThreshold, hashTagNav) {
 
         var _animation = this;
 
@@ -1467,7 +1480,7 @@ function defineSequence() {
           removeClass(activePhases.current.stepElement, "animate-in");
 
           // Make the next step transition to "animate-in"
-          _animation.startAnimateIn(id, 1, activePhases, phaseThresholdTime, hashTagNav);
+          _animation.startAnimateIn(id, 1, activePhases, phaseThresholdTime, ignorePhaseThreshold, hashTagNav);
         });
       },
 
@@ -1481,7 +1494,7 @@ function defineSequence() {
        * before the next step should start animating in
        * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
        */
-      reverse: function(id, activePhases, phaseThresholdTime, hashTagNav) {
+      reverse: function(id, activePhases, phaseThresholdTime, ignorePhaseThreshold, hashTagNav) {
 
         var _animation = this,
             phaseDifference = 0,
@@ -1529,7 +1542,7 @@ function defineSequence() {
        * @param {Number} phaseThresholdTime - The amount of time in milliseconds
        * before the next step should start animating in
        */
-      reverseProperties: function(activePhase, phaseDelay, phaseThresholdTime) {
+      reverseProperties: function(activePhase, phaseDelay, phaseThresholdTime, ignorePhaseThreshold) {
 
         var _animation = this,
             stepChildren = activePhase.stepElement.querySelectorAll("*"),
@@ -1603,7 +1616,7 @@ function defineSequence() {
        * before the next step should start animating in
        * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
        */
-      startAnimateIn: function(id, direction, activePhases, phaseThresholdTime, hashTagNav) {
+      startAnimateIn: function(id, direction, activePhases, phaseThresholdTime, ignorePhaseThreshold, hashTagNav) {
 
         var _animation = this,
             stepDurations = {};
@@ -1616,12 +1629,6 @@ function defineSequence() {
         // completely finishes animating?
         if (self._firstRun === false) {
 
-          // If the current phase was skipped whilst animating, trigger the
-          // currentPhaseEnded() callback now
-          if (activePhases.current.skipped === true) {
-            self.currentPhaseEnded();
-          }
-
           // Callback
           self.animationStarted(id, self);
           _animation._currentPhaseStarted();
@@ -1630,7 +1637,7 @@ function defineSequence() {
           // step duration
           var currentPhaseDuration = activePhases.current.watchedTimings.maxTotal,
               nextPhaseDuration = activePhases.next.watchedTimings.maxTotal;
-          stepDurations = _animation.getStepDurations(currentPhaseDuration, nextPhaseDuration, phaseThresholdTime);
+          stepDurations = _animation.getStepDurations(currentPhaseDuration, nextPhaseDuration, phaseThresholdTime, ignorePhaseThreshold);
 
           // Start the "animate-in" phase
           self.phaseThresholdTimer = setTimeout(function() {
@@ -1641,8 +1648,8 @@ function defineSequence() {
           }, phaseThresholdTime);
 
           // Wait for the current and next phases to end
-          _animation.phaseEnded(self.prevStepId, stepDurations.currentPhase.animation, _animation._currentPhaseEnded);
-          _animation.phaseEnded(id, stepDurations.nextPhase.animation, _animation._nextPhaseEnded);
+          _animation.phaseEnded(self.prevStepId, "current", stepDurations.currentPhase.animation, _animation._currentPhaseEnded);
+          _animation.phaseEnded(id, "next", stepDurations.nextPhase.animation, _animation._nextPhaseEnded);
 
           // Wait for the step (both phases) to finish animating
           _animation.stepEnded(id, stepDurations.maximum);
@@ -1700,9 +1707,10 @@ function defineSequence() {
        * before the next step should start animating in
        * @returns {Object} durations - Return animation times for both phases
        */
-      getStepDurations: function(currentPhaseDuration, nextPhaseDuration, phaseThresholdTime) {
+      getStepDurations: function(currentPhaseDuration, nextPhaseDuration, phaseThresholdTime, ignorePhaseThreshold) {
 
-        var durations = {};
+        var phaseThreshold,
+            durations = {};
         durations.currentPhase = {};
         durations.nextPhase = {};
 
@@ -1714,14 +1722,19 @@ function defineSequence() {
         // The total time it'll take for both phases to finish
         durations.maximum = 0;
 
-        var phaseThreshold = self.options.phaseThreshold;
+        // Does the phase threshold need to be ignored due to a step being skipped?
+        if (ignorePhaseThreshold === true) {
+          phaseThreshold = false;
+        } else {
+          phaseThreshold = self.options.phaseThreshold;
+        }
 
         switch (phaseThreshold) {
 
           case false:
-          // The next phase should be set to "animate-in" immediately
-          // The step ends whenever the longest phase has finished
-          durations.nextPhase.animation = nextPhaseDuration;
+            // The next phase should be set to "animate-in" immediately
+            // The step ends whenever the longest phase has finished
+            durations.nextPhase.animation = nextPhaseDuration;
           if (currentPhaseDuration > nextPhaseDuration) {
             durations.maximum = currentPhaseDuration;
           }else {
@@ -1757,7 +1770,7 @@ function defineSequence() {
       _currentPhaseStarted: function() {
 
         // Callback
-        self.currentPhaseStarted(self);
+        self.currentPhaseStarted(self.prevStepId, self);
 
         // Update pagination
         self._pagination.update();
@@ -1766,10 +1779,14 @@ function defineSequence() {
       /**
        * When the current phase finishes animating
        */
-      _currentPhaseEnded: function() {
+      _currentPhaseEnded: function(id) {
+
+        if (id === undefined) {
+          id = self.prevStepId;
+        }
 
         // Callback
-        self.currentPhaseEnded(self);
+        self.currentPhaseEnded(id, self);
       },
 
       /**
@@ -1785,16 +1802,20 @@ function defineSequence() {
         }
 
         // Callback
-        self.nextPhaseStarted(self);
+        self.nextPhaseStarted(self.currentStepId, self);
       },
 
       /**
        * When the next phase finishes animating
        */
-      _nextPhaseEnded: function() {
+      _nextPhaseEnded: function(id) {
+
+        if (id === undefined) {
+          id = self.currentStepId;
+        }
 
         // Callback
-        self.nextPhaseEnded(self);
+        self.nextPhaseEnded(id, self);
       },
 
       /**
@@ -1805,16 +1826,29 @@ function defineSequence() {
        * ends (in milliseconds)
        * @param {Function} callback - A function to execute when the phase ends
        */
-      phaseEnded: function(id, phaseDuration, callback) {
+      phaseEnded: function(id, phase, phaseDuration, callback) {
 
-        self.phaseEndedTimer = setTimeout(function() {
-
+        var phaseEnded = function() {
           self.animationMap["step" + id].isAnimating = false;
-          self.animationMap.stepsAnimating -= 1;
+          self.animationMap.stepsAnimating--;
 
           // Callback
           callback();
-        }, phaseDuration);
+        }
+
+        if (phase === "current") {
+
+          self.currentPhaseEndedTimer = setTimeout(function() {
+
+            phaseEnded();
+          }, phaseDuration);
+        } else {
+
+          self.nextPhaseEndedTimer = setTimeout(function() {
+
+            phaseEnded();
+          }, phaseDuration);
+        }
       },
 
       /**
@@ -3649,9 +3683,14 @@ function defineSequence() {
 
       // Clear the previous autoPlayTimer
       clearTimeout(self.autoPlayTimer);
+      clearTimeout(self.stepEndedTimer);
+      clearTimeout(self.currentPhaseEndedTimer);
+      clearTimeout(self.nextPhaseEndedTimer);
 
       // Save the latest direction
       self.direction = direction;
+
+
 
       // Get the step number, element, its animated elements (child nodes), and
       // max timings
@@ -3663,6 +3702,14 @@ function defineSequence() {
         "next": nextPhaseProperties
       };
 
+      // Determine how often goTo() can be used based on
+      // navigationSkipThreshold and manage step fading accordingly
+      self._animation.manageNavigationSkip(id, direction);
+
+      if (self.isActive === true) {
+        ignorePhaseThreshold = true;
+      }
+
       // How long before the next phase should start?
       // Ignore the phaseThreshold (on first run for example)
       if (ignorePhaseThreshold === undefined) {
@@ -3672,10 +3719,6 @@ function defineSequence() {
           phaseThresholdTime = self.options.phaseThreshold;
         }
       }
-
-      // Determine how often goTo() can be used based on
-      // navigationSkipThreshold and manage step fading accordingly
-      self._animation.manageNavigationSkip(id, direction);
 
       // Move the active step to the top (via a higher z-index)
       self._animation.moveActiveStepToTop(activePhases.current.stepElement, activePhases.next.stepElement);
@@ -3696,9 +3739,9 @@ function defineSequence() {
 
         // Are we moving the active phases forward or in reverse?
         if (direction === 1) {
-          self._animation.forward(id, activePhases, phaseThresholdTime, hashTagNav);
+          self._animation.forward(id, activePhases, phaseThresholdTime, ignorePhaseThreshold, hashTagNav);
         } else {
-          self._animation.reverse(id, activePhases, phaseThresholdTime, hashTagNav);
+          self._animation.reverse(id, activePhases, phaseThresholdTime, ignorePhaseThreshold, hashTagNav);
         }
       }
 
@@ -3730,7 +3773,7 @@ function defineSequence() {
      */
     self.animationStarted = function(id, self) {
 
-      // console.log("animation started")
+      // console.log("animation started", id)
     };
 
     /**
@@ -3742,7 +3785,7 @@ function defineSequence() {
      */
     self.animationEnded = function(id, self) {
 
-      console.log("Animation ended", id)
+      // console.log("Animation ended", id)
     };
 
     /**
@@ -3751,9 +3794,9 @@ function defineSequence() {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.currentPhaseStarted = function(self) {
+    self.currentPhaseStarted = function(id, self) {
 
-      // console.log("Current phase started");
+      // console.log("Current phase started", id);
     };
 
     /**
@@ -3762,9 +3805,9 @@ function defineSequence() {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.currentPhaseEnded = function(self) {
+    self.currentPhaseEnded = function(id, self) {
 
-      console.log("Current phase ended");
+      // console.log("Current phase ended", id);
     };
 
     /**
@@ -3773,9 +3816,9 @@ function defineSequence() {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.nextPhaseStarted = function(self) {
+    self.nextPhaseStarted = function(id, self) {
 
-      console.log("Next phase started");
+      // console.log("Next phase started", id);
     };
 
     /**
@@ -3784,9 +3827,9 @@ function defineSequence() {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.nextPhaseEnded = function(self) {
+    self.nextPhaseEnded = function(id, self) {
 
-      console.log("Next phase ended");
+      // console.log("Next phase ended", id);
     };
 
     /**
@@ -3795,7 +3838,10 @@ function defineSequence() {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.throttledResize = function(self) {};
+    self.throttledResize = function(self) {
+
+
+    };
 
     /**
      * Callback executed when preloading has finished
@@ -3803,7 +3849,10 @@ function defineSequence() {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.preloaded = function(self) {};
+    self.preloaded = function(self) {
+
+
+    };
 
     /**
      * Callback executed every time an image to be preloaded returns a status
@@ -3815,7 +3864,10 @@ function defineSequence() {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.preloadProgress = function(result, src, progress, length, self) {};
+    self.preloadProgress = function(result, src, progress, length, self) {
+
+
+    };
 
     /**
      * Callback executed when Sequence is ready to be interacted with
@@ -3835,7 +3887,10 @@ function defineSequence() {
      * @param {Object} self - Properties and methods available to this instance
      * @api public
      */
-    self.destroyed = function(self) {};
+    self.destroyed = function(self) {
+
+
+    };
 
     /**
     * Make some of Sequence's helper functions public

@@ -48,6 +48,11 @@
   width: 100px;
   border: red solid 1px;
   left: 100%;
+  -webkit-transition-duration: 1s;
+  transition-duration: 1s;
+}
+
+#sequence #step2 .boxb {
   -webkit-transition-duration: 3s;
   transition-duration: 3s;
 }

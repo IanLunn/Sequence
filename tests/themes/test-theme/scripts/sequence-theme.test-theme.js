@@ -24,7 +24,7 @@ var sequenceElement = document.getElementById("sequence");
 var options = {
   animateCanvas: true,
   autoPlay: false,
-  phaseThreshold: true,
+  phaseThreshold: false,
   hashTags: false,
   keyNavigation: true
 }
