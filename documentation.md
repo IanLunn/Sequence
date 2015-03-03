@@ -16,7 +16,7 @@ Currently Sequence supports **jQuery 1.7.1 - 1.9.1**. Other versions of jQuery h
 
 Once you’ve added the necessary files for Sequence, within the `<head>` of your document, inititate an instance of Sequence like so:
 ```html
-<script type="text/javascript"> 
+<script type="text/javascript">
     $(document).ready(function(){
         var sequence = $("#sequence").sequence().data("sequence");
     });
@@ -33,7 +33,7 @@ The Sequence function `.sequence()`, will accept many options that allow for mod
 
 It is possible to place multiple instances of Sequence on the same page, like so:
 ```html
-<script type="text/javascript"> 
+<script type="text/javascript">
     $(document).ready(function(){
         var sequence = $("#sequence").sequence().data("sequence");
         var sequence2 = $("#sequence2").sequence().data("sequence");
@@ -119,7 +119,7 @@ In a small percentage of browsers, JavaScript may be disabled which is the techn
 </div>
 ```
 
-Here you’ve nominated the first frame to be displayed if JavaScript is disabled. 
+Here you’ve nominated the first frame to be displayed if JavaScript is disabled.
 
 ##Sequence's Canvas and Frames
 The basic structure of Sequence is a container element, an unordered list `<ul class="sequence-canvas">` (the canvas) and list items `<li>` (the frames), as shown below.
@@ -160,7 +160,7 @@ This way, when you come to position elements within the container, `top: 0` will
 To make the canvas the same size as the container, add the following:
 ```css
 #sequence > .sequence-canvas { /* required */
-    height: 100%; 
+    height: 100%;
     width: 100%;
 }
 ```
@@ -332,7 +332,7 @@ This CSS overwrites the top positions for each element so one is positioned belo
     -o-transition-duration: 1s;
     -ms-transition-duration: 1s;
     transition-duration: 1s;
-}   
+}
 ```
 
 And finally you’ve included the second and third `<div>` elements in your “animate-in” and “animate-out” transitional positions.
@@ -347,7 +347,7 @@ Sequence comes with many options that allow you to easily control its features.
 
 As explained in Initiate Sequence, each instance of Sequence can be passed developer defined options that override Sequence’s default settings. Options are stored in an object passed to the `.sequence()` function, like so:
 ```html
-<script type="text/javascript"> 
+<script type="text/javascript">
     $(document).ready(function(){
         var options = {
             autoPlay: true,
@@ -360,7 +360,7 @@ As explained in Initiate Sequence, each instance of Sequence can be passed devel
 
 Multiple instances of Sequence can be passed the same options:
 ```html
-<script type="text/javascript"> 
+<script type="text/javascript">
     $(document).ready(function(){
         var options = {
             autoPlay: true,
@@ -374,7 +374,7 @@ Multiple instances of Sequence can be passed the same options:
 
 Or differing options:
 ```html
-<script type="text/javascript"> 
+<script type="text/javascript">
     $(document).ready(function(){
         var options = {
             autoPlay: true,
@@ -397,7 +397,7 @@ The following is the complete set of options implemented within Sequence:
 
 #### <a id="general-options">General Options</a>
 
-##### startingFrameID 
+##### startingFrameID
 **Type: A number, Default: `1`**
 
 The frame (the list item `<li>`) that should first be displayed when Sequence loads.
@@ -458,7 +458,7 @@ Cause Sequence to automatically change between frames over a period of time, as 
 - `true`: Sequence will automatically animate from frame to frame with a delay between each frame (specified using the `autoPlayDelay` option).
 - `false`: Sequence will display the starting frame until a user chooses to navigate Sequence using next/previous buttons, swiping, etc.
 
-##### autoPlayDirection	
+##### autoPlayDirection
 **Type: a number (`1` = forward, `-1` = reverse), Default:`1`, dependencies: `autoPlay: true`**
 
 The direction in which Sequence should auto play.
@@ -576,7 +576,7 @@ Display a pause icon when the user hovers over Sequence.
 
 Pagination associates child elements within the pagination selector (`.sequence-pagination` by default) to each frame of Sequence. When a child element is clicked, Sequence will navigate to the frame that is associated with that child element. If `pagination` is `true`, the following HTML can be included in your document to act as pagination:
 ```html
-<ul class="pagination">
+<ul class="sequence-pagination">
     <li>Frame 1</li>
     <li>Frame 2</li>
     <li>Frame 3</li>
@@ -598,14 +598,14 @@ HTML:
 </ul>
 ```
 
-CSS: 
-```css    
+CSS:
+```css
 .sequence-pagination .current {
     font-weight: bold;
 }
 ```
 
-- `true`: Use pagination with the default CSS selector (`.pagination`).
+- `true`: Use pagination with the default CSS selector (`.sequence-pagination`).
 - `false`: don't use pagination.
 - CSS Selector: Specify a CSS selector to an HTML element you have manually added to the document.
 
@@ -624,7 +624,7 @@ CSS:
 - `false`: don't use a preloader.
 - CSS Selector: Specify a CSS selector to an HTML element you have manually added to the document.
 
-If using `preloader: true`, the following default preloading HTML and CSS will be applied to the document: 
+If using `preloader: true`, the following default preloading HTML and CSS will be applied to the document:
 
 HTML:
 ```html
@@ -703,7 +703,7 @@ div.inline{
 
 **Note:** Vendor prefixes are omitted from the above CSS for brevity but should be used for cross browser compatibility.
 
-##### preloadTheseFrames	
+##### preloadTheseFrames
 **Type: An integer array containing a list of frame numbers, Default: `[1]`, Dependencies: `preloader: true`**
 
 Specify which frames should have their images loaded before Sequence initiates. By default, images in the first frame are loaded before Sequence initiates.
@@ -712,7 +712,7 @@ The following example will load all images in frames 1 and 2:
 
 `preloadTheseFrames: [1,2]`
 
-##### preloadTheseImages	
+##### preloadTheseImages
 **Type: A string array containing a list of image sources, Default: `[]`, Dependencies: `preloader: true`**
 
 Specify which images should be loaded before Sequence initiates. By default, no individual images are loaded (note that all images in frame 1 load by default, as described in the `preloadTheseFrames` option).
@@ -752,7 +752,7 @@ Specify whether frames should be hidden during preloading and then shown afterwa
 
 The above CSS will cause the preloader element to fade out over a 1 second duration and then become hidden.
 
-##### hidePreloaderDelay	
+##### hidePreloaderDelay
 **Type: a number representing time in milliseconds, Default: `0`, Dependencies: `preloader: true` and `hidePreloaderUsingCSS: true`**
 
 The number of milliseconds to wait after the preloader has been hidden before initiating the first animation.
@@ -775,12 +775,12 @@ The public Sequence method that should occur when the left or right arrow keys a
 
 Currently, the public methods supported by this option are `prev()`, `next()` and `pause()`.
 
-- An object: 
+- An object:
 
 Example:
 ```css
 keyEvents {
-    left: "prev", 
+    left: "prev",
     right: "next"
 }
 ```
@@ -821,15 +821,15 @@ The number of pixels that the user's finger must move across before a swipe even
 
 The default of `20`, means the user must move their finger at least 20 pixels before a swipe event is recognised.
 
-##### swipePreventsDefault	
+##### swipePreventsDefault
 **Type: true/false, Default: `false`**
 
-- `true`: when a user swipes their finger over an instance of Sequence, the page will be prevented from scrolling. 
+- `true`: when a user swipes their finger over an instance of Sequence, the page will be prevented from scrolling.
 - `false`: the browser will will continue with it's default behaviour when a swipe occurs.
 
 **Note:** Be careful with this option if `true`, make sure the user can touch an area of the page that still allows them to scroll.
 
-##### swipeEvents	
+##### swipeEvents
 **Type: An object or false, Default: `{left: "prev", right: "next", up: false, down: false}`**
 
 The public Sequence method that should occur when the user swipes in a particular direction.
@@ -864,7 +864,7 @@ Please place a reference to the jQuery HashChange plugin above your reference to
 ##### hashTags
 **Type: true/false, Default: `false`**
 
-- `true`: when a frame is navigated to and becomes active, the hash tag will change to reflect the frames ID. 
+- `true`: when a frame is navigated to and becomes active, the hash tag will change to reflect the frames ID.
 
 In the following example, when the second frame becomes active, the URL will be changed to end with the hashTag `#second-frame`. The name "second-frame" is taken from the list item's ID attribute.
 ```html
@@ -901,7 +901,7 @@ In the following example, when `hashDataAttribute` is true and the first frame b
 - `false`: Use the ID attribute instead of the data attribute.
 
 ##### hashChangesOnFirstFrame
-**Type: true/false, Default: `false`, Dependencies: `hashTags: true`**	
+**Type: true/false, Default: `false`, Dependencies: `hashTags: true`**
 
 Whether the hash tag should be changed when the first frame becomes active.
 
@@ -916,7 +916,7 @@ The fallback theme options control Sequence when it is being viewed in browsers 
 
 Fallback theme options are included in the options of each instance of Sequence, like so:
 ```html
-<script type="text/javascript"> 
+<script type="text/javascript">
     $(document).ready(function(){
         var options = {
             fallback: {
@@ -939,7 +939,7 @@ The name of the fallback theme to be used when the browser doesn't support CSS3 
 - `slide`: Causes frames to slide left and right.
 - `fade`: Causes a frame to fade out before the next fades in (note: due to poor support for opacity in Internet Explorer 8 and below it's advised to use the "slide" theme instead).
 
-##### speed	
+##### speed
 **Type: a number representing milliseconds, Default: `500`**
 
 The speed at which frames should transition when in a browser that does not support CSS3 transitions.
@@ -952,7 +952,7 @@ Callbacks allow you to execute custom JavaScript functions at specific key point
 
 By using the variable that the Sequence object is stored in, you can add custom code to Sequence's callbacks, like so:
 ```html
-<script type="text/javascript"> 
+<script type="text/javascript">
     $(document).ready(function(){
         var options = {
             autoPlay: true,
@@ -1014,7 +1014,7 @@ Causes Sequence to animate to a specific frame.
 
 Arguments:
 
-- `id` (required): a number corresponding to a frame (the first frame has an id of 1). 
+- `id` (required): a number corresponding to a frame (the first frame has an id of 1).
 - `direction` (optional): whether the frame being animated to should be considered as being ahead or behind the current frame.
 - 'ignoreTransitionThreshold' (optional): if true, ignore the transitionThreshold setting and immediately go to the specified frame.
 
@@ -1023,26 +1023,26 @@ Specifying a direction value of `1` will change the current frame from the "anim
 If a "direction" is not specified, Sequence will consider a frame with a higher id than the current frame as being ahead of it (`1`), and frames with a lower id will be considered as being behind (`-1`).
 
 Examples:
-    
+
     sequence.goTo(3, 1); //navigate forwards to frame 3
     sequence.goTo(2, -1); //navigate backwards to frame 2
 
-#### pause()	
+#### pause()
 **Dependencies: `autoPlay: true`**
 
 `pause()` will either pause or unpause Sequence's autoPlay feature depending on its current state.
 
 Example:
-    
+
     sequence.pause()
-    
+
 #### unpause()
 **Dependencies: `autoPlay: true`**
 
 `unpause()` will unpause Sequence's autoPlay feature when paused.
 
 Example:
-    
+
     sequence.unpause()
 
 #### next()
@@ -1061,7 +1061,7 @@ Example:
 
     sequence.prev()
 
-#### startAutoPlay(delay)	
+#### startAutoPlay(delay)
 
 Start Sequences auto play feature if not already active.
 
@@ -1069,16 +1069,16 @@ Arguments:
 
 - `delay` (optional): A number in milliseconds to wait before the autoPlay feature is started. If undefined, the delay will be the same as `autoPlayDelay`.
 
-Example: 
-    
+Example:
+
     sequence.startAutoPlay(1000); //start Sequence's autoPlay feature after 1 second (1000 milliseconds).
 
 #### stopAutoPlay()
 
 Stop Sequence from auto playing.
 
-Example:	
-    
+Example:
+
     sequence.stopAutoPlay()
 
 #### destroy(navigation, callback)
@@ -1187,11 +1187,11 @@ The following are examples of advanced functionality you might like to use.
 
 ###Initiating and Destroying Sequence (v0.9 onwards)
 You may want to initiate and destroy Sequence as you require. For example, you may have several Sequence sliders on the same page but only want one to be active initially, then when the user clicks a button, destroy that first instance and initiate another. The following code allows you to do just that:
-```js 
+```js
 var options = {};           //your Sequence options, change as desired
 var mySequence = undefined; //setup a public variable to contain your Sequence instances
 
-function initSequence() { 
+function initSequence() {
     mySequence = $("#sequence").sequence(options).data("sequence"); //initiate Sequence
 
     mySequence.afterLoaded = function() {
