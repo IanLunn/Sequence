@@ -23,10 +23,14 @@ var sequenceElement = document.getElementById("sequence");
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
   animateCanvas: true,
-  autoPlay: false,
+  autoPlay: true,
+  autoPlayThreshold: 1000,
   phaseThreshold: false,
-  hashTags: false,
-  keyNavigation: true
+  // hashTags: true,
+  // startingStepId: 2,
+  keyNavigation: true,
+  // fadeStepWhenSkipped: true
+  startingStepAnimatesIn: false
 }
 
 var mySequence,
@@ -39,12 +43,18 @@ function init() {
   if (mySequence === undefined) {
     mySequence = sequence(sequenceElement, options);
 
-    mySequence.paused = function() {
+    mySequence.paused = function(self) {
       pauseButton.innerHTML = "Unpause";
     }
 
     mySequence.unpaused = function() {
       pauseButton.innerHTML = "Pause";
+    }
+
+    if (mySequence.options.autoPlay === true) {
+      mySequence.unpaused();
+    } else {
+      mySequence.paused();
     }
   }
 }

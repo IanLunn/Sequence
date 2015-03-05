@@ -22,6 +22,7 @@ var sequenceElement = document.getElementById("sequence");
 // Place your Sequence options here to override defaults
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
+  autoPlay: false,
   keyNavigation: true,
   pauseOnHover: false,
   autoPlayThreshold: 3000

@@ -31,6 +31,10 @@
   font-family: sans-serif;
 }
 
+#sequence.seq-fallback {
+  border: blue solid 2px;
+}
+
 #sequence .seq-screen,
 #sequence .seq-canvas,
 #sequence .seq-canvas > * {
@@ -48,24 +52,23 @@
   width: 100px;
   border: red solid 1px;
   left: 100%;
-  -webkit-transition-duration: 1s;
-  transition-duration: 1s;
+  -webkit-transition-duration: 4s;
+  transition-duration: 4s;
+  /*transition-timing-function: linear;*/
 }
 
-#sequence #step2 .boxb {
+#sequence #step3 .box {
+  /*transition-delay: 1s;*/
+}
+
+#sequence #step3 .boxb {
   -webkit-transition-duration: 3s;
   transition-duration: 3s;
+  /*transition-delay: 1s;*/
 }
 
 #sequence .boxb {
   top: 200px;
-}
-
-#sequence .special {
-  height: 10px;
-  width: 10px;
-  background: blue;
-  transition-duration: 5s;
 }
 
 #sequence .animate-in .box {
