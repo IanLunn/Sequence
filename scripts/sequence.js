@@ -80,13 +80,27 @@ function defineSequence() {
       /* --- autoPlay --- */
 
       // Cause Sequence to automatically navigate between steps
+      // Specify a number in milliseconds or true (for a default of 5000ms) to
+      // define the period Sequence should wait between each step before
+      // navigating to the next step
       autoPlay: false,
 
       // How long to wait between each step before navigation occurs again
-      autoPlayThreshold: 5000,
+      autoPlayDelay: 5000,
 
       // Direction of navigation when autoPlay is enabled
       autoPlayDirection: 1,
+
+      // Use an autoPlay button? You can also specify a CSS selector to
+      // change what element acts as the button. If true, the element uses the
+      // class of "seq-autoplay"
+      autoPlayButton: true,
+
+      // Amount of time to wait until autoPlay starts again after being stopped
+      autoPlayStartDelay: null,
+
+      // Pause autoPlay when the Sequence element is hovered over
+      autoPlayPauseOnHover: true,
 
 
       /* --- Navigation Skipping --- */
@@ -116,20 +130,6 @@ function defineSequence() {
       // classes of "seq-next" and "seq-prev"
       nextButton: true,
       prevButton: true,
-
-
-      /* --- Pause Button --- */
-
-      // Use a pause button? You can also specify a CSS selector to
-      // change what element acts as the button. If true, the element uses the
-      // class of "seq-pause"
-      pauseButton: true,
-
-      // Amount of time to wait until autoPlay starts again after being unpaused
-      unpauseThreshold: null,
-
-      // Pause autoPlay when the Sequence element is hovered over
-      pauseOnHover: true,
 
 
       /* --- Pagination --- */
@@ -216,6 +216,9 @@ function defineSequence() {
         speed: 500
       }
     };
+
+    // Default value for autoPlay in milliseconds
+    var autoPlayDefault = 5000;
 
     // See sequence._animation.domDelay() for an explanation of this
     var domThreshold = 50;
@@ -611,6 +614,27 @@ function defineSequence() {
     }
 
     /**
+     * Determine if the cursor is inside the boundaries of an
+     * element.
+     *
+     * @param {Object} element - The element to test
+     * @param {Object} cursor - The event holding cursor properties
+     */
+    function insideElement(element, cursor) {
+
+      // Get the elements boundaries
+      var rect = element.getBoundingClientRect(),
+          inside = false;
+
+      // Return true if inside the boundaries of the Sequence element
+      if (cursor.clientX >= rect.left && cursor.clientX <= rect.right && cursor.clientY >= rect.top && cursor.clientY <= rect.bottom) {
+        inside = true;
+      }
+
+      return inside;
+    };
+
+    /**
      * Does a theme require full CSS 3D support? This will return true when the
      * canvas is given one of the following data attributes:
      *
@@ -770,11 +794,11 @@ function defineSequence() {
 
       // Default UI elements
       defaultElements: {
-        "nextButton" : "seq-next",
-        "prevButton" : "seq-prev",
-        "pauseButton": "seq-pause",
-        "pagination" : "seq-pagination",
-        "preloader"  : "seq-preloader"
+        "nextButton": "seq-next",
+        "prevButton": "seq-prev",
+        "autoPlayButton": "seq-autoplay",
+        "pagination": "seq-pagination",
+        "preloader": "seq-preloader"
       },
 
       /**
@@ -881,87 +905,97 @@ function defineSequence() {
     self._autoPlay = {
 
       /**
-       * Start or restart autoPlay only if autoPlay is enabled and Sequence
-       * isn't currently paused.
+       * Initiate autoPlay
        */
       init: function() {
 
+        self.isAutoPlayPaused = false;
         self.isAutoPlaying = false;
-
-        // Should the unpause threshold be taken from the autoPlayThreshold or
-        // has the developer defined an unpauseThreshold?
-        self.options.unpauseThreshold = (self.options.unpauseThreshold === null) ? self.options.autoPlayThreshold : self.options.unpauseThreshold;
-
-        // Start autoPlay
-        // if (self.options.autoPlay === true && self.isPaused === false) {
-        //   this.start();
-        // }
       },
 
       /**
-       * Unpause autoPlay
+       * Determine the delay that should be applied before starting autoPlay. A
+       * custom delay should take precedence. If delay is true then the delay
+       * should use options.autoPlayStartDelay where specified. If not
+       * specified, use the same time as defined in options.autoPlayDelay
+       *
+       * @param {Boolean/Number} delay - Whether a delay should be applied before
+       * starting autoPlay (true = same amount as options.autoPlayDelay,
+       * false = no delay, number = custom delay period). Applied to
+       * _autoPlay.start()
+       * @param {Number} startDelay - The delay applied via options.autoPlayStartDelay
+       * @param {Number} autoPlayDelay - The delay applied via options.autoPlayDelay
        */
-      unpause: function() {
+      getDelay: function(delay, startDelay, autoPlayDelay) {
 
-        if (self.options.autoPlay === true) {
+        switch (delay) {
 
-          self.isPaused = false;
+          case true:
 
-          this.start();
+            delay = (startDelay === null) ? autoPlayDelay: startDelay;
+            break;
 
-          removeClass(self.container, "seq-paused");
-          removeClass(self.pauseButton, "seq-paused");
-
-          // Callback
-          self.unpaused(self);
+          case false:
+          case undefined:
+            delay = 0;
+            break;
         }
-      },
 
-      /**
-       * Pause autoPlay
-       */
-      pause: function() {
-
-        self.isPaused = true;
-
-        this.stop();
-
-        addClass(self.container, "seq-paused");
-        addClass(self.pauseButton, "seq-paused");
-
-        // Callback
-        self.paused(self);
+        return delay;
       },
 
       /**
        * Start autoPlay
+       *
+       * @param {Boolean/Number} delay - Whether a delay should be applied before
+       * starting autoPlay (true = same amount as options.autoPlayDelay,
+       * false = no delay, number = custom delay period)
+       * @param {Boolean} continuing - If autoPlay is continuing from a
+       * previous cycle, the started() callback won't be triggered
+       * @returns false - When autoPlay is already active and can't be started
+       * again
        */
-      start: function() {
+      start: function(delay, continuing) {
 
-        var threshold;
-
-        // How long to wait before autoPlay should start?
-        if (self.isPaused === false) {
-          threshold = self.options.autoPlayThreshold;
-        }else {
-          threshold = self.options.unpauseThreshold;
+        // Only start once
+        if (self.isAutoPlaying === true) {
+          return false;
         }
 
-        // autoPlay is now active
+        var options = self.options;
+
+        // Which delay should we use?
+        var delay = this.getDelay(delay, options.autoPlayStartDelay, options.autoPlayDelay);
+
+        // Callback (only to be triggered when autoPlay is continuing from a
+        // previous cycle)
+        if (continuing === undefined) {
+          self.started();
+        }
+
+        addClass(self.container, "seq-autoplaying");
+        addClass(self.autoPlayButton, "seq-autoplaying");
+
+        // autoPlay is now enabled and active
+        options.autoPlay = true;
         self.isAutoPlaying = true;
 
-        // Clear the previous autoPlayTimer
-        clearTimeout(self.autoPlayTimer);
+        // Only start a new autoPlay timer if Sequence isn't already animating.
+        // If it is, a new one will be started at the end of the animation.
+        if (self.isAnimating === false) {
 
-        // Choose the direction and start autoPlay
-        self.autoPlayTimer = setTimeout(function() {
+          // Choose the direction and start autoPlay
+          self.autoPlayTimer = setTimeout(function() {
 
-          if (self.options.autoPlayDirection === 1) {
-            self.next();
-          }else {
-            self.prev();
-          }
-        }, threshold);
+            if (options.autoPlayDirection === 1) {
+              self.next();
+            }else {
+              self.prev();
+            }
+          }, delay);
+        }
+
+        return null;
       },
 
       /**
@@ -969,8 +1003,51 @@ function defineSequence() {
        */
       stop: function() {
 
-        self.isAutoPlaying = false;
-        clearTimeout(self.autoPlayTimer);
+        if (self.options.autoPlay === true) {
+          self.options.autoPlay = false;
+          self.isAutoPlaying = false;
+          clearTimeout(self.autoPlayTimer);
+
+          removeClass(self.container, "seq-autoplaying");
+          removeClass(self.autoPlayButton, "seq-autoplaying");
+
+          // Callback
+          self.stopped();
+        }
+
+        return null;
+      },
+
+      /**
+       * Unpause autoPlay
+       *
+       * autoPlay.pause() and autoPlay.unpause() are used internally to
+       * temporarily stop autoPlay when hovered over.
+       */
+      unpause: function() {
+
+        if (self.isAutoPlayPaused === true) {
+
+          self.isAutoPlayPaused = false;
+          this.start(true);
+        }
+      },
+
+      /**
+       * Pause autoPlay
+       *
+       * autoPlay.pause() and autoPlay.unpause() are used internally to
+       * temporarily stop autoPlay when hovered over.
+       */
+      pause: function() {
+
+        if (self.options.autoPlay === true) {
+
+          self.isAutoPlayPaused = true;
+          this.stop();
+        }
+
+        return null;
       }
     };
 
@@ -1673,11 +1750,9 @@ function defineSequence() {
             _animation.resetInheritedSpeed(activePhases.next.stepId);
 
             self.animationMap.stepsAnimating = 0;
-            self.isActive = false;
+            self.isAnimating = false;
 
-            if (self.options.autoPlay === true) {
-              self._autoPlay.start();
-            }
+            // self._autoPlay.continue();
           }
 
           // Animate the first step into place
@@ -1873,9 +1948,15 @@ function defineSequence() {
       stepEnded: function(id, stepDuration) {
 
         self.stepEndedTimer = setTimeout(function() {
-          self._autoPlay.init();
 
-          self.isActive = false;
+          //
+          self.isAnimating = false;
+          self.isAutoPlaying = false;
+
+          // Continue with autoPlay if enabled
+          if (self.options.autoPlay === true) {
+            self._autoPlay.start(true, true);
+          }
 
           // Callback
           self.animationEnded(id, self);
@@ -2336,7 +2417,7 @@ function defineSequence() {
         }
 
         // Sequence is now animating
-        self.isActive = true;
+        self.isAnimating = true;
 
         // When should the "animate-in" phase start and how long until the step
         // completely finishes animating?
@@ -2978,14 +3059,14 @@ function defineSequence() {
           this.add.button(self.prevButton, "nav", self.prev);
         }
 
-        // If being used, get the pause button(s) and set up the events
-        if (self.options.pauseButton !== false) {
-          self.pauseButton = self._ui.getElements("pauseButton", self.options.pauseButton);
-          this.add.button(self.pauseButton, "nav", self.togglePause);
+        // If being used, get the autoPlay button(s) and set up the events
+        if (self.options.autoPlayButton !== false) {
+          self.autoPlayButton = self._ui.getElements("autoPlayButton", self.options.autoPlayButton);
+          this.add.button(self.autoPlayButton, "nav", self.toggleAutoPlay);
         }
 
-        // If being used, set up the pauseOnHover event
-        this.add.pauseOnHover();
+        // If being used, set up the stopOnHover event
+        this.add.stopOnHover();
 
         // If being used, get the pagination element(s) and set up the events
         if (self.options.pagination !== false) {
@@ -3079,7 +3160,7 @@ function defineSequence() {
         },
 
         /**
-         * Add next/prev/pause buttons
+         * Add  buttons
          *
          * @param {Array} elements - The element or elements acting as the next button
          * @param {String} type - The type of button being added - "nav" or "pagination"
@@ -3165,61 +3246,43 @@ function defineSequence() {
         },
 
         /**
-         * Pause and unpause autoPlay when the user's cursor enters and leaves
+         * Stop and start autoPlay when the user's cursor enters and leaves
          * the Sequence element accordingly.
          *
-         * Note: autoPlay will be paused only when the cursor is inside the
+         * Note: autoPlay will be stopped only when the cursor is inside the
          * boundaries of the Sequence element, either on the element itself or
          * its children. Child elements overflowing the Sequence element will
-         * not cause Sequence to be paused.
+         * not cause Sequence to be stopped.
          */
-        pauseOnHover: function() {
-
-          /**
-           * Determine if the cursor is inside the boundaries of the Sequence
-           * element.
-           *
-           * @param {Object} element - The Sequence element
-           * @param {Object} cursor - The event holding cursor properties
-           */
-          var insideElement = function(element, cursor) {
-
-            // Get the elements boundaries
-            var rect = element.getBoundingClientRect();
-
-            // Return true if inside the boundaries of the Sequence element
-            if (cursor.clientX >= rect.left && cursor.clientX <= rect.right && cursor.clientY >= rect.top && cursor.clientY <= rect.bottom) {
-              return true;
-            }else {
-              return false;
-            }
-          };
+        stopOnHover: function() {
 
           var previouslyInside = false,
               touchHandler,
               handler;
 
+          self.isMouseOver = false;
+
           /**
            * Determine when the user touches the container. This is so we can
-           * disable the use of pauseOnHover for touches, but not for mousemove
+           * disable the use of stopOnHover for touches, but not for mousemove
            */
           touchHandler = addEvent(self.container, "touchstart", function(e) {
 
             self.isTouched = true;
           });
 
+          // Save the event
           self.manageEvent.list.touchstart.push({"element": self.container, "handler": touchHandler});
 
-
           /**
-           * Pause autoPlay only when the cursor is inside the boundaries of the
+           * Stop autoPlay only when the cursor is inside the boundaries of the
            * Sequence element
            */
           handler = addEvent(self.container, "mousemove", function(e) {
 
             e = e || window.event;
 
-            // If the user touched the container, don't pause - pauseOnHover
+            // If the user touched the container, don't stop - stopOnHover
             // should only occur when a mouse cursor is used
             if (self.isTouched === true) {
               self.isTouched = false;
@@ -3230,7 +3293,7 @@ function defineSequence() {
             if (insideElement(self.container, e) === true) {
 
               // Pause if the cursor was previously outside the Sequence element
-              if (self.options.pauseOnHover === true && self.isPaused === false) {
+              if (self.options.autoPlayPauseOnHover === true && self.isMouseOver === false) {
                 self._autoPlay.pause();
               }
 
@@ -3238,10 +3301,12 @@ function defineSequence() {
               self.isMouseOver = true;
             }
 
+            // The cursor is outside of the main container, but over child
+            // elements belonging to the container
             else {
 
               // Unpause if the cursor was previously inside the Sequence element
-              if (self.options.pauseOnHover === true && self.isMouseOver === true && self.isHardPaused === false) {
+              if (self.options.autoPlayPauseOnHover === true && self.isMouseOver === true) {
                 self._autoPlay.unpause();
               }
 
@@ -3250,14 +3315,15 @@ function defineSequence() {
             }
           });
 
+          // Save the event
           self.manageEvent.list.mousemove.push({"element": self.container, "handler": handler});
 
           /**
-           * Unpause autoPlay when the cursor leaves the Sequence element
+           * Start autoPlay when the cursor leaves the Sequence element
            */
           handler = addEvent(self.container, "mouseleave", function(e) {
 
-            if (self.options.pauseOnHover === true && self.isHardPaused === false && self.isAutoPlaying === false) {
+            if (self.options.autoPlayPauseOnHover === true) {
               self._autoPlay.unpause();
             }
 
@@ -3265,7 +3331,10 @@ function defineSequence() {
             self.isMouseOver = false;
           });
 
+          // Save the event
           self.manageEvent.list.mouseleave.push({"element": self.container, "handler": handler});
+
+          return null;
         },
 
         /**
@@ -3414,9 +3483,7 @@ function defineSequence() {
       self.canvas = self.container.querySelectorAll(".seq-canvas")[0];
       self.steps = getSteps(self.canvas);
 
-      self.isHardPaused = false;
-      self.isPaused = (self.options.autoPlay === true) ? false : true;
-      self.isActive = false;
+      self.isAnimating = false;
 
       // Count number of steps
       self.noOfSteps = self.steps.length;
@@ -3475,9 +3542,8 @@ function defineSequence() {
 
       goToFirstStep = function() {
 
-        // Callback
         if (self.options.autoPlay === true) {
-          self.unpaused(self);
+          self._autoPlay.start(true);
         }
 
         // Snap the previous step into position
@@ -3545,13 +3611,9 @@ function defineSequence() {
         }
       }
 
-      // Remove classes:
-      // - the "seq-current" class from the active pagination links
-      // - the "seq-paused" class from the container
-      // - the step index class from the container
-      // - the "seq-active" class from the container
+      // Remove classes
       removeClass(self.currentPaginationLinks, "seq-current");
-      removeClass(self.container, "seq-paused");
+      removeClass(self.container, "seq-autoplaying");
       removeClass(self.container, "seq-step" + self.currentStepId);
       removeClass(self.container, "seq-active");
 
@@ -3619,45 +3681,30 @@ function defineSequence() {
     /**
      * Stop and start Sequence's autoPlay feature
      *
+     * @param {Boolean/Number} delay - Whether a delay should be applied before
+     * starting autoPlay (true = same amount as options.autoPlayDelay,
+     * false = no delay, number = custom delay period). Applied to
+     * _autoPlay.start()
+
      * @api public
      */
-    self.togglePause = function() {
+    self.toggleAutoPlay = function(delay) {
 
-      if (self.isPaused === false) {
-        self.pause();
-      }else {
-        self.unpause();
+      if (self.isAutoPlaying === false) {
+        self.start(delay);
+      } else {
+        self.stop();
       }
     };
 
-    /**
-     * Stop Sequence's autoPlay feature
-     *
-     * isPaused = autoPlay is paused by Sequence and expects to be unpaused in
-     * the future. For example: when the user hovers over the Sequence element.
-     *
-     * isHardPaused = autoPlay is paused by the user via a pause button or
-     * public method. For example: when the user presses a pause button.
-     *
-     * @api public
-     */
-    self.pause = function() {
+    self.stop = function() {
 
-      self.options.autoPlay = false;
-      self.isHardPaused = true;
-      self._autoPlay.pause();
+      self._autoPlay.stop();
     };
 
-    /**
-     * Start Sequence's autoPlay feature
-     *
-     * @api public
-     */
-    self.unpause = function() {
+    self.start = function(delay) {
 
-      self.options.autoPlay = true;
-      self.isHardPaused = false;
-      self._autoPlay.unpause();
+      self._autoPlay.start(delay);
     };
 
     /**
@@ -3681,7 +3728,7 @@ function defineSequence() {
        *
        * - ID isn't defined
        * - It doesn't exist
-       * - It is already active
+       * - It is already animating
        * - navigationSkip isn't allowed and an animation is active
        * - navigationSkip is allowed but the threshold is yet to expire (unless
        *   navigating via forward/back button with hashTags enabled - see
@@ -3692,14 +3739,14 @@ function defineSequence() {
        * - preventReverseSkipping is enabled and the user is trying to navigate
        *   in a different direction to the one already active
        */
-      if (id === undefined || id < 1 || id > self.noOfSteps || id === self.currentStepId || (self.options.navigationSkip === false && self.isActive === true) || (self.options.navigationSkip === true && self.navigationSkipThresholdActive === true && hashTagNav === undefined) || (self.isFallbackMode === true && self.isActive === true && hashTagNav === undefined) || (self.options.preventReverseSkipping === true && self.direction !== direction && self.isActive === true)) {
+      if (id === undefined || id < 1 || id > self.noOfSteps || id === self.currentStepId || (self.options.navigationSkip === false && self.isAnimating === true) || (self.options.navigationSkip === true && self.navigationSkipThresholdActive === true && hashTagNav === undefined) || (self.isFallbackMode === true && self.isAnimating === true && hashTagNav === undefined) || (self.options.preventReverseSkipping === true && self.direction !== direction && self.isAnimating === true)) {
         return false;
       }
 
       var phaseThresholdTime = 0;
 
       // Clear the previous autoPlayTimer
-      clearTimeout(self.autoPlayTimer);
+      // clearTimeout(self.autoPlayTimer);
       clearTimeout(self.stepEndedTimer);
       clearTimeout(self.currentPhaseEndedTimer);
       clearTimeout(self.nextPhaseEndedTimer);
@@ -3732,7 +3779,7 @@ function defineSequence() {
         // navigationSkipThreshold and manage step fading accordingly
         self._animation.manageNavigationSkip(id, direction);
 
-        if (self.isActive === true) {
+        if (self.isAnimating === true) {
           ignorePhaseThreshold = true;
         }
 
@@ -3747,7 +3794,7 @@ function defineSequence() {
         }
 
         // Sequence is now animating
-        self.isActive = true;
+        self.isAnimating = true;
 
         // Animate the canvas
         self._canvas.move(id, true);
@@ -3777,19 +3824,19 @@ function defineSequence() {
     /* --- CALLBACKS --- */
 
     /**
-     * Callback executed when autoPlay is paused
+     * Callback executed when autoPlay is started
      */
-    self.paused = function(self) {
+    self.started = function(self) {
 
-      console.log("paused");
+      // console.log("auto play started");
     };
 
     /**
-     * Callback executed when autoPlay is unpaused
+     * Callback executed when autoPlay is stopped
      */
-    self.unpaused = function(self) {
+    self.stopped = function(self) {
 
-      console.log("unpaused");
+      // console.log("auto play stopped");
     };
 
     /**

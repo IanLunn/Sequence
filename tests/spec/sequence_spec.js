@@ -35,41 +35,6 @@ describe("Get UI elements - sequence._ui.getElements()", function() {
   });
 });
 
-describe("Prevent going to a step - sequence.goTo()", function() {
-
-  wait();
-
-  it("should prevent going to the same step already being viewed", function(done) {
-
-    expect(mySequence.goTo(1)).toEqual(false);
-    done();
-  });
-
-
-  it("should prevent going to a non-existent step", function() {
-
-    expect(mySequence.goTo(5)).toEqual(false);
-    expect(mySequence.goTo(-1)).toEqual(false);
-  });
-
-
-  it("should prevent going to a step whilst another is animating and navigationSkip is false", function() {
-
-    mySequence.options.navigationSkip = false;
-    mySequence.isActive = true;
-    expect(mySequence.goTo(2)).toEqual(false);
-  });
-
-
-  it("should prevent going to a step if the navigationSkipThreshold is active", function() {
-
-    mySequence.options.navigationSkip = true;
-    mySequence.navigationSkipThresholdActive = true;
-    expect(mySequence.goTo(2)).toEqual(false);
-  });
-});
-
-
 describe("Get direction - sequence._animation.getDirection()", function() {
 
   it("should return the same direction as the one defined", function() {
@@ -147,5 +112,79 @@ describe("Get direction - sequence._animation.getDirection()", function() {
     mySequence.noOfSteps = 5;
 
     expect(mySequence._animation.getDirection(5, undefined, self)).toEqual(1);
+  });
+});
+
+describe("Prevent going to a step - sequence.goTo()", function() {
+
+  wait();
+
+  it("should prevent going to the same step already being viewed", function(done) {
+
+    expect(mySequence.goTo(1)).toEqual(false);
+    done();
+  });
+
+
+  it("should prevent going to a non-existent step", function() {
+
+    expect(mySequence.goTo(5)).toEqual(false);
+    expect(mySequence.goTo(-1)).toEqual(false);
+  });
+
+
+  it("should prevent going to a step whilst another is animating and navigationSkip is false", function() {
+
+    mySequence.options.navigationSkip = false;
+    mySequence.isAnimating = true;
+    expect(mySequence.goTo(2)).toEqual(false);
+  });
+
+
+  it("should prevent going to a step if the navigationSkipThreshold is active", function() {
+
+    mySequence.options.navigationSkip = true;
+    mySequence.navigationSkipThresholdActive = true;
+    expect(mySequence.goTo(2)).toEqual(false);
+  });
+});
+
+describe("autoPlay - sequence._autoPlay()", function() {
+
+  wait();
+
+  it("should allow autoPlay to be started once, then prevent autoPlay from being started again when already active", function() {
+
+    expect(mySequence._autoPlay.start()).toEqual(null);
+    expect(mySequence._autoPlay.start()).toEqual(false);
+  });
+});
+
+describe("autoPlay Start Delay - sequence._autoPlay.getDelay()", function() {
+
+  wait();
+
+  it("should return a delay with the same value as options.autoPlayDelay when delay is true or options.autoPlayStartDelay is null", function() {
+
+    expect(mySequence._autoPlay.getDelay(true, null, 5000)).toEqual(5000);
+  });
+
+  it("should return a delay with the same value as options.autoPlayStartDelay when delay is true or undefined", function() {
+
+    expect(mySequence._autoPlay.getDelay(true, 250, 5000)).toEqual(250);
+
+  });
+
+  it("should return a delay of 0 when delay is false or undefined", function() {
+
+    expect(mySequence._autoPlay.getDelay(false, null, 5000)).toEqual(0);
+    expect(mySequence._autoPlay.getDelay(undefined, 250, 5000)).toEqual(0);
+    expect(mySequence._autoPlay.getDelay(undefined, null, 5000)).toEqual(0);
+  });
+
+  it("should return a delay of 750 when a custom delay is defined, regardless of options.autoPlayDelay and options.autoPlayStartDelay", function() {
+
+    expect(mySequence._autoPlay.getDelay(750, null, 5000)).toEqual(750);
+    expect(mySequence._autoPlay.getDelay(750, 250, 5000)).toEqual(750);
   });
 });

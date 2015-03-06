@@ -24,7 +24,7 @@ var sequenceElement = document.getElementById("sequence");
 var options = {
   animateCanvas: true,
   autoPlay: true,
-  autoPlayThreshold: 1000,
+  autoPlayDelay: 1000,
   phaseThreshold: false,
   // hashTags: true,
   // startingStepId: 2,
@@ -34,7 +34,7 @@ var options = {
 }
 
 var mySequence,
-    pauseButton = document.getElementById("pause"),
+    autoPlayButton = document.getElementById("autoplay"),
     initButton = document.getElementById("init"),
     destroyButton = document.getElementById("destroy");
 
@@ -43,18 +43,20 @@ function init() {
   if (mySequence === undefined) {
     mySequence = sequence(sequenceElement, options);
 
-    mySequence.paused = function(self) {
-      pauseButton.innerHTML = "Unpause";
+    mySequence.started = function() {
+      autoPlayButton.innerHTML = "Stop Autoplay";
+      console.log("auto play started");
     }
 
-    mySequence.unpaused = function() {
-      pauseButton.innerHTML = "Pause";
+    mySequence.stopped = function() {
+      autoPlayButton.innerHTML = "Start Autoplay";
+      console.log("auto play stopped");
     }
 
     if (mySequence.options.autoPlay === true) {
-      mySequence.unpaused();
+      mySequence.started();
     } else {
-      mySequence.paused();
+      mySequence.stopped();
     }
   }
 }
