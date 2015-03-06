@@ -325,6 +325,33 @@ function defineSequence() {
       };
     }
 
+
+    /**
+     * Determine the prefix to use for the pageVisibility API
+     */
+    var hidden,
+        visibilityChange;
+
+    if (typeof document.hidden !== "undefined") {
+
+      // Opera 12.10 and Firefox 18 and later support
+      hidden = "hidden";
+      visibilityChange = "visibilitychange";
+    } else if (typeof document.mozHidden !== "undefined") {
+
+      hidden = "mozHidden";
+      visibilityChange = "mozvisibilitychange";
+    } else if (typeof document.msHidden !== "undefined") {
+
+      hidden = "msHidden";
+      visibilityChange = "msvisibilitychange";
+    } else if (typeof document.webkitHidden !== "undefined") {
+
+      hidden = "webkitHidden";
+      visibilityChange = "webkitvisibilitychange";
+    }
+
+
     /**
      * Is an object an array?
      *
@@ -1754,7 +1781,7 @@ function defineSequence() {
 
             if (self.options.autoPlay === true) {
               self._autoPlay.start(true);
-            }  
+            }
           }
 
           // Animate the first step into place
@@ -3036,6 +3063,9 @@ function defineSequence() {
        */
       init: function() {
 
+        // Add visibilityChange to the list of events
+        self.manageEvent.list[visibilityChange] = [];
+
         this.add.hashChange();
 
         if (self.options.swipeNavigation === true) {
@@ -3047,6 +3077,8 @@ function defineSequence() {
         }
 
         this.add.resizeThrottle();
+
+        this.add.pageVisibility();
 
         // If being used, get the next button(s) and set up the events
         if (self.options.nextButton !== false) {
@@ -3457,6 +3489,26 @@ function defineSequence() {
           });
 
           self.manageEvent.list.resize.push({"element": window, "handler": handler});
+        },
+
+        /**
+         * When the page loses visibility, pause autoPlay, then unpause when
+         * the page gains visibility again
+         */
+        pageVisibility: function() {
+
+          var handler = addEvent(document, visibilityChange, function() {
+
+            if (document[hidden]) {
+
+              self._autoPlay.pause();
+            } else {
+
+              self._autoPlay.unpause();
+            }
+          }, false);
+
+          self.manageEvent.list[visibilityChange].push({"element": document, "handler": handler});
         }
       }
     };
@@ -3530,7 +3582,7 @@ function defineSequence() {
       if (self.options.autoPlayDirection === 1) {
         prevStepId = id - 1;
         self.prevStepId = (prevStepId < 1) ? self.noOfSteps: prevStepId;
-      }else {
+      } else {
         prevStepId = id + 1;
         self.prevStepId = (prevStepId > self.noOfSteps) ? 1: prevStepId;
       }
@@ -3605,6 +3657,8 @@ function defineSequence() {
         if (eventList.hasOwnProperty(eventType) === true) {
 
           theEvents = eventList[eventType];
+
+          console.log(eventType)
           self.manageEvent.remove(eventType);
         }
       }
