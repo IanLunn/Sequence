@@ -1752,7 +1752,7 @@ function defineSequence() {
             self.animationMap.stepsAnimating = 0;
             self.isAnimating = false;
 
-            // self._autoPlay.continue();
+            self._autoPlay.start(true);
           }
 
           // Animate the first step into place
@@ -3542,10 +3542,6 @@ function defineSequence() {
 
       goToFirstStep = function() {
 
-        if (self.options.autoPlay === true) {
-          self._autoPlay.start(true);
-        }
-
         // Snap the previous step into position
         self._animation.domDelay(function() {
           self._animation.resetInheritedSpeed(prevStep);
@@ -3746,7 +3742,7 @@ function defineSequence() {
       var phaseThresholdTime = 0;
 
       // Clear the previous autoPlayTimer
-      // clearTimeout(self.autoPlayTimer);
+      clearTimeout(self.autoPlayTimer);
       clearTimeout(self.stepEndedTimer);
       clearTimeout(self.currentPhaseEndedTimer);
       clearTimeout(self.nextPhaseEndedTimer);

@@ -54,9 +54,9 @@ function init() {
     }
 
     if (mySequence.options.autoPlay === true) {
-      mySequence.started();
+      // mySequence.started();
     } else {
-      mySequence.stopped();
+      // mySequence.stopped();
     }
   }
 }
