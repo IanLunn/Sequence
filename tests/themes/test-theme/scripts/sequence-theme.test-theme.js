@@ -23,7 +23,7 @@ var sequenceElement = document.getElementById("sequence");
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
   animateCanvas: true,
-  autoPlay: true,
+  autoPlay: false,
   autoPlayDelay: 1000,
   phaseThreshold: false,
   // hashTags: true,
@@ -51,12 +51,6 @@ function init() {
     mySequence.stopped = function() {
       autoPlayButton.innerHTML = "Start Autoplay";
       console.log("auto play stopped");
-    }
-
-    if (mySequence.options.autoPlay === true) {
-      // mySequence.started();
-    } else {
-      // mySequence.stopped();
     }
   }
 }

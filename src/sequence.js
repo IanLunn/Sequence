@@ -1752,7 +1752,9 @@ function defineSequence() {
             self.animationMap.stepsAnimating = 0;
             self.isAnimating = false;
 
-            self._autoPlay.start(true);
+            if (self.options.autoPlay === true) {
+              self._autoPlay.start(true);
+            }  
           }
 
           // Animate the first step into place
