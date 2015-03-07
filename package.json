@@ -36,8 +36,12 @@
     "grunt-contrib-sass": "~0.6.0",
     "grunt-contrib-uglify": "~0.3.0",
     "grunt-contrib-watch": "~0.5.3",
+    "grunt-karma": "^0.10.1",
     "grunt-open": "~0.2.3",
     "grunt-version": "~0.3.0",
+    "jasmine-core": "^2.2.0",
+    "karma-jasmine": "^0.3.5",
+    "karma-phantomjs-launcher": "^0.1.4",
     "load-grunt-tasks": "~0.2.1",
     "time-grunt": "~0.2.8"
   }

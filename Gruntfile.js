@@ -185,6 +185,13 @@ module.exports = function(grunt) {
           spawn: false
         }
       }
+    },
+
+    karma: {
+      unit: {
+        configFile: 'tests/karma.conf.js',
+        autoWatch: true
+      }
     }
   });
 
@@ -205,5 +212,9 @@ module.exports = function(grunt) {
     'autoprefixer',
     'cssmin',
     'uglify'
+  ]);
+
+  grunt.registerTask('test', [
+    'karma'
   ]);
 };
