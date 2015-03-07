@@ -25,9 +25,9 @@ function defineSequence() {
    */
   var Sequence = (function (element, options) {
 
-    // Prevent an element from have multiple instances of Sequence applied to it
+    // Prevent an element from having multiple instances of Sequence applied to it
     if (element.getAttribute("data-seq-enabled") === "true") {
-      return;
+      return null;
     }
 
     // The element now has Sequence attached to it
@@ -659,33 +659,6 @@ function defineSequence() {
       }
 
       return inside;
-    };
-
-    /**
-     * Does a theme require full CSS 3D support? This will return true when the
-     * canvas is given one of the following data attributes:
-     *
-     * - data-seq-z
-     * - data-seq-rotate-x
-     * - data-seq-rotate-y
-     *
-     * @param {Object} dataAttributes - The data attributes applied to each step
-     * @returns {Boolean} requires3d - Whether 3D is required
-     * @api private
-     */
-    function is3dRequired(dataAttributes) {
-
-      for (var step in dataAttributes) {
-
-        var stepAttributes = dataAttributes[step];
-
-        if (
-          requires3d === false && (stepAttributes.hasOwnProperty("seqZ") === true || stepAttributes.hasOwnProperty("seqRotateX") === true || stepAttributes.hasOwnProperty("seqRotateY") === true)) {
-          return true;
-        }
-      }
-
-      return false;
     }
 
     /**
@@ -881,7 +854,7 @@ function defineSequence() {
        */
       show: function(element, duration) {
 
-        if (self.transitionsSupported === true) {
+        if (self.propertySupport.transitions === true) {
 
           element.style[Modernizr.prefixed("transitionDuration")] = duration + "ms";
           element.style[Modernizr.prefixed("transitionProperty")] = "opacity, " + Modernizr.prefixed("transform");
@@ -904,7 +877,7 @@ function defineSequence() {
        */
       hide: function(element, duration, callback) {
 
-        if (self.transitionsSupported === true) {
+        if (self.propertySupport.transitions === true) {
 
           element.style[Modernizr.prefixed("transitionDuration")] = duration + "ms";
           element.style[Modernizr.prefixed("transitionProperty")] = "opacity, " + Modernizr.prefixed("transform");
@@ -992,7 +965,7 @@ function defineSequence() {
         var options = self.options;
 
         // Which delay should we use?
-        var delay = this.getDelay(delay, options.autoPlayStartDelay, options.autoPlayDelay);
+        delay = this.getDelay(delay, options.autoPlayStartDelay, options.autoPlayDelay);
 
         // Callback (only to be triggered when autoPlay is continuing from a
         // previous cycle)
@@ -1307,7 +1280,7 @@ function defineSequence() {
             self.screen.style[Modernizr.prefixed("transitionDuration")] = duration + "ms";
             self.screen.style[Modernizr.prefixed("transitionProperty")] = Modernizr.prefixed("transform");
 
-            if (self.transformOriginSupported === true) {
+            if (self.propertySupport.transformOrigin === true) {
               self.screen.style[Modernizr.prefixed("transform")] = "scale(" + transformCss.scale + ")";
             }
 
@@ -2201,48 +2174,107 @@ function defineSequence() {
       },
 
       /**
+       * Does Sequence need to go into fallback mode because the browser doesn't
+       * support transitions?
+       *
+       * @param {Object} propertySupport - List of properties and whether the
+       * browser supports them
+       * @param {Boolean} require3d - Does the Sequence theme require CSS 3D support?
+       */
+      requiresFallbackMode: function(propertySupport) {
+
+        var transitions = propertySupport.transitions,
+            transformStyle = propertySupport.transformStyle,
+            requires3d = propertySupport.requires3d,
+            isFallbackMode = false;
+
+        // If the theme uses 3D transforms but they're not fully supported,
+        // use fallback mode
+        if (transitions === false || (transformStyle === false && requires3d === true)) {
+          isFallbackMode = true;
+        }
+
+        return isFallbackMode;
+      },
+
+      /**
+       * Does a theme require full CSS 3D support? This will return true when the
+       * canvas is given one of the following data attributes:
+       *
+       * - data-seq-z
+       * - data-seq-rotate-x
+       * - data-seq-rotate-y
+       *
+       * @param {Object} properties - The properties applied to each step
+       * @returns {Boolean} requires3d - Whether 3D is required
+       * @api private
+       */
+      is3dRequired: function(properties) {
+
+        var step,
+            stepProperties,
+            required = false;
+
+        for (step in properties) {
+
+          stepProperties = properties[step];
+
+          if (
+            requires3d === false && (stepProperties.hasOwnProperty("seqZ") === true || stepProperties.hasOwnProperty("seqRotateX") === true || stepProperties.hasOwnProperty("seqRotateY") === true)) {
+              required = true;
+          }
+        }
+
+        return required;
+      },
+
+      /**
        * Determine what properties the browser supports. Currently tests:
        *
        * - transitions
        * - transform-style: preserve-3d
        * - animations
        *
-       * @param {Object} dataAttributes - The data attributes used on steps
+       * @param {Object} properties - The properties to be used (on the canvas)
+       * @returns {Object} The list of properties we've tested and their support
        */
-      propertySupport: function(dataAttributes) {
+      getPropertySupport: function(properties) {
 
-        self.transitionsSupported = false;
-        self.animationsSupported = false;
-        self.transformStyleSupported = false;
-        self.transformOriginSupported = true;
-        self.isFallbackMode = false;
+        var transitions = false,
+            animations = false,
+            transformStyle = false,
+            transformOrigin = true,
+            requires3d = false;
 
         // Does the browser support transform-style: preserve-3d?
-        Modernizr.addTest('csstransformspreserve3d', function () {
+        Modernizr.addTest("csstransformspreserve3d", function () {
 
-          var prop = Modernizr.prefixed('transformStyle');
-          var val = 'preserve-3d';
-          var computedStyle;
-          if (!prop) return false;
+          var prop = Modernizr.prefixed("transformStyle"),
+              val = "preserve-3d",
+              computedStyle;
 
-          prop = prop.replace(/([A-Z])/g, function(str,m1){ return '-' + m1.toLowerCase(); }).replace(/^ms-/,'-ms-');
+          if (!prop) {
+            return false;
+          }
 
-          Modernizr.testStyles('#modernizr{' + prop + ':' + val + ';}', function (el, rule) {
-            computedStyle = window.getComputedStyle ? getComputedStyle(el, null).getPropertyValue(prop) : '';
+          prop = prop.replace(/([A-Z])/g, function(str,m1){ return "-" + m1.toLowerCase(); }).replace(/^ms-/,"-ms-");
+
+          Modernizr.testStyles("#modernizr{" + prop + ":" + val + ";}", function (el, rule) {
+            computedStyle = window.getComputedStyle ? getComputedStyle(el, null).getPropertyValue(prop) : "";
           });
 
           return (computedStyle === val);
         });
 
         // Does the theme require 3D support?
-        self.requires3d = is3dRequired(dataAttributes);
+        requires3d = self._animation.is3dRequired(properties);
 
         // Additional tests when 3D is required
-        if (self.requires3d === true) {
+        if (requires3d === true) {
 
           // Is transform-style: preserve-3d supported?
           if (Modernizr.csstransformspreserve3d === true) {
-            self.transformStyleSupported = true;
+            transformStyle = true;
           }
 
           /**
@@ -2264,27 +2296,27 @@ function defineSequence() {
            * - Uses the -webkit- prefix for transformOrigin
            * - The browser is not Blink (separate Blink from WebKit)
            */
-          if (self.options.transformOriginWorkaround === true && Modernizr.prefixed("transformOrigin") === "WebkitTransformOrigin" && !(window.chrome && 'CSS' in window)) {
-            self.transformOriginSupported = false;
+          if (self.options.transformOriginWorkaround === true && Modernizr.prefixed("transformOrigin") === "WebkitTransformOrigin" && !(window.chrome && "CSS" in window)) {
+            transformOrigin = false;
           }
         }
 
         // Are transitions supported?
         if (Modernizr.csstransitions === true) {
-          self.transitionsSupported = true;
+          transitions = true;
         }
 
         // Are animations supported?
         if (Modernizr.cssanimations === true) {
-          self.animationsSupported = true;
+          animations = true;
         }
 
-
-        // If the theme uses 3D transforms but they're not fully supported,
-        // use fallback mode
-        if (self.transitionsSupported === false || (self.transformStyleSupported === false && self.requires3d === true && self.options.require3d !== false)) {
-          self.isFallbackMode = true;
-        }
+        return {
+          transitions: transitions,
+          animations: animations,
+          transformStyle: transformStyle,
+          transformOrigin: transformOrigin
+        };
       }
     };
 
@@ -2955,7 +2987,7 @@ function defineSequence() {
 
         var _preload = this;
 
-        if (self.transitionsSupported === true) {
+        if (self.propertySupport.transitions === true) {
           addClass(self.preloader, "preload-complete");
         }else {
 
@@ -3466,7 +3498,7 @@ function defineSequence() {
              * This event will immediately snap the canvas back into place.
              */
 
-            if (self.transitionsSupported === true) {
+            if (self.propertySupport.transitions === true) {
               self._canvas.move(self.currentStepId, false);
             }
 
@@ -3555,9 +3587,10 @@ function defineSequence() {
       // attributes
       transformProperties = self._canvas.getTransformProperties();
 
-      // Find out what properties the browser supports and whether we need to
-      // go into fallback mode
-      self._animation.propertySupport(transformProperties);
+      // Find out what properties the browser supports
+      // and whether we need to go into fallback mode
+      self.propertySupport = self._animation.getPropertySupport(transformProperties);
+      self.isFallbackMode = self._animation.requiresFallbackMode(self.propertySupport);
 
       // Set up the canvas and screen with the necessary CSS properties
       self._canvas.setup(id);
@@ -3616,7 +3649,7 @@ function defineSequence() {
             self.ready(self);
           });
         });
-      }else {
+      } else {
         goToFirstStep();
 
         self._animation.domDelay(function() {
@@ -3658,7 +3691,6 @@ function defineSequence() {
 
           theEvents = eventList[eventType];
 
-          console.log(eventType)
           self.manageEvent.remove(eventType);
         }
       }

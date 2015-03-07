@@ -169,6 +169,14 @@ module.exports = function(grunt) {
         }
       },
 
+      jshint: {
+        files: ['src/sequence.js'],
+        tasks: ['jshint'],
+        options: {
+          spawn: false
+        }
+      },
+
       // Process SASS, autoprefix, and minify main CSS
       scss: {
         files: ['scss/*.scss'],
@@ -188,9 +196,15 @@ module.exports = function(grunt) {
     },
 
     karma: {
-      unit: {
+      single: {
         configFile: 'tests/karma.conf.js',
         singleRun: true
+      },
+
+      watch: {
+        configFile: 'tests/karma.conf.js',
+        singleRun: false,
+        autoWatch: true
       }
     }
   });
@@ -214,8 +228,13 @@ module.exports = function(grunt) {
     'uglify'
   ]);
 
+  // Single use test - will run jshint and karma once
   grunt.registerTask('test', [
     'jshint',
-    'karma'
+    'karma:single'
+  ]);
+
+  grunt.registerTask('test-watch', [
+    'karma:watch'
   ]);
 };

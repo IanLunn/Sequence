@@ -3,9 +3,11 @@
  */
 describe("Prevent going to a step - sequence.goTo()", function() {
 
-  wait();
+  setup();
 
   it("should prevent going to the same step already being viewed", function(done) {
+
+    var mySequence = initSequence();
 
     expect(mySequence.goTo(1)).toEqual(false);
     done();
@@ -14,6 +16,8 @@ describe("Prevent going to a step - sequence.goTo()", function() {
 
   it("should prevent going to a non-existent step", function() {
 
+    var mySequence = initSequence();
+
     expect(mySequence.goTo(5)).toEqual(false);
     expect(mySequence.goTo(-1)).toEqual(false);
   });
@@ -21,7 +25,10 @@ describe("Prevent going to a step - sequence.goTo()", function() {
 
   it("should prevent going to a step whilst another is animating and navigationSkip is false", function() {
 
-    mySequence.options.navigationSkip = false;
+    var mySequence = initSequence({
+      navigationSkip: false
+    });
+
     mySequence.isAnimating = true;
     expect(mySequence.goTo(2)).toEqual(false);
   });
@@ -29,7 +36,10 @@ describe("Prevent going to a step - sequence.goTo()", function() {
 
   it("should prevent going to a step if the navigationSkipThreshold is active", function() {
 
-    mySequence.options.navigationSkip = true;
+    var mySequence = initSequence({
+      navigationSkip: true
+    });
+
     mySequence.navigationSkipThresholdActive = true;
     expect(mySequence.goTo(2)).toEqual(false);
   });
