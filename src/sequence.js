@@ -659,7 +659,7 @@ function defineSequence() {
       }
 
       return inside;
-    };
+    }
 
     /**
      * Does a theme require full CSS 3D support? This will return true when the
@@ -992,7 +992,7 @@ function defineSequence() {
         var options = self.options;
 
         // Which delay should we use?
-        var delay = this.getDelay(delay, options.autoPlayStartDelay, options.autoPlayDelay);
+        delay = this.getDelay(delay, options.autoPlayStartDelay, options.autoPlayDelay);
 
         // Callback (only to be triggered when autoPlay is continuing from a
         // previous cycle)
@@ -3658,7 +3658,6 @@ function defineSequence() {
 
           theEvents = eventList[eventType];
 
-          console.log(eventType)
           self.manageEvent.remove(eventType);
         }
       }

@@ -190,7 +190,7 @@ module.exports = function(grunt) {
     karma: {
       unit: {
         configFile: 'tests/karma.conf.js',
-        autoWatch: true
+        singleRun: true
       }
     }
   });
@@ -215,6 +215,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('test', [
+    'jshint',
     'karma'
   ]);
 };
