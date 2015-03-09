@@ -2,147 +2,168 @@
  * sequence._animation
  */
 
-describe("Get property support - sequence._animation.getPropertySupport()", function() {
+describe("_animation.getPropertySupport()", function() {
 
-  setup();
+  var sequence;
+
+  // Set up Sequence and wait for it to be ready
+  beforeAll(function(done) {
+
+    appendSequence();
+
+    sequence = initSequence();
+
+    sequence.ready = function() {
+      done();
+    };
+  });
 
   it("should return a list of properties and whether the browser supports them", function() {
-
-    var mySequence = initSequence();
-    expect(mySequence._animation.getPropertySupport()).toEqual(jasmine.any(Object));
+    expect(sequence._animation.getPropertySupport()).toEqual(jasmine.any(Object));
   });
 });
 
-describe("Determine if fallback mode is required - sequence._animation.requiresFallbackMode()", function() {
+describe("_animation.requiresFallbackMode()", function() {
 
-  setup();
+  var sequence;
 
-  it("should be required if transitions aren't supported", function() {
+  // Set up Sequence and wait for it to be ready
+  beforeAll(function(done) {
+
+    appendSequence();
+
+    sequence = initSequence();
+
+    sequence.ready = function() {
+      done();
+    };
+  });
+
+  it("should put Sequence in fallbackMode if transitions aren't supported", function() {
 
     var propertySupport = {
       transitions: false,
       transformStyle: true,
       requires3d: false
     };
-
-    var mySequence = initSequence();
-    expect(mySequence._animation.requiresFallbackMode(propertySupport)).toEqual(true);
+    expect(sequence._animation.requiresFallbackMode(propertySupport)).toEqual(true);
   });
 
-  it("should be required if transitions are supported but transformStyle isn't yet the theme requires3d support", function() {
+  it("should put Sequence in fallbackMode if transitions are supported but transformStyle isn't yet the theme requires 3D support", function() {
 
     var propertySupport = {
       transitions: true,
       transformStyle: false,
       requires3d: true
     };
-
-    var mySequence = initSequence();
-    expect(mySequence._animation.requiresFallbackMode(propertySupport)).toEqual(true);
+    expect(sequence._animation.requiresFallbackMode(propertySupport)).toEqual(true);
   });
 
-  it("should not be required if transitions are supported but transformStyle isn't yet the theme doesn't requires3d support", function() {
+  it("should not put Sequence in fallbackMode if transitions are supported but transformStyle isn't yet the theme doesn't requires3d support", function() {
 
     var propertySupport = {
       transitions: true,
       transformStyle: false,
       requires3d: false
     };
-
-    var mySequence = initSequence();
-    expect(mySequence._animation.requiresFallbackMode(propertySupport)).toEqual(false);
+    expect(sequence._animation.requiresFallbackMode(propertySupport)).toEqual(false);
   });
+
 });
 
-describe("Get direction - sequence._animation.getDirection()", function() {
+describe("_animation.getDirection()", function() {
 
-  setup();
+  var sequence;
+
+  // Set up Sequence and wait for it to be ready
+  beforeAll(function(done) {
+
+    appendSequence();
+
+    sequence = initSequence();
+
+    sequence.ready = function() {
+      done();
+    };
+  });
 
   it("should return the same direction as the one defined", function() {
 
-    var mySequence = initSequence();
+    sequence.options.reverseWhenNavigatingBackwards = true;
+    sequence.options.cycle = true;
 
-    expect(mySequence._animation.getDirection(1, 1, self)).toEqual(1);
-    expect(mySequence._animation.getDirection(1, -1, self)).toEqual(-1);
+    expect(sequence._animation.getDirection(1, 1)).toEqual(1);
+    expect(sequence._animation.getDirection(1, -1)).toEqual(-1);
   });
 
 
-  it("should return a direction of 1 when the reverseWhenNavigatingBackwards option is false, and a direction isn't defined", function() {
+  it("should return a direction of 1 when the reverseWhenNavigatingBackwards option is disbaled, fallbackMode is disabled, and a direction isn't defined", function() {
 
-    var mySequence = initSequence({
-      reverseWhenNavigatingBackwards: false
-    });
+    sequence.options.reverseWhenNavigatingBackwards = false;
+    sequence.options.cycle = true;
 
-    expect(mySequence._animation.getDirection(1, undefined, self)).toEqual(1);
+    sequence.isFallbackMode = true;
+
+    expect(sequence._animation.getDirection(1, undefined)).toEqual(1);
   });
 
 
-  it("should return a direction of 1 when the reverseWhenNavigatingBackwards option is true, cycle is true, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is forward", function() {
+  it("should return a direction of 1 when reverseWhenNavigatingBackwards and cycle options are enabled, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is forward", function() {
 
-    var mySequence = initSequence({
-      reverseWhenNavigatingBackwards: true,
-      cycle: true
-    });
+    sequence.options.reverseWhenNavigatingBackwards = true;
+    sequence.options.cycle = true;
 
-    mySequence.currentStepId = 1;
-    mySequence.noOfSteps = 5;
+    sequence.currentStepId = 1;
+    sequence.noOfSteps = 5;
 
-    expect(mySequence._animation.getDirection(2, undefined, self)).toEqual(1);
+    expect(sequence._animation.getDirection(2, undefined)).toEqual(1);
   });
 
 
-  it("should return a direction of -1 when the reverseWhenNavigatingBackwards option is true, cycle is true, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is reverse", function() {
+  it("should return a direction of -1 when the reverseWhenNavigatingBackwards and cycle options are enabled, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is backwards", function() {
 
-    var mySequence = initSequence({
-      reverseWhenNavigatingBackwards: true,
-      cycle: true
-    });
+    sequence.options.reverseWhenNavigatingBackwards = true;
+    sequence.options.cycle = true;
 
-    mySequence.currentStepId = 3;
-    mySequence.noOfSteps = 5;
+    sequence.currentStepId = 3;
+    sequence.noOfSteps = 5;
 
-    expect(mySequence._animation.getDirection(1, undefined, self)).toEqual(-1);
+    expect(sequence._animation.getDirection(1, undefined)).toEqual(-1);
   });
 
 
-  it("should return a direction of 1 when the reverseWhenNavigatingBackwards option is true, cycle is true, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is forward (the last slide is the currentId and the next slide ID is 1)", function() {
+  it("should return a direction of 1 when reverseWhenNavigatingBackwards and cycle options are enabled, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is forward (the last slide is the currentId and the next slide ID is 1)", function() {
 
-    var mySequence =   initSequence({
-      reverseWhenNavigatingBackwards: true,
-      cycle: true
-    });
+    sequence.options.reverseWhenNavigatingBackwards = true;
+    sequence.options.cycle = true;
 
-    mySequence.currentStepId = 5;
-    mySequence.noOfSteps = 5;
+    sequence.currentStepId = 5;
+    sequence.noOfSteps = 5;
 
-    expect(mySequence._animation.getDirection(1, undefined, self)).toEqual(1);
+    expect(sequence._animation.getDirection(1, undefined)).toEqual(1);
   });
 
 
-  it("should return a direction of -1 when the reverseWhenNavigatingBackwards option is true, cycle is false, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is forward (the last slide is the currentId and the next slide ID is 1)", function() {
+  it("should return a direction of -1 when reverseWhenNavigatingBackwards is enabled, cycle is disabled, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is forward (the last slide is the currentId and the next slide ID is 1)", function() {
 
-    var mySequence = initSequence({
-      reverseWhenNavigatingBackwards: true,
-      cycle: false
-    });
+    sequence.options.reverseWhenNavigatingBackwards = true;
+    sequence.options.cycle = false;
 
-    mySequence.currentStepId = 5;
-    mySequence.noOfSteps = 5;
+    sequence.currentStepId = 5;
+    sequence.noOfSteps = 5;
 
-    expect(mySequence._animation.getDirection(1, undefined, self)).toEqual(-1);
+    expect(sequence._animation.getDirection(1, undefined)).toEqual(-1);
   });
 
 
-  it("should return a direction of 1 when the reverseWhenNavigatingBackwards option is true, cycle is false, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is forward (the last slide is the currentId and the next slide ID is 1)", function() {
+  it("should return a direction of 1 when reverseWhenNavigatingBackwards is enabled, cycle is disabled, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is forward (the last slide is the currentId and the next slide ID is 1)", function() {
 
-    var mySequence = initSequence({
-      reverseWhenNavigatingBackwards: true,
-      cycle: false
-    });
+    sequence.options.reverseWhenNavigatingBackwards = true;
+    sequence.options.cycle = false;
 
-    mySequence.currentStepId = 1;
-    mySequence.noOfSteps = 5;
+    sequence.currentStepId = 1;
+    sequence.noOfSteps = 5;
 
-    expect(mySequence._animation.getDirection(5, undefined, self)).toEqual(1);
+    expect(sequence._animation.getDirection(5, undefined)).toEqual(1);
   });
 });

@@ -15,6 +15,9 @@ function defineSequence() {
 
   'use strict';
 
+  var instances = [],
+      instance = 0;
+
   /**
    * Sequence function
    *
@@ -25,13 +28,16 @@ function defineSequence() {
    */
   var Sequence = (function (element, options) {
 
-    // Prevent an element from having multiple instances of Sequence applied to it
-    if (element.getAttribute("data-seq-enabled") === "true") {
-      return null;
+    var instanceId = element.getAttribute("data-seq-enabled");
+
+    // Prevent multiple instances on the same element. Return the object instead
+    if (instanceId !== null) {
+      return instances[instanceId];
     }
 
     // The element now has Sequence attached to it
-    element.setAttribute("data-seq-enabled", true);
+    element.setAttribute("data-seq-enabled", instance);
+    instance++;
 
     /* --- PRIVATE VARIABLES/FUNCTIONS --- */
 
@@ -958,7 +964,7 @@ function defineSequence() {
       start: function(delay, continuing) {
 
         // Only start once
-        if (self.isAutoPlaying === true) {
+        if (self.isAutoPlaying === true || self.isReady === false) {
           return false;
         }
 
@@ -995,7 +1001,7 @@ function defineSequence() {
           }, delay);
         }
 
-        return null;
+        return true;
       },
 
       /**
@@ -1003,7 +1009,7 @@ function defineSequence() {
        */
       stop: function() {
 
-        if (self.options.autoPlay === true) {
+        if (self.options.autoPlay === true && self.isAutoPlaying === true) {
           self.options.autoPlay = false;
           self.isAutoPlaying = false;
           clearTimeout(self.autoPlayTimer);
@@ -2143,29 +2149,24 @@ function defineSequence() {
        * has a defined direction, and if not, what options are being used.
        *
        * @param {Number} id - The id of the step to go to
-       * @param {Number} direction - The defined direction 1 or -1
+       * @param {Number} definedDirection - The defined direction 1 or -1
        * @returns {Number} direction - The direction 1 or -1
        */
-      getDirection: function(id, direction) {
+      getDirection: function(id, definedDirection) {
 
-        var _animation = this;
+        var _animation = this,
+            direction = 1;
 
-        // If the developer has defined a direction, then use that
-        if (direction !== undefined) {
-          return direction;
-        }
+        if (definedDirection !== undefined) {
+          direction = definedDirection;
+        } else if (self.options.reverseWhenNavigatingBackwards === true || self.isFallbackMode === true) {
 
-        // If a direction wasn't defined, work out the best one to use
-        if (self.options.reverseWhenNavigatingBackwards === true || self.isFallbackMode === true) {
-
-          if (direction === undefined && self.options.cycle === true) {
+          if (self.options.cycle === true) {
             direction = _animation.getShortestDirection(id, self.currentStepId, self.noOfSteps);
-          }else if (direction === undefined) {
+          } else {
             direction = (id < self.currentStepId) ? -1: 1;
           }
-        }
-
-        else {
+        } else {
 
           direction = 1;
         }
@@ -3570,6 +3571,7 @@ function defineSequence() {
       self.steps = getSteps(self.canvas);
 
       self.isAnimating = false;
+      self.isReady = false;
 
       // Count number of steps
       self.noOfSteps = self.steps.length;
@@ -3627,34 +3629,34 @@ function defineSequence() {
       // If the browser doesn't support CSS transitions, setup the fallback
       self._animationFallback.setupCanvas(id);
 
+
       goToFirstStep = function() {
 
-        // Snap the previous step into position
         self._animation.domDelay(function() {
-          self._animation.resetInheritedSpeed(prevStep);
-        });
 
-        // Go to the first step
-        self.goTo(id, self.options.autoPlayDirection, true);
+          // Snap the previous step into position
+          self._animation.domDelay(function() {
+            self._animation.resetInheritedSpeed(prevStep);
+          });
+
+          // Go to the first step
+          self.goTo(id, self.options.autoPlayDirection, true);
+
+          self.isReady = true;
+
+          // Callback
+          self.ready(self);
+        });
       };
 
       // Set up preloading if required, then go to the first step
       if (self.options.preloader !== false && document.querySelectorAll !== undefined && typeof imagesLoaded === "function") {
 
         self._preload.init(function() {
-
           goToFirstStep();
-
-          self._animation.domDelay(function() {
-            self.ready(self);
-          });
         });
       } else {
         goToFirstStep();
-
-        self._animation.domDelay(function() {
-          self.ready(self);
-        });
       }
     };
 
@@ -3800,6 +3802,7 @@ function defineSequence() {
      * @param {Boolean} ignorePhaseThreshold - if true, ignore the
      * transitionThreshold setting and immediately go to the specified step
      * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
+     * @returns {Boolean} false when goTo was disallowed true when allowed
      * @api public
      */
     self.goTo = function(id, direction, ignorePhaseThreshold, hashTagNav) {
@@ -3827,7 +3830,12 @@ function defineSequence() {
         return false;
       }
 
-      var phaseThresholdTime = 0;
+      var phaseThresholdTime = 0,
+          currentStepElement,
+          nextStepElement,
+          currentPhaseProperties,
+          nextPhaseProperties,
+          activePhases;
 
       // Clear the previous autoPlayTimer
       clearTimeout(self.autoPlayTimer);
@@ -3838,8 +3846,8 @@ function defineSequence() {
       // Save the latest direction
       self.direction = direction;
 
-      var currentStepElement = self.steps[self.currentStepId - 1],
-          nextStepElement = self.steps[id - 1];
+      currentStepElement = self.steps[self.currentStepId - 1];
+      nextStepElement = self.steps[id - 1];
 
       // Move the active step to the top (via a higher z-index)
       self._animation.moveActiveStepToTop(currentStepElement, nextStepElement);
@@ -3851,10 +3859,10 @@ function defineSequence() {
 
         // Get the step number, element, its animated elements (child nodes), and
         // max timings
-        var currentPhaseProperties = self._animation.getPhaseProperties(self.currentStepId, "current"),
-            nextPhaseProperties = self._animation.getPhaseProperties(id, "next");
+        currentPhaseProperties = self._animation.getPhaseProperties(self.currentStepId, "current");
+        nextPhaseProperties = self._animation.getPhaseProperties(id, "next");
 
-        var activePhases = self.animationMap.activePhases = {
+        activePhases = self.animationMap.activePhases = {
           "current": currentPhaseProperties,
           "next": nextPhaseProperties
         };
@@ -3903,6 +3911,8 @@ function defineSequence() {
 
         self._animationFallback.goTo(id, self.currentStepId, currentStepElement, id, nextStepElement, direction, hashTagNav);
       }
+
+      return true;
     };
 
     /* --- CALLBACKS --- */
@@ -3932,7 +3942,7 @@ function defineSequence() {
      */
     self.animationStarted = function(id, self) {
 
-      // console.log("animation started", id)
+      // console.log("Animation started", id);
     };
 
     /**
@@ -3944,7 +3954,7 @@ function defineSequence() {
      */
     self.animationEnded = function(id, self) {
 
-      // console.log("Animation ended", id)
+      // console.log("Animation ended", id);
     };
 
     /**
@@ -4010,7 +4020,7 @@ function defineSequence() {
      */
     self.preloaded = function(self) {
 
-
+      // console.log("preloaded");
     };
 
     /**
@@ -4025,7 +4035,7 @@ function defineSequence() {
      */
     self.preloadProgress = function(result, src, progress, length, self) {
 
-
+      // console.log(progress, length);
     };
 
     /**
@@ -4065,11 +4075,9 @@ function defineSequence() {
 
 
     /* --- INIT --- */
-
-    // Set up an instance of Sequence
     self._init(element);
 
-    // Expose this instances public variables and methods
+    instances.push(self);
     return self;
   });
 

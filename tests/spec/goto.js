@@ -1,46 +1,55 @@
 /**
  * sequence.goTo()
  */
-describe("Prevent going to a step - sequence.goTo()", function() {
+describe("goTo()", function() {
 
-  setup();
+  var sequence;
 
-  it("should prevent going to the same step already being viewed", function(done) {
+  // Set up Sequence and wait for it to be ready
+  beforeAll(function(done) {
 
-    var mySequence = initSequence();
+    appendSequence();
 
-    expect(mySequence.goTo(1)).toEqual(false);
+    sequence = initSequence({
+      autoPlay: false
+    });
+
+    sequence.ready = function() {
+      done();
+    };
+  });
+
+  it("should prevent going to the same step already being viewed", function() {
+
+    sequence.goTo(1);
+    expect(sequence.goTo(1)).toEqual(false);
+    done();
+  });
+
+  it("should prevent going to a non-existent step", function() {
+
+    expect(sequence.goTo(5)).toEqual(false);
+    expect(sequence.goTo(-1)).toEqual(false);
     done();
   });
 
 
-  it("should prevent going to a non-existent step", function() {
+  it("should prevent going to a step whilst another is animating and navigationSkip is disabled", function() {
 
-    var mySequence = initSequence();
+    sequence.options.navigationSkip = false;
+    sequence.isAnimating = true;
 
-    expect(mySequence.goTo(5)).toEqual(false);
-    expect(mySequence.goTo(-1)).toEqual(false);
-  });
-
-
-  it("should prevent going to a step whilst another is animating and navigationSkip is false", function() {
-
-    var mySequence = initSequence({
-      navigationSkip: false
-    });
-
-    mySequence.isAnimating = true;
-    expect(mySequence.goTo(2)).toEqual(false);
+    expect(sequence.goTo(2)).toEqual(false);
+    done();
   });
 
 
   it("should prevent going to a step if the navigationSkipThreshold is active", function() {
 
-    var mySequence = initSequence({
-      navigationSkip: true
-    });
+    sequence.options.navigationSkip = true;
+    sequence.navigationSkipThresholdActive = true;
 
-    mySequence.navigationSkipThresholdActive = true;
-    expect(mySequence.goTo(2)).toEqual(false);
+    expect(sequence.goTo(2)).toEqual(false);
+    done();
   });
 });

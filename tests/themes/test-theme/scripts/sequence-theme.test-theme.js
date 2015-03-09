@@ -23,14 +23,14 @@ var sequenceElement = document.getElementById("sequence");
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
   animateCanvas: true,
-  autoPlay: false,
+  autoPlay: true,
   autoPlayDelay: 1000,
   phaseThreshold: false,
+  preloader: true,
   // hashTags: true,
   // startingStepId: 2,
   keyNavigation: true,
-  // fadeStepWhenSkipped: true
-  startingStepAnimatesIn: false
+  // startingStepAnimatesIn: true
 }
 
 var mySequence,

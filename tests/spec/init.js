@@ -1,38 +1,67 @@
 /**
  * Test initiation of Sequence
  */
- describe("Initiating Sequence", function() {
+describe("Sequence initiation", function() {
 
-  setup();
+  var sequence;
 
-  it("should return an object", function() {
+  // Set up Sequence and wait for it to be ready
+  beforeAll(function(done) {
 
-    var mySequence = initSequence();
+    appendSequence();
 
-    expect(mySequence).toEqual(jasmine.any(Object));
+    sequence = initSequence({
+      autoPlay: true
+    });
+
+    sequence.ready = function() {
+      done();
+    };
   });
 
-  it("should prevent initiating Sequence twice on the same element", function() {
+  it("should return the sequence object", function() {
 
-    var mySequence = initSequence();
-        mySequence = initSequence();
-
-    expect(mySequence).toEqual(null);
+    expect(sequence).toEqual(jasmine.any(Object));
   });
 
   it("should add data-seq-enabled to the element", function() {
-
-    var mySequence = initSequence();
-
-    expect(mySequence.container.dataset["seqEnabled"]).toEqual("true");
+    expect(parseInt(sequence.container.dataset.seqEnabled)).toEqual(jasmine.any(Number));
   });
 
   it("should merge and override default options with developer options (change autoPlay from the default of false to true)", function() {
 
-    var mySequence =  initSequence({
-      autoPlay: true
-    });
+    expect(sequence.options.autoPlay).toEqual(true);
+  });
+});
 
-    expect(mySequence.options.autoPlay).toEqual(true);
+
+describe("Sequence multiple instantiations", function() {
+
+  var sequence;
+
+  // Set up Sequence and wait for it to be ready
+  beforeAll(function(done) {
+
+    appendSequence();
+
+    // Init Sequence on <div id="sequence"></div>
+    sequence = initSequence();
+
+    sequence.ready = function() {
+      done();
+    };
+  });
+
+  it("should prevent a second instantiation on the same element and instead return the object already attached to the element", function() {
+
+    // Get the instanceId added the first time on the element
+    var originalInstanceId = parseInt(sequence.container.dataset.seqEnabled);
+    expect(originalInstanceId).toEqual(jasmine.any(Number));
+
+    // Init Sequence AGAIN on <div id="sequence"></div>
+    sequence = initSequence({}, "sequence");
+
+    // Make sure the same instanceId is returned
+    expect(parseInt(sequence.container.dataset.seqEnabled)).toEqual(originalInstanceId);
   });
 });
