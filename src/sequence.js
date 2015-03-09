@@ -11,7 +11,7 @@
  * @copyright Ian Lunn 2015
  */
 
-function defineSequence() {
+function defineSequence(imagesLoaded, Hammer) {
 
   'use strict';
 
@@ -3429,7 +3429,7 @@ function defineSequence() {
             }
           };
 
-          if(typeof Hammer === "function") {
+          if (typeof Hammer === "function") {
             self.hammerTime = new Hammer(self.container).on("swipe", handler);
 
               // Set Hammer's Swipe options
@@ -3648,6 +3648,8 @@ function defineSequence() {
           self.ready(self);
         });
       };
+
+
 
       // Set up preloading if required, then go to the first step
       if (self.options.preloader !== false && document.querySelectorAll !== undefined && typeof imagesLoaded === "function") {
@@ -4084,4 +4086,14 @@ function defineSequence() {
   return Sequence;
 }
 
-var sequence = defineSequence();
+if (typeof define === "function" && define.amd) {
+
+  define(["imagesLoaded", "Hammer"], defineSequence);
+} else {
+
+  /* Make dependencies optional */
+  Hammer = (typeof Hammer !== "function") ? null: Hammer;
+  imagesLoaded = (typeof imagesLoaded !== "function") ? null: imagesLoaded;
+
+  var sequence = defineSequence(imagesLoaded, Hammer);
+}
