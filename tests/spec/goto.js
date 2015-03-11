@@ -19,6 +19,11 @@ describe("goTo()", function() {
     };
   });
 
+  afterAll(function(done) {
+    removeSequence();
+    done();
+  });
+
   it("should prevent going to the same step already being viewed", function() {
 
     sequence.goTo(1);

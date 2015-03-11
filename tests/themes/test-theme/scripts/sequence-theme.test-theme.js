@@ -34,34 +34,31 @@ var options = {
 }
 
 var mySequence,
-    autoPlayButton = document.getElementById("autoplay"),
     initButton = document.getElementById("init"),
     destroyButton = document.getElementById("destroy");
 
 // Launch Sequence on the element, and with the options we specified above
 function init() {
-  if (mySequence === undefined) {
-    mySequence = sequence(sequenceElement, options);
+  mySequence = sequence(sequenceElement, options);
 
-    mySequence.started = function() {
-      autoPlayButton.innerHTML = "Stop Autoplay";
-      console.log("auto play started");
-    }
+  mySequence.started = function(sequence) {
+    sequence.$autoPlay[0].innerHTML = "Stop Autoplay";
+    console.log("auto play started");
+  }
 
-    mySequence.stopped = function() {
-      autoPlayButton.innerHTML = "Start Autoplay";
-      console.log("auto play stopped");
-    }
+  mySequence.stopped = function(sequence) {
+    sequence.$autoPlay[0].innerHTML = "Start Autoplay";
+    console.log("auto play stopped");
   }
 }
 
 init();
 
-mySequence._utils.addEvent(initButton, "click", function() {
+mySequence.utils.addEvent(initButton, "click", function() {
   init();
 });
 
-mySequence._utils.addEvent(destroyButton, "click", function() {
+mySequence.utils.addEvent(destroyButton, "click", function() {
   if (mySequence !== undefined) {
     mySequence.destroy();
     mySequence = undefined;

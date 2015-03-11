@@ -1,5 +1,5 @@
 /**
- * sequence._canvas
+ * sequence.canvas
  */
 // describe("", function() {
 //

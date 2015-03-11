@@ -19,21 +19,44 @@ describe("Sequence initiation", function() {
     };
   });
 
+  afterAll(function(done) {
+    removeSequence();
+    done();
+  });
+
   it("should return the sequence object", function() {
 
     expect(sequence).toEqual(jasmine.any(Object));
   });
 
   it("should add data-seq-enabled to the element", function() {
-    expect(parseInt(sequence.container.dataset.seqEnabled)).toEqual(jasmine.any(Number));
+    expect(parseInt(sequence.$container.dataset.seqEnabled)).toEqual(jasmine.any(Number));
   });
 
   it("should merge and override default options with developer options (change autoPlay from the default of false to true)", function() {
 
     expect(sequence.options.autoPlay).toEqual(true);
   });
-});
 
+  it("should expose properties", function() {
+
+    expect(sequence.options).toEqual(jasmine.any(Object));
+    expect(sequence.$container.id).toEqual("sequence");
+    expect(sequence.$screen.classList.contains("seq-screen")).toEqual(true);
+    expect(sequence.$canvas.classList.contains("seq-canvas")).toEqual(true);
+    expect(sequence.$steps).toEqual(jasmine.any(Array));
+
+    expect(sequence.isAnimating).not.toEqual(undefined);
+    expect(sequence.isReady).not.toEqual(undefined);
+    expect(sequence.noOfSteps).not.toEqual(undefined);
+    expect(sequence.animationMap).not.toEqual(undefined);
+    expect(sequence.propertySupport).not.toEqual(undefined);
+    expect(sequence.isFallbackMode).not.toEqual(undefined);
+    expect(sequence.firstRun).not.toEqual(undefined);
+    expect(sequence.currentStepId).not.toEqual(undefined);
+    expect(sequence.isReady).not.toEqual(undefined);
+  });
+});
 
 describe("Sequence multiple instantiations", function() {
 
@@ -55,13 +78,13 @@ describe("Sequence multiple instantiations", function() {
   it("should prevent a second instantiation on the same element and instead return the object already attached to the element", function() {
 
     // Get the instanceId added the first time on the element
-    var originalInstanceId = parseInt(sequence.container.dataset.seqEnabled);
+    var originalInstanceId = parseInt(sequence.$container.dataset.seqEnabled);
     expect(originalInstanceId).toEqual(jasmine.any(Number));
 
     // Init Sequence AGAIN on <div id="sequence"></div>
     sequence = initSequence({}, "sequence");
 
     // Make sure the same instanceId is returned
-    expect(parseInt(sequence.container.dataset.seqEnabled)).toEqual(originalInstanceId);
+    expect(parseInt(sequence.$container.dataset.seqEnabled)).toEqual(originalInstanceId);
   });
 });

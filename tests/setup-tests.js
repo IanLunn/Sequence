@@ -15,6 +15,10 @@ appendSequence = function() {
   document.body.innerHTML = sequenceHtml;
 };
 
+removeSequence = function() {
+  document.body.innerHTML = "";
+};
+
 initSequence = function(options) {
 
   if (options === undefined) {
@@ -25,4 +29,4 @@ initSequence = function(options) {
       mySequence = sequence(sequenceElement, options);
 
   return mySequence;
-}
+};

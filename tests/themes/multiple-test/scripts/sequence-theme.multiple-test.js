@@ -20,31 +20,37 @@
 var sequenceElement1 = document.getElementById("sequence1");
 var sequenceElement2 = document.getElementById("sequence2");
 
-var pause1 = document.getElementById("pause1");
-var pause2 = document.getElementById("pause2");
-
 // Place your Sequence options here to override defaults
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
-  keyNavigation: true
+  keyNavigation: true,
+  autoPlay: true
 }
 
 // Launch Sequence on the elements, and with the options we specified above
 var mySequence1 = sequence(sequenceElement1, options);
 var mySequence2 = sequence(sequenceElement2, options);
 
-mySequence1.paused = function() {
-  pause1.innerHTML = "Unpause";
+function updateButtons(buttons, text) {
+
+  for (var i = 0; i < buttons.length; i++) {
+    var button = buttons[i];
+    button.innerHTML = text;
+  }
 }
 
-mySequence1.unpaused = function() {
-  pause1.innerHTML = "Pause";
+mySequence1.stopped = function() {
+  updateButtons(mySequence1.$autoPlay, "Start");
 }
 
-mySequence2.paused = function() {
-  pause2.innerHTML = "Unpause";
+mySequence1.started = function() {
+  updateButtons(mySequence1.$autoPlay, "Stop");
 }
 
-mySequence2.unpaused = function() {
-  pause2.innerHTML = "Pause";
+mySequence2.stopped = function() {
+  updateButtons(mySequence2.$autoPlay, "Start");
+}
+
+mySequence2.started = function() {
+  updateButtons(mySequence2.$autoPlay, "Stop");
 }

@@ -1,8 +1,8 @@
 /**
- * sequence._animation
+ * sequence.animation
  */
 
-describe("_animation.getPropertySupport()", function() {
+describe("animation.getPropertySupport()", function() {
 
   var sequence;
 
@@ -16,14 +16,20 @@ describe("_animation.getPropertySupport()", function() {
     sequence.ready = function() {
       done();
     };
+
+  });
+
+  afterAll(function(done) {
+    removeSequence();
+    done();
   });
 
   it("should return a list of properties and whether the browser supports them", function() {
-    expect(sequence._animation.getPropertySupport()).toEqual(jasmine.any(Object));
+    expect(sequence.animation.getPropertySupport()).toEqual(jasmine.any(Object));
   });
 });
 
-describe("_animation.requiresFallbackMode()", function() {
+describe("animation.requiresFallbackMode()", function() {
 
   var sequence;
 
@@ -37,6 +43,11 @@ describe("_animation.requiresFallbackMode()", function() {
     sequence.ready = function() {
       done();
     };
+  });
+
+  afterAll(function(done) {
+    removeSequence();
+    done();
   });
 
   it("should put Sequence in fallbackMode if transitions aren't supported", function() {
@@ -46,7 +57,7 @@ describe("_animation.requiresFallbackMode()", function() {
       transformStyle: true,
       requires3d: false
     };
-    expect(sequence._animation.requiresFallbackMode(propertySupport)).toEqual(true);
+    expect(sequence.animation.requiresFallbackMode(propertySupport)).toEqual(true);
   });
 
   it("should put Sequence in fallbackMode if transitions are supported but transformStyle isn't yet the theme requires 3D support", function() {
@@ -56,7 +67,7 @@ describe("_animation.requiresFallbackMode()", function() {
       transformStyle: false,
       requires3d: true
     };
-    expect(sequence._animation.requiresFallbackMode(propertySupport)).toEqual(true);
+    expect(sequence.animation.requiresFallbackMode(propertySupport)).toEqual(true);
   });
 
   it("should not put Sequence in fallbackMode if transitions are supported but transformStyle isn't yet the theme doesn't requires3d support", function() {
@@ -66,12 +77,12 @@ describe("_animation.requiresFallbackMode()", function() {
       transformStyle: false,
       requires3d: false
     };
-    expect(sequence._animation.requiresFallbackMode(propertySupport)).toEqual(false);
+    expect(sequence.animation.requiresFallbackMode(propertySupport)).toEqual(false);
   });
 
 });
 
-describe("_animation.getDirection()", function() {
+describe("animation.getDirection()", function() {
 
   var sequence;
 
@@ -92,8 +103,8 @@ describe("_animation.getDirection()", function() {
     sequence.options.reverseWhenNavigatingBackwards = true;
     sequence.options.cycle = true;
 
-    expect(sequence._animation.getDirection(1, 1)).toEqual(1);
-    expect(sequence._animation.getDirection(1, -1)).toEqual(-1);
+    expect(sequence.animation.getDirection(1, 1)).toEqual(1);
+    expect(sequence.animation.getDirection(1, -1)).toEqual(-1);
   });
 
 
@@ -104,7 +115,7 @@ describe("_animation.getDirection()", function() {
 
     sequence.isFallbackMode = true;
 
-    expect(sequence._animation.getDirection(1, undefined)).toEqual(1);
+    expect(sequence.animation.getDirection(1, undefined)).toEqual(1);
   });
 
 
@@ -116,7 +127,7 @@ describe("_animation.getDirection()", function() {
     sequence.currentStepId = 1;
     sequence.noOfSteps = 5;
 
-    expect(sequence._animation.getDirection(2, undefined)).toEqual(1);
+    expect(sequence.animation.getDirection(2, undefined)).toEqual(1);
   });
 
 
@@ -128,7 +139,7 @@ describe("_animation.getDirection()", function() {
     sequence.currentStepId = 3;
     sequence.noOfSteps = 5;
 
-    expect(sequence._animation.getDirection(1, undefined)).toEqual(-1);
+    expect(sequence.animation.getDirection(1, undefined)).toEqual(-1);
   });
 
 
@@ -140,7 +151,7 @@ describe("_animation.getDirection()", function() {
     sequence.currentStepId = 5;
     sequence.noOfSteps = 5;
 
-    expect(sequence._animation.getDirection(1, undefined)).toEqual(1);
+    expect(sequence.animation.getDirection(1, undefined)).toEqual(1);
   });
 
 
@@ -152,7 +163,7 @@ describe("_animation.getDirection()", function() {
     sequence.currentStepId = 5;
     sequence.noOfSteps = 5;
 
-    expect(sequence._animation.getDirection(1, undefined)).toEqual(-1);
+    expect(sequence.animation.getDirection(1, undefined)).toEqual(-1);
   });
 
 
@@ -164,6 +175,6 @@ describe("_animation.getDirection()", function() {
     sequence.currentStepId = 1;
     sequence.noOfSteps = 5;
 
-    expect(sequence._animation.getDirection(5, undefined)).toEqual(1);
+    expect(sequence.animation.getDirection(5, undefined)).toEqual(1);
   });
 });
