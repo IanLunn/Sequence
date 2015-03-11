@@ -21,7 +21,10 @@ describe("goTo()", function() {
 
   afterAll(function(done) {
     removeSequence();
-    done();
+    SetTimeout(function() {
+      resetSequence(sequence);
+      done();
+    }, 500);
   });
 
   it("should prevent going to the same step already being viewed", function() {
@@ -38,7 +41,6 @@ describe("goTo()", function() {
     done();
   });
 
-
   it("should prevent going to a step whilst another is animating and navigationSkip is disabled", function() {
 
     sequence.options.navigationSkip = false;
@@ -47,7 +49,6 @@ describe("goTo()", function() {
     expect(sequence.goTo(2)).toEqual(false);
     done();
   });
-
 
   it("should prevent going to a step if the navigationSkipThreshold is active", function() {
 

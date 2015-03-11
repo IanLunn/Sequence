@@ -13,23 +13,34 @@ describe("manageEvents()", function() {
     sequence = initSequence();
 
     sequence.ready = function() {
-
-      setTimeout(function() {
-        sequence.destroy();
-        done();
-      }, 500);
-
+      done();
     };
   });
 
   afterAll(function(done) {
     removeSequence();
+    SetTimeout(function() {
+      resetSequence(sequence);
+      done();
+    }, 500);
+  });
+
+  it("should add a hashChange event and return the element and handler function", function(done) {
+
+    var myEvent = sequence.manageEvents.add.hashChange()[0];
+    expect(myEvent.element).not.toEqual(undefined);
+    expect(typeof myEvent.handler === "function").toEqual(true);
     done();
   });
 
-  it("should remove the data-seq-enabled attribute from the container", function(done) {
+  it("should add a button event and return the element and handler function", function(done) {
 
-    expect(sequence.$container.getAttribute("data-seq-enabled")).toEqual(null);
+    // Use a nextButton, and add it with an empty function
+    var button = sequence.ui.getElements("nextButton", true);
+    var myEvent = sequence.manageEvents.add.button(button, "nav", function(){})[0];
+
+    expect(myEvent.element).not.toEqual(undefined);
+    expect(typeof myEvent.handler === "function").toEqual(true);
     done();
   });
 });

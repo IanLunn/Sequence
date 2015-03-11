@@ -19,9 +19,11 @@ describe("ui.getElements()", function() {
 
   afterAll(function(done) {
     removeSequence();
-    done();
+    SetTimeout(function() {
+      resetSequence(sequence);
+      done();
+    }, 500);
   });
-
   it("should get a default element (.seq-next)", function() {
 
     var nextButton = sequence.ui.getElements("nextButton", true);

@@ -21,7 +21,10 @@ describe("animation.getPropertySupport()", function() {
 
   afterAll(function(done) {
     removeSequence();
-    done();
+    SetTimeout(function() {
+      resetSequence(sequence);
+      done();
+    }, 500);
   });
 
   it("should return a list of properties and whether the browser supports them", function() {
@@ -47,7 +50,10 @@ describe("animation.requiresFallbackMode()", function() {
 
   afterAll(function(done) {
     removeSequence();
-    done();
+    SetTimeout(function() {
+      resetSequence(sequence);
+      done();
+    }, 500);
   });
 
   it("should put Sequence in fallbackMode if transitions aren't supported", function() {
@@ -96,6 +102,14 @@ describe("animation.getDirection()", function() {
     sequence.ready = function() {
       done();
     };
+  });
+
+  afterAll(function(done) {
+    removeSequence();
+    SetTimeout(function() {
+      resetSequence(sequence);
+      done();
+    }, 500);
   });
 
   it("should return the same direction as the one defined", function() {

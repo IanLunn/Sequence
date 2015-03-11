@@ -24,7 +24,6 @@ function defineSequence(imagesLoaded, Hammer) {
    * @param {Object} element - the element Sequence is bound to
    * @param {Object} options - this instance's options
    * @returns {Object} self - Properties and methods available to this instance
-   * @api public
    */
   var Sequence = (function (element, options) {
 
@@ -791,10 +790,11 @@ function defineSequence(imagesLoaded, Hammer) {
 
     var self = {};
 
+    // Expose Sequence's custom Modernizr
+    self.modernizr = Modernizr;
+
     /**
      * Manage UI elements such as nextButton, prevButton, and pagination
-     *
-     * @api private
      */
     self.ui = {
 
@@ -905,8 +905,6 @@ function defineSequence(imagesLoaded, Hammer) {
 
     /**
      * Methods relating to autoPlay
-     *
-     * @api private
      */
     self.autoPlay = {
 
@@ -1019,9 +1017,11 @@ function defineSequence(imagesLoaded, Hammer) {
 
           // Callback
           self.stopped(self);
+        } else {
+          return false;
         }
 
-        return null;
+        return true;
       },
 
       /**
@@ -1036,7 +1036,11 @@ function defineSequence(imagesLoaded, Hammer) {
 
           self.isAutoPlayPaused = false;
           this.start(true);
+        } else {
+          return false;
         }
+
+        return true;
       },
 
       /**
@@ -1051,16 +1055,17 @@ function defineSequence(imagesLoaded, Hammer) {
 
           self.isAutoPlayPaused = true;
           this.stop();
+
+        } else {
+          return false;
         }
 
-        return null;
+        return true;
       }
     };
 
     /**
      * Controls Sequence's canvas
-     *
-     * @api private
      */
     self.canvas = {
 
@@ -1307,8 +1312,6 @@ function defineSequence(imagesLoaded, Hammer) {
 
     /**
      * Controls Sequence's step animations
-     *
-     * @api private
      */
     self.animation = {
 
@@ -1399,13 +1402,14 @@ function defineSequence(imagesLoaded, Hammer) {
 
         if (self.options.moveActiveStepToTop === true) {
 
-          // var prevStepElement = self.animationMap["step" + self.prevStepId].element;
           var prevStepElement = self.$steps[self.prevStepId - 1];
 
           prevStepElement.style.zIndex = 1;
           currentElement.style.zIndex = self.noOfSteps - 1;
           nextElement.style.zIndex = self.noOfSteps;
         }
+
+        return null;
       },
 
       /**
@@ -1851,7 +1855,7 @@ function defineSequence(imagesLoaded, Hammer) {
             durations.nextPhase.animation = nextPhaseDuration + phaseThresholdTime;
             if (currentPhaseDuration > nextPhaseDuration + phaseThresholdTime) {
               durations.maximum = currentPhaseDuration;
-            }else {
+            } else {
               durations.maximum = nextPhaseDuration + phaseThresholdTime;
             }
         }
@@ -2208,7 +2212,6 @@ function defineSequence(imagesLoaded, Hammer) {
        *
        * @param {Object} properties - The properties applied to each step
        * @returns {Boolean} requires3d - Whether 3D is required
-       * @api private
        */
       is3dRequired: function(properties) {
 
@@ -2324,8 +2327,6 @@ function defineSequence(imagesLoaded, Hammer) {
     /**
      * Controls Sequence's animations when in a browser that doesn't support
      * CSS transitions
-     *
-     * @api private
      */
     self.animationFallback = {
 
@@ -2506,8 +2507,6 @@ function defineSequence(imagesLoaded, Hammer) {
 
     /**
      * Manage pagination
-     *
-     * @api private
      */
     self.pagination = {
 
@@ -2591,8 +2590,6 @@ function defineSequence(imagesLoaded, Hammer) {
 
     /**
      * Manage Sequence hashTag support
-     *
-     * @api private
      */
     self.hashTags = {
 
@@ -2621,19 +2618,18 @@ function defineSequence(imagesLoaded, Hammer) {
           self.stepHashTags = this.getStepHashTags();
 
           // If there is a hashTag but no value, don't go any further
-          if (newHashTag === "") {
-            return id;
-          }
+          if (newHashTag !== "") {
 
-          // Get the current hashTag's step ID's
-          self.currentHashTag = newHashTag;
-          correspondingStepId = this.hasCorrespondingStep();
+            // Get the current hashTag's step ID's
+            self.currentHashTag = newHashTag;
+            correspondingStepId = this.hasCorrespondingStep(self.currentHashTag);
 
-          // If the entering URL contains a hashTag, and the hashTag relates to
-          // a corresponding step, the step's ID will override the startStepId
-          // defined in options
-          if (correspondingStepId > -1) {
-            id = correspondingStepId + 1;
+            // If the entering URL contains a hashTag, and the hashTag relates to
+            // a corresponding step, the step's ID will override the startStepId
+            // defined in options
+            if (correspondingStepId > -1) {
+              id = correspondingStepId + 1;
+            }
           }
         }
 
@@ -2646,12 +2642,12 @@ function defineSequence(imagesLoaded, Hammer) {
       /**
        * Does a hashTag have a corresponding step?
        *
-       * @returns {Number} correspondingStep - The step ID relating to the hashTag
+       * @returns {Number} correspondingStep - The step ID relating to the hashTag or -1 meaning there is no correspondingStep
        */
-      hasCorrespondingStep: function() {
+      hasCorrespondingStep: function(hashTag) {
 
-        var correspondingStep = -1;
-        var correspondingStepId = self.stepHashTags.indexOf(self.currentHashTag);
+        var correspondingStep = -1,
+            correspondingStepId = self.stepHashTags.indexOf(hashTag);
 
         if (correspondingStepId > -1) {
           correspondingStep = correspondingStepId;
@@ -2694,22 +2690,22 @@ function defineSequence(imagesLoaded, Hammer) {
 
         if (self.options.hashTags === true && self.firstRun === false || (self.options.hashTags === true && self.firstRun === true && self.options.hashChangesOnFirstStep === true)) {
 
-            // Zero-base the currentStepId
-            var hashTagId = self.currentStepId - 1;
+          // Zero-base the currentStepId
+          var hashTagId = self.currentStepId - 1;
 
-            // Get the current hashTag
-            self.currentHashTag = self.stepHashTags[hashTagId];
+          // Get the current hashTag
+          self.currentHashTag = self.stepHashTags[hashTagId];
 
-            if (self.currentHashtag !== "") {
+          if (self.currentHashtag !== "") {
 
-              // Add the hashTag to the URL
-              if (self.hasPushstate === true) {
-                history.pushState(null, null, "#!" + self.currentHashTag);
-              }
-              else {
-                location.hash = "#!" + self.currentHashTag;
-              }
+            // Add the hashTag to the URL
+            if (self.hasPushstate === true) {
+              history.pushState(null, null, "#!" + self.currentHashTag);
             }
+            else {
+              location.hash = "#!" + self.currentHashTag;
+            }
+          }
         }
       },
 
@@ -2783,8 +2779,6 @@ function defineSequence(imagesLoaded, Hammer) {
 
     /**
      * Manage Sequence preloading
-     *
-     * @api private
      */
     self.preload = {
 
@@ -3073,8 +3067,6 @@ function defineSequence(imagesLoaded, Hammer) {
 
     /**
      * Add and remove Sequence events
-     *
-     * @api public
      */
     self.manageEvents = {
 
@@ -3109,14 +3101,15 @@ function defineSequence(imagesLoaded, Hammer) {
           this.add.keyNavigation();
         }
 
+        // Throttles the resize event to once every 100ms
         this.add.resizeThrottle();
 
+        // Used to start/stop Sequence when page visibility changes
         this.add.pageVisibility();
 
         // If being used, get the next button(s) and set up the events
         if (self.options.nextButton !== false) {
           self.$next = self.ui.getElements("nextButton", self.options.nextButton);
-
           this.add.button(self.$next, "nav", self.next);
         }
 
@@ -3143,9 +3136,13 @@ function defineSequence(imagesLoaded, Hammer) {
           self.$pagination = self.ui.getElements("pagination", self.options.pagination);
           this.add.button(self.$pagination, "pagination");
         }
+
+        return null;
       },
 
       /**
+       * Remove all events at once
+       *
        *
        */
       removeAll: function(eventList) {
@@ -3162,6 +3159,8 @@ function defineSequence(imagesLoaded, Hammer) {
             this.remove(eventType);
           }
         }
+
+        return null;
       },
 
       /**
@@ -3191,9 +3190,11 @@ function defineSequence(imagesLoaded, Hammer) {
           break;
 
           default:
+
             // Remove the event from each element
             for (var i = 0; i < eventElementsLength; i++) {
               var eventProperties = eventElements[i];
+
               removeEvent(eventProperties.element, type, eventProperties.handler);
             }
         }
@@ -3203,6 +3204,8 @@ function defineSequence(imagesLoaded, Hammer) {
 
         /**
          * Add the hashchange event
+         *
+         * @returns {Array} Containing an object with the element and handler
          */
         hashChange: function() {
 
@@ -3243,6 +3246,8 @@ function defineSequence(imagesLoaded, Hammer) {
           addHashChange(handler);
 
           self.manageEvents.list.hashchange.push({"element": window, "handler": handler});
+
+          return self.manageEvents.list.hashchange;
         },
 
         /**
@@ -3251,6 +3256,7 @@ function defineSequence(imagesLoaded, Hammer) {
          * @param {Array} elements - The element or elements acting as the next button
          * @param {String} type - The type of button being added - "nav" or "pagination"
          * @param {Function} callback - Function to execute when the button is clicked
+         * @returns {Array} Containing an object with the element and handler
          */
         button: function(elements, type, callback) {
 
@@ -3329,6 +3335,8 @@ function defineSequence(imagesLoaded, Hammer) {
             // be removed
             self.manageEvents.list.click.push({"element": element, "handler": handler});
           }
+
+          return self.manageEvents.list.click;
         },
 
         /**
@@ -3569,7 +3577,6 @@ function defineSequence(imagesLoaded, Hammer) {
      * Set up an instance of Sequence
      *
      * @param {Object} element - The element Sequence is attached to
-     * @api private
      */
     self.init = function(element) {
 
@@ -3668,8 +3675,6 @@ function defineSequence(imagesLoaded, Hammer) {
         });
       };
 
-
-
       // Set up preloading if required, then go to the first step
       if (self.options.preloader !== false && document.querySelectorAll !== undefined && typeof imagesLoaded === "function") {
 
@@ -3685,7 +3690,6 @@ function defineSequence(imagesLoaded, Hammer) {
      * Destroy an instance of Sequence
      *
      * @returns {Boolean}
-     * @api public
      */
     self.destroy = function() {
 
@@ -3740,41 +3744,54 @@ function defineSequence(imagesLoaded, Hammer) {
       self.destroyed(self);
 
       // Finally, clear the instance's properties and methods
-      self = {};
+      self = null;
 
-      return null;
+      return self;
     };
 
     /**
      * Go to the next step
      *
-     * @api public
+     * @returns {Number | false} The ID of the next step Sequence will
+     * navigate to or false if next() is prevented because the current step is
+     * the last and the cycle option is disabled
      */
     self.next = function() {
 
       var nextStepId = self.currentStepId + 1;
 
-      if (nextStepId > self.noOfSteps && self.options.cycle === true) {
+      // Cycle to the first step if on the current step and cycle is enabled
+      if (nextStepId > self.noOfSteps && self.options.cycle === false) {
+        return false;
+      } else if (nextStepId > self.noOfSteps) {
         nextStepId = 1;
       }
 
       self.goTo(nextStepId);
+
+      return nextStepId;
     };
 
     /**
      * Go to the previous step
      *
-     * @api public
+     * @returns {Number | false} The ID of the previous step Sequence will
+     * navigate to or false if prev() is prevented because the current step is
+     * the first and the cycle option is disabled
      */
     self.prev = function() {
 
       var prevStepId = self.currentStepId - 1;
 
-      if (prevStepId < 1 && self.options.cycle === true) {
+      if (prevStepId < 1 && self.options.cycle === false) {
+        return false;
+      } else if (prevStepId < 1) {
         prevStepId = self.noOfSteps;
       }
 
       self.goTo(prevStepId);
+
+      return prevStepId;
     };
 
     /**
@@ -3784,8 +3801,7 @@ function defineSequence(imagesLoaded, Hammer) {
      * starting autoPlay (true = same amount as options.autoPlayDelay,
      * false = no delay, number = custom delay period). Applied to
      * autoPlay.start()
-
-     * @api public
+     * @returns {Boolean} isAutoPlaying - true if autoPlay was started, false if stopped
      */
     self.toggleAutoPlay = function(delay) {
 
@@ -3794,6 +3810,8 @@ function defineSequence(imagesLoaded, Hammer) {
       } else {
         self.stop();
       }
+
+      return self.isAutoPlaying;
     };
 
     self.stop = function() {
@@ -3816,7 +3834,6 @@ function defineSequence(imagesLoaded, Hammer) {
      * transitionThreshold setting and immediately go to the specified step
      * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
      * @returns {Boolean} false when goTo was disallowed true when allowed
-     * @api public
      */
     self.goTo = function(id, direction, ignorePhaseThreshold, hashTagNav) {
 
@@ -3951,7 +3968,6 @@ function defineSequence(imagesLoaded, Hammer) {
      *
      * @param {Number} id - The ID of the step that was started
      * @param {Object} self - Properties and methods available to this instance
-     * @api public
      */
     self.animationStarted = function(id, self) {
 
@@ -3963,7 +3979,6 @@ function defineSequence(imagesLoaded, Hammer) {
      *
      * @param {Number} id - The ID of the step that finished
      * @param {Object} self - Properties and methods available to this instance
-     * @api public
      */
     self.animationEnded = function(id, self) {
 
@@ -3974,7 +3989,6 @@ function defineSequence(imagesLoaded, Hammer) {
      * Callback executed when the current phase starts animating
      *
      * @param {Object} self - Properties and methods available to this instance
-     * @api public
      */
     self.currentPhaseStarted = function(id, self) {
 
@@ -3985,7 +3999,6 @@ function defineSequence(imagesLoaded, Hammer) {
      * Callback executed when the current phase finishes animating
      *
      * @param {Object} self - Properties and methods available to this instance
-     * @api public
      */
     self.currentPhaseEnded = function(id, self) {
 
@@ -3996,7 +4009,6 @@ function defineSequence(imagesLoaded, Hammer) {
      * Callback executed when the next phase starts animating
      *
      * @param {Object} self - Properties and methods available to this instance
-     * @api public
      */
     self.nextPhaseStarted = function(id, self) {
 
@@ -4007,7 +4019,6 @@ function defineSequence(imagesLoaded, Hammer) {
      * Callback executed when the next phase finishes animating
      *
      * @param {Object} self - Properties and methods available to this instance
-     * @api public
      */
     self.nextPhaseEnded = function(id, self) {
 
@@ -4018,7 +4029,6 @@ function defineSequence(imagesLoaded, Hammer) {
      * When the throttled window resize event occurs
      *
      * @param {Object} self - Properties and methods available to this instance
-     * @api public
      */
     self.throttledResize = function(self) {
 
@@ -4029,7 +4039,6 @@ function defineSequence(imagesLoaded, Hammer) {
      * Callback executed when preloading has finished
      *
      * @param {Object} self - Properties and methods available to this instance
-     * @api public
      */
     self.preloaded = function(self) {
 
@@ -4044,7 +4053,6 @@ function defineSequence(imagesLoaded, Hammer) {
      * @param {Number} progress - The number of images that have returned a result
      * @param {Number} length - The total number of images that are being preloaded
      * @param {Object} self - Properties and methods available to this instance
-     * @api public
      */
     self.preloadProgress = function(result, src, progress, length, self) {
 
@@ -4056,7 +4064,6 @@ function defineSequence(imagesLoaded, Hammer) {
      * = preloading + domDelay
      *
      * @param {Object} self - Properties and methods available to this instance
-     * @api public
      */
     self.ready = function(self) {
 
@@ -4067,7 +4074,6 @@ function defineSequence(imagesLoaded, Hammer) {
      * Callback executed when Sequence has finished being destroyed via .destroy()
      *
      * @param {Object} self - Properties and methods available to this instance
-     * @api public
      */
     self.destroyed = function(self) {
 

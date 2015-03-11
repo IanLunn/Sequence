@@ -21,7 +21,10 @@ describe("Sequence initiation", function() {
 
   afterAll(function(done) {
     removeSequence();
-    done();
+    SetTimeout(function() {
+      resetSequence(sequence);
+      done();
+    }, 500);
   });
 
   it("should return the sequence object", function() {
@@ -73,6 +76,14 @@ describe("Sequence multiple instantiations", function() {
     sequence.ready = function() {
       done();
     };
+  });
+
+  afterAll(function(done) {
+    removeSequence();
+    SetTimeout(function() {
+      resetSequence(sequence);
+      done();
+    }, 500);
   });
 
   it("should prevent a second instantiation on the same element and instead return the object already attached to the element", function() {

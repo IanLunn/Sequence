@@ -24,13 +24,14 @@ var sequenceElement = document.getElementById("sequence");
 var options = {
   animateCanvas: true,
   autoPlay: true,
+  cycle: false,
+  // autoPlayDirection: -1,
   autoPlayDelay: 1000,
   phaseThreshold: false,
   preloader: true,
-  // hashTags: true,
-  // startingStepId: 2,
+  // startingStepId: 1,
   keyNavigation: true,
-  // startingStepAnimatesIn: true
+  startingStepAnimatesIn: true
 }
 
 var mySequence,
@@ -44,12 +45,17 @@ function init() {
   mySequence.started = function(sequence) {
     sequence.$autoPlay[0].innerHTML = "Stop Autoplay";
     console.log("auto play started");
-  }
+  };
 
   mySequence.stopped = function(sequence) {
     sequence.$autoPlay[0].innerHTML = "Start Autoplay";
     console.log("auto play stopped");
-  }
+  };
+
+  mySequence.ready = function() {
+
+    console.log("Ready!");
+  };
 }
 
 init();
