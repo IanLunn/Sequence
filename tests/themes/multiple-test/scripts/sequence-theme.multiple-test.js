@@ -24,7 +24,7 @@ var sequenceElement2 = document.getElementById("sequence2");
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
   keyNavigation: true,
-  autoPlay: true
+  autoPlay: false
 }
 
 // Launch Sequence on the elements, and with the options we specified above

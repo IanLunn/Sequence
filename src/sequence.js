@@ -2517,74 +2517,74 @@ function defineSequence(imagesLoaded, Hammer) {
        * @param {String} rel - Which Sequence element the pagination relates
        * to (if any)
        * @param {Number} i - The number of the pagination element
+       * @returns {Array} paginationLinks - Each link in an array
        */
-      getLinks: function(element, rel, i) {
+      getLinks: function(element, rel) {
 
         var childElement,
-            childElements,
-            childElementsLength,
+            childElements = element.childNodes,
+            childElementsLength = childElements.length,
             paginationLinks = [],
-            j;
-
-        // Get the pagination's link elements and count them
-        childElements = element.childNodes;
-        childElementsLength = childElements.length;
+            i;
 
         // Get each top level pagination link and add it to the array
-        for (j = 0; j < childElementsLength; j++) {
+        for (i = 0; i < childElementsLength; i++) {
 
-          childElement = childElements[j];
+          childElement = childElements[i];
 
           if (childElement.nodeType === 1) {
             paginationLinks.push(childElement);
           }
         }
 
-        // Save the pagination element and its links
-        self.$paginationLinks.push(paginationLinks);
+        return paginationLinks;
       },
 
       /**
        * Update the pagination to activate the relevant link
+       *
+       * @returns {Array} - the pagination element(s) that are currently active
        */
       update: function() {
 
-        if(self.$pagination !== undefined) {
+        if(self.$pagination.elements !== undefined) {
 
           var i,
               j,
               id = self.currentStepId - 1,
               currentPaginationLink,
               currentPaginationLinksLength,
-              paginationLength = self.$pagination.length;
+              paginationLength = self.$pagination.elements.length;
 
           // Remove the "seq-current" class from a previous pagination link
           // if there is one
-          if (self.$currentPaginationLinks !== undefined) {
+          if (self.$pagination.currentLinks !== undefined) {
 
-            currentPaginationLinksLength = self.$currentPaginationLinks.length;
+            currentPaginationLinksLength = self.$pagination.currentLinks.length;
 
             for (i = 0; i < currentPaginationLinksLength; i++) {
 
-              currentPaginationLink = self.$currentPaginationLinks[i];
+              currentPaginationLink = self.$pagination.currentLinks[i];
               removeClass(currentPaginationLink, "seq-current");
             }
           }
 
           // Where we'll save the current pagination links
-          self.$currentPaginationLinks = [];
+          self.$pagination.currentLinks = [];
 
           // Get the current pagination link from each pagination element,
           // add the "seq-current" class to them, then save them for later
           // for when they need to have the "seq-current" class removed
           for (j = 0; j < paginationLength; j++) {
 
-            currentPaginationLink = self.$paginationLinks[j][id];
-            self.$currentPaginationLinks.push(currentPaginationLink);
+            currentPaginationLink = self.$pagination.links[j][id];
+            self.$pagination.currentLinks.push(currentPaginationLink);
 
             addClass(currentPaginationLink, "seq-current");
           }
         }
+
+        return self.$pagination.currentLinks;
       }
     };
 
@@ -3131,10 +3131,15 @@ function defineSequence(imagesLoaded, Hammer) {
         // If being used, get the pagination element(s) and set up the events
         if (self.options.pagination !== false) {
 
-          self.$paginationLinks = [];
+          self.$pagination = {};
 
-          self.$pagination = self.ui.getElements("pagination", self.options.pagination);
-          this.add.button(self.$pagination, "pagination");
+          // The Sequence element and the links that will control it
+          self.$pagination.relatedElementId = instance;
+          self.$pagination.links = [];
+
+          self.$pagination.elements = self.ui.getElements("pagination", self.options.pagination);
+
+          this.add.button(self.$pagination.elements, "pagination");
         }
 
         return null;
@@ -3271,43 +3276,46 @@ function defineSequence(imagesLoaded, Hammer) {
               id,
               i;
 
-          // Set up a click event for navigation elements
-          if (type === "nav") {
+          switch (type) {
 
-            buttonEvent = function(element) {
+            // Set up a click event for navigation elements
+            case "nav":
 
-              handler = addEvent(element, "click", function(e) {
+              buttonEvent = function(element) {
 
-                callback();
-              });
-            };
-          }
+                handler = addEvent(element, "click", function(e) {
 
-          // Set up a click event for pagination
-          else {
+                  callback();
+                });
+              };
+              break;
 
-            buttonEvent = function(element, rel, i) {
+            // Set up a click event for pagination
+            case "pagination":
 
-              handler = addEvent(element, "click", function(event, element) {
+              buttonEvent = function(element, rel) {
 
-                if (!event) {
-                  event = window.event;
-                }
+                handler = addEvent(element, "click", function(event, element) {
 
-                var targetElement = event.target || event.srcElement;
+                  if (!event) {
+                    event = window.event;
+                  }
 
-                parent = this;
+                  var targetElement = event.target || event.srcElement;
 
-                // Get the ID of the clicked pagination link
-                id = hasParent(parent, targetElement);
+                  parent = this;
 
-                // Go to the clicked pagination ID
-                self.goTo(id);
-              });
+                  // Get the ID of the clicked pagination link
+                  id = hasParent(parent, targetElement);
 
-              // Get the pagination links
-              self.pagination.getLinks(element, rel, i);
-            };
+                  // Go to the clicked pagination ID
+                  self.goTo(id);
+                });
+
+                // Save the pagination links
+                self.$pagination.links.push(self.pagination.getLinks(element, rel));
+              };
+              break;
           }
 
           // Add a click event for each element
@@ -3319,16 +3327,16 @@ function defineSequence(imagesLoaded, Hammer) {
 
             // The button controls one Sequence instance
             // (defined via the rel attribute)
-            if (rel === self.$container.id && element.getAttribute("data-seq") !== "true") {
+            if (rel === self.$container.id && element.getAttribute("data-seq-button") === null) {
 
-              element.setAttribute("data-seq", true);
-              buttonEvent(element, rel, i);
+              element.setAttribute("data-seq-button", true);
+              buttonEvent(element, rel);
             }
 
             // The button controls all Sequence instances
-            else if (rel === null && element.getAttribute("data-seq") !== "true") {
+            else if (rel === null && element.getAttribute("data-seq-button") === null) {
 
-              buttonEvent(element, rel, i);
+              buttonEvent(element, rel);
             }
 
             // Save the element and its handler for later, should it need to
@@ -3713,7 +3721,7 @@ function defineSequence(imagesLoaded, Hammer) {
       self.manageEvents.removeAll(self.manageEvents.list);
 
       // Remove classes
-      removeClass(self.$currentPaginationLinks, "seq-current");
+      removeClass(self.$pagination.currentLinks, "seq-current");
       removeClass(self.$container, "seq-step" + self.currentStepId);
       removeClass(self.$container, "seq-active");
 

@@ -31,14 +31,12 @@ describe("goTo()", function() {
 
     sequence.goTo(1);
     expect(sequence.goTo(1)).toEqual(false);
-    done();
   });
 
   it("should prevent going to a non-existent step", function() {
 
     expect(sequence.goTo(5)).toEqual(false);
     expect(sequence.goTo(-1)).toEqual(false);
-    done();
   });
 
   it("should prevent going to a step whilst another is animating and navigationSkip is disabled", function() {
@@ -47,7 +45,6 @@ describe("goTo()", function() {
     sequence.isAnimating = true;
 
     expect(sequence.goTo(2)).toEqual(false);
-    done();
   });
 
   it("should prevent going to a step if the navigationSkipThreshold is active", function() {
@@ -56,6 +53,5 @@ describe("goTo()", function() {
     sequence.navigationSkipThresholdActive = true;
 
     expect(sequence.goTo(2)).toEqual(false);
-    done();
   });
 });

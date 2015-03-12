@@ -22,9 +22,21 @@ describe("pagination", function() {
     done();
   });
 
-  it("", function() {
+  it("getLinks() should return an array containing 3 pagination links", function() {
 
-    // expect().toEqual();
+    var $pagination = document.querySelectorAll(".seq-pagination")[0],
+        paginationLinks = sequence.pagination.getLinks($pagination, "sequence");
+
+    expect(paginationLinks).toEqual(jasmine.any(Array));
+    expect(paginationLinks.length).toEqual(3);
+  });
+
+  it("update() should return the current pagination link", function() {
+
+    var currentPaginationLink = sequence.pagination.update();
+
+    expect(currentPaginationLink).toEqual(jasmine.any(Array));
+    expect(currentPaginationLink.length).toEqual(1);
   });
 
 });
