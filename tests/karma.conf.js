@@ -23,7 +23,6 @@ module.exports = function(config) {
       '../scripts/hammer.min.js',
       '../scripts/sequence.js',
       'spec/*.js'
-
     ],
 
     // list of files / patterns to exclude

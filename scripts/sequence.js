@@ -6,7 +6,7 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0-pre.1
+ * @version 2.0.0-alpha.8
  * @license https://github.com/IanLunn/Sequence/blob/master/LICENSE
  * @copyright Ian Lunn 2015
  */
@@ -330,7 +330,6 @@ function defineSequence(imagesLoaded, Hammer) {
       };
     }
 
-
     /**
      * Determine the prefix to use for the pageVisibility API
      */
@@ -355,7 +354,6 @@ function defineSequence(imagesLoaded, Hammer) {
       hidden = "webkitHidden";
       visibilityChange = "webkitvisibilitychange";
     }
-
 
     /**
      * Is an object an array?
@@ -869,7 +867,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
         else {
 
-         self.animationFallback.animate(element, "opacity", "", 0, 1, duration);
+          self.animationFallback.animate(element, "opacity", "", 0, 1, duration);
         }
       },
 
@@ -892,7 +890,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
         else {
 
-         self.animationFallback.animate(element, "opacity", "", 1, 0, duration);
+          self.animationFallback.animate(element, "opacity", "", 1, 0, duration);
         }
 
         if (callback !== undefined) {
@@ -2786,18 +2784,25 @@ function defineSequence(imagesLoaded, Hammer) {
        * Setup Sequence preloading
        *
        * @param {Function} callback - Function to execute when preloading has finished
+       * @returns {Boolean} Whether preload was initiated
        */
       init: function(callback) {
 
-        var preload = this;
-
         if (self.options.preloader !== false) {
+
+          var preload = this,
+              stepImagesToPreload,
+              individualImagesToPreload,
+              imagesToPreload,
+              imgLoad,
+              progress,
+              result;
 
           // Add a class of "seq-preloading" to the Sequence element
           addClass(self.$container, "seq-preloading");
 
           // Get the preloader
-          self.preloader = self.ui.getElements("preloader", self.options.preloader);
+          self.$preloader = self.ui.getElements("preloader", self.options.preloader);
 
           // Add the preloader element if necessary
           preload.append();
@@ -2806,18 +2811,18 @@ function defineSequence(imagesLoaded, Hammer) {
           preload.addStyles();
 
           // Hide steps if necessary
-          preload.hideAndShowSteps("hide");
+          preload.toggleStepsVisibility("hide");
 
           // Get images from particular Sequence steps to be preloaded
           // Get images with specific source values to be preloaded
-          var stepImagesToPreload = this.saveImagesToArray(self.options.preloadTheseSteps);
-          var individualImagesToPreload = this.saveImagesToArray(self.options.preloadTheseImages, true);
+          stepImagesToPreload = preload.getImagesToPreload(self.options.preloadTheseSteps);
+          individualImagesToPreload = preload.getImagesToPreload(self.options.preloadTheseImages, true);
 
           // Combine step images and individual images
-          var imagesToPreload = stepImagesToPreload.concat(individualImagesToPreload);
+          imagesToPreload = stepImagesToPreload.concat(individualImagesToPreload);
 
           // Initiate the imagesLoaded plugin
-          var imgLoad = imagesLoaded(imagesToPreload);
+          imgLoad = imagesLoaded(imagesToPreload);
 
           // When imagesLoaded() has finished (regardless of whether images
           // completed or failed to load)
@@ -2826,17 +2831,21 @@ function defineSequence(imagesLoaded, Hammer) {
           });
 
           // Track the number of images that have loaded so far
-          var progress = 1;
+          progress = 1;
 
-          imgLoad.on("progress", function( instance, image ) {
+          imgLoad.on("progress", function(instance, image) {
 
             // Has the image loaded or is it broken?
-            var result = image.isLoaded ? 'loaded' : 'broken';
+            result = image.isLoaded ? 'loaded': 'broken';
 
             // Callback
             self.preloadProgress(result, image.img.src, progress++, imagesToPreload.length, self);
           });
+
+          return true;
         }
+
+        return false;
       },
 
       /**
@@ -2850,7 +2859,7 @@ function defineSequence(imagesLoaded, Hammer) {
         self.preloaded(self);
 
         // Show steps if necessary
-        this.hideAndShowSteps("show");
+        this.toggleStepsVisibility("show");
 
         // Remove the "preloading" class and add the "preloaded" class
         removeClass(self.$container, "seq-preloading");
@@ -2859,7 +2868,9 @@ function defineSequence(imagesLoaded, Hammer) {
         // Hide the preloader
         this.hide();
 
-        callback();
+        if (callback !== undefined) {
+          callback();
+        }
       },
 
       /**
@@ -2893,7 +2904,7 @@ function defineSequence(imagesLoaded, Hammer) {
           if (Modernizr.svg === false) {
 
             // Get the preload indicator
-            var preloadIndicator = self.preloader[0].firstChild;
+            var preloadIndicator = self.$preloader[0].firstChild;
 
             // Make the preload indicator flash
             this.preloadIndicatorTimer = setInterval(function() {
@@ -2919,56 +2930,60 @@ function defineSequence(imagesLoaded, Hammer) {
        * Get <img> elements and return them to be preloaded. Elements can be got
        * either via the <img> element itself or a src attribute.
        *
-       * @param {Number} images - The <img> elements or image src attributes to save
+       * @param {Array} elements - An integer array of steps to get images from or a string array of image sources
        * @param {Boolean} srcOnly - Is the element to be retrieved via the src?
-       * @returns {Array} imagesToPreload - The images to preload
+       * @returns {Array} imagesToPreload - The images to preload in an array
        */
-      saveImagesToArray: function(images, srcOnly) {
+      getImagesToPreload: function(elements, srcOnly) {
 
         // Where we'll save the images
         var imagesToPreload = [];
 
-        // If there aren't any images, return an empty array
-        if (isArray(images) === false) {
-          return imagesToPreload;
-        }
+        if (isArray(elements) === true) {
 
-        var i,
-            j,
-            imageLength = images.length;
+          var i,
+              j,
+              elementLength = elements.length,
+              step,
+              imagesInStep,
+              imagesInStepLength,
+              image,
+              img,
+              src;
 
-        // Get each step's <img> elements and add them to imagesToPreload
-        if (srcOnly !== true) {
+          // Get each step's <img> elements and add them to imagesToPreload
+          if (srcOnly !== true) {
 
-          // Get each step
-          for (i = 0; i < imageLength; i++) {
+            // Get each step
+            for (i = 0; i < elementLength; i++) {
 
-            // Get the step and any images belonging to it
-            var step = self.$steps[i];
-            var imagesInStep = step.getElementsByTagName("img");
-            var imagesInStepLength = imagesInStep.length;
+              // Get the step and any images belonging to it
+              step = self.$steps[i];
+              imagesInStep = step.getElementsByTagName("img");
+              imagesInStepLength = imagesInStep.length;
 
-            // Get each image within the step
-            for (j = 0; j < imagesInStepLength; j++) {
+              // Get each image within the step
+              for (j = 0; j < imagesInStepLength; j++) {
 
-              var image = imagesInStep[j];
-              imagesToPreload.push(image);
+                image = imagesInStep[j];
+                imagesToPreload.push(image);
+              }
             }
           }
-        }
 
-        // Get each step's <img> elements via the src and add them to imagesToPreload
-        else {
+          // Get each step's <img> elements via the src and add them to imagesToPreload
+          else {
 
-          var img = [];
+            img = [];
 
-          for (i = 0; i < imageLength; i++) {
-            var src = images[i];
+            for (i = 0; i < elementLength; i++) {
+              src = elements[i];
 
-            img[i] = new Image();
-            img[i].src = src;
+              img[i] = new Image();
+              img[i].src = src;
 
-            imagesToPreload.push(img[i]);
+              imagesToPreload.push(img[i]);
+            }
           }
         }
 
@@ -2983,10 +2998,10 @@ function defineSequence(imagesLoaded, Hammer) {
         var preload = this;
 
         if (self.propertySupport.transitions === true) {
-          addClass(self.preloader, "preload-complete");
+          addClass(self.$preloader, "preload-complete");
         }else {
 
-          self.ui.hide(self.preloader[0], 500);
+          self.ui.hide(self.$preloader[0], 500);
         }
 
         // Stop the preload inidcator fading in/out (for non-SVG browsers only)
@@ -3000,32 +3015,39 @@ function defineSequence(imagesLoaded, Hammer) {
 
       /**
        * Append the default preloader
+       *
+       * @returns {Boolean} whether the default preloader was appended or not
        */
       append: function() {
 
-        if (self.options.preloader === true && self.preloader.length === 0) {
+        if (self.options.preloader === true && self.$preloader.length === 0) {
 
           // Set up the preloader container
-          self.preloader = document.createElement("div");
-          self.preloader.className = "seq-preloader";
+          self.$preloader = document.createElement("div");
+          self.$preloader.className = "seq-preloader";
 
-          self.preloader = [self.preloader];
+          // Convert the preloader to an array
+          self.$preloader = [self.$preloader];
 
           // Use the SVG preloader
           if (Modernizr.svg === true) {
 
-            self.preloader[0].innerHTML = '<svg class="preload" xmlns="http://www.w3.org/2000/svg"><circle class="circle" cx="6" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" repeatCount="indefinite" /></circle><circle class="circle" cx="22" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" begin="150ms" repeatCount="indefinite" /></circle><circle class="circle" cx="38" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" begin="300ms" repeatCount="indefinite" /></circle></svg>';
+            self.$preloader[0].innerHTML = '<svg class="preload" xmlns="http://www.w3.org/2000/svg"><circle class="circle" cx="6" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" repeatCount="indefinite" /></circle><circle class="circle" cx="22" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" begin="150ms" repeatCount="indefinite" /></circle><circle class="circle" cx="38" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" begin="300ms" repeatCount="indefinite" /></circle></svg>';
           }
 
           // Use the Non-SVG preloader
           else {
 
-            self.preloader[0].innerHTML = '<div class="preload fallback"><div class="circle"></div><div class="circle"></div><div class="circle"></div></div>';
+            self.$preloader[0].innerHTML = '<div class="preload fallback"><div class="circle"></div><div class="circle"></div><div class="circle"></div></div>';
           }
 
           // Add the preloader
-          self.$container.insertBefore(self.preloader[0], null);
+          self.$container.insertBefore(self.$preloader[0], null);
+
+          return true;
         }
+
+        return false;
       },
 
       /**
@@ -3033,12 +3055,14 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       remove: function() {
 
-        self.preloader[0].parentNode.removeChild(self.preloader[0]);
+        self.$preloader[0].parentNode.removeChild(self.$preloader[0]);
 
         // If using the default preloader, remove its styles
         if (self.options.preloader === true) {
           this.removeStyles();
         }
+
+        return null;
       },
 
       /**
@@ -3046,13 +3070,16 @@ function defineSequence(imagesLoaded, Hammer) {
        *
        * @param {String} type - "show" or "hide"
        */
-      hideAndShowSteps: function(type) {
+      toggleStepsVisibility: function(type) {
 
-        if (self.options.hideStepsUntilPreloaded === true && self.preloader.length !== 0) {
+        if (self.options.hideStepsUntilPreloaded === true && self.$preloader.length !== 0) {
+
+          var i,
+              step;
 
           // Hide or show each step
-          for (var i = 0; i < self.noOfSteps; i++) {
-            var step = self.$steps[i];
+          for (i = 0; i < self.noOfSteps; i++) {
+            step = self.$steps[i];
 
             if (type === "hide") {
               self.ui.hide(step, 0);
@@ -4104,7 +4131,9 @@ function defineSequence(imagesLoaded, Hammer) {
     /* --- INIT --- */
     self.init(element);
 
+    // Save the instance globally so we can return it if an init is tried again
     instances.push(self);
+
     return self;
   });
 
