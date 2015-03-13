@@ -5,3 +5,4 @@
 /_notes/*
 themes/dev/*
 sftp-config.json
+node_modules/

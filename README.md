@@ -25,6 +25,13 @@ Sequence provides the complete functionality for a website slider without forcin
 ##Documentation
 Documentation can be found here: [SequenceJS Demo](https://github.com/IanLunn/Sequence/blob/master/documentation.md).
 
+## Sponsors
+
+Sequence's browser testing environment is provided by <a href="http://browserstack.com/">BrowerStack</a>.
+
+[![Browser Stack](http://www.sequencejs.com/wp-content/themes/sequence/images/browserstack-light.png)](http://browserstack.com/)
+
+
 ##Author
 [@Ian Lunn](http://twitter.com/#!/IanLunn)
 
