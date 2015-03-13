@@ -70,6 +70,12 @@ npm install sequencejs
 
 Follow [@IanLunn](https://twitter.com/IanLunn/) on Twitter for updates on Sequence as well as news and opinions on front-end web development.
 
+## Sponsors
+
+Sequence's browser testing environment is provided by <a href="http://browserstack.com/">BrowerStack</a>.
+
+[![Browser Stack](http://www.sequencejs.com/wp-content/themes/sequence/images/browserstack-light.png)](http://browserstack.com/)
+
 ## History
 
 Sequence v1 was first conceived in 2011 by [Ian Lunn](http://ianlunn.co.uk/) whilst he was recreating an animated effect used on the Apple iPhone 4 website. In creating the demo he realised the limited script had far more
