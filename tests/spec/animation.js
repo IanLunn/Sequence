@@ -59,33 +59,10 @@ describe("animation.requiresFallbackMode()", function() {
   it("should put Sequence in fallbackMode if transitions aren't supported", function() {
 
     var propertySupport = {
-      transitions: false,
-      transformStyle: true,
-      requires3d: false
+      transitions: false
     };
     expect(sequence.animation.requiresFallbackMode(propertySupport)).toEqual(true);
   });
-
-  it("should put Sequence in fallbackMode if transitions are supported but transformStyle isn't yet the theme requires 3D support", function() {
-
-    var propertySupport = {
-      transitions: true,
-      transformStyle: false,
-      requires3d: true
-    };
-    expect(sequence.animation.requiresFallbackMode(propertySupport)).toEqual(true);
-  });
-
-  it("should not put Sequence in fallbackMode if transitions are supported but transformStyle isn't yet the theme doesn't requires3d support", function() {
-
-    var propertySupport = {
-      transitions: true,
-      transformStyle: false,
-      requires3d: false
-    };
-    expect(sequence.animation.requiresFallbackMode(propertySupport)).toEqual(false);
-  });
-
 });
 
 describe("animation.getDirection()", function() {

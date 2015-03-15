@@ -52,7 +52,7 @@ describe("Sequence initiation", function() {
     expect(sequence.isAnimating).not.toEqual(undefined);
     expect(sequence.isReady).not.toEqual(undefined);
     expect(sequence.noOfSteps).not.toEqual(undefined);
-    expect(sequence.animationMap).not.toEqual(undefined);
+    expect(sequence.stepProperties).not.toEqual(undefined);
     expect(sequence.propertySupport).not.toEqual(undefined);
     expect(sequence.isFallbackMode).not.toEqual(undefined);
     expect(sequence.firstRun).not.toEqual(undefined);
