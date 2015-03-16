@@ -990,11 +990,15 @@ function defineSequence(imagesLoaded, Hammer) {
             self.$canvas.style[Modernizr.prefixed("transitionDuration")] = duration + "ms";
             self.$canvas.style[Modernizr.prefixed("transform")] = "translateX(" + transforms.seqX + "px) " + "translateY(" + transforms.seqY + "px) " + "translateZ(" + transforms.seqZ + "px) ";
           }
+
+          return true;
         }
+
+        return false;
       },
 
       /**
-       * Remove the no-JS "animate-in" class from a step
+       * Remove the no-JS "seq-in" class from a step
        *
        * @param {Object} self - Properties and methods available to this instance
        * @api private
@@ -1005,15 +1009,15 @@ function defineSequence(imagesLoaded, Hammer) {
           return;
         }
 
-        // Look for the step with the "animate-in" class and remove the class
+        // Look for the step with the "seq-in" class and remove the class
         for (var i = 0; i < self.$steps.length; i++) {
           var element = self.$steps[i];
 
-          if (hasClass(element, "animate-in") === true) {
+          if (hasClass(element, "seq-in") === true) {
             var step = i + 1;
 
             self.animation.resetInheritedSpeed(step);
-            removeClass(element, "animate-in");
+            removeClass(element, "seq-in");
           }
         }
       }
@@ -1180,7 +1184,7 @@ function defineSequence(imagesLoaded, Hammer) {
                   stepElement = self.$steps[i - 1];
                   stepId = i;
 
-                  self.animation.stepSkipped(direction, stepId, step, stepElement);
+                  self.animation.stepSkipped(stepElement);
                 }
               }
 
@@ -1199,7 +1203,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
           // Start the navigationSkipThreshold timer to prevent being able to
           // navigate too quickly
-          setTimeout(function() {
+          self.navigationSkipThresholdTimer = setTimeout(function() {
             self.navigationSkipThresholdActive = false;
           }, self.options.navigationSkipThreshold);
         }
@@ -1213,7 +1217,7 @@ function defineSequence(imagesLoaded, Hammer) {
        * @param {String} step - The step that was skipped
        * @param {HTMLElement} stepElement - The step element that was skipped
        */
-      stepSkipped: function(direction, stepId, step, stepElement) {
+      stepSkipped: function(stepElement) {
 
         //TODO: Add resetWhenStepSkipped option - https://github.com/IanLunn/Sequence/issues/257
 
@@ -1250,7 +1254,7 @@ function defineSequence(imagesLoaded, Hammer) {
        *
        * @param {Number} id - The ID of the next step
        * @param {Object} activePhases - Properties relating to the active phases
-       * (animate-in and animate-out)
+       * (seq-in and seq-out)
        * @param {Number} phaseThresholdTime - The amount of time in milliseconds
        * before the next step should start animating in
        * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
@@ -1260,15 +1264,15 @@ function defineSequence(imagesLoaded, Hammer) {
         var animation = this;
 
         // Snap the step to the "animate-start" phase
-        removeClass(activePhases.next.stepElement, "animate-out");
+        removeClass(activePhases.next.stepElement, "seq-out");
 
         animation.domDelay(function() {
 
-          // Make the current step transition to "animate-out"
-          addClass(activePhases.current.stepElement, "animate-out");
-          removeClass(activePhases.current.stepElement, "animate-in");
+          // Make the current step transition to "seq-out"
+          addClass(activePhases.current.stepElement, "seq-out");
+          removeClass(activePhases.current.stepElement, "seq-in");
 
-          // Make the next step transition to "animate-in"
+          // Make the next step transition to "seq-in"
           animation.startAnimateIn(id, 1, activePhases, phaseThresholdTime, ignorePhaseThreshold, hashTagNav);
         });
       },
@@ -1278,7 +1282,7 @@ function defineSequence(imagesLoaded, Hammer) {
        *
        * @param {Number} id - The ID of the next step
        * @param {Object} activePhases - Properties relating to the active phases
-       * (animate-in and animate-out)
+       * (seq-in and seq-out)
        * @param {Number} phaseThresholdTime - The amount of time in milliseconds
        * before the next step should start animating in
        * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
@@ -1291,8 +1295,8 @@ function defineSequence(imagesLoaded, Hammer) {
             currentDelay = 0,
             nextDelay = 0;
 
-        // Snap the next phase to "animate-out"
-        addClass(activePhases.next.stepElement, "animate-out");
+        // Snap the next phase to "seq-out"
+        addClass(activePhases.next.stepElement, "seq-out");
 
         animation.domDelay(function() {
 
@@ -1314,9 +1318,9 @@ function defineSequence(imagesLoaded, Hammer) {
           animation.reverseProperties(activePhases.next, nextDelay, phaseThresholdTime, ignorePhaseThreshold);
 
           // Make the current step transition to "animate-start"
-          removeClass(activePhases.current.stepElement, "animate-in");
+          removeClass(activePhases.current.stepElement, "seq-in");
 
-          // Make the next step transition to "animate-in"
+          // Make the next step transition to "seq-in"
           animation.startAnimateIn(id, -1, activePhases, phaseThresholdTime, ignorePhaseThreshold, hashTagNav);
         });
       },
@@ -1325,7 +1329,7 @@ function defineSequence(imagesLoaded, Hammer) {
        * Apply the reversed properties to all animatable elements within a phase
        *
        * @param {Object} activePhases - Properties relating to the active phases
-       * (animate-in and animate-out)
+       * (seq-in and seq-out)
        * @param {Number} phaseDelay - A delay that is added when one phase
        * animates longer than the other
        * @param {Number} phaseThresholdTime - The amount of time in milliseconds
@@ -1399,12 +1403,12 @@ function defineSequence(imagesLoaded, Hammer) {
       },
 
       /**
-       * Start the next step's "animate-in" phase
+       * Start the next step's "seq-in" phase
        *
        * @param {Number} id - The ID of the next step
        * @param {Number} direction - The direction of navigation
        * @param {Object} activePhases - Properties relating to the active phases
-       * (animate-in and animate-out)
+       * (seq-in and seq-out)
        * @param {Number} phaseThresholdTime - The amount of time in milliseconds
        * before the next step should start animating in
        * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
@@ -1425,7 +1429,7 @@ function defineSequence(imagesLoaded, Hammer) {
         self.stepProperties[activePhases.current.stepId].isAnimating = true;
         self.stepProperties[activePhases.next.stepId].isAnimating = true;
 
-        // When should the "animate-in" phase start and how long until the step
+        // When should the "seq-in" phase start and how long until the step
         // completely finishes animating?
         if (self.firstRun === false) {
 
@@ -1439,12 +1443,12 @@ function defineSequence(imagesLoaded, Hammer) {
           nextPhaseDuration = activePhases.next.watchedTimings.maxTotal;
           stepDurations = animation.getStepDurations(currentPhaseDuration, nextPhaseDuration, phaseThresholdTime, ignorePhaseThreshold);
 
-          // Start the "animate-in" phase
+          // Start the "seq-in" phase
           self.phaseThresholdTimer = setTimeout(function() {
 
             animation.nextPhaseStarted(hashTagNav);
-            addClass(activePhases.next.stepElement, "animate-in");
-            removeClass(activePhases.next.stepElement, "animate-out");
+            addClass(activePhases.next.stepElement, "seq-in");
+            removeClass(activePhases.next.stepElement, "seq-out");
           }, phaseThresholdTime);
 
           // Wait for the current and next phases to end
@@ -1491,10 +1495,10 @@ function defineSequence(imagesLoaded, Hammer) {
           }
 
           // We're now done with the first run
-          // Add the "animate-in" class to the next step
+          // Add the "seq-in" class to the next step
           self.firstRun = false;
-          addClass(activePhases.next.stepElement, "animate-in");
-          removeClass(activePhases.next.stepElement, "animate-out");
+          addClass(activePhases.next.stepElement, "seq-in");
+          removeClass(activePhases.next.stepElement, "seq-out");
         }
       },
 
@@ -1502,8 +1506,8 @@ function defineSequence(imagesLoaded, Hammer) {
        * Determine how long a step's phases will animate for
        *
        * Note: the first time sequence.goTo() is run, the step duration
-       * will always be the longest computed duration from the "animate-in"
-       * phase, as the "animate-out" phase is immediately snapped into place.
+       * will always be the longest computed duration from the "seq-in"
+       * phase, as the "seq-out" phase is immediately snapped into place.
        *
        * @param {Number} currentPhaseDuration - How long the current phase will
        * animate for
@@ -1524,7 +1528,7 @@ function defineSequence(imagesLoaded, Hammer) {
         durations.currentPhase.animation = currentPhaseDuration;
         durations.nextPhase.animation = nextPhaseDuration;
 
-        // The time the next phase should wait before being set to "animate-in"
+        // The time the next phase should wait before being set to "seq-in"
         // The total time it'll take for both phases to finish
         durations.maximum = 0;
 
@@ -1538,7 +1542,7 @@ function defineSequence(imagesLoaded, Hammer) {
         switch (phaseThreshold) {
 
           case false:
-            // The next phase should be set to "animate-in" immediately
+            // The next phase should be set to "seq-in" immediately
             // The step ends whenever the longest phase has finished
             durations.nextPhase.animation = nextPhaseDuration;
             if (currentPhaseDuration > nextPhaseDuration && ignorePhaseThreshold !== true) {
@@ -1556,7 +1560,7 @@ function defineSequence(imagesLoaded, Hammer) {
           break;
 
           default:
-            // The next phase should be set to "animate-in" after a specific time
+            // The next phase should be set to "seq-in" after a specific time
             // The step ends whenever the longest phase has finished (including
             // the phaseThreshold time)
             durations.nextPhase.animation = nextPhaseDuration + phaseThresholdTime;
@@ -1625,7 +1629,7 @@ function defineSequence(imagesLoaded, Hammer) {
       },
 
       /**
-       * Wait for a phases (animate-in or animate-out) animations to finish
+       * Wait for a phases (seq-in or seq-out) animations to finish
        *
        * @param {Number} id - The id of the step the phase belongs to
        * @param {Number} phaseDuration - The amount of time before the phase
@@ -1683,7 +1687,7 @@ function defineSequence(imagesLoaded, Hammer) {
       },
 
       /**
-       * Change "animate-out" to "animate-in" and vice-versa.
+       * Change "seq-out" to "seq-in" and vice-versa.
        *
        * @param {String} phase - The phase to reverse
        * @returns {String} - The reversed phase
@@ -1691,8 +1695,8 @@ function defineSequence(imagesLoaded, Hammer) {
       reversePhase: function(phase) {
 
         var reversePhase = {
-            "animate-out": "animate-in",
-            "animate-in": "animate-out"
+            "seq-out": "seq-in",
+            "seq-in": "seq-out"
         };
 
         return reversePhase[phase];
@@ -2019,12 +2023,12 @@ function defineSequence(imagesLoaded, Hammer) {
             stepId = i + 1;
 
             /**
-             * Move each step to its "animate-in" position
+             * Move each step to its "seq-in" position
              *
              * Note: in fallback mode, steps will always remain in their
-             * "animate-in" position
+             * "seq-in" position
              */
-            addClass(step, "animate-in");
+            addClass(step, "seq-in");
 
             // Make the step 100% width/height
             step.style.width = "100%";
@@ -2032,7 +2036,7 @@ function defineSequence(imagesLoaded, Hammer) {
             step.style.position = "absolute";
             step.style.whiteSpace = "normal";
 
-            // Move all steps to "animate-out"
+            // Move all steps to "seq-out"
             step.style.left = "100%";
           }
         }
@@ -2100,7 +2104,7 @@ function defineSequence(imagesLoaded, Hammer) {
         // Sequence is now animating
         self.isAnimating = true;
 
-        // When should the "animate-in" phase start and how long until the step
+        // When should the "seq-in" phase start and how long until the step
         // completely finishes animating?
         if (self.firstRun === false) {
 
@@ -2676,7 +2680,13 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       remove: function() {
 
-        self.$preloader[0].parentNode.removeChild(self.$preloader[0]);
+        if (self === null) {
+          return;
+        }
+
+        if (self.$preloader[0] !== undefined) {
+          self.$preloader[0].parentNode.removeChild(self.$preloader[0]);
+        }
 
         // If using the default preloader, remove its styles
         if (self.options.preloader === true) {
@@ -3265,7 +3275,7 @@ function defineSequence(imagesLoaded, Hammer) {
       // Set up the canvas and screen with the necessary CSS properties
       self.canvas.init(id);
 
-      // Remove the no-JS "animate-in" class from a step
+      // Remove the no-JS "seq-in" class from a step
       self.canvas.removeNoJsClass(self);
 
       // Set up events
@@ -3349,6 +3359,7 @@ function defineSequence(imagesLoaded, Hammer) {
       clearTimeout(self.nextPhaseEndedTimer);
       clearTimeout(self.fadeStepTimer);
       clearTimeout(self.hideTimer);
+      clearTimeout(self.navigationSkipThresholdTimer);
 
       // Remove all events
       self.manageEvents.removeAll(self.manageEvents.list);
@@ -3365,20 +3376,20 @@ function defineSequence(imagesLoaded, Hammer) {
       }
       self.$canvas.removeAttribute("style");
 
-      // Remove styles from steps and snap them to their "animate-out" position
+      // Remove styles from steps and snap them to their "seq-out" position
       for (i = 0; i < self.noOfSteps; i++) {
         step = self.$steps[i];
 
         step.removeAttribute("style");
         self.animation.resetInheritedSpeed(i + 1);
-        removeClass(step, "animate-in");
-        removeClass(step, "animate-out");
+        removeClass(step, "seq-in");
+        removeClass(step, "seq-out");
       }
 
-      // Snap the starting step back into its "animate-in" position
+      // Snap the starting step back into its "seq-in" position
       lastStep = self.$steps[self.options.startingStepId - 1];
       self.animation.resetInheritedSpeed(self.options.startingStepId);
-      addClass(lastStep, "animate-in");
+      addClass(lastStep, "seq-in");
 
       // Allow the same element to have Sequence initated on it in the future
       element.removeAttribute("data-seq-enabled");

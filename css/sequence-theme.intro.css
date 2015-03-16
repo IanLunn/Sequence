@@ -71,8 +71,8 @@
   -o-transform: translate(0, 20px);
   transform: translate(0, 20px);
 }
-#sequence .animate-in h2,
-#sequence .animate-in h3 {
+#sequence .seq-in h2,
+#sequence .seq-in h3 {
   opacity: 1;
   -webkit-transform: translate(0, 0);
   -moz-transform: translate(0, 0);
@@ -80,8 +80,8 @@
   -o-transform: translate(0, 0);
   transform: translate(0, 0);
 }
-#sequence .animate-out h2,
-#sequence .animate-out h3 {
+#sequence .seq-out h2,
+#sequence .seq-out h3 {
   opacity: 1;
   -webkit-transform: translate(0, 0);
   -moz-transform: translate(0, 0);

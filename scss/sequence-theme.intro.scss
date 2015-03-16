@@ -48,7 +48,7 @@ $sequenceHeight: 585px;
     padding: 0;
     list-style: none;
   }
-  
+
   // Make the canvas the same dimensions as the container and prevent lines from
   // wrapping so each step can sit side-by-side
   .seq-canvas {
@@ -85,7 +85,7 @@ $sequenceHeight: 585px;
   }
 
   // Animate in positions for content
-  .animate-in {
+  .seq-in {
     h2,
     h3 {
       opacity: 1;
@@ -94,7 +94,7 @@ $sequenceHeight: 585px;
   }
 
   // Animate out positions for content
-  .animate-out {
+  .seq-out {
     h2,
     h3 {
       opacity: 1;

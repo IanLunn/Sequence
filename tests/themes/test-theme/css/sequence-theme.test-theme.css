@@ -71,12 +71,12 @@
   top: 200px;
 }
 
-#sequence .animate-in .box {
+#sequence .seq-in .box {
   left: 50%;
   margin-left: -50px;
 }
 
-#sequence .animate-out .box {
+#sequence .seq-out .box {
   left: 0;
   margin-left: -100px;
 }
