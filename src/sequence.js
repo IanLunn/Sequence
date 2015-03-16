@@ -884,8 +884,10 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       init: function(id) {
 
-        self.$screen.style.height = "100%";
-        self.$screen.style.width = "100%";
+        if (self.$screen !== undefined) {
+          self.$screen.style.height = "100%";
+          self.$screen.style.width = "100%";
+        }
 
         // Determine the position of each step and the transform properties
         // required for the canvas so it can move to each step
@@ -1994,14 +1996,17 @@ function defineSequence(imagesLoaded, Hammer) {
           // Add the "seq-fallback" class to the Sequence element
           addClass(self.$container, "seq-fallback");
 
-          // Prevent steps from appearing outside of the Sequence screen
-          self.$screen.style.overflow = "hidden";
+          if (self.$screen !== undefined) {
+            // Prevent steps from appearing outside of the Sequence screen
+            self.$screen.style.overflow = "hidden";
+            self.$screen.style.width = "100%";
+            self.$screen.style.height = "100%";
+          }
 
           // Make the canvas and screen 100% width/height
           self.$canvas.style.width = "100%";
           self.$canvas.style.height = "100%";
-          self.$screen.style.width = "100%";
-          self.$screen.style.height = "100%";
+
 
           // Get the width of the canvas
           this.canvasWidth = self.$canvas.offsetWidth;
@@ -3355,7 +3360,9 @@ function defineSequence(imagesLoaded, Hammer) {
 
       // Remove styles
       self.$container.removeAttribute("style");
-      self.$screen.removeAttribute("style");
+      if (self.$screen !== undefined) {
+        self.$screen.removeAttribute("style");
+      }
       self.$canvas.removeAttribute("style");
 
       // Remove styles from steps and snap them to their "animate-out" position
