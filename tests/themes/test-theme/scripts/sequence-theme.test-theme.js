@@ -24,13 +24,11 @@ var sequenceElement = document.getElementById("sequence");
 var options = {
   animateCanvas: true,
   autoPlay: true,
-  // autoPlayDirection: -1,
   autoPlayDelay: 1000,
   phaseThreshold: false,
   preloader: true,
-  // startingStepId: 1,
   keyNavigation: true,
-  startingStepAnimatesIn: true
+  hashTags: true
 }
 
 var mySequence,

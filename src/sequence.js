@@ -1672,7 +1672,6 @@ function defineSequence(imagesLoaded, Hammer) {
 
         self.stepEndedTimer = setTimeout(function() {
 
-          //
           self.isAnimating = false;
           self.isAutoPlaying = false;
 
@@ -2101,8 +2100,7 @@ function defineSequence(imagesLoaded, Hammer) {
           self.hashTags.update();
         }
 
-        // Sequence is now animating
-        self.isAnimating = true;
+        self.pagination.update();
 
         // When should the "seq-in" phase start and how long until the step
         // completely finishes animating?
@@ -2110,8 +2108,14 @@ function defineSequence(imagesLoaded, Hammer) {
 
           this.moveCanvas(nextStepElement, currentStepElement, direction, true);
 
+          // Sequence is now animating
+          self.isAnimating = true;
+
           // Callback
           self.animationStarted(self.currentStepId, self);
+
+          // Wait for the step (both phases) to finish animating
+          self.animation.stepEnded(self.currentStepId, self.options.fallback.speed);
         }
 
         // This is the first step we're going to
@@ -2119,11 +2123,11 @@ function defineSequence(imagesLoaded, Hammer) {
 
           this.moveCanvas(nextStepElement, currentStepElement, direction, false);
           self.firstRun = false;
-        }
 
-        // Wait for the step (both phases) to finish animating
-        self.animation.stepEnded(self.currentStepId, self.options.fallback.speed);
-        self.pagination.update();
+          if (self.options.autoPlay === true) {
+            self.autoPlay.start(true);
+          }
+        }        
       }
     };
 
@@ -3220,8 +3224,10 @@ function defineSequence(imagesLoaded, Hammer) {
             if (document[hidden]) {
 
               self.autoPlay.pause();
+              console.log("paise")
             } else {
 
+              console.log("unp")
               self.autoPlay.unpause();
             }
           }, false);
@@ -3316,13 +3322,13 @@ function defineSequence(imagesLoaded, Hammer) {
             self.animation.resetInheritedSpeed(prevStep);
           });
 
-          // Go to the first step
-          self.goTo(id, self.options.autoPlayDirection, true);
-
           self.isReady = true;
 
           // Callback
           self.ready(self);
+
+          // Go to the first step
+          self.goTo(id, self.options.autoPlayDirection, true);
         });
       };
 
