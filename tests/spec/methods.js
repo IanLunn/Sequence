@@ -5,20 +5,28 @@ describe("next()", function() {
 
   var sequence;
 
-    // Set up Sequence and wait for it to be ready
-    beforeAll(function(done) {
+  // Set up Sequence and wait for it to be ready
+  beforeAll(function(done) {
 
-      appendSequence();
+    appendSequence();
 
-      sequence = initSequence({
-        autoPlay: false,
-        cycle: true
-      });
-
-      sequence.ready = function() {
-        done();
-      };
+    sequence = initSequence({
+      autoPlay: false,
+      cycle: true
     });
+
+    sequence.ready = function() {
+      done();
+    };
+  });
+
+  afterAll(function(done) {
+    removeSequence();
+    SetTimeout(function() {
+      resetSequence(sequence);
+      done();
+    }, 500);
+  });
 
   it("should go to the next step and return the ID of that step", function() {
 
@@ -44,21 +52,29 @@ describe("prev()", function() {
 
   var sequence;
 
-    // Set up Sequence and wait for it to be ready
-    beforeAll(function(done) {
+  // Set up Sequence and wait for it to be ready
+  beforeAll(function(done) {
 
-      appendSequence();
+    appendSequence();
 
-      sequence = initSequence({
-        autoPlay: false,
-        cycle: true,
-        startingStepId: 3
-      });
-
-      sequence.ready = function() {
-        done();
-      };
+    sequence = initSequence({
+      autoPlay: false,
+      cycle: true,
+      startingStepId: 3
     });
+
+    sequence.ready = function() {
+      done();
+    };
+  });
+
+  afterAll(function(done) {
+    removeSequence();
+    SetTimeout(function() {
+      resetSequence(sequence);
+      done();
+    }, 500);
+  });
 
   it("should go to the previous step and return the ID of that step", function() {
 

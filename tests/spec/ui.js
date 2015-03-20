@@ -24,6 +24,7 @@ describe("ui.getElements()", function() {
       done();
     }, 500);
   });
+
   it("should get a default element (.seq-next)", function() {
 
     var nextButton = sequence.ui.getElements("nextButton", true);

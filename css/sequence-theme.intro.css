@@ -50,7 +50,6 @@
 #sequence h2,
 #sequence h3 {
   display: block;
-  opacity: 0;
   -webkit-transition-duration: 0.5s;
   -moz-transition-duration: 0.5s;
   -ms-transition-duration: 0.5s;

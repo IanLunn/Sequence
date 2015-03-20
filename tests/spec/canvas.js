@@ -1,41 +1,6 @@
 /**
  * sequence.canvas
  */
-describe("canvas getSteps()", function() {
-
-  var sequence;
-
-  // Set up Sequence and wait for it to be ready
-  beforeAll(function(done) {
-
-    appendSequence();
-
-    sequence = initSequence();
-
-    sequence.ready = function() {
-      done();
-    };
-
-  });
-
-  afterAll(function(done) {
-    removeSequence();
-    SetTimeout(function() {
-      resetSequence(sequence);
-      done();
-    }, 500);
-  });
-
-  it("should return an array of HTML elements being used as steps", function() {
-
-    var canvas = sequence.$canvas;
-
-    expect(sequence.canvas.getSteps(canvas)).toEqual(jasmine.any(Array));
-    expect(sequence.canvas.getSteps(canvas).length).not.toEqual(0);
-  });
-
-});
-
 describe("canvas move()", function() {
 
   var sequence;
@@ -74,7 +39,7 @@ describe("canvas move()", function() {
 
 });
 
-describe("canvas move()", function() {
+describe("canvas removeNoJsClass()", function() {
 
   var sequence;
 

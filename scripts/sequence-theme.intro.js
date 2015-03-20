@@ -25,8 +25,15 @@ var options = {
   autoPlay: false,
   keyNavigation: true,
   pauseOnHover: false,
-  autoPlayThreshold: 3000
+  autoPlayThreshold: 3000,
+  preloader: true
 }
 
 // Launch Sequence on the element, and with the options we specified above
 var mySequence = sequence(sequenceElement, options);
+
+mySequence.ready = function(sequence) {
+
+  // var preloader = sequence.$preloader[0];
+  // preloader.parentNode.removeChild(preloader);
+}

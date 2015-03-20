@@ -224,6 +224,15 @@ function defineSequence(imagesLoaded, Hammer) {
     // see self.manageEvents.add.resizeThrottle()
     var resizeThreshold = 100;
 
+    // Convert browser fixes to CSS strings
+    var prefixTranslations = {
+
+      animation: {
+        "WebkitAnimation": "-webkit-",
+        "animation": ""
+      }
+    };
+
     /**
      *
      * This version of Modernizr is for use with Sequence.js and is included
@@ -598,10 +607,10 @@ function defineSequence(imagesLoaded, Hammer) {
 
     /* --- PUBLIC PROPERTIES/METHODS --- */
 
-    var self = {};
-
-    // Expose Sequence's custom Modernizr
-    self.modernizr = Modernizr;
+    // Expose some of Sequence's private properties
+    var self = {
+      modernizr: Modernizr
+    };
 
     /**
      * Manage UI elements such as nextButton, prevButton, and pagination
@@ -1373,6 +1382,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
           // Reverse the timing function
           timingFunction = getStyle(el, Modernizr.prefixed("transitionTimingFunction"));
+
           timingFunctionReversed = animation.reverseTimingFunction(timingFunction);
 
           // Apply the reversed transition properties to each element
@@ -1731,6 +1741,10 @@ function defineSequence(imagesLoaded, Hammer) {
        * @returns {String} timingFunction - The reverse timing function
        */
       reverseTimingFunction: function(timingFunction) {
+
+        if (timingFunction === '' || timingFunction === undefined) {
+          return timingFunction;
+        }
 
         // Convert timingFunction keywords to a cubic-bezier function
         // This is needed because some browsers return a keyword, others a function
@@ -2127,7 +2141,7 @@ function defineSequence(imagesLoaded, Hammer) {
           if (self.options.autoPlay === true) {
             self.autoPlay.start(true);
           }
-        }        
+        }
       }
     };
 
@@ -2409,6 +2423,14 @@ function defineSequence(imagesLoaded, Hammer) {
      */
     self.preload = {
 
+      // Sequence's default HTML for the preloader
+      defaultHtml: '<svg height="16" width="42" class="seq-preload-indicator" xmlns="http://www.w3.org/2000/svg"><circle class="seq-preload-circle seq-preload-circle-1" cx="4" cy="8" r="4"></circle><circle class="seq-preload-circle seq-preload-circle-2" cx="17" cy="8" r="6"></circle><circle class="seq-preload-circle seq-preload-circle-3" cx="34" cy="8" r="8"></circle></svg>',
+
+      fallbackHtml: '<div class="seq-preload-indicator seq-preload-indicator-fallback"><div class="seq-preload-circle seq-preload-circle-1"></div><div class="seq-preload-circle seq-preload-circle-2"></div><div class="seq-preload-circle seq-preload-circle-3"></div></div>',
+
+      // Sequence's default preloader styles and animation for the preloader
+       defaultStyles: '@'+prefixTranslations.animation[Modernizr.prefixed("animation")]+'keyframes seq-preloader {50% {opacity: 1;}100% {opacity: 0;}}.seq-preloader {background: white;visibility: visible;opacity: 1;position: absolute;z-index: 9999;height: 100%;width: 100%;top: 0;left: 0;right: 0;bottom: 0;} .seq-preloader.seq-preloaded {opacity: 0;visibility: hidden;'+Modernizr.prefixed("transition")+': visibility 0s .5s, opacity .5s;}.seq-preload-indicator {overflow: visible;position: relative;top: 50%;left: 50%;'+Modernizr.prefixed("transform")+': translate(-50%, -50%);}.seq-preload-circle {display: inline-block;height: 12px;width: 12px;fill: #FF5A05;opacity: 0;'+prefixTranslations.animation[Modernizr.prefixed("animation")]+'animation: seq-preloader 1.25s infinite;}.seq-preload-circle-2 {'+prefixTranslations.animation[Modernizr.prefixed("animation")]+'animation-delay: .15s;}.seq-preload-circle-3 {'+prefixTranslations.animation[Modernizr.prefixed("animation")]+'animation-delay: .3s;}.seq-preload-indicator-fallback{width: 42px; overflow: visible;}.seq-preload-indicator-fallback .seq-preload-circle {width: 8px; height:8px;background-color: #FF5A05;border-radius: 100%; opacity: 1;display: inline-block; vertical-align: middle;}.seq-preload-indicator-fallback .seq-preload-circle-2{margin-left: 3px; margin-right: 3px; width: 12px; height: 12px;}.seq-preload-indicator-fallback .seq-preload-circle-3{width: 16px; height: 16px;}',
+
       /**
        * Setup Sequence preloading
        *
@@ -2493,19 +2515,20 @@ function defineSequence(imagesLoaded, Hammer) {
         // Remove the "preloading" class and add the "preloaded" class
         removeClass(self.$container, "seq-preloading");
         addClass(self.$container, "seq-preloaded");
+        addClass(self.$preloader[0], "seq-preloaded");
 
-        // Hide the preloader
-        this.hide();
+        if (this.preloadIndicatorTimer !== undefined) {
+          clearInterval(this.preloadIndicatorTimer);
+        }
+
+        if (Modernizr.prefixed("animation") === false || Modernizr.svg === false) {
+          self.$preloader[0].style.display = "none";
+        }
 
         if (callback !== undefined) {
           callback();
         }
       },
-
-      /**
-       * Sequence's default preloader styles and animation for the preloader icon
-       */
-     defaultStyles: '.seq-preloader {position: absolute;z-index: 9999;height: 100%;width: 100%;top: 0;left:0;right:0;bottom:0;}.seq-preloader .preload .circle {position: relative;top: -50%;display: inline-block;height: 12px;width: 12px;fill: #ff9442;}.preload {position: relative;top: 50%;display: block;height: 12px;width: 48px;margin: -6px auto 0 auto;}.preload-complete {opacity: 0;visibility: hidden;'+Modernizr.prefixed("transition")+': .5s;}.preload.fallback .circle {float: left;margin-right: 4px;background-color: #ff9442;border-radius: 6px;}',
 
       /**
        * Add the preloader's styles to the <head></head>
@@ -2522,7 +2545,7 @@ function defineSequence(imagesLoaded, Hammer) {
           this.styleElement.type = 'text/css';
           if (this.styleElement.styleSheet) {
             this.styleElement.styleSheet.cssText = this.defaultStyles;
-          }else {
+          } else {
             this.styleElement.appendChild(document.createTextNode(this.defaultStyles));
           }
 
@@ -2530,21 +2553,31 @@ function defineSequence(imagesLoaded, Hammer) {
           head.appendChild(this.styleElement);
 
           // Animate the preloader using JavaScript if the browser doesn't support SVG
-          if (Modernizr.svg === false) {
+          if (Modernizr.prefixed("animation") === false || Modernizr.svg === false) {
 
             // Get the preload indicator
             var preloadIndicator = self.$preloader[0].firstChild;
 
-            // Make the preload indicator flash
-            this.preloadIndicatorTimer = setInterval(function() {
+            var indicatorFlash = function() {
               preloadIndicator.style.visibility = "hidden";
+              preloadFlashTime = 1000;
               setTimeout(function() {
                 preloadIndicator.style.visibility = "visible";
-              }, 250);
+              }, 500);
+            };
 
-            }, 500);
+            indicatorFlash();
+
+            // Make the preload indicator flash
+            this.preloadIndicatorTimer = setInterval(function() {
+              indicatorFlash();
+            }, 1000);
           }
+
+          return true;
         }
+
+        return false;
       },
 
       /**
@@ -2620,36 +2653,13 @@ function defineSequence(imagesLoaded, Hammer) {
       },
 
       /**
-       * Hide the preloader using CSS transitions if supported, else use JavaScript
-       */
-      hide: function() {
-
-        var preload = this;
-
-        if (self.propertySupport.transitions === true) {
-          addClass(self.$preloader, "preload-complete");
-        }else {
-
-          self.ui.hide(self.$preloader[0], 500);
-        }
-
-        // Stop the preload inidcator fading in/out (for non-SVG browsers only)
-        clearInterval(this.preloadIndicatorTimer);
-
-        // Remove the preloader once it has been hidden
-        setTimeout(function() {
-          preload.remove();
-        }, 500);
-      },
-
-      /**
        * Append the default preloader
        *
        * @returns {Boolean} whether the default preloader was appended or not
        */
       append: function() {
 
-        if (self.options.preloader === true && self.$preloader.length === 0) {
+        if (self.options.preloader === true) {
 
           // Set up the preloader container
           self.$preloader = document.createElement("div");
@@ -2658,16 +2668,11 @@ function defineSequence(imagesLoaded, Hammer) {
           // Convert the preloader to an array
           self.$preloader = [self.$preloader];
 
-          // Use the SVG preloader
-          if (Modernizr.svg === true) {
-
-            self.$preloader[0].innerHTML = '<svg class="preload" xmlns="http://www.w3.org/2000/svg"><circle class="circle" cx="6" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" repeatCount="indefinite" /></circle><circle class="circle" cx="22" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" begin="150ms" repeatCount="indefinite" /></circle><circle class="circle" cx="38" cy="6" r="6" opacity="0"><animate attributeName="opacity" values="0;1;0" dur="1s" begin="300ms" repeatCount="indefinite" /></circle></svg>';
-          }
-
-          // Use the Non-SVG preloader
-          else {
-
-            self.$preloader[0].innerHTML = '<div class="preload fallback"><div class="circle"></div><div class="circle"></div><div class="circle"></div></div>';
+          // Use the fallback preloader if CSS keyframes or SVG aren't supported
+          if (Modernizr.prefixed("animation") !== false && Modernizr.svg === true) {
+            self.$preloader[0].innerHTML = self.preload.defaultHtml;
+          } else {
+            self.$preloader[0].innerHTML = self.preload.fallbackHtml;
           }
 
           // Add the preloader
@@ -2680,34 +2685,13 @@ function defineSequence(imagesLoaded, Hammer) {
       },
 
       /**
-       * Remove the preloader
-       */
-      remove: function() {
-
-        if (self === null) {
-          return;
-        }
-
-        if (self.$preloader[0] !== undefined) {
-          self.$preloader[0].parentNode.removeChild(self.$preloader[0]);
-        }
-
-        // If using the default preloader, remove its styles
-        if (self.options.preloader === true) {
-          this.removeStyles();
-        }
-
-        return null;
-      },
-
-      /**
        * If enabled, hide/show Sequence steps until preloading has finished
        *
        * @param {String} type - "show" or "hide"
        */
       toggleStepsVisibility: function(type) {
 
-        if (self.options.hideStepsUntilPreloaded === true && self.$preloader.length !== 0) {
+        if (self.options.hideStepsUntilPreloaded === true) {
 
           var i,
               step;
@@ -2723,7 +2707,11 @@ function defineSequence(imagesLoaded, Hammer) {
             }
 
           }
+
+          return true;
         }
+
+        return false;
       }
     };
 
@@ -3224,10 +3212,8 @@ function defineSequence(imagesLoaded, Hammer) {
             if (document[hidden]) {
 
               self.autoPlay.pause();
-              console.log("paise")
             } else {
 
-              console.log("unp")
               self.autoPlay.unpause();
             }
           }, false);

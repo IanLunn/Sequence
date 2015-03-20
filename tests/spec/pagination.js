@@ -19,7 +19,10 @@ describe("pagination", function() {
 
   afterAll(function(done) {
     removeSequence();
-    done();
+    SetTimeout(function() {
+      resetSequence(sequence);
+      done();
+    }, 500);
   });
 
   it("getLinks() should return an array containing 3 pagination links", function() {
