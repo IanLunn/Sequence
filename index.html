@@ -2,49 +2,64 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Intro - Sequence.js Theme</title>
-  <link href="css/sequence-theme.intro.css" rel="stylesheet" media="all">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Basic - Sequence.js Theme</title>
+  <link href="css/sequence-theme.basic.css" rel="stylesheet" media="all">
+  <!--[if lt IE 8]><link href="css/ie7.css" rel="stylesheet" media="all"><![endif]-->
+
   <style>
     body {
-        margin: 0;
-        padding: 0;
+      margin: 0;
+      padding: 0;
     }
   </style>
+  <!--[if lt IE 9]><script src="scripts/respond.min.js"></script><![endif]-->
 </head>
 <body>
 
-
-
   <div id="sequence">
 
-    <ul class="seq-canvas">
-      <li class="step1">
-        <h2>Powered by Sequence.js</h2>
-        <h3>The open-source CSS animation framework</h3>
-      </li>
-      <li class="step2">
-        <h2>Create Unique Animated Themes</h2>
-        <h3>For sliders, presentations, banners, accordions, and other step-based applications</h3>
-      </li>
-      <li class="step3">
-        <h2>No Restrictions, Endless Possibilities</h2>
-        <h3>Use the HTML and CSS syntax you're used to. No JavaScript knowledge required.</h3>
-      </li>
+    <ul rel="sequence" class="seq-pagination">
+      <li class="seq-current" rel="step1">Powered by Sequence.js</li>
+      <li rel="step2">Create Unique Animated Themes</li>
+      <li rel="step3">No Restrictions, Endless Possibilities</li>
     </ul>
+
+    <div class="seq-screen">
+      <ul class="seq-canvas">
+
+        <li class="step1" id="step1">
+          <div class="content">
+            <h2 data-seq>Powered by Sequence.js</h2>
+            <h3 data-seq>The open-source CSS animation framework.</h3>
+            <a data-seq class="button" href="http://sequencejs.com/" target="_blank">Find Out More →</a>
+          </div>
+        </li>
+
+        <li class="step2" id="step2">
+          <div class="content">
+            <h2 data-seq>Create Unique Animated Themes</h2>
+            <h3 data-seq>For responsive sliders, presentations, <br />banners, and other step-based applications.</h3>
+            <a data-seq class="button" href="http://sequencejs.com/" target="_blank">Find Out More →</a>
+          </div>
+        </li>
+
+        <li class="step3" id="step3">
+          <div class="content">
+            <h2 data-seq>No Restrictions, Endless Possibilities</h2>
+            <h3 data-seq>Use the HTML and CSS syntax you're used to. <br />No JavaScript knowledge required.</h3>
+            <a data-seq class="button" href="http://sequencejs.com/" target="_blank">Find Out More →</a>
+          </div>
+        </li>
+
+      </ul>
+    </div>
   </div>
-
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est.
-
-
-  Vivamus fermentum semper porta. Nunc diam velit, adipiscing ut tristique vitae, sagittis vel odio. Maecenas convallis ullamcorper ultricies. Curabitur ornare, ligula semper consectetur sagittis, nisi diam iaculis velit, id fringilla sem nunc vel mi. Nam dictum, odio nec pretium volutpat, arcu ante placerat erat, non tristique elit urna et turpis. Quisque mi metus, ornare sit amet fermentum et, tincidunt et orci. Fusce eget orci a orci congue vestibulum. Ut dolor diam, elementum et vestibulum eu, porttitor vel elit. Curabitur venenatis pulvinar tellus gravida ornare. Sed et erat faucibus nunc euismod ultricies ut id justo. Nullam cursus suscipit nisi, et ultrices justo sodales nec. Fusce venenatis facilisis lectus ac semper. Aliquam at massa ipsum. Quisque bibendum purus convallis nulla ultrices ultricies. Nullam aliquam, mi eu aliquam tincidunt, purus velit laoreet tortor, viverra pretium nisi quam vitae mi. Fusce vel volutpat elit. Nam sagittis nisi dui.
-
-
-  Suspendisse lectus leo, consectetur in tempor sit amet, placerat quis neque. Etiam luctus porttitor lorem, sed suscipit est rutrum non. Curabitur lobortis nisl a enim congue semper. Aenean commodo ultrices imperdiet. Vestibulum ut justo vel sapien venenatis tincidunt. Phasellus eget dolor sit amet ipsum dapibus condimentum vitae quis lectus. Aliquam ut massa in turpis dapibus convallis. Praesent elit lacus, vestibulum at malesuada et, ornare et est. Ut augue nunc, sodales ut euismod non, adipiscing vitae orci. Mauris ut placerat justo. Mauris in ultricies enim. Quisque nec est eleifend nulla ultrices egestas quis ut quam. Donec sollicitudin lectus a mauris pulvinar id aliquam urna cursus. Cras quis ligula sem, vel elementum mi. Phasellus non ullamcorper urna.
 
   <script src="scripts/imagesloaded.pkgd.min.js"></script>
   <script src="scripts/hammer.min.js"></script>
   <script src="scripts/sequence.js"></script>
-  <script src="scripts/sequence-theme.intro.js"></script>
+  <script src="scripts/sequence-theme.basic.js"></script>
 </body>
 </html>

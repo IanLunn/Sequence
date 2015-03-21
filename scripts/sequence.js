@@ -2521,6 +2521,7 @@ function defineSequence(imagesLoaded, Hammer) {
           clearInterval(this.preloadIndicatorTimer);
         }
 
+        // Remove the fallback preloader
         if (Modernizr.prefixed("animation") === false || Modernizr.svg === false) {
           self.$preloader[0].style.display = "none";
         }
