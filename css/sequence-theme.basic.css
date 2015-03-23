@@ -98,7 +98,7 @@
   border-radius: 100%;
 }
 #sequence .seq-pagination > * {
-  margin: 0 2px;
+  margin: 0 4px;
   padding: 0;
   display: inline-block;
   *display: inline;
@@ -147,6 +147,11 @@
   white-space: normal;
   text-align: center;
   color: white;
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
 }
 #sequence .seq-canvas > li:before {
   content: "";
@@ -209,6 +214,16 @@
 }
 #sequence .step3 .button:hover {
   color: #2bbf8e;
+}
+#sequence h2,
+#sequence h3,
+#sequence .button {
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
 }
 #sequence h2,
 #sequence h3 {
@@ -315,8 +330,8 @@
     margin-top: -19px;
   }
   #sequence .seq-pagination > * {
-    width: 14px;
-    height: 14px;
+    width: 20px;
+    height: 20px;
   }
   #sequence h2,
   #sequence h3 {

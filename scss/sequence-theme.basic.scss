@@ -73,7 +73,7 @@ $color3: #2BBF8E;
     }
 
     > * {
-      margin: 0 2px;
+      margin: 0 4px;
       padding: 0;
       display: inline-block;
       *display: inline;
@@ -124,6 +124,7 @@ $color3: #2BBF8E;
       white-space: normal;
       text-align: center;
       color: white;
+      @include prefixed(transform, translateZ(0));
     }
 
     > li:before {
@@ -157,7 +158,6 @@ $color3: #2BBF8E;
     font-family: 'Roboto', sans-serif;
 
     @include prefixed(animation-fill-mode, "forwards");
-
     @include prefixed(transition-duration, .25s);
     @include prefixed(transition-property, "background-color, color");
 
@@ -188,6 +188,13 @@ $color3: #2BBF8E;
     .button:hover {
       color: $color3;
     }
+  }
+
+  h2,
+  h3,
+  .button {
+    -moz-osx-font-smoothing: grayscale;
+    @include prefixed(transform, translateZ(0));
   }
 
   h2,
@@ -281,8 +288,8 @@ $color3: #2BBF8E;
     }
 
     .seq-pagination > * {
-      width: 14px;
-      height: 14px;
+      width: 20px;
+      height: 20px;
     }
 
     h2,

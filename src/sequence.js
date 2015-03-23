@@ -6,7 +6,7 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0-alpha.8
+ * @version 2.0.0-beta.2
  * @license https://github.com/IanLunn/Sequence/blob/master/LICENSE
  * @copyright Ian Lunn 2015
  */
@@ -85,6 +85,9 @@ function defineSequence(imagesLoaded, Hammer) {
       // How long to wait between each step before navigation occurs again
       autoPlayDelay: 5000,
 
+      // Amount of time to wait until autoPlay starts again after being stopped
+      autoPlayStartDelay: null,
+
       // Direction of navigation when autoPlay is enabled
       autoPlayDirection: 1,
 
@@ -92,9 +95,6 @@ function defineSequence(imagesLoaded, Hammer) {
       // change what element acts as the button. If true, the element uses the
       // class of "seq-autoplay"
       autoPlayButton: true,
-
-      // Amount of time to wait until autoPlay starts again after being stopped
-      autoPlayStartDelay: null,
 
       // Pause autoPlay when the Sequence element is hovered over
       autoPlayPauseOnHover: true,

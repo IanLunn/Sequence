@@ -1,7 +1,7 @@
 Sequence [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=IanLunn&url=https://github.com/IanLunn/Sequence&title=Sequence&language=english&tags=github&category=software)
 =====================
 
-> CSS animation framework for creating responsive sliders, presentations, banners, and other step-based applications.
+> JavaScript library that provides a simple CSS framework for creating unique, animated themes for sliders, presentations, banners, accordions, and other step-based applications.
 
 See the [introduction](http://ianlunn.github.io/Sequence/) and [pre-made themes](http://sequencejs.com/).
 
@@ -27,22 +27,6 @@ See the [introduction](http://ianlunn.github.io/Sequence/) and [pre-made themes]
 ## Philosophy
 
 The key philosophy for Sequence is to aid you in creating your animated step-based application without getting in the way of how you or a web browser work. Create content and then animate it using the HTML and CSS you're used to. There's no special syntax to learn, no limitations on the elements you can use, and no heavy JavaScript implementations recreating what the browser is already capable of.
-
-## Demo Themes
-
-The following themes are packaged with the Sequence download package:
-
-- [Intro](http://ianlunn.github.io/Sequence/themes/intro-theme/) - The theme used to introduce Sequence
-- [Modern Slide In](http://ianlunn.github.io/Sequence/themes/modern-slide-in/) - A minimalist theme for showcasing products
-- [Pop Slide](http://ianlunn.github.io/Sequence/themes/pop-slide/) - A colourful slider with highlighted pagination
-- [Cube](http://ianlunn.github.io/Sequence/themes/cube) - A basic 3D cube that spins on the Y axis
-- [Basic](http://ianlunn.github.io/Sequence/themes/basic/) - A basic slider that moves side to side
-- [Test Theme](http://ianlunn.github.io/Sequence/themes/test-theme/) - Used for Testing Sequence.js and its API
-- [Multiple Test Theme](http://ianlunn.github.io/Sequence/themes/mmultiple-test/) - A theme to test multiple instances of Sequence
-
-Additional themes are made available on the [Sequence Theme Store](http://sequencejs.com/themes/)
-
-Head to the [showcase](https://github.com/IanLunn/Sequence/wiki/Showcase) to see themes others have created.
 
 ## Getting Started
 
@@ -75,34 +59,6 @@ Follow [@IanLunn](https://twitter.com/IanLunn/) on Twitter for updates on Sequen
 Sequence's browser testing environment is provided by <a href="http://browserstack.com/">BrowerStack</a>.
 
 [![Browser Stack](http://www.sequencejs.com/wp-content/themes/sequence/images/browserstack-light.png)](http://browserstack.com/)
-
-## History
-
-Sequence v1 was first conceived in 2011 by [Ian Lunn](http://ianlunn.co.uk/) whilst he was recreating an animated effect used on the Apple iPhone 4 website. In creating the demo he realised the limited script had far more
-potential if its animations could be written via CSS instead of JavaScript. This would allow developers to easily create their own animations that were completely separate from the logic of the script itself.
-
-CSS animations were still quite new at the time so after a lot of battling with browser support, Ian released the first version of Sequence in February 2012 under an open-source MIT License.
-
-Sequence grew in popularity and was updated with bug fixes and minor features for the next 18 months.
-
-In early 2014, Ian began working on Sequence 2.0.0. This addressed version 1's biggest limitations and issues; the requirement of having to animate all top-level elements, improved touch support, and so on.
-
-Sequence 2.0.0 was released in July 2014.
-
-For a complete list of changes, see the [CHANGELOG](https://github.com/IanLunn/Sequence/blob/master/CHANGELOG.md).
-
-## Limitations
-
-Sometimes when choosing a library, its better to know what it *doesn't* do to enable you to make the decision to use it in a project. Although we've made Sequence as good as it can possibly be, we've tried to keep its scope tight, as such, there are some limitations:
-
-### AJAX Support
-
-If you're planning on using AJAX in your project, know that Sequence can be initiated and destroyed whenever necessary, meaning it can be loaded on a page via AJAX after the page load event. However, at present Sequence doesn't allow for loading additional steps via AJAX.
-
-### 3D Transform Support
-
-At present, some browsers don't fully support CSS 3D transforms.
- Internet Explorer 10 and 11 don't support `preserve-3d` and as such, are forced into fallback mode when the use of CSS 3D transforms are detected.
 
 ## License
 

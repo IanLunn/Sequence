@@ -20,8 +20,7 @@ Contains the compiled `sequence.js` and its minified version `sequence.min.js`. 
 
 - `hammer.min.js` - Used for touch support
 - `imagesloaded.pkgd.min.js` - Used for preloading images
-- `respond.min.js` - Used to make a Sequence theme responsive in Internet Explorer 7 and 8
-- `sequence-theme.intro.js` - Options and inititate code to start Sequence on the demo theme
+- `sequence-theme.basic.js` - Options and inititation code to start Sequence on the demo theme
 
 ### `src`
 
