@@ -6,7 +6,7 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0-beta.2
+ * @version 2.0.0-beta.3
  * @license https://github.com/IanLunn/Sequence/blob/master/LICENSE
  * @copyright Ian Lunn 2015
  */
@@ -59,7 +59,7 @@ function defineSequence(imagesLoaded, Hammer) {
       phaseThreshold: true,
 
       // Should animations be reversed when navigating backwards?
-      reverseWhenNavigatingBackwards: true,
+      reverseWhenNavigatingBackwards: false,
 
       // Should the active step be given a higher z-index?
       moveActiveStepToTop: true,
@@ -157,7 +157,7 @@ function defineSequence(imagesLoaded, Hammer) {
       ],
 
       // Hide Sequence's steps until it has preloaded
-      hideStepsUntilPreloaded: true,
+      hideStepsUntilPreloaded: false,
 
 
       /* --- Keyboard --- */
@@ -898,6 +898,14 @@ function defineSequence(imagesLoaded, Hammer) {
           self.$screen.style.width = "100%";
         }
 
+        // if moveActiveStepToTop is enabled and the browser supports
+        // transform-style: preserve-3d, add this property to the canvas.
+        // This enables the use of transform: translateZ() in favor of z-index
+        // to work around a bug in iOS browsers
+        if (self.options.moveActiveStepToTop === true && self.propertySupport.transformStylePreserve3d === true) {
+          self.$canvas.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
+        }
+
         // Determine the position of each step and the transform properties
         // required for the canvas so it can move to each step
         self.canvas.getTransformProperties();
@@ -1124,11 +1132,19 @@ function defineSequence(imagesLoaded, Hammer) {
 
         if (self.options.moveActiveStepToTop === true) {
 
-          var prevStepElement = self.$steps[self.prevStepId - 1];
+          var prevStepElement = self.$steps[self.prevStepId - 1],
+              lastStepId = self.noOfSteps - 1;
 
-          prevStepElement.style.zIndex = 1;
-          currentElement.style.zIndex = self.noOfSteps - 1;
-          nextElement.style.zIndex = self.noOfSteps;
+          if (self.propertySupport.transformStylePreserve3d === true) {
+
+            prevStepElement.style[Modernizr.prefixed("transform")] = "translateZ(1px)";
+            currentElement.style[Modernizr.prefixed("transform")] = "translateZ(" + lastStepId + "px)";
+            nextElement.style[Modernizr.prefixed("transform")] = "translateZ(" + self.noOfSteps + "px)";
+          } else {
+            prevStepElement.style.zIndex = 1;
+            currentElement.style.zIndex = lastStepId;
+            nextElement.style.zIndex = self.noOfSteps;
+          }
         }
 
         return null;
@@ -1926,6 +1942,7 @@ function defineSequence(imagesLoaded, Hammer) {
        *
        * - transitions
        * - animations
+       * - transform-style: preserve-3d
        *
        * @param {Object} properties - The properties to be used (on the canvas)
        * @returns {Object} The list of properties we've tested and their support
@@ -1933,7 +1950,28 @@ function defineSequence(imagesLoaded, Hammer) {
       getPropertySupport: function(properties) {
 
         var transitions = false,
-            animations = false;
+            animations = false,
+            transformStylePreserve3d = false;
+
+        // Modernizr test for transform-style: preserve-3d
+        Modernizr.addTest("csstransformspreserve3d", function () {
+
+          var prop = Modernizr.prefixed("transformStyle"),
+              val = "preserve-3d",
+              computedStyle;
+
+          if (!prop) {
+            return false;
+          }
+
+          prop = prop.replace(/([A-Z])/g, function(str,m1){ return "-" + m1.toLowerCase(); }).replace(/^ms-/,"-ms-");
+
+          Modernizr.testStyles("#modernizr{" + prop + ":" + val + ";}", function (el, rule) {
+            computedStyle = window.getComputedStyle ? getComputedStyle(el, null).getPropertyValue(prop) : "";
+          });
+
+          return (computedStyle === val);
+        });
 
         // Are transitions supported?
         if (Modernizr.csstransitions === true) {
@@ -1945,9 +1983,15 @@ function defineSequence(imagesLoaded, Hammer) {
           animations = true;
         }
 
+        // Is transform-style: preserve-3d supported?
+        if (Modernizr.csstransformspreserve3d === true) {
+          transformStylePreserve3d = true;
+        }
+
         return {
           transitions: transitions,
-          animations: animations
+          animations: animations,
+          transformStylePreserve3d: transformStylePreserve3d
         };
       }
     };

@@ -25,11 +25,11 @@ var sequenceElement = document.getElementById("sequence");
 var options = {
   startingStepAnimatesIn: true,
   autoPlay: true,
-  phaseThreshold: 500,
+  phaseThreshold: true,
   preloader: true,
-  reverseWhenNavigatingBackwards: false,
   fadeStepWhenSkipped: false,
-  keyNavigation: true
+  keyNavigation: true,
+  moveActiveStepToTop: false
 }
 
 // Launch Sequence on the element, and with the options we specified above

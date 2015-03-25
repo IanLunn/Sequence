@@ -1,7 +1,7 @@
 Sequence [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=IanLunn&url=https://github.com/IanLunn/Sequence&title=Sequence&language=english&tags=github&category=software)
 =====================
 
-> JavaScript library that provides a simple CSS framework for creating unique, animated themes for sliders, presentations, banners, accordions, and other step-based applications.
+> Responsive animation framework for creating unique sliders, presentations, banners, and other step-based applications.
 
 See the [introduction](http://ianlunn.github.io/Sequence/) and [pre-made themes](http://sequencejs.com/).
 
