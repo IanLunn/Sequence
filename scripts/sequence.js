@@ -3572,6 +3572,15 @@ function defineSequence(imagesLoaded, Hammer) {
       // Save the latest direction
       self.direction = direction;
 
+      // Add the "seq-reversed" class if navigating in reverse
+      if (direction === 1) {
+        // Add a "seq-reversed" class
+        removeClass(self.$container, "seq-reversed");
+      } else {
+        // Add a "seq-reversed" class
+        addClass(self.$container, "seq-reversed");
+      }
+
       currentStepElement = self.$steps[self.currentStepId - 1];
       nextStepElement = self.$steps[id - 1];
 
