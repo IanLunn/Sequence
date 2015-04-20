@@ -1396,9 +1396,14 @@ function defineSequence(imagesLoaded, Hammer) {
           delays.push(delay);
           totals.push(delay + duration);
 
-          // Reverse the timing function
+          // Get the timing-function
           timingFunction = getStyle(el, Modernizr.prefixed("transitionTimingFunction"));
 
+          // Use the first timing-function only
+          // TODO: Support multiple transition timing-functions
+          timingFunction = timingFunction.split(",")[0];
+
+          // Reverse the timing function
           timingFunctionReversed = animation.reverseTimingFunction(timingFunction);
 
           // Apply the reversed transition properties to each element
