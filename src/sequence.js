@@ -184,7 +184,9 @@ function defineSequence(imagesLoaded, Hammer) {
       // Events to run when the user swipes in a particular direction
       swipeEvents: {
         left: function(sequence) {sequence.next();},
-        right: function(sequence) {sequence.prev();}
+        right: function(sequence) {sequence.prev();},
+        up: undefined,
+        down: undefined
       },
 
       // Options to supply the third-party Hammer library See: http://hammerjs.github.io/recognizer-swipe/
@@ -603,6 +605,35 @@ function defineSequence(imagesLoaded, Hammer) {
         previousTarget = target;
         return hasParent(parent, target.parentNode, previousTarget);
       }
+    }
+
+    /**
+     * Determine the Hammer direction required based on the swipe directions
+     * being used
+     * hammerjs.github.io/api/#directions
+     */
+    function getHammerDirection(swipeEvents) {
+
+      var swipeDirections = 0,
+          hammerDirection = Hammer.DIRECTION_NONE;
+
+      if (swipeEvents.left !== undefined || swipeEvents.right !== undefined) {
+        swipeDirections += 1;
+      }
+
+      if (swipeEvents.up !== undefined || swipeEvents.down !== undefined) {
+        swipeDirections += 2;
+      }
+
+      if (swipeDirections === 1) {
+        hammerDirection = Hammer.DIRECTION_HORIZONTAL;
+      } else if (swipeDirections === 2) {
+        hammerDirection = Hammer.DIRECTION_VERTICAL;
+      } else if (swipeDirections === 3) {
+        hammerDirection = Hammer.DIRECTION_ALL;
+      }
+
+      return hammerDirection;
     }
 
     /* --- PUBLIC PROPERTIES/METHODS --- */
@@ -3148,27 +3179,49 @@ function defineSequence(imagesLoaded, Hammer) {
             return;
           }
 
-          var handler = function(e) {
-
-            switch(e.direction) {
-
-              case 2:
-                self.options.swipeEvents.left(self);
-              break;
-
-              case 4:
-                self.options.swipeEvents.right(self);
-              break;
-            }
-          };
+          var hammerDirection,
+              handler;
 
           if (typeof Hammer === "function") {
+
+            handler = function(e) {
+
+              switch(e.direction) {
+
+                // Left
+                case 2:
+                  self.options.swipeEvents.left(self);
+                break;
+
+                // Right
+                case 4:
+                  self.options.swipeEvents.right(self);
+                break;
+
+                // Up
+                case 8:
+                  self.options.swipeEvents.up(self);
+                break;
+
+                // Down
+                case 16:
+                  self.options.swipeEvents.down(self);
+                break;
+              }
+            };
+
+            // Set up the swipe event
             self.hammerTime = new Hammer(self.$container).on("swipe", handler);
 
-              // Set Hammer's Swipe options
-              self.hammerTime.get("swipe").set(self.options.swipeHammerOptions);
+            // Set Hammer's Swipe options
+            self.hammerTime.get("swipe").set(self.options.swipeHammerOptions);
 
-              self.manageEvents.list.hammer.push({"element": self.$container, "handler": handler});
+            // determine the Hammer direction that needs to be set based on the
+            // swipe directions being used (hammerjs.github.io/api/#directions)
+            hammerDirection = getHammerDirection(self.options.swipeEvents);
+            self.hammerTime.get("swipe").set({direction: hammerDirection});
+
+            self.manageEvents.list.hammer.push({"element": self.$container, "handler": handler});
           }
         },
 
