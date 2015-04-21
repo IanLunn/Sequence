@@ -2778,7 +2778,7 @@ function defineSequence(imagesLoaded, Hammer) {
         "mousemove": [],
         "mouseleave": [],
         "hammer": [],
-        "keydown": [],
+        "keyup": [],
         "hashchange": [],
         "resize": []
       },
@@ -3177,7 +3177,7 @@ function defineSequence(imagesLoaded, Hammer) {
          */
         keyNavigation: function() {
 
-          var handler = addEvent(document, "keydown", function(event) {
+          var handler = addEvent(document, "keyup", function(event) {
 
             if (!event) {
               event = window.event;
@@ -3203,7 +3203,7 @@ function defineSequence(imagesLoaded, Hammer) {
             }
           });
 
-          self.manageEvents.list.keydown.push({"element": document, "handler": handler});
+          self.manageEvents.list.keyup.push({"element": document, "handler": handler});
         },
 
         /**
