@@ -2855,6 +2855,8 @@ function defineSequence(imagesLoaded, Hammer) {
 
         if (self.options.swipeNavigation === true) {
           this.add.swipeNavigation();
+        } else {
+          self.hammerTime = false;
         }
 
         if (self.options.keyNavigation === true) {
@@ -3205,6 +3207,7 @@ function defineSequence(imagesLoaded, Hammer) {
           // Don't use swipe navigation if the browser doesn't support
           // addEventListener (Hammer.js needs it)
           if (window.addEventListener === undefined) {
+            self.hammerTime = false;
             return;
           }
 
