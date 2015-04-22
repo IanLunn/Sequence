@@ -3297,20 +3297,24 @@ function defineSequence(imagesLoaded, Hammer) {
           // Events to be executed when the throttled window resize occurs
           function throttledEvents() {
 
-            self.canvas.getTransformProperties();
+            // Use a delay to give the browser a chance to repaint before
+            // getting transform properties
+            setTimeout(function() {
+              self.canvas.getTransformProperties();
 
-            /**
-             * Snap to the currently active step
-             *
-             * Assume the canvas is laid out in a 2 x 2 grid, the Sequence
-             * element has a height of 100%, and the user is viewing the second
-             * row of steps -- when the user resizes the window, the second row
-             * of steps will no longer be positioned perfectly in the window.
-             * This event will immediately snap the canvas back into place.
-             */
-            if (self.propertySupport.transitions === true) {
-              self.canvas.move(self.currentStepId, false);
-            }
+              /**
+               * Snap to the currently active step
+               *
+               * Assume the canvas is laid out in a 2 x 2 grid, the Sequence
+               * element has a height of 100%, and the user is viewing the second
+               * row of steps -- when the user resizes the window, the second row
+               * of steps will no longer be positioned perfectly in the window.
+               * This event will immediately snap the canvas back into place.
+               */
+              if (self.propertySupport.transitions === true) {
+                self.canvas.move(self.currentStepId, false);
+              }
+            }, 500);
 
             // Callback
             self.throttledResize(self);
