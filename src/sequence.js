@@ -958,17 +958,38 @@ function defineSequence(imagesLoaded, Hammer) {
           self.$screen.style.width = "100%";
         }
 
-        // if moveActiveStepToTop is enabled and the browser supports
-        // transform-style: preserve-3d, add this property to the canvas.
-        // This enables the use of transform: translateZ() in favor of z-index
-        // to work around a bug in iOS browsers
-        if (self.options.moveActiveStepToTop === true && self.propertySupport.transformStylePreserve3d === true) {
-          self.$canvas.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
-        }
+        self.canvas.addPreserve3d();
 
         // Determine the position of each step and the transform properties
         // required for the canvas so it can move to each step
         self.canvas.getTransformProperties();
+      },
+
+      /**
+       * if moveActiveStepToTop is enabled and the browser supports
+       * transform-style: preserve-3d, add this property to the canvas and steps.
+       * This enables the use of transform: translateZ() in favor of z-index
+       * to work around a bug in iOS browsers
+       *
+       * @api private
+       */
+      addPreserve3d: function() {
+
+        if (self.options.moveActiveStepToTop === true && self.propertySupport.transformStylePreserve3d === true) {
+
+          var i,
+              $step;
+
+          // Add to the canvas
+          self.$canvas.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
+
+          // Add to the steps
+          for (i = 0; i < self.noOfSteps; i++) {
+
+            $step = self.$steps[i];
+            $step.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
+          }
+        }
       },
 
       /**
