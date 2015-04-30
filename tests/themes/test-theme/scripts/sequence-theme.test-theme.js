@@ -22,13 +22,17 @@ var sequenceElement = document.getElementById("sequence");
 // Place your Sequence options here to override defaults
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
-  animateCanvas: true,
-  autoPlay: true,
+  // animateCanvas: true,
+  autoPlay: false,
+  autoPlayDirection: -1,
   autoPlayDelay: 1000,
-  phaseThreshold: false,
-  preloader: true,
+  phaseThreshold: 500,
+  // preloader: true,
   keyNavigation: true,
-  hashTags: true
+  // hashTags: true,
+  startingStepId: 1,
+  // startingStepAnimatesIn: true,
+  reverseWhenNavigatingBackwards: true
 }
 
 var mySequence,
@@ -60,3 +64,27 @@ mySequence.utils.addEvent(destroyButton, "click", function() {
     mySequence = undefined;
   }
 });
+
+mySequence.currentPhaseStarted = function(id) {
+  console.log("cur started", id);
+}
+
+mySequence.currentPhaseEnded = function(id) {
+  console.log("cur ended", id);
+}
+
+mySequence.nextPhaseStarted = function(id) {
+  console.log("next started", id);
+}
+
+mySequence.nextPhaseEnded = function(id) {
+  console.log("next ended", id);
+}
+
+mySequence.animationStarted = function(id) {
+  console.log("started", id);
+};
+
+mySequence.animationEnded = function(id) {
+  console.log("ended", id);
+};
