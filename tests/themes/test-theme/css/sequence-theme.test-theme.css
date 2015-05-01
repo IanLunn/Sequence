@@ -59,7 +59,7 @@
 
 #sequence .boxb {
   top: 200px;
-  /*transition-duration: 2s;*/
+  transition-duration: 2s;
   /*transition-delay: .5s;*/
 }
 
@@ -68,7 +68,8 @@
   margin-left: -50px;
   -webkit-transition-duration: 1s;
   transition-duration: 1s;
-  /*transition-delay: 2s;*/
+  /*-webkit-transition-delay: .5s;*/
+  /*transition-delay: .5s;*/
 
 
 }

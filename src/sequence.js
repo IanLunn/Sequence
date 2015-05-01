@@ -1472,12 +1472,12 @@ function defineSequence(imagesLoaded, Hammer) {
             currentPhaseProperties,
             currentPhaseDuration,
             phaseThresholdTime,
-            activePhases = {};
+            activePhases;
 
         if (self.firstRun === false) {
 
           // Callback
-          animation.currentPhaseStarted();
+          animation.currentPhaseStarted(self.currentStepId);
         }
 
         // Snap the step to the "animate-start" phase
@@ -1485,14 +1485,18 @@ function defineSequence(imagesLoaded, Hammer) {
 
         animation.domDelay(function() {
 
-          // Make the activePhases public
-          // self.stepProperties.activePhases = activePhases;
-
           // Make the current step transition to "seq-out"
           currentPhaseProperties = animation.startAnimateOut(self.prevStepId, currentStepElement, 1);
 
           // How long will the current watched elements animate for (including delay)?
           currentPhaseDuration = currentPhaseProperties.watchedTimings.maxTotal;
+
+          activePhases = self.stepProperties.activePhases = {
+            "current": currentPhaseProperties,
+            "next": {
+              "stepElement": nextStepElement
+            }
+          };
 
           // Determine how often goTo() can be used based on
           // navigationSkipThreshold and manage step fading accordingly
@@ -1535,14 +1539,16 @@ function defineSequence(imagesLoaded, Hammer) {
 
         animation.domDelay(function() {
 
-          // Make the activePhases public
-          // self.stepProperties.activePhases = activePhases;
-
           // Get the step number, element, its animated elements (child nodes), and
           // max timings
-          currentPhaseProperties = animation.getPhaseProperties(self.prevStepId, "current");
+          currentPhaseProperties = animation.getPhaseProperties(self.currentStepId, "current");
 
           nextPhaseProperties = animation.getPhaseProperties(id, "next");
+
+          activePhases = self.stepProperties.activePhases = {
+            "current": currentPhaseProperties,
+            "next": nextPhaseProperties
+          };
 
           // Add a threshold between delays if one finishes before another when
           // navigating forwards
@@ -1597,7 +1603,7 @@ function defineSequence(imagesLoaded, Hammer) {
             current = 0,
             next = 0;
 
-        if (phaseThresholdOption !== true) {
+        // if (phaseThresholdOption !== true) {
 
           phaseDifference = currentPhaseDuration - nextPhaseDuration;
 
@@ -1606,7 +1612,7 @@ function defineSequence(imagesLoaded, Hammer) {
           } else if (phaseDifference < 0) {
             current = Math.abs(phaseDifference);
           }
-        }
+        // }
 
         return {
           next: next,
@@ -1631,6 +1637,15 @@ function defineSequence(imagesLoaded, Hammer) {
             nextPhaseDuration,
             nextPhaseProperties,
             nextPhaseStarts = phaseThresholdTime;
+
+        // The next ID is now the current ID
+        self.prevStepId = self.currentStepId;
+        self.currentStepId = id;
+
+        if (self.firstRun === true) {
+          // Update pagination
+          self.pagination.update();
+        }
 
         // When should the "seq-in" phase start and how long until the step
         // completely finishes animating?
@@ -1799,13 +1814,14 @@ function defineSequence(imagesLoaded, Hammer) {
       /**
        * When the current phase starts animating
        */
-      currentPhaseStarted: function() {
+      currentPhaseStarted: function(id) {
+
+        if (id === undefined) {
+          id = self.prevStepId;
+        }
 
         // Callback
-        self.currentPhaseStarted(self.prevStepId, self);
-
-        // Update pagination
-        self.pagination.update();
+        self.currentPhaseStarted(id, self);
       },
 
       /**
@@ -1832,6 +1848,9 @@ function defineSequence(imagesLoaded, Hammer) {
         if (hashTagNav === undefined) {
           self.hashTags.update();
         }
+
+        // Update pagination
+        self.pagination.update();
 
         // Callback
         self.nextPhaseStarted(self.currentStepId, self);
@@ -1902,8 +1921,6 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       stepEnded: function(id) {
 
-        // self.stepEndedTimer = setTimeout(function() {
-
           self.isAnimating = false;
           self.isAutoPlaying = false;
 
@@ -1914,7 +1931,6 @@ function defineSequence(imagesLoaded, Hammer) {
 
           // Callback
           self.animationEnded(id, self);
-        // }, stepDuration);
       },
 
       /**
@@ -3830,15 +3846,6 @@ function defineSequence(imagesLoaded, Hammer) {
 
           // Callback
           self.animationStarted(id, self);
-        }
-
-        // The next ID is now the current ID
-        self.prevStepId = self.currentStepId;
-        self.currentStepId = id;
-
-        // Should the phaseThreshold be ignored?
-        if (self.isAnimating === true) {
-          ignorePhaseThreshold = true;
         }
 
         // Sequence is now animating

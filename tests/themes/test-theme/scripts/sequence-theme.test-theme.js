@@ -26,13 +26,15 @@ var options = {
   autoPlay: false,
   autoPlayDirection: -1,
   autoPlayDelay: 1000,
-  phaseThreshold: 500,
+  phaseThreshold: true,
   // preloader: true,
   keyNavigation: true,
   // hashTags: true,
   startingStepId: 1,
   // startingStepAnimatesIn: true,
-  reverseWhenNavigatingBackwards: true
+  reverseWhenNavigatingBackwards: true,
+  navigationSkip: true,
+  fadeStepWhenSkipped: true
 }
 
 var mySequence,
@@ -82,9 +84,9 @@ mySequence.nextPhaseEnded = function(id) {
 }
 
 mySequence.animationStarted = function(id) {
-  console.log("started", id);
+  // console.log("started", id);
 };
 
 mySequence.animationEnded = function(id) {
-  console.log("ended", id);
+  // console.log("ended", id);
 };
