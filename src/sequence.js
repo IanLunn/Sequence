@@ -1258,13 +1258,18 @@ function defineSequence(imagesLoaded, Hammer) {
        * @param {Number} id - The ID of the step Sequence is trying to go to
        * @param {Number} direction - The direction Sequence is trying to go
        */
-      manageNavigationSkip: function(id, direction, nextStepElement, activePhases) {
+      manageNavigationSkip: function(id, nextStepElement, activePhases) {
 
-        if (self.isFallbackMode === true || activePhases === undefined) {
+        if (self.isFallbackMode === true) {
           return;
         }
 
-        var animation = this;
+        var animation = this,
+            stepsAnimatingLength = self.stepsAnimating,
+            i,
+            stepProperties,
+            stepElement,
+            stepId;
 
         // Show the next step again
         self.ui.show(nextStepElement, 0);
@@ -1273,13 +1278,6 @@ function defineSequence(imagesLoaded, Hammer) {
 
           // Start the navigation skip threshold
           self.navigationSkipThresholdActive = true;
-
-          // Count the number of steps currently animating
-          var stepsAnimatingLength = self.stepsAnimating,
-              i,
-              stepProperties,
-              stepElement,
-              stepId;
 
           if (self.options.startingStepAnimatesIn === true && self.firstRun === true) {
             self.stepsAnimating += 1;
@@ -1310,9 +1308,15 @@ function defineSequence(imagesLoaded, Hammer) {
                   stepId = i;
 
                   self.animation.stepSkipped(stepElement);
+                } else if (stepProperties.isAnimating === true) {
+                  // If the step that is being navigated to was skipped, don't
+                  // fade it out but discount it as being animated as it will
+                  // be counted again when it restarts
+                  self.stepsAnimating--;
                 }
               }
 
+              // Save the IDs of the steps that were skipped
               activePhases.prevStepId = self.prevStepId;
               activePhases.currentStepId = self.currentStepId;
 
@@ -1423,10 +1427,6 @@ function defineSequence(imagesLoaded, Hammer) {
           // Get the timing-function
           timingFunction = getStyle(el, Modernizr.prefixed("transitionTimingFunction"));
 
-          // Use the first timing-function only
-          // TODO: Support multiple transition timing-functions
-          // timingFunction = timingFunction.split(",")[0];
-
           // Reverse the timing function
           timingFunctionReversed = animation.reverseTimingFunction(timingFunction);
 
@@ -1486,7 +1486,7 @@ function defineSequence(imagesLoaded, Hammer) {
         animation.domDelay(function() {
 
           // Make the current step transition to "seq-out"
-          currentPhaseProperties = animation.startAnimateOut(self.prevStepId, currentStepElement, 1);
+          currentPhaseProperties = animation.startAnimateOut(self.currentStepId, currentStepElement, 1);
 
           // How long will the current watched elements animate for (including delay)?
           currentPhaseDuration = currentPhaseProperties.watchedTimings.maxTotal;
@@ -1500,13 +1500,14 @@ function defineSequence(imagesLoaded, Hammer) {
 
           // Determine how often goTo() can be used based on
           // navigationSkipThreshold and manage step fading accordingly
-          self.animation.manageNavigationSkip(id, 1, nextStepElement, activePhases);
+          self.animation.manageNavigationSkip(id, nextStepElement, activePhases);
 
           // How long before the next phase should start?
           phaseThresholdTime = animation.getPhaseThreshold(ignorePhaseThreshold, self.options.phaseThreshold, currentPhaseDuration);
 
           // Make the next step transition to "seq-in"
           animation.startAnimateIn(id, 1, nextStepElement, phaseThresholdTime, activePhases, hashTagNav);
+
         });
       },
 
@@ -1563,18 +1564,19 @@ function defineSequence(imagesLoaded, Hammer) {
           // Reverse properties for all elements in the next step
           nextPhaseDuration = animation.reverseProperties(nextPhaseProperties, reversePhaseThreshold.next, phaseThresholdTime, ignorePhaseThreshold);
 
+          // Make the current step transition to "animate-start"
+          animation.startAnimateOut(self.currentStepId, currentStepElement, -1, currentPhaseDuration);
+
           // Determine how often goTo() can be used based on
           // navigationSkipThreshold and manage step fading accordingly
-          self.animation.manageNavigationSkip(id, 1, nextStepElement, activePhases);
-
-          // Make the current step transition to "animate-start"
-          animation.startAnimateOut(id, currentStepElement, -1, currentPhaseDuration);
+          self.animation.manageNavigationSkip(id, nextStepElement, activePhases);
 
           // How long before the next phase should start?
           phaseThresholdTime = animation.getPhaseThreshold(ignorePhaseThreshold, self.options.phaseThreshold, currentPhaseDuration);
 
-          // Callbacks
           if (self.firstRun === false) {
+
+            // Callbacks
             setTimeout(function() {
               animation.currentPhaseStarted();
             }, reversePhaseThreshold.current);
@@ -1722,6 +1724,7 @@ function defineSequence(imagesLoaded, Hammer) {
           currentPhaseProperties = animation.getPhaseProperties(id, "current");
 
           currentPhaseDuration = currentPhaseProperties.watchedTimings.maxTotal;
+
         } else {
 
           // Make the current step transition to "animate-start"
@@ -1980,6 +1983,8 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       reverseTimingFunction: function(timingFunction) {
 
+        // console.log(timingFunction)
+
         if (timingFunction === '' || timingFunction === undefined) {
           return timingFunction;
         }
@@ -2001,6 +2006,13 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // Convert the timing function to a cubic-bezier if it is a keyword
         if (timingFunction.indexOf("cubic-bezier") < 0) {
+
+          // TODO: Support multiple timing-functions
+          // If the timing-function is made up of multiple functions, reduce it
+          // to one only
+          timingFunction = timingFunction.split(",")[0];
+
+          // Convert
           timingFunction = timingFunctionToCubicBezier[timingFunction];
         }
 
@@ -2395,7 +2407,10 @@ function defineSequence(imagesLoaded, Hammer) {
           self.animationStarted(self.currentStepId, self);
 
           // Wait for the step (both phases) to finish animating
-          self.animation.stepEnded(self.currentStepId, self.options.fallback.speed);
+          self.stepEndedTimer = setTimeout(function() {
+
+            self.animation.stepEnded(self.currentStepId);
+          }, self.options.fallback.speed);
         }
 
         // This is the first step we're going to
@@ -3868,7 +3883,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // Determine how often goTo() can be used based on
         // navigationSkipThreshold and manage step fading accordingly
-        self.animation.manageNavigationSkip(id, direction, activePhases);
+        self.animation.manageNavigationSkip(id);
 
         self.animationFallback.goTo(id, self.currentStepId, currentStepElement, id, nextStepElement, direction, hashTagNav);
       }

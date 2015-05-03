@@ -29,8 +29,11 @@ describe("goTo()", function() {
 
   it("should prevent going to the same step already being viewed", function() {
 
-    sequence.goTo(1);
-    expect(sequence.goTo(1)).toEqual(false);
+    setTimeout(function() {
+      sequence.goTo(1);
+      expect(sequence.goTo(1)).toEqual(false);
+    }, 100);
+
   });
 
   it("should prevent going to a non-existent step", function() {

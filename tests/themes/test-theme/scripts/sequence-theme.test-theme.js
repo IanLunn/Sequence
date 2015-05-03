@@ -24,7 +24,7 @@ var sequenceElement = document.getElementById("sequence");
 var options = {
   // animateCanvas: true,
   autoPlay: false,
-  autoPlayDirection: -1,
+  // autoPlayDirection: -1,
   autoPlayDelay: 1000,
   phaseThreshold: true,
   // preloader: true,
@@ -33,8 +33,9 @@ var options = {
   startingStepId: 1,
   // startingStepAnimatesIn: true,
   reverseWhenNavigatingBackwards: true,
-  navigationSkip: true,
-  fadeStepWhenSkipped: true
+  // navigationSkip: false,
+  // fadeStepWhenSkipped: false,
+  // preventReverseSkipping: true
 }
 
 var mySequence,
@@ -84,9 +85,9 @@ mySequence.nextPhaseEnded = function(id) {
 }
 
 mySequence.animationStarted = function(id) {
-  // console.log("started", id);
+  console.log("---started---", id);
 };
 
 mySequence.animationEnded = function(id) {
-  // console.log("ended", id);
+  console.log("---ended---", id);
 };

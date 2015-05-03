@@ -24,13 +24,38 @@ var sequenceElement = document.getElementById("sequence");
 // See: http://www.sequencejs.com/developers/documentation/
 var options = {
   startingStepAnimatesIn: true,
-  autoPlay: true,
+  // autoPlay: true,
   phaseThreshold: true,
-  preloader: true,
+  // preloader: true,
   fadeStepWhenSkipped: false,
   keyNavigation: true,
-  moveActiveStepToTop: false
+  moveActiveStepToTop: false,
+  // reverseWhenNavigatingBackwards: true
 }
 
 // Launch Sequence on the element, and with the options we specified above
 var mySequence = sequence(sequenceElement, options);
+
+mySequence.currentPhaseStarted = function(id) {
+  console.log("cur started", id);
+}
+
+mySequence.currentPhaseEnded = function(id) {
+  console.log("cur ended", id);
+}
+
+mySequence.nextPhaseStarted = function(id) {
+  console.log("next started", id);
+}
+
+mySequence.nextPhaseEnded = function(id) {
+  console.log("next ended", id);
+}
+
+mySequence.animationStarted = function(id) {
+  console.log("---started---", id);
+};
+
+mySequence.animationEnded = function(id) {
+  console.log("---ended---", id);
+};
