@@ -1983,8 +1983,6 @@ function defineSequence(imagesLoaded, Hammer) {
        */
       reverseTimingFunction: function(timingFunction) {
 
-        // console.log(timingFunction)
-
         if (timingFunction === '' || timingFunction === undefined) {
           return timingFunction;
         }
@@ -3727,7 +3725,7 @@ function defineSequence(imagesLoaded, Hammer) {
         nextStepId = 1;
       }
 
-      self.goTo(nextStepId);
+      self.goTo(nextStepId, 1);
 
       return nextStepId;
     };
@@ -3749,7 +3747,7 @@ function defineSequence(imagesLoaded, Hammer) {
         prevStepId = self.noOfSteps;
       }
 
-      self.goTo(prevStepId);
+      self.goTo(prevStepId, -1);
 
       return prevStepId;
     };
