@@ -2110,7 +2110,7 @@ function defineSequence(imagesLoaded, Hammer) {
         if (nextId > currentId) {
           forwardDirection = nextId - currentId;
           reverseDirection = currentId + (noOfSteps - nextId);
-        }else {
+        } else {
           reverseDirection = currentId - nextId;
           forwardDirection = nextId + (noOfSteps - currentId);
         }
@@ -3725,7 +3725,7 @@ function defineSequence(imagesLoaded, Hammer) {
         nextStepId = 1;
       }
 
-      self.goTo(nextStepId, 1);
+      self.goTo(nextStepId);
 
       return nextStepId;
     };
@@ -3739,7 +3739,8 @@ function defineSequence(imagesLoaded, Hammer) {
      */
     self.prev = function() {
 
-      var prevStepId = self.currentStepId - 1;
+      var prevStepId = self.currentStepId - 1,
+          direction = undefined;
 
       if (prevStepId < 1 && self.options.cycle === false) {
         return false;
@@ -3747,7 +3748,11 @@ function defineSequence(imagesLoaded, Hammer) {
         prevStepId = self.noOfSteps;
       }
 
-      self.goTo(prevStepId, -1);
+      if (self.options.reverseWhenNavigatingBackwards === true) {
+        direction = -1;
+      }
+
+      self.goTo(prevStepId, direction);
 
       return prevStepId;
     };
