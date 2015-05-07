@@ -83,10 +83,10 @@ function defineSequence(imagesLoaded, Hammer) {
       autoPlay: false,
 
       // How long to wait between each step before navigation occurs again
-      autoPlayDelay: 5000,
+      autoPlayInterval: 5000,
 
       // Amount of time to wait until autoPlay starts again after being stopped
-      autoPlayStartDelay: null,
+      autoPlayDelay: null,
 
       // Direction of navigation when autoPlay is enabled
       autoPlayDirection: 1,
@@ -807,23 +807,23 @@ function defineSequence(imagesLoaded, Hammer) {
       /**
        * Determine the delay that should be applied before starting autoPlay. A
        * custom delay should take precedence. If delay is true then the delay
-       * should use options.autoPlayStartDelay where specified. If not
-       * specified, use the same time as defined in options.autoPlayDelay
+       * should use options.autoPlayDelay where specified. If not
+       * specified, use the same time as defined in options.autoPlayInterval
        *
        * @param {Boolean/Number} delay - Whether a delay should be applied before
-       * starting autoPlay (true = same amount as options.autoPlayDelay,
-       * false = no delay, number = custom delay period). Applied to
+       * starting autoPlay (true = same amount as options.autoPlayInterval,
+       * false = no interval, number = custom interval period). Applied to
        * autoPlay.start()
-       * @param {Number} startDelay - The delay applied via options.autoPlayStartDelay
-       * @param {Number} autoPlayDelay - The delay applied via options.autoPlayDelay
+       * @param {Number} startDelay - The delay applied via options.autoPlayDelay
+       * @param {Number} autoPlayInterval - The delay applied via options.autoPlayInterval
        */
-      getDelay: function(delay, startDelay, autoPlayDelay) {
+      getDelay: function(delay, startDelay, autoPlayInterval) {
 
         switch (delay) {
 
           case true:
 
-            delay = (startDelay === null) ? autoPlayDelay: startDelay;
+            delay = (startDelay === null) ? autoPlayInterval: startDelay;
             break;
 
           case false:
@@ -839,7 +839,7 @@ function defineSequence(imagesLoaded, Hammer) {
        * Start autoPlay
        *
        * @param {Boolean/Number} delay - Whether a delay should be applied before
-       * starting autoPlay (true = same amount as options.autoPlayDelay,
+       * starting autoPlay (true = same amount as options.autoPlayInterval,
        * false = no delay, number = custom delay period)
        * @param {Boolean} continuing - If autoPlay is continuing from a
        * previous cycle, the started() callback won't be triggered
@@ -856,7 +856,7 @@ function defineSequence(imagesLoaded, Hammer) {
         var options = self.options;
 
         // Which delay should we use?
-        delay = this.getDelay(delay, options.autoPlayStartDelay, options.autoPlayDelay);
+        delay = this.getDelay(delay, options.autoPlayDelay, options.autoPlayInterval);
 
         // Callback (only to be triggered when autoPlay is continuing from a
         // previous cycle)
@@ -3689,7 +3689,7 @@ function defineSequence(imagesLoaded, Hammer) {
      * Stop and start Sequence's autoPlay feature
      *
      * @param {Boolean/Number} delay - Whether a delay should be applied before
-     * starting autoPlay (true = same amount as options.autoPlayDelay,
+     * starting autoPlay (true = same amount as options.autoPlayInterval,
      * false = no delay, number = custom delay period). Applied to
      * autoPlay.start()
      * @returns {Boolean} isAutoPlaying - true if autoPlay was started, false if stopped

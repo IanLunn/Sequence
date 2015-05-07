@@ -23,9 +23,9 @@ var sequenceElement = document.getElementById("sequence");
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
   // animateCanvas: true,
-  // autoPlay: true,
+  autoPlay: true,
   // autoPlayDirection: -1,
-  autoPlayDelay: 3000,
+  autoPlayInterval: 400,
   phaseThreshold: false,
   // preloader: true,
   keyNavigation: true,
