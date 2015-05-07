@@ -23,10 +23,10 @@ var sequenceElement = document.getElementById("sequence");
 // See: https://github.com/IanLunn/Sequence/blob/v2/DOCUMENTATION.md
 var options = {
   // animateCanvas: true,
-  autoPlay: false,
+  // autoPlay: true,
   // autoPlayDirection: -1,
-  autoPlayDelay: 1000,
-  phaseThreshold: true,
+  autoPlayDelay: 3000,
+  phaseThreshold: false,
   // preloader: true,
   keyNavigation: true,
   // hashTags: true,
@@ -34,7 +34,8 @@ var options = {
   // startingStepAnimatesIn: true,
   reverseWhenNavigatingBackwards: true,
   // navigationSkip: false,
-  // fadeStepWhenSkipped: false,
+  // ignorePhaseThresholdWhenSkipped: false,
+  fadeStepWhenSkipped: true,
   // preventReverseSkipping: true
 }
 

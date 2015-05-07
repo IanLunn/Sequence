@@ -30,7 +30,8 @@ var options = {
   fadeStepWhenSkipped: false,
   keyNavigation: true,
   moveActiveStepToTop: false,
-  reverseWhenNavigatingBackwards: false
+  reverseWhenNavigatingBackwards: false,
+  ignorePhaseThresholdWhenSkipped: false
 }
 
 // Launch Sequence on the element, and with the options we specified above
