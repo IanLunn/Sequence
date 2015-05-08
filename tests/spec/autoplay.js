@@ -61,12 +61,12 @@ describe("autoPlay.getDelay()", function() {
     }, 500);
   });
 
-  it("should return a delay with the same value as options.autoPlayDelay when delay is true or options.autoPlayStartDelay is null", function() {
+  it("should return a delay with the same value as options.autoPlayInterval when delay is true or options.autoPlayDelay is null", function() {
 
     expect(sequence.autoPlay.getDelay(true, null, 5000)).toEqual(5000);
   });
 
-  it("should return a delay with the same value as options.autoPlayStartDelay when delay is true or undefined", function() {
+  it("should return a delay with the same value as options.autoPlayDelay when delay is true or undefined", function() {
 
     expect(sequence.autoPlay.getDelay(true, 250, 5000)).toEqual(250);
   });
@@ -78,7 +78,7 @@ describe("autoPlay.getDelay()", function() {
     expect(sequence.autoPlay.getDelay(undefined, null, 5000)).toEqual(0);
   });
 
-  it("should return a delay of 750 when a custom delay is defined, regardless of options.autoPlayDelay and options.autoPlayStartDelay", function() {
+  it("should return a delay of 750 when a custom delay is defined, regardless of options.autoPlayInterval and options.autoPlayDelay", function() {
 
     expect(sequence.autoPlay.getDelay(750, null, 5000)).toEqual(750);
     expect(sequence.autoPlay.getDelay(750, 250, 5000)).toEqual(750);

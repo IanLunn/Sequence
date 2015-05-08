@@ -2947,7 +2947,9 @@ function defineSequence(imagesLoaded, Hammer) {
         // Add visibilityChange to the list of events
         self.manageEvents.list[visibilityChange] = [];
 
-        this.add.hashChange();
+        if (self.options.hashTags === true) {
+          this.add.hashChange();
+        }
 
         if (self.options.swipeNavigation === true) {
           this.add.swipeNavigation();
@@ -3038,7 +3040,9 @@ function defineSequence(imagesLoaded, Hammer) {
         switch(type) {
 
           case "hashchange":
-            removeHashChange(eventElements[0].handler);
+            if (self.options.hashTags === true) {
+              removeHashChange(eventElements[0].handler);
+            }
           break;
 
           case "hammer":
