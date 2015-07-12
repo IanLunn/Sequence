@@ -1,14 +1,14 @@
 /*
- * Sequence
+ * Sequence.js
  *
- * The open-source CSS animation framework for creating responsive sliders,
+ * The responsive CSS animation framework for creating unique sliders,
  * presentations, banners, and other step-based applications.
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0-beta.5
- * @license https://github.com/IanLunn/Sequence/blob/master/LICENSE
- * @copyright Ian Lunn 2015
+ * @version 2.0.0-beta.7
+ * @license http://sequencejs.com/licenses/
+ * @copyright Ian Lunn Design Limited 2015
  */
 
 function defineSequence(imagesLoaded, Hammer) {
@@ -977,7 +977,7 @@ function defineSequence(imagesLoaded, Hammer) {
        * if moveActiveStepToTop is enabled and the browser supports
        * transform-style: preserve-3d, add this property to the canvas and steps.
        * This enables the use of transform: translateZ() in favor of z-index
-       * to work around a bug in iOS browsers
+       * for better performance
        *
        * @api private
        */
@@ -1269,8 +1269,15 @@ function defineSequence(imagesLoaded, Hammer) {
 
       /**
        * If the moveActiveStepToTop option is being used, move the next step
-       * to the top (via a z-index equivalent to the number of steps), and the
-       * current step to the bottom
+       * to the top and the current step to the bottom
+       *
+       * Stacking order is manipulated via translateZ() instead of z-index in
+       * supporting browsers as it is much quicker
+       *
+       * Bug Workaround 29/06/2015: Blink does some odd things with Stacking
+       * order when using translateZ(). To workaround this each Z translation
+       * is multipled by ten
+       * https://code.google.com/p/chromium/issues/detail?id=505608
        *
        * @param {HTMLElement} currentElement - The current step to be moved off
        * the top
@@ -1285,9 +1292,9 @@ function defineSequence(imagesLoaded, Hammer) {
 
           if (self.propertySupport.transformStylePreserve3d === true) {
 
-            prevStepElement.style[Modernizr.prefixed("transform")] = "translateZ(1px)";
-            currentElement.style[Modernizr.prefixed("transform")] = "translateZ(" + lastStepId + "px)";
-            nextElement.style[Modernizr.prefixed("transform")] = "translateZ(" + self.noOfSteps + "px)";
+            prevStepElement.style[Modernizr.prefixed("transform")] = "translateZ(10px)";
+            currentElement.style[Modernizr.prefixed("transform")] = "translateZ(" + (lastStepId * 10) + "px)";
+            nextElement.style[Modernizr.prefixed("transform")] = "translateZ(" + (self.noOfSteps * 10) + "px)";
           } else {
             prevStepElement.style.zIndex = 1;
             currentElement.style.zIndex = lastStepId;
@@ -3143,7 +3150,20 @@ function defineSequence(imagesLoaded, Hammer) {
 
               buttonEvent = function(element) {
 
-                handler = addEvent(element, "click", function(e) {
+                handler = addEvent(element, "click", function(event) {
+
+                  if (!event) {
+                    event = window.event;
+                  }
+
+                  // Prevent the default action - this is so <a href="#step1">
+                  // can act as a navigation element but the anchor link will
+                  // only activate when JS is disabled
+                  if (event.preventDefault) {
+                    event.preventDefault();
+                  } else {
+                    event.returnValue = false;
+                  }
 
                   callback();
                 });
@@ -3159,6 +3179,15 @@ function defineSequence(imagesLoaded, Hammer) {
 
                   if (!event) {
                     event = window.event;
+                  }
+
+                  // Prevent the default action - this is so <a href="#step1">
+                  // can act as a pagination element but the anchor link will
+                  // only activate when JS is disabled
+                  if (event.preventDefault) {
+                    event.preventDefault();
+                  } else {
+                    event.returnValue = false;
                   }
 
                   var targetElement = event.target || event.srcElement;

@@ -1,9 +1,9 @@
-Sequence [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=IanLunn&url=https://github.com/IanLunn/Sequence&title=Sequence&language=english&tags=github&category=software)
+Sequence.js [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=IanLunn&url=https://github.com/IanLunn/Sequence&title=Sequence&language=english&tags=github&category=software)
 =====================
 
-> Responsive animation framework for creating unique sliders, presentations, banners, and other step-based applications.
+> The responsive CSS animation framework for creating unique sliders, presentations, banners, and other step-based applications.
 
-See the [introduction](http://ianlunn.github.io/Sequence/) and [pre-made themes](http://sequencejs.com/).
+See the [introduction](http://ianlunn.github.io/Sequence/) and [ready-made themes](http://sequencejs.com/).
 
 ## Features
 

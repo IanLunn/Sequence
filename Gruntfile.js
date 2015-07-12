@@ -212,14 +212,14 @@ module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt);
 
   // Watch for local development
-  grunt.registerTask('default', [
+  grunt.registerTask('serve', 'start the server and watch files', [
     'connect:livereload',
     'open',
     'watch'
   ]);
 
   // Manual compile
-  grunt.registerTask('run', [
+  grunt.registerTask('default', [
     'version',
     'copy',
     'sass',
@@ -229,12 +229,12 @@ module.exports = function(grunt) {
   ]);
 
   // Single use test - will run jshint and karma once
-  grunt.registerTask('test', [
+  grunt.registerTask('test', 'run tests' [
     'jshint',
     'karma:single'
   ]);
 
-  grunt.registerTask('test-watch', [
+  grunt.registerTask('test-watch', 'start a server to watch test files and run tests when they are updated' [
     'karma:watch'
   ]);
 };

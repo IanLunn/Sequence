@@ -1,26 +1,35 @@
-/*!
+/**
  * Theme Name: Basic
- * Version: 0.1.0
- * Theme URL:
+ * Version: 0.0.0
+ * Theme URL: http://sequencejs.com/themes/basic/
  *
- * A simple theme that slides side-to-side
+ * A simple, colorful side-to-side slider
  *
- * Powered by Sequence.js - The open-source CSS animation framework for creating
- * responsive sliders, presentations, banners, and other step-based applications.
+ * This theme is powered by Sequence.js - The
+ * responsive CSS animation framework for creating unique sliders,
+ * presentations, banners, and other step-based applications.
  *
  * Author: Ian Lunn
- * Author URL: https://ianlunn.co.uk/
+ * Author URL: http://ianlunn.co.uk/
  *
- * Basic Sequence Theme Copyright (c) Ian Lunn 2014
- * License: MIT http://opensource.org/licenses/MIT
+ * Theme License: http://sequencejs.com/licenses/#free-theme
+ * Sequence.js Licenses: http://sequencejs.com/licenses/
  *
- * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
+ * Copyright © 2015 Ian Lunn Design Limited unless otherwise stated.
  */
 
 @import "partials/mixins";
 @import "partials/animations";
 
-// Google Web Font
+body,
+html,
+.seq {
+  /* Uncomment to make the theme full-screen */
+  /* height: 100% !important; */
+  /* max-height: 100% !important; */
+}
+
+/* Google Web Font */
 @import url(http://fonts.googleapis.com/css?family=Roboto:900);
 
 // Colors for each step
@@ -28,29 +37,29 @@ $color1: #279FE5;
 $color2: #F96852;
 $color3: #2BBF8E;
 
-#sequence {
+$sequenceMobileHeight: 400px;
+$sequenceDesktopHeight: 585px;
+
+.seq {
   position: relative;
 
-  // Dimensions
+  /* Dimensions */
   width: 100%;
-  height: 400px;
+  height: $sequenceMobileHeight;
   max-width: 100%;
 
-  // Hide anything that goes beyond the boundaries of the Sequence container
-  overflow: hidden;
-
-  // Center the Sequence container on the page
+  /* Center the Sequence container on the page */
   margin: 0 auto;
   padding: 0;
 
-  // Some basic styles
+  /* Some basic styles */
   font-family: sans-serif;
 
-  // Reset the canvas and steps for more browser consistency
   .seq-pagination,
   .seq-screen,
   .seq-canvas,
   .seq-canvas > * {
+    /* Reset the canvas and steps for better browser consistency */
     margin: 0;
     padding: 0;
     list-style: none;
@@ -61,62 +70,71 @@ $color3: #2BBF8E;
   }
 
   .seq-pagination {
-    visibility: hidden;
     position: absolute;
     z-index: 10;
     bottom: 20px;
     width: 100%;
+    border: none;
     text-align: center;
 
+    a {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
     .seq-current {
-      @include prefixed(border-radius, 100%);
+      @include prefixed(border-radius, "100%");
     }
 
     > * {
       margin: 0 4px;
       padding: 0;
       display: inline-block;
-      *display: inline;
       zoom: 1;
       width: 28px;
       height: 28px;
       cursor: pointer;
+      background: none;
       border: white solid 2px;
-      @include prefixed(transition-duration, .1s);
+      @include prefixed(transition-duration, ".1s");
       @include prefixed(transition-property, "background-color, border-radius");
 
-      &[rel="step1"]:hover {
+      &:nth-child(1):focus,
+      &:nth-child(1):hover {
         background-color: $color1;
       }
 
-      &[rel="step2"]:hover {
+      &:nth-child(2):focus,
+      &:nth-child(2):hover {
         background-color: $color2;
       }
 
-      &[rel="step3"]:hover {
+      &:nth-child(3):focus,
+      &:nth-child(3):hover {
         background-color: $color3;
       }
 
-      // Image replacement
+      /* Image replacement */
       font: 0/0 a;
       text-shadow: none;
       color: transparent;
     }
   }
 
-  // Make the canvas the same dimensions as the container and prevent lines from
-  // wrapping so each step can sit side-by-side
   .seq-canvas {
+    /* Make the canvas the same dimensions as the container and prevent lines
+     * from wrapping so each step can sit side-by-side */
     position: absolute;
     height: 100%;
     width: 100%;
     white-space: nowrap;
-    font-size: 0; // Reset the font-size to remove 4px from :before and .title
+    /* Reset the font-size to remove 4px from :before and .title */
+    font-size: 0;
 
-    // Make the steps the same size as the container and sit side-by-side
     > * {
+      /* Make the steps the same size as the container and sit side-by-side */
       display: inline-block;
-      *display: inline;
       zoom: 1;
       vertical-align: top;
       width: 100%;
@@ -124,30 +142,30 @@ $color3: #2BBF8E;
       white-space: normal;
       text-align: center;
       color: white;
-      @include prefixed(transform, translateZ(0));
+      @include prefixed(transform, "translateZ(0)");
     }
 
-    > li:before {
+    > *:before {
+      /* Vertically align .seq-content */
       content: "";
       display: inline-block;
-      *display: inline;
       vertical-align: middle;
       height: 100%;
     }
   }
 
-  // Default styles for content
-  .content {
+  .seq-content {
+    /* Default styles for content */
     display: inline-block;
-    *display: inline;
     vertical-align: middle;
+    max-width: 720px;
     margin: 0 4%;
-    font-size: 16px; // Reset the font-size from 0 back to 16
+    /* Reset the font-size from 0 back to 16 */
+    font-size: 16px;
   }
 
-  .button {
+  .seq-button {
     display: inline-block;
-    *display: inline;
     zoom: 1;
     margin-top: 2em;
     padding: .6em;
@@ -158,61 +176,68 @@ $color3: #2BBF8E;
     font-family: 'Roboto', sans-serif;
 
     @include prefixed(animation-fill-mode, "forwards");
-    @include prefixed(transition-duration, .25s);
+    @include prefixed(transition-duration, ".25s");
     @include prefixed(transition-property, "background-color, color");
 
+    &:focus,
     &:hover {
       background-color: white;
     }
   }
 
-  .step1 {
+  .seq-step1 {
     background-color: $color1;
 
-    .button:hover {
+    .seq-button:focus,
+    .seq-button:hover {
       color: $color1;
     }
   }
 
-  .step2 {
+  .seq-step2 {
     background-color: $color2;
 
-    .button:hover {
+    .seq-button:focus,
+    .seq-button:hover {
       color: $color2;
     }
   }
 
-  .step3 {
+  .seq-step3 {
     background-color: $color3;
 
-    .button:hover {
+    .seq-button:focus,
+    .seq-button:hover {
       color: $color3;
     }
   }
 
-  h2,
-  h3,
-  .button {
+  .seq-title,
+  .seq-subtitle,
+  .seq-button {
     -moz-osx-font-smoothing: grayscale;
-    @include prefixed(transform, translateZ(0));
+    @include prefixed(transform, "translateZ(0)");
   }
 
-  h2,
-  h3 {
+  .seq-title,
+  .seq-subtitle {
     margin: 0 0 .5em 0;
     display: block;
-    line-height: 120%;
+    line-height: 1.4;
     -moz-osx-font-smoothing: grayscale;
-    @include prefixed(transform, translateZ(0));
+    @include prefixed(transform, "translateZ(0)");
   }
 
-  h2 {
+  .seq-title {
     font-family: 'Roboto', sans-serif;
     font-size: 1.8em;
   }
 
-  // when JS is enabled
   &.seq-active {
+    /* when JS is enabled */
+
+    /* Hide anything that goes beyond the boundaries of the Sequence container */
+    overflow: hidden;
 
     .seq-preloader,
     .seq-pagination {
@@ -227,77 +252,84 @@ $color3: #2BBF8E;
       fill: white;
     }
 
-    .content {
-      margin-top: -26px; // Pull the content up a bit to account for the pagination
+    .seq-content {
+      /* Pull the content up a bit to account for the pagination */
+      margin-top: -26px;
     }
 
-    .button {
-      @include prefixed(transform, scale(0) translateZ(0));
+    .seq-button {
+      @include prefixed(transform, "scale(0) translateZ(0)");
     }
 
-    // Starting positions
-    h2,
-    h3 {
+    .seq-title,
+    .seq-subtitle {
+      /* Starting positions */
       opacity: 0;
-      @include prefixed(transition-duration, .4s);
+      @include prefixed(transition-duration, ".4s");
     }
 
-    h2 {
-      @include prefixed(transform, translate(0, -20px));
+    .seq-title {
+      @include prefixed(transform, "translate(0, -20px)");
     }
 
     h3 {
-      @include prefixed(transform, translate(0, 20px));
+      @include prefixed(transform, "translate(0, 20px)");
     }
   }
 
-  // Animate in positions for content
   .seq-in {
-    h2,
-    h3 {
+    /* Animate in positions for content */
+    .seq-title,
+    .seq-subtitle {
       opacity: 1;
-      @include prefixed(transform, translate(0, 0));
+      @include prefixed(transform, "translate(0, 0)");
     }
 
-    .button {
+    .seq-button {
       @include prefixed(animation-name, "jelly");
-      @include prefixed(animation-duration, .5s);
+      @include prefixed(animation-duration, ".5s");
     }
   }
 
-  // Animate out positions for content
   .seq-out {
-    h2,
-    h3 {
+    /* Animate out positions for content */
+    .seq-title,
+    .seq-subtitle {
       opacity: 1;
-      @include prefixed(transform, translate(0, 0));
+      @include prefixed(transform, "translate(0, 0)");
     }
 
-    .button {
-      @include prefixed(transform, scale(1) translateZ(0));
+    .seq-button {
+      @include prefixed(transform, "scale(1) translateZ(0)");
     }
   }
-}
 
-@media only screen and (min-width: 600px) {
-  #sequence {
-    height: 585px;
+  @media only screen and (min-width: 600px) {
 
-    .content {
-      margin-top: -19px; // Pull the content up a bit to account for the pagination
+    /* Make the container 16:9 but no bigger than 90% of the screen height */
+    @include aspect-ratio(16, 9);
+    height: 100%;
+    max-height: 90vh;
+    min-height: $sequenceMobileHeight;
+
+    .seq-content {
+      /* Pull the content up to account for the pagination */
+      margin-top: -19px;
     }
 
     .seq-pagination > * {
       width: 20px;
       height: 20px;
     }
+  }
 
-    h2,
-    h3 {
+  @media only screen and (min-width: 768px) {
+    .seq-title,
+    .seq-subtitle {
       font-size: 1.4em;
     }
 
-    h2 {
+    .seq-title {
       font-size: 2.6em;
     }
   }

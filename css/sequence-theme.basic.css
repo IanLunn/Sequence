@@ -1,145 +1,149 @@
-/*!
+@charset "UTF-8";
+/**
  * Theme Name: Basic
- * Version: 0.1.0
- * Theme URL:
+ * Version: 0.0.0
+ * Theme URL: http://sequencejs.com/themes/basic/
  *
- * A simple theme that slides side-to-side
+ * A simple, colorful side-to-side slider
  *
- * Powered by Sequence.js - The open-source CSS animation framework for creating
- * responsive sliders, presentations, banners, and other step-based applications.
+ * This theme is powered by Sequence.js - The
+ * responsive CSS animation framework for creating unique sliders,
+ * presentations, banners, and other step-based applications.
  *
  * Author: Ian Lunn
- * Author URL: https://ianlunn.co.uk/
+ * Author URL: http://ianlunn.co.uk/
  *
- * Basic Sequence Theme Copyright (c) Ian Lunn 2014
- * License: MIT http://opensource.org/licenses/MIT
+ * Theme License: http://sequencejs.com/licenses/#free-theme
+ * Sequence.js Licenses: http://sequencejs.com/licenses/
  *
- * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
+ * Copyright © 2015 Ian Lunn Design Limited unless otherwise stated.
  */
 @import url(http://fonts.googleapis.com/css?family=Roboto:900);
 @keyframes jelly {
   0% {
     transform: scale(0);
   }
-
   40% {
     transform: scale(1.15);
   }
-
   60% {
     transform: scale(1);
   }
-
   80% {
     transform: scale(1.05);
   }
-
   100% {
     transform: scale(1);
   }
 }
-
 @-webkit-keyframes jelly {
   0% {
     -webkit-transform: scale(0);
   }
-
   40% {
     -webkit-transform: scale(1.15);
   }
-
   60% {
     -webkit-transform: scale(1);
   }
-
   80% {
     -webkit-transform: scale(1.05);
   }
-
   100% {
     -webkit-transform: scale(1);
   }
 }
+body,
+html,
+.seq {
+  /* Uncomment to make the theme full-screen */
+  /* height: 100% !important; */
+  /* max-height: 100% !important; */
+}
 
-#sequence {
+/* Google Web Font */
+.seq {
   position: relative;
+  /* Dimensions */
   width: 100%;
   height: 400px;
   max-width: 100%;
-  overflow: hidden;
+  /* Center the Sequence container on the page */
   margin: 0 auto;
   padding: 0;
+  /* Some basic styles */
   font-family: sans-serif;
 }
-#sequence .seq-pagination,
-#sequence .seq-screen,
-#sequence .seq-canvas,
-#sequence .seq-canvas > * {
+.seq .seq-pagination,
+.seq .seq-screen,
+.seq .seq-canvas,
+.seq .seq-canvas > * {
+  /* Reset the canvas and steps for better browser consistency */
   margin: 0;
   padding: 0;
   list-style: none;
 }
-#sequence .seq-preloader {
-  background: #279fe5;
+.seq .seq-preloader {
+  background: #279FE5;
 }
-#sequence .seq-pagination {
-  visibility: hidden;
+.seq .seq-pagination {
   position: absolute;
   z-index: 10;
   bottom: 20px;
   width: 100%;
+  border: none;
   text-align: center;
 }
-#sequence .seq-pagination .seq-current {
+.seq .seq-pagination a {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.seq .seq-pagination .seq-current {
   -webkit-border-radius: 100%;
-  -moz-border-radius: 100%;
-  -ms-border-radius: 100%;
-  -o-border-radius: 100%;
   border-radius: 100%;
 }
-#sequence .seq-pagination > * {
+.seq .seq-pagination > * {
   margin: 0 4px;
   padding: 0;
   display: inline-block;
-  *display: inline;
   zoom: 1;
   width: 28px;
   height: 28px;
   cursor: pointer;
+  background: none;
   border: white solid 2px;
-  -webkit-transition-duration: 0.1s;
-  -moz-transition-duration: 0.1s;
-  -ms-transition-duration: 0.1s;
-  -o-transition-duration: 0.1s;
-  transition-duration: 0.1s;
+  -webkit-transition-duration: .1s;
+  transition-duration: .1s;
   -webkit-transition-property: background-color, border-radius;
-  -moz-transition-property: background-color, border-radius;
-  -ms-transition-property: background-color, border-radius;
-  -o-transition-property: background-color, border-radius;
   transition-property: background-color, border-radius;
+  /* Image replacement */
   font: 0/0 a;
   text-shadow: none;
   color: transparent;
 }
-#sequence .seq-pagination > *[rel="step1"]:hover {
-  background-color: #279fe5;
+.seq .seq-pagination > *:nth-child(1):focus, .seq .seq-pagination > *:nth-child(1):hover {
+  background-color: #279FE5;
 }
-#sequence .seq-pagination > *[rel="step2"]:hover {
-  background-color: #f96852;
+.seq .seq-pagination > *:nth-child(2):focus, .seq .seq-pagination > *:nth-child(2):hover {
+  background-color: #F96852;
 }
-#sequence .seq-pagination > *[rel="step3"]:hover {
-  background-color: #2bbf8e;
+.seq .seq-pagination > *:nth-child(3):focus, .seq .seq-pagination > *:nth-child(3):hover {
+  background-color: #2BBF8E;
 }
-#sequence .seq-canvas {
+.seq .seq-canvas {
+  /* Make the canvas the same dimensions as the container and prevent lines
+   * from wrapping so each step can sit side-by-side */
   position: absolute;
   height: 100%;
   width: 100%;
   white-space: nowrap;
+  /* Reset the font-size to remove 4px from :before and .title */
   font-size: 0;
 }
-#sequence .seq-canvas > * {
+.seq .seq-canvas > * {
+  /* Make the steps the same size as the container and sit side-by-side */
   display: inline-block;
-  *display: inline;
   zoom: 1;
   vertical-align: top;
   width: 100%;
@@ -148,28 +152,26 @@
   text-align: center;
   color: white;
   -webkit-transform: translateZ(0);
-  -moz-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  -o-transform: translateZ(0);
   transform: translateZ(0);
 }
-#sequence .seq-canvas > li:before {
+.seq .seq-canvas > *:before {
+  /* Vertically align .seq-content */
   content: "";
   display: inline-block;
-  *display: inline;
   vertical-align: middle;
   height: 100%;
 }
-#sequence .content {
+.seq .seq-content {
+  /* Default styles for content */
   display: inline-block;
-  *display: inline;
   vertical-align: middle;
+  max-width: 720px;
   margin: 0 4%;
+  /* Reset the font-size from 0 back to 16 */
   font-size: 16px;
 }
-#sequence .button {
+.seq .seq-button {
   display: inline-block;
-  *display: inline;
   zoom: 1;
   margin-top: 2em;
   padding: .6em;
@@ -179,165 +181,162 @@
   text-transform: uppercase;
   font-family: 'Roboto', sans-serif;
   -webkit-animation-fill-mode: forwards;
-  -moz-animation-fill-mode: forwards;
-  -ms-animation-fill-mode: forwards;
-  -o-animation-fill-mode: forwards;
   animation-fill-mode: forwards;
-  -webkit-transition-duration: 0.25s;
-  -moz-transition-duration: 0.25s;
-  -ms-transition-duration: 0.25s;
-  -o-transition-duration: 0.25s;
-  transition-duration: 0.25s;
+  -webkit-transition-duration: .25s;
+  transition-duration: .25s;
   -webkit-transition-property: background-color, color;
-  -moz-transition-property: background-color, color;
-  -ms-transition-property: background-color, color;
-  -o-transition-property: background-color, color;
   transition-property: background-color, color;
 }
-#sequence .button:hover {
+.seq .seq-button:focus, .seq .seq-button:hover {
   background-color: white;
 }
-#sequence .step1 {
-  background-color: #279fe5;
+.seq .seq-step1 {
+  background-color: #279FE5;
 }
-#sequence .step1 .button:hover {
-  color: #279fe5;
+.seq .seq-step1 .seq-button:focus,
+.seq .seq-step1 .seq-button:hover {
+  color: #279FE5;
 }
-#sequence .step2 {
-  background-color: #f96852;
+.seq .seq-step2 {
+  background-color: #F96852;
 }
-#sequence .step2 .button:hover {
-  color: #f96852;
+.seq .seq-step2 .seq-button:focus,
+.seq .seq-step2 .seq-button:hover {
+  color: #F96852;
 }
-#sequence .step3 {
-  background-color: #2bbf8e;
+.seq .seq-step3 {
+  background-color: #2BBF8E;
 }
-#sequence .step3 .button:hover {
-  color: #2bbf8e;
+.seq .seq-step3 .seq-button:focus,
+.seq .seq-step3 .seq-button:hover {
+  color: #2BBF8E;
 }
-#sequence h2,
-#sequence h3,
-#sequence .button {
+.seq .seq-title,
+.seq .seq-subtitle,
+.seq .seq-button {
   -moz-osx-font-smoothing: grayscale;
   -webkit-transform: translateZ(0);
-  -moz-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  -o-transform: translateZ(0);
   transform: translateZ(0);
 }
-#sequence h2,
-#sequence h3 {
+.seq .seq-title,
+.seq .seq-subtitle {
   margin: 0 0 .5em 0;
   display: block;
-  line-height: 120%;
+  line-height: 1.4;
   -moz-osx-font-smoothing: grayscale;
   -webkit-transform: translateZ(0);
-  -moz-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  -o-transform: translateZ(0);
   transform: translateZ(0);
 }
-#sequence h2 {
+.seq .seq-title {
   font-family: 'Roboto', sans-serif;
   font-size: 1.8em;
 }
-#sequence.seq-active .seq-preloader,
-#sequence.seq-active .seq-pagination {
+.seq.seq-active {
+  /* when JS is enabled */
+  /* Hide anything that goes beyond the boundaries of the Sequence container */
+  overflow: hidden;
+}
+.seq.seq-active .seq-preloader,
+.seq.seq-active .seq-pagination {
   visibility: visible;
 }
-#sequence.seq-active .seq-preloader.seq-preloaded {
+.seq.seq-active .seq-preloader.seq-preloaded {
   visibility: hidden;
 }
-#sequence.seq-active .seq-preloader .seq-preload-circle {
+.seq.seq-active .seq-preloader .seq-preload-circle {
   fill: white;
 }
-#sequence.seq-active .content {
+.seq.seq-active .seq-content {
+  /* Pull the content up a bit to account for the pagination */
   margin-top: -26px;
 }
-#sequence.seq-active .button {
+.seq.seq-active .seq-button {
   -webkit-transform: scale(0) translateZ(0);
-  -moz-transform: scale(0) translateZ(0);
-  -ms-transform: scale(0) translateZ(0);
-  -o-transform: scale(0) translateZ(0);
   transform: scale(0) translateZ(0);
 }
-#sequence.seq-active h2,
-#sequence.seq-active h3 {
+.seq.seq-active .seq-title,
+.seq.seq-active .seq-subtitle {
+  /* Starting positions */
   opacity: 0;
-  -webkit-transition-duration: 0.4s;
-  -moz-transition-duration: 0.4s;
-  -ms-transition-duration: 0.4s;
-  -o-transition-duration: 0.4s;
-  transition-duration: 0.4s;
+  -webkit-transition-duration: .4s;
+  transition-duration: .4s;
 }
-#sequence.seq-active h2 {
+.seq.seq-active .seq-title {
   -webkit-transform: translate(0, -20px);
-  -moz-transform: translate(0, -20px);
-  -ms-transform: translate(0, -20px);
-  -o-transform: translate(0, -20px);
   transform: translate(0, -20px);
 }
-#sequence.seq-active h3 {
+.seq.seq-active h3 {
   -webkit-transform: translate(0, 20px);
-  -moz-transform: translate(0, 20px);
-  -ms-transform: translate(0, 20px);
-  -o-transform: translate(0, 20px);
   transform: translate(0, 20px);
 }
-#sequence .seq-in h2,
-#sequence .seq-in h3 {
+.seq .seq-in {
+  /* Animate in positions for content */
+}
+.seq .seq-in .seq-title,
+.seq .seq-in .seq-subtitle {
   opacity: 1;
   -webkit-transform: translate(0, 0);
-  -moz-transform: translate(0, 0);
-  -ms-transform: translate(0, 0);
-  -o-transform: translate(0, 0);
   transform: translate(0, 0);
 }
-#sequence .seq-in .button {
+.seq .seq-in .seq-button {
   -webkit-animation-name: jelly;
-  -moz-animation-name: jelly;
-  -ms-animation-name: jelly;
-  -o-animation-name: jelly;
   animation-name: jelly;
-  -webkit-animation-duration: 0.5s;
-  -moz-animation-duration: 0.5s;
-  -ms-animation-duration: 0.5s;
-  -o-animation-duration: 0.5s;
-  animation-duration: 0.5s;
+  -webkit-animation-duration: .5s;
+  animation-duration: .5s;
 }
-#sequence .seq-out h2,
-#sequence .seq-out h3 {
+.seq .seq-out {
+  /* Animate out positions for content */
+}
+.seq .seq-out .seq-title,
+.seq .seq-out .seq-subtitle {
   opacity: 1;
   -webkit-transform: translate(0, 0);
-  -moz-transform: translate(0, 0);
-  -ms-transform: translate(0, 0);
-  -o-transform: translate(0, 0);
   transform: translate(0, 0);
 }
-#sequence .seq-out .button {
+.seq .seq-out .seq-button {
   -webkit-transform: scale(1) translateZ(0);
-  -moz-transform: scale(1) translateZ(0);
-  -ms-transform: scale(1) translateZ(0);
-  -o-transform: scale(1) translateZ(0);
   transform: scale(1) translateZ(0);
 }
-
 @media only screen and (min-width: 600px) {
-  #sequence {
-    height: 585px;
+  .seq {
+    /* Make the container 16:9 but no bigger than 90% of the screen height */
+    position: relative;
+    height: auto;
+    height: 100%;
+    max-height: 90vh;
+    min-height: 400px;
   }
-  #sequence .content {
+  .seq:before {
+    /* Make an element a certain aspect ratio */
+    display: block;
+    content: "";
+    width: 100%;
+    padding-top: 56.25%;
+  }
+  .seq .seq-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  .seq .seq-content {
+    /* Pull the content up to account for the pagination */
     margin-top: -19px;
   }
-  #sequence .seq-pagination > * {
+  .seq .seq-pagination > * {
     width: 20px;
     height: 20px;
   }
-  #sequence h2,
-  #sequence h3 {
+}
+@media only screen and (min-width: 768px) {
+  .seq .seq-title,
+  .seq .seq-subtitle {
     font-size: 1.4em;
   }
-  #sequence h2 {
+  .seq .seq-title {
     font-size: 2.6em;
   }
 }
+
+/*# sourceMappingURL=sequence-theme.basic.css.map */
