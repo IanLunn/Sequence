@@ -229,12 +229,12 @@ module.exports = function(grunt) {
   ]);
 
   // Single use test - will run jshint and karma once
-  grunt.registerTask('test', 'run tests' [
+  grunt.registerTask('test', 'run tests', [
     'jshint',
     'karma:single'
   ]);
 
-  grunt.registerTask('test-watch', 'start a server to watch test files and run tests when they are updated' [
+  grunt.registerTask('test-watch', 'start a server to watch test files and run tests when they are updated', [
     'karma:watch'
   ]);
 };
