@@ -3,7 +3,9 @@ Sequence.js [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-l
 
 > The responsive CSS animation framework for creating unique sliders, presentations, banners, and other step-based applications.
 
-See the [introduction](http://ianlunn.github.io/Sequence/) and [ready-made themes](http://sequencejs.com/).
+## Demos
+
+See the [introduction](http://ianlunn.github.io/Sequence/) and [ready-made themes](http://sequencejs.com/themes/).
 
 ## Features
 
@@ -26,17 +28,17 @@ See the [introduction](http://ianlunn.github.io/Sequence/) and [ready-made theme
 
 ## Philosophy
 
-The key philosophy for Sequence is to aid you in creating your animated step-based application without getting in the way of how you or a web browser work. Create content and then animate it using the HTML and CSS you're used to. There's no special syntax to learn, no limitations on the elements you can use, and no heavy JavaScript implementations recreating what the browser is already capable of.
+The key philosophy for Sequence.js is to aid you in creating your animated step-based application without getting in the way of how you or a web browser work. Create content and then animate it using the HTML and CSS you're used to. There's no special syntax to learn, no limitations on the elements you can use, and no heavy JavaScript implementations recreating what the browser is already capable of.
 
 ## Getting Started
 
-To get started [download](https://github.com/IanLunn/Sequence#download) Sequence and then head to the [documentation](https://github.com/IanLunn/Sequence/wiki/Documentation). If you'd like to contribute to Sequence's development, please see the [contributing](https://github.com/IanLunn/Sequence/blob/master/contributing.md) guidelines.
+To get started [download](https://github.com/IanLunn/Sequence#download) Sequence.js and then head to the [documentation](https://github.com/IanLunn/Sequence/wiki/Documentation). If you'd like to contribute to Sequence.js development, please see the [contributing](https://github.com/IanLunn/Sequence/blob/master/contributing.md) guidelines.
 
 ### Download
 
-- [Download Sequence](https://github.com/IanLunn/Sequence/archive/master.zip)
+- [Download Sequence.js](https://github.com/IanLunn/Sequence/archive/master.zip)
 
-Sequence can also be installed using the [Bower](http://bower.io/) command:
+Sequence.js can also be installed using the [Bower](http://bower.io/) command:
 
 ```
 bower install sequencejs
@@ -52,41 +54,16 @@ npm install sequencejs
 
 [Ian Lunn](https://ianlunn.co.uk/) and [contributors](https://github.com/IanLunn/Sequence/graphs/contributors).
 
-Follow [@IanLunn](https://twitter.com/IanLunn/) on Twitter for updates on Sequence as well as news and opinions on front-end web development.
+Follow [@IanLunn](https://twitter.com/IanLunn/) on Twitter for updates on Sequence.js as well as news and opinions on front-end web development.
 
 ## Sponsors
 
-Sequence's browser testing environment is provided by <a href="http://browserstack.com/">BrowerStack</a>.
+Sequence.js browser testing environment is provided by <a href="http://browserstack.com/">BrowerStack</a>.
 
 [![Browser Stack](http://www.sequencejs.com/wp-content/themes/sequence/images/browserstack-light.png)](http://browserstack.com/)
 
 ## License
 
-Sequence is made available under a [MIT License](https://github.com/IanLunn/Sequence/blob/master/LICENSE.md).
-
-Sequence themes included in the download are made available under a [MIT License](https://github.com/IanLunn/Sequence/blob/master/LICENSE.md) unless otherwise stated. Themes available on [SequenceJS.com](http://www.sequencejs.com/) have their own licenses, please respect them accordingly.
-
-[SequenceJS.com](http://www.sequencejs.com/), Sequence, and its dependencies are &copy; 2014 [Ian Lunn](https://www.ianlunn.co.uk/) unless otherwise stated.
-
-## Support Sequence Development
-
-To support the future development of Sequence and other open source projects created by [Ian Lunn](https://github.com/IanLunn), please consider making a contribution.
-
-Your contribution is not-for-profit (or beer!), and will allow Ian to spend a little less time on client projects and more time supporting and creating open source software.
-
-Thank you.
-
-### Flatter
-
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=IanLunn&url=https://github.com/IanLunn/Sequence&title=Sequence&language=english&tags=github&category=software)
-
-### Bitcoin
-
-Bitcoin contributions may be sent to the following address:
-
-<div style="text-align: center;">
-<a href="bitcoin:1KEbFvcXL8m6LogG2wjSUFz2xH6PeN6jRd?label=Sequence.js%20Development"><img src="http://ianlunn.co.uk/images/btc-donate.jpg" /></a>
-<p>1KEbFvcXL8m6LogG2wjSUFz2xH6PeN6jRd</p>
-</div>
+License information can be found on the [Sequence.js website](http://sequencejs.com/licenses/) or in [LICENSE.md](https://github.com/IanLunn/Sequence/blob/master/LICENSE.md).
 
 [![Analytics](https://ga-beacon.appspot.com/UA-11991680-6/sequence)](https://github.com/ianlunn/sequence)

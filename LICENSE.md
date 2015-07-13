@@ -1,21 +1,45 @@
-The MIT License (MIT)
+# Licenses
 
-Copyright (c) 2014 Ian Lunn
+The Sequence.js Library is made available under three different licenses depending on how you plan to use it. The following gives a brief description of each license. Please see the [official Sequence.js license page](http://sequencejs.com/licenses/) for full details.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## Personal/Open-Source
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+Use for free in personal/open-source projects, such as:
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+- Your portfolio website
+- Charity websites
+- Your own free Sequence.js themes
+
+Distribute, modify, and/or integrate the Sequence.js Library in multiple personal/open-source projects under the same [GPLv3 license](http://opensource.org/licenses/gpl-3.0.html).
+
+[Full Details](http://sequencejs.com/licenses/#personal-open-source)
+
+## Commercial
+
+Purchase a Commercial License to use in one commercial application, such as:
+
+- Client projects
+- Premium WordPress themes etc
+- Your own premium Sequence.js themes
+
+Distribute, modify, and/or integrate the Sequence.js Library in one commercial application per license
+
+[Full Details](http://sequencejs.com/licenses/#commercial) | [Buy Now →](http://sequencejs.com/licenses/#commercial-overview)
+
+## Commercial OEM
+
+Purchase a commercial OEM License to use in one commercial application, such as:
+
+- WYSIWYG Editors
+- SDKs/Toolkits
+- Sequence.js Theme Builders
+
+Distribute, modify, and/or integrate the Sequence.js Library in one commercial application per license, with which your customers can generate additional commercial applications
+
+[Full Details](http://sequencejs.com/licenses/#commercial-oem) | [Buy Now →](http://sequencejs.com/licenses/#commercial-oem-overview)
+
+---
+
+## Sequence.js Theme Licenses
+
+Sequence.js themes are licensed individually. Please see their respective theme pages on the [Sequence.js website](http://sequencejs.com/themes) for license information.
