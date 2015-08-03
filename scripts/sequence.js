@@ -1440,6 +1440,8 @@ function defineSequence(imagesLoaded, Hammer) {
        * @param {Boolean} ignorePhaseThreshold - if true, ignore the threshold
        * between phases (breaks reversal of animations but may be used when
        * skipping navigation etc)
+       * @returns {Number} maxWatchedTotal - The new total length
+       * (duration + delay) for watched elements when reversed
        */
       reverseProperties: function(phaseProperties, phaseDelay, phaseThresholdTime, ignorePhaseThreshold) {
 
@@ -1453,8 +1455,11 @@ function defineSequence(imagesLoaded, Hammer) {
             timingFunctionReversed,
             duration,
             delay,
+            total,
             maxTotal,
-            totals = [];
+            maxWatchedTotal,
+            totals = [],
+            watchedTotals = [];
 
         for (i = 0; i < noOfPhaseElements; i++) {
           el = phaseElements[i];
@@ -1463,10 +1468,13 @@ function defineSequence(imagesLoaded, Hammer) {
           duration = convertTimeToMs(getStyle(el, Modernizr.prefixed("transitionDuration")));
           delay = convertTimeToMs(getStyle(el, Modernizr.prefixed("transitionDelay")));
 
+          // Save the total
+          total = duration + delay;
+
           // Delay elements in relation to the length of other elements in the
           // phase eg. If one element A transitions for 1s and element B 2s
           // element A should be delayed by 1s (element B length - element A length).
-          delay = stepDurations.maxTotal - (duration + delay);
+          delay = stepDurations.maxTotal - total;
 
           // Delay this phase's elements so they animate in relation to the
           // other phase
@@ -1474,8 +1482,16 @@ function defineSequence(imagesLoaded, Hammer) {
             delay += phaseDelay;
           }
 
+          // Update the total with the new delay
+          total = duration + delay;
+
           // Save the total of the reversed animation
-          totals.push(delay + duration);
+          totals.push(total);
+
+          // Save the total of the reversed animation for watched elements only
+          if (el.getAttribute("data-seq") !== null) {
+            watchedTotals.push(total);
+          }
 
           // Get the timing-function and reverse it
           timingFunction = getStyle(el, Modernizr.prefixed("transitionTimingFunction"));
@@ -1487,6 +1503,10 @@ function defineSequence(imagesLoaded, Hammer) {
 
         // Get the longest total and delay of the reversed animations
         maxTotal = Math.max.apply(Math, totals);
+
+        // Get the longest total and delay of the reversed animations (for
+        // watched elements only)
+        maxWatchedTotal = Math.max.apply(Math, watchedTotals);
 
         // Remove the reversed transition properties from each element once it
         // has finished animating; allowing for the inherited styles to take
@@ -1501,7 +1521,7 @@ function defineSequence(imagesLoaded, Hammer) {
           });
         }, maxTotal + phaseThresholdTime);
 
-        return maxTotal;
+        return maxWatchedTotal;
       },
 
       /**

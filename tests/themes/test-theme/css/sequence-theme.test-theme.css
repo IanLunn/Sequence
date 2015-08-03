@@ -53,6 +53,7 @@
   border: red solid 1px;
   left: 100%;
   transition-duration: .5s;
+  /*transition-delay: 1s;*/
   transition-timing-function: linear;
 }
 
@@ -60,8 +61,8 @@
   top: 100px;
 }
 
-#sequence .seq-out .boxb {
-
+#sequence .boxb {
+  /*transition-delay: 0s;*/
 }
 
 #sequence .seq-in .box {
@@ -72,5 +73,4 @@
 #sequence .seq-out .box {
   left: 0;
   margin-left: -100px;
-  transition-delay: .25s;
 }
