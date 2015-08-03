@@ -1242,33 +1242,36 @@ function defineSequence(imagesLoaded, Hammer) {
        * Do we need to add a delay to account for one phase finishing
        * before another?
        *
-       * @param {Number} currentPhaseDuration - The total time the current
-       * phase will transition
-       * @param {Number} nextPhaseDuration - The total time the next phase will
-       * transition
-       * @param {Boolean} ignorePhaseThresholdWhenSkippedOption - if true, ignore the
-       * reversePhaseThreshold and immediately go to the specified step
+       * @param {Number} currentPhaseTotal - Amount of time in milliseconds the
+       * current phase will animate for
+       * @param {Number} nextPhaseTotal - Amount of time in milliseconds the
+       * next phase will animate for
+       * @param {Boolean} ignorePhaseThresholdWhenSkippedOption - if true,
+       * don't use a reversePhaseDelay
        * @param {Boolean} isAnimating - Whether Sequence is animating
        * @returns {Object} - Contains times that should delay the next or
        * current phase accordingly
        */
-       getReversePhaseDelay: function(currentPhaseDuration, nextPhaseDuration, phaseThresholdOption, ignorePhaseThresholdWhenSkippedOption, isAnimating) {
+       getReversePhaseDelay: function(currentPhaseTotal, nextPhaseTotal, phaseThresholdOption, ignorePhaseThresholdWhenSkippedOption, isAnimating) {
 
         var phaseDifference = 0,
             current = 0,
             next = 0;
 
-        if (phaseThresholdOption !== true) {
-        // if (ignorePhaseThresholdWhenSkippedOption === false) {
-          phaseDifference = currentPhaseDuration - nextPhaseDuration;
+        // Only use a reversePhaseDelay if the phaseThreshold option is true or
+        // a custom time, and Sequence is not animating with the
+        // ignorePhaseThreshold option on
+        if (phaseThresholdOption !== true && (ignorePhaseThresholdWhenSkippedOption === false || isAnimating === false)) {
+            phaseDifference = currentPhaseTotal - nextPhaseTotal;
 
           if (phaseDifference > 0) {
             next = phaseDifference;
           } else if (phaseDifference < 0) {
             current = Math.abs(phaseDifference);
           }
-        // }
         }
+
+        console.log(next, current);
 
         return {
           next: next,

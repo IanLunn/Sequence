@@ -169,3 +169,126 @@ describe("animation.getDirection()", function() {
     expect(sequence.animation.getDirection(5, undefined)).toEqual(1);
   });
 });
+
+describe("animation.getReversePhaseDelay()", function() {
+
+  var sequence;
+
+  // Set up Sequence and wait for it to be ready
+  beforeAll(function(done) {
+
+    appendSequence();
+
+    sequence = initSequence();
+
+    sequence.ready = function() {
+      done();
+    };
+  });
+
+  afterAll(function(done) {
+    removeSequence();
+    SetTimeout(function() {
+      resetSequence(sequence);
+      done();
+    }, 500);
+  });
+
+  it("should return a next reversePhaseDelay of 1000 when the currentPhaseTotal is 2000, nextPhaseTotal is 1000, phaseThreshold is false, ignorePhaseThresholdWhenSkipped is false, and Sequence.js isn't animating", function() {
+
+    var currentPhaseTotal = 2000,
+        nextPhaseTotal = 1000,
+        phaseThresholdOption = false,
+        ignorePhaseThresholdWhenSkipped = false,
+        isAnimating = false;
+
+    expect(sequence.animation.getReversePhaseDelay(currentPhaseTotal, nextPhaseTotal, phaseThresholdOption, ignorePhaseThresholdWhenSkipped, isAnimating)).toEqual(jasmine.objectContaining({
+      next: 1000,
+      current: 0
+    }));
+  });
+
+
+  it("should return a current reversePhaseDelay of 1000 when the currentPhaseTotal is 1000, nextPhaseTotal is 2000, phaseThreshold is false, ignorePhaseThresholdWhenSkipped is false, and Sequence.js isn't animating", function() {
+
+    var currentPhaseTotal = 1000,
+        nextPhaseTotal = 2000,
+        phaseThresholdOption = false,
+        ignorePhaseThresholdWhenSkipped = false,
+        isAnimating = false;
+
+    expect(sequence.animation.getReversePhaseDelay(currentPhaseTotal, nextPhaseTotal, phaseThresholdOption, ignorePhaseThresholdWhenSkipped, isAnimating)).toEqual(jasmine.objectContaining({
+      next: 0,
+      current: 1000
+    }));
+  });
+
+
+  it("should return no reversePhaseDelay when the currentPhaseTotal and nextPhaseTotal are the same, phaseThreshold is false, ignorePhaseThresholdWhenSkipped is false, and Sequence.js isn't animating", function() {
+
+    var currentPhaseTotal = 1000,
+        nextPhaseTotal = 1000,
+        phaseThresholdOption = false,
+        ignorePhaseThresholdWhenSkipped = false,
+        isAnimating = false;
+
+    expect(sequence.animation.getReversePhaseDelay(currentPhaseTotal, nextPhaseTotal, phaseThresholdOption, ignorePhaseThresholdWhenSkipped, isAnimating)).toEqual(jasmine.objectContaining({
+      next: 0,
+      current: 0
+    }));
+  });
+
+
+  it("should not return a phaseThreshold when phaseThreshold is true", function() {
+
+    var currentPhaseTotal = 2000,
+        nextPhaseTotal = 1000,
+        phaseThresholdOption = true,
+        ignorePhaseThresholdWhenSkipped = false,
+        isAnimating = false;
+
+    expect(sequence.animation.getReversePhaseDelay(currentPhaseTotal, nextPhaseTotal, phaseThresholdOption, ignorePhaseThresholdWhenSkipped, isAnimating)).toEqual(jasmine.objectContaining({
+      next: 0,
+      current: 0
+    }));
+  });
+
+
+  it("should return a phaseThreshold when ignorePhaseThresholdWhenSkipped is false, regardless of whether Sequence is animating", function() {
+
+    var currentPhaseTotal = 2000,
+        nextPhaseTotal = 1000,
+        phaseThresholdOption = false,
+        ignorePhaseThresholdWhenSkipped = false,
+        isAnimating = true;
+
+    // When animating
+    expect(sequence.animation.getReversePhaseDelay(currentPhaseTotal, nextPhaseTotal, phaseThresholdOption, ignorePhaseThresholdWhenSkipped, isAnimating)).toEqual(jasmine.objectContaining({
+      next: 1000,
+      current: 0
+    }));
+
+    // When not animating
+    isAnimating = false;
+
+    expect(sequence.animation.getReversePhaseDelay(currentPhaseTotal, nextPhaseTotal, phaseThresholdOption, ignorePhaseThresholdWhenSkipped, isAnimating)).toEqual(jasmine.objectContaining({
+      next: 1000,
+      current: 0
+    }));
+  });
+
+
+  it("should not return a phaseThreshold when ignorePhaseThresholdWhenSkipped is true, and Sequence is animating", function() {
+
+    var currentPhaseTotal = 2000,
+        nextPhaseTotal = 1000,
+        phaseThresholdOption = false,
+        ignorePhaseThresholdWhenSkipped = true,
+        isAnimating = true;
+
+    expect(sequence.animation.getReversePhaseDelay(currentPhaseTotal, nextPhaseTotal, phaseThresholdOption, ignorePhaseThresholdWhenSkipped, isAnimating)).toEqual(jasmine.objectContaining({
+      next: 0,
+      current: 0
+    }));
+  });
+});

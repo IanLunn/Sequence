@@ -1242,33 +1242,36 @@ function defineSequence(imagesLoaded, Hammer) {
        * Do we need to add a delay to account for one phase finishing
        * before another?
        *
-       * @param {Number} currentPhaseDuration - The total time the current
-       * phase will transition
-       * @param {Number} nextPhaseDuration - The total time the next phase will
-       * transition
-       * @param {Boolean} ignorePhaseThresholdWhenSkippedOption - if true, ignore the
-       * reversePhaseThreshold and immediately go to the specified step
+       * @param {Number} currentPhaseTotal - Amount of time in milliseconds the
+       * current phase will animate for
+       * @param {Number} nextPhaseTotal - Amount of time in milliseconds the
+       * next phase will animate for
+       * @param {Boolean} ignorePhaseThresholdWhenSkippedOption - if true,
+       * don't use a reversePhaseDelay
        * @param {Boolean} isAnimating - Whether Sequence is animating
        * @returns {Object} - Contains times that should delay the next or
        * current phase accordingly
        */
-       getReversePhaseDelay: function(currentPhaseDuration, nextPhaseDuration, phaseThresholdOption, ignorePhaseThresholdWhenSkippedOption, isAnimating) {
+       getReversePhaseDelay: function(currentPhaseTotal, nextPhaseTotal, phaseThresholdOption, ignorePhaseThresholdWhenSkippedOption, isAnimating) {
 
         var phaseDifference = 0,
             current = 0,
             next = 0;
 
-        if (phaseThresholdOption !== true) {
-        // if (ignorePhaseThresholdWhenSkippedOption === false) {
-          phaseDifference = currentPhaseDuration - nextPhaseDuration;
+        // Only use a reversePhaseDelay if the phaseThreshold option is true or
+        // a custom time, and Sequence is not animating with the
+        // ignorePhaseThreshold option on
+        if (phaseThresholdOption !== true && (ignorePhaseThresholdWhenSkippedOption === false || isAnimating === false)) {
+            phaseDifference = currentPhaseTotal - nextPhaseTotal;
 
           if (phaseDifference > 0) {
             next = phaseDifference;
           } else if (phaseDifference < 0) {
             current = Math.abs(phaseDifference);
           }
-        // }
         }
+
+        console.log(next, current);
 
         return {
           next: next,
@@ -1549,15 +1552,7 @@ function defineSequence(imagesLoaded, Hammer) {
       },
 
       /**
-       * Go in reverse to the next step
-       *
-       * Reversing consists of:
-       *
-       * 1. Making all individual transitions go in reverse
-       * 2. Adding a delay to one phase if the other finishes before it
-       * 3. Adding a delay to elements in a phase if those in the same phase have
-       *    different delays/durations
-       * 4. Adding a delay to a phase if the other has delays as applied in (3).
+       * Navigate in reverse to the next step
        *
        * @param {Number} id - The ID of the next step
        * @param {HTMLObject} currentStepElement - The element for the current step
@@ -1759,7 +1754,7 @@ function defineSequence(imagesLoaded, Hammer) {
        * current phase will animate for
        * @param {Number} nextPhaseTotal - Amount of time in milliseconds the
        * next phase will animate for
-       * @param {Number|Boolean} phaseThresholdOption - Amount of time between 
+       * @param {Number|Boolean} phaseThresholdOption - Amount of time between
        * phases as defined via the phaseThreshold option
        * @returns {Number} stepDuration - Which ever is longest, current or next
        * phase duration

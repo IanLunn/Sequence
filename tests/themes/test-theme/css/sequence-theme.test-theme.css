@@ -61,7 +61,7 @@
 }
 
 #sequence .seq-out .boxb {
-  transition-delay: .25s;
+
 }
 
 #sequence .seq-in .box {
@@ -72,4 +72,5 @@
 #sequence .seq-out .box {
   left: 0;
   margin-left: -100px;
+  transition-delay: .25s;
 }
