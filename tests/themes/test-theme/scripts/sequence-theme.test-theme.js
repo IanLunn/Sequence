@@ -27,7 +27,7 @@ var options = {
   // autoPlayDirection: -1,
   // autoPlayInterval: 2000,
   // autoPlayDelay: 1000,
-  phaseThreshold: 1000,
+  phaseThreshold: false,
   ignorePhaseThresholdWhenSkipped: true,
   preloader: false,
   keyNavigation: true,

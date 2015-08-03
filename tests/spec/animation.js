@@ -65,111 +65,6 @@ describe("animation.requiresFallbackMode()", function() {
   });
 });
 
-describe("animation.getDirection()", function() {
-
-  var sequence;
-
-  // Set up Sequence and wait for it to be ready
-  beforeAll(function(done) {
-
-    appendSequence();
-
-    sequence = initSequence();
-
-    sequence.ready = function() {
-      done();
-    };
-  });
-
-  afterAll(function(done) {
-    removeSequence();
-    SetTimeout(function() {
-      resetSequence(sequence);
-      done();
-    }, 500);
-  });
-
-  it("should return the same direction as the one defined", function() {
-
-    sequence.options.reverseWhenNavigatingBackwards = true;
-    sequence.options.cycle = true;
-
-    expect(sequence.animation.getDirection(1, 1)).toEqual(1);
-    expect(sequence.animation.getDirection(1, -1)).toEqual(-1);
-  });
-
-
-  it("should return a direction of 1 when the reverseWhenNavigatingBackwards option is disbaled, fallbackMode is disabled, and a direction isn't defined", function() {
-
-    sequence.options.reverseWhenNavigatingBackwards = false;
-    sequence.options.cycle = true;
-
-    sequence.isFallbackMode = true;
-
-    expect(sequence.animation.getDirection(1, undefined)).toEqual(1);
-  });
-
-
-  it("should return a direction of 1 when reverseWhenNavigatingBackwards and cycle options are enabled, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is forward", function() {
-
-    sequence.options.reverseWhenNavigatingBackwards = true;
-    sequence.options.cycle = true;
-
-    sequence.currentStepId = 1;
-    sequence.noOfSteps = 5;
-
-    expect(sequence.animation.getDirection(2, undefined)).toEqual(1);
-  });
-
-
-  it("should return a direction of -1 when the reverseWhenNavigatingBackwards and cycle options are enabled, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is backwards", function() {
-
-    sequence.options.reverseWhenNavigatingBackwards = true;
-    sequence.options.cycle = true;
-
-    sequence.currentStepId = 3;
-    sequence.noOfSteps = 5;
-
-    expect(sequence.animation.getDirection(1, undefined)).toEqual(-1);
-  });
-
-
-  it("should return a direction of 1 when reverseWhenNavigatingBackwards and cycle options are enabled, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is forward (the last slide is the currentId and the next slide ID is 1)", function() {
-
-    sequence.options.reverseWhenNavigatingBackwards = true;
-    sequence.options.cycle = true;
-
-    sequence.currentStepId = 5;
-    sequence.noOfSteps = 5;
-
-    expect(sequence.animation.getDirection(1, undefined)).toEqual(1);
-  });
-
-
-  it("should return a direction of -1 when reverseWhenNavigatingBackwards is enabled, cycle is disabled, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is forward (the last slide is the currentId and the next slide ID is 1)", function() {
-
-    sequence.options.reverseWhenNavigatingBackwards = true;
-    sequence.options.cycle = false;
-
-    sequence.currentStepId = 5;
-    sequence.noOfSteps = 5;
-
-    expect(sequence.animation.getDirection(1, undefined)).toEqual(-1);
-  });
-
-
-  it("should return a direction of 1 when reverseWhenNavigatingBackwards is enabled, cycle is disabled, a direction isn't defined, and the shortest direction to get from the currentId to the nextId is forward (the last slide is the currentId and the next slide ID is 1)", function() {
-
-    sequence.options.reverseWhenNavigatingBackwards = true;
-    sequence.options.cycle = false;
-
-    sequence.currentStepId = 1;
-    sequence.noOfSteps = 5;
-
-    expect(sequence.animation.getDirection(5, undefined)).toEqual(1);
-  });
-});
-
 describe("animation.getReversePhaseDelay()", function() {
 
   var sequence;
@@ -193,6 +88,7 @@ describe("animation.getReversePhaseDelay()", function() {
       done();
     }, 500);
   });
+
 
   it("should return a next reversePhaseDelay of 1000 when the currentPhaseTotal is 2000, nextPhaseTotal is 1000, phaseThreshold is false, ignorePhaseThresholdWhenSkipped is false, and Sequence.js isn't animating", function() {
 
@@ -290,5 +186,113 @@ describe("animation.getReversePhaseDelay()", function() {
       next: 0,
       current: 0
     }));
+  });
+});
+
+describe("animation.getDirection()", function() {
+
+  var sequence;
+
+  // Set up Sequence and wait for it to be ready
+  beforeAll(function(done) {
+
+    appendSequence();
+
+    sequence = initSequence();
+
+    sequence.ready = function() {
+      done();
+    };
+
+  });
+
+  afterAll(function(done) {
+    removeSequence();
+    SetTimeout(function() {
+      resetSequence(sequence);
+      done();
+    }, 500);
+  });
+
+  it("should return 1 when no direction is defined", function() {
+
+    var id = 2,
+        definedDirection = undefined,
+        currentStepId = 1,
+        noOfSteps = 3,
+        isFallbackMode = false,
+        reverseWhenNavigatingBackwardsOption = true,
+        cycleOption = true;
+
+    expect(sequence.animation.getDirection(id, definedDirection, currentStepId, noOfSteps, isFallbackMode, reverseWhenNavigatingBackwardsOption, cycleOption)).toEqual(1);
+  });
+
+
+  it("should return 1 when going from the last step to the first", function() {
+
+    var id = 1,
+        definedDirection = 1,
+        currentStepId = 5,
+        noOfSteps = 5,
+        isFallbackMode = false,
+        reverseWhenNavigatingBackwardsOption = true,
+        cycleOption = true;
+
+    expect(sequence.animation.getDirection(id, definedDirection, currentStepId, noOfSteps, isFallbackMode, reverseWhenNavigatingBackwardsOption, cycleOption)).toEqual(1);
+  });
+
+
+  it("should return 1 when the reverseWhenNavigatingBackwards option is disabled", function() {
+
+    var id = 1,
+        definedDirection = 1,
+        currentStepId = 5,
+        noOfSteps = 5,
+        isFallbackMode = false,
+        reverseWhenNavigatingBackwardsOption = false,
+        cycleOption = true;
+
+    expect(sequence.animation.getDirection(id, definedDirection, currentStepId, noOfSteps, isFallbackMode, reverseWhenNavigatingBackwardsOption, cycleOption)).toEqual(1);
+  });
+
+
+  it("should return 1 when in fallback mode", function() {
+
+    var id = 1,
+        definedDirection = 1,
+        currentStepId = 5,
+        noOfSteps = 5,
+        isFallbackMode = true,
+        reverseWhenNavigatingBackwardsOption = true,
+        cycleOption = true;
+
+    expect(sequence.animation.getDirection(id, definedDirection, currentStepId, noOfSteps, isFallbackMode, reverseWhenNavigatingBackwardsOption, cycleOption)).toEqual(1);
+  });
+
+  it("should return 1 when the step being navigated to is ahead of the current step", function() {
+
+    var id = 2,
+        definedDirection = undefined,
+        currentStepId = 1,
+        noOfSteps = 5,
+        isFallbackMode = false,
+        reverseWhenNavigatingBackwardsOption = true,
+        cycleOption = true;
+
+    expect(sequence.animation.getDirection(id, definedDirection, currentStepId, noOfSteps, isFallbackMode, reverseWhenNavigatingBackwardsOption, cycleOption)).toEqual(1);
+  });
+
+
+  it("should return -1 when the step being navigated to is before the current step", function() {
+
+    var id = 2,
+        definedDirection = undefined,
+        currentStepId = 3,
+        noOfSteps = 5,
+        isFallbackMode = false,
+        reverseWhenNavigatingBackwardsOption = true,
+        cycleOption = true;
+
+    expect(sequence.animation.getDirection(id, definedDirection, currentStepId, noOfSteps, isFallbackMode, reverseWhenNavigatingBackwardsOption, cycleOption)).toEqual(-1);
   });
 });

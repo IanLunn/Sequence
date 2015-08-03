@@ -2062,35 +2062,6 @@ function defineSequence(imagesLoaded, Hammer) {
       },
 
       /**
-       * When the sequence.goTo() function is specified without a direction, and
-       * the cycle option is being used, get the shortest direction to the next step
-       *
-       * @param {Number} nextId - The Id of the step to go to
-       * @param {Number} currentId - The Id of the current step
-       * @param {Number} noOfSteps - The number of steps
-       * @returns {Number} direction - The shortest direction between the
-       * current slide and the next
-       */
-      getShortestDirection: function(nextId, currentId, noOfSteps) {
-
-        var forwardDirection;
-        var reverseDirection;
-        var direction;
-
-        if (nextId > currentId) {
-          forwardDirection = nextId - currentId;
-          reverseDirection = currentId + (noOfSteps - nextId);
-        } else {
-          reverseDirection = currentId - nextId;
-          forwardDirection = nextId + (noOfSteps - currentId);
-        }
-
-        direction = (forwardDirection <= reverseDirection) ? 1: -1;
-
-        return direction;
-      },
-
-      /**
        * Get the direction to navigate in based on whether the .goTo() function
        * has a defined direction, and if not, what options are being used.
        *
@@ -2098,22 +2069,23 @@ function defineSequence(imagesLoaded, Hammer) {
        * @param {Number} definedDirection - The defined direction 1 or -1
        * @returns {Number} direction - The direction 1 or -1
        */
-      getDirection: function(id, definedDirection) {
+      getDirection: function(id, definedDirection, currentStepId, noOfSteps, isFallbackMode, reverseWhenNavigatingBackwardsOption, cycleOption) {
 
         var animation = this,
             direction = 1;
 
         if (definedDirection !== undefined) {
           direction = definedDirection;
-        } else if (self.options.reverseWhenNavigatingBackwards === true || self.isFallbackMode === true) {
+        } else if (reverseWhenNavigatingBackwardsOption === true || isFallbackMode === true) {
 
-          if (self.options.cycle === true) {
-            direction = animation.getShortestDirection(id, self.currentStepId, self.noOfSteps);
+          if (cycleOption === true && (id === 1 && currentStepId === noOfSteps)) {
+            // If the cycle option is enabled, and the user is navigating from
+            // the last step to the first, navigate forwards
+            direction = 1;
           } else {
-            direction = (id < self.currentStepId) ? -1: 1;
+            direction = (id < currentStepId) ? -1: 1;
           }
         } else {
-
           direction = 1;
         }
 
@@ -3805,7 +3777,7 @@ function defineSequence(imagesLoaded, Hammer) {
     self.goTo = function(id, direction, ignorePhaseThreshold, hashTagNav) {
 
       // Get the direction to navigate if one wasn't specified
-      direction = self.animation.getDirection(id, direction);
+      direction = self.animation.getDirection(id, direction, self.currentStepId, self.noOfSteps, self.isFallbackMode, self.options.reverseWhenNavigatingBackwards, self.options.cycle);
 
       /**
        * Don't go to a step if:
