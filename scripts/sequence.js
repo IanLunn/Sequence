@@ -6,7 +6,7 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0-beta.7
+ * @version 2.0.0-beta.8
  * @license http://sequencejs.com/licenses/
  * @copyright Ian Lunn Design Limited 2015
  */
@@ -1184,11 +1184,12 @@ function defineSequence(imagesLoaded, Hammer) {
         // Which were the longest durations and delays?
         var maxDuration = Math.max.apply(Math, durations),
             maxDelay = Math.max.apply(Math, delays),
-            maxTotal = maxDuration + maxDelay;
+            maxTotal = Math.max.apply(Math, lengths);
 
+        // Which were the longest watched durations and delays?
         var watchedMaxDuration = Math.max.apply(Math, watchedDurations),
             watchedMaxDelay = Math.max.apply(Math, watchedDelays),
-            watchedMaxTotal = watchedMaxDuration + watchedMaxDelay;
+            watchedMaxTotal = Math.max.apply(Math, watchedLengths);
 
         return {
           stepId: stepId,
@@ -1212,19 +1213,24 @@ function defineSequence(imagesLoaded, Hammer) {
        * How long before the next phase should start?
        * Ignore the phaseThreshold (on first run for example)
        */
-      getPhaseThreshold: function(ignorePhaseThreshold, phaseThresholdOption, currentPhaseDuration) {
+      getPhaseThreshold: function(ignorePhaseThreshold, phaseThresholdOption, isAnimating, currentPhaseDuration) {
 
         var phaseThresholdTime = 0;
 
-        if (self.isAnimating === true && self.options.ignorePhaseThresholdWhenSkipped === true) {
+        // Ignore the phaseThreshold if the developer wishes for this to happen
+        // if Sequence.js is animating
+        if (isAnimating === true && self.options.ignorePhaseThresholdWhenSkipped === true) {
           ignorePhaseThreshold = true;
         }
 
         if (ignorePhaseThreshold === undefined) {
 
           if (phaseThresholdOption === true) {
+            // The phaseThreshold should be the length of the current phase
+            // so the next starts immediately after
             phaseThresholdTime = currentPhaseDuration;
           } else if (phaseThresholdOption !== false) {
+            // Use the developer defined phaseThreshold
             phaseThresholdTime = phaseThresholdOption;
           }
         }
@@ -1242,16 +1248,18 @@ function defineSequence(imagesLoaded, Hammer) {
        * transition
        * @param {Boolean} ignorePhaseThresholdWhenSkippedOption - if true, ignore the
        * reversePhaseThreshold and immediately go to the specified step
+       * @param {Boolean} isAnimating - Whether Sequence is animating
        * @returns {Object} - Contains times that should delay the next or
        * current phase accordingly
        */
-       getReversePhaseThreshold: function(currentPhaseDuration, nextPhaseDuration, ignorePhaseThresholdWhenSkippedOption) {
+       getReversePhaseDelay: function(currentPhaseDuration, nextPhaseDuration, phaseThresholdOption, ignorePhaseThresholdWhenSkippedOption, isAnimating) {
 
         var phaseDifference = 0,
             current = 0,
             next = 0;
 
-        if (ignorePhaseThresholdWhenSkippedOption === false) {
+        if (phaseThresholdOption !== true) {
+        // if (ignorePhaseThresholdWhenSkippedOption === false) {
           phaseDifference = currentPhaseDuration - nextPhaseDuration;
 
           if (phaseDifference > 0) {
@@ -1259,6 +1267,7 @@ function defineSequence(imagesLoaded, Hammer) {
           } else if (phaseDifference < 0) {
             current = Math.abs(phaseDifference);
           }
+        // }
         }
 
         return {
@@ -1366,8 +1375,6 @@ function defineSequence(imagesLoaded, Hammer) {
                   self.animation.stepSkipped(stepElement);
                 }
               }
-
-
             }
           }
 
@@ -1382,9 +1389,6 @@ function defineSequence(imagesLoaded, Hammer) {
       /**
        * Deal with a step when it has been skipped
        *
-       * @param {Number} direction - The direction of navigation when the step
-       * was skipped
-       * @param {String} step - The step that was skipped
        * @param {HTMLElement} stepElement - The step element that was skipped
        */
       stepSkipped: function(stepElement) {
@@ -1432,12 +1436,15 @@ function defineSequence(imagesLoaded, Hammer) {
        * animates longer than the other
        * @param {Number} phaseThresholdTime - The amount of time in milliseconds
        * before the next step should start animating in
+       * @param {Boolean} ignorePhaseThreshold - if true, ignore the threshold
+       * between phases (breaks reversal of animations but may be used when
+       * skipping navigation etc)
        */
       reverseProperties: function(phaseProperties, phaseDelay, phaseThresholdTime, ignorePhaseThreshold) {
 
         var animation = this,
-            stepChildren = phaseProperties.stepElement.querySelectorAll("*"),
-            stepChildrenLength = stepChildren.length,
+            phaseElements = phaseProperties.children,
+            noOfPhaseElements = phaseElements.length,
             stepDurations = phaseProperties.timings,
             el,
             i,
@@ -1445,60 +1452,55 @@ function defineSequence(imagesLoaded, Hammer) {
             timingFunctionReversed,
             duration,
             delay,
-            total,
-            durations = [],
-            delays = [],
+            maxTotal,
             totals = [];
 
-        for (i = 0; i < stepChildrenLength; i++) {
-          el = stepChildren[i];
+        for (i = 0; i < noOfPhaseElements; i++) {
+          el = phaseElements[i];
 
           // Get each element's duration and delay
           duration = convertTimeToMs(getStyle(el, Modernizr.prefixed("transitionDuration")));
           delay = convertTimeToMs(getStyle(el, Modernizr.prefixed("transitionDelay")));
 
-          delay = (stepDurations.maxDuration - duration) + (stepDurations.maxDelay - delay);
+          // Delay elements in relation to the length of other elements in the
+          // phase eg. If one element A transitions for 1s and element B 2s
+          // element A should be delayed by 1s (element B length - element A length).
+          delay = stepDurations.maxTotal - (duration + delay);
 
-          // Delay elements so they animate in relation to other elements in the phase
+          // Delay this phase's elements so they animate in relation to the
+          // other phase
           if (ignorePhaseThreshold !== true) {
             delay += phaseDelay;
           }
 
           // Save the total of the reversed animation
-          durations.push(duration);
-          delays.push(delay);
           totals.push(delay + duration);
 
-          // Get the timing-function
+          // Get the timing-function and reverse it
           timingFunction = getStyle(el, Modernizr.prefixed("transitionTimingFunction"));
-
-          // Reverse the timing function
           timingFunctionReversed = animation.reverseTimingFunction(timingFunction);
 
           // Apply the reversed transition properties to each element
           el.style[Modernizr.prefixed("transition")] = duration + "ms " + delay + "ms " + timingFunctionReversed;
         }
 
-        // Get the longest total of the reversed animations
-        total = Math.max.apply(Math, totals);
-
-        // Add the phaseThreshold delay
-        total = (total + phaseThresholdTime);
+        // Get the longest total and delay of the reversed animations
+        maxTotal = Math.max.apply(Math, totals);
 
         // Remove the reversed transition properties from each element once it
         // has finished animating; allowing for the inherited styles to take
         // effect again.
         setTimeout(function() {
           animation.domDelay(function() {
-            for (i = 0; i < stepChildrenLength; i++) {
-              el = stepChildren[i];
+            for (i = 0; i < noOfPhaseElements; i++) {
+              el = phaseElements[i];
 
               el.style[Modernizr.prefixed("transition")] = "";
             }
           });
-        }, total);
+        }, maxTotal + phaseThresholdTime);
 
-        return total;
+        return maxTotal;
       },
 
       /**
@@ -1515,7 +1517,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
         var animation = this,
             currentPhaseProperties,
-            currentPhaseDuration,
+            currentPhaseTotal,
             phaseThresholdTime;
 
         if (self.firstRun === false) {
@@ -1532,22 +1534,30 @@ function defineSequence(imagesLoaded, Hammer) {
           // Make the current step transition to "seq-out"
           currentPhaseProperties = animation.startAnimateOut(self.currentStepId, currentStepElement, 1);
 
-          // How long will the current watched elements animate for (including delay)?
-          currentPhaseDuration = currentPhaseProperties.watchedTimings.maxTotal;
+          // Total duration of the current phase (duration + delay)
+          currentPhaseTotal = currentPhaseProperties.watchedTimings.maxTotal;
 
           // How long before the next phase should start?
-          phaseThresholdTime = animation.getPhaseThreshold(ignorePhaseThreshold, self.options.phaseThreshold, currentPhaseDuration);
+          phaseThresholdTime = animation.getPhaseThreshold(ignorePhaseThreshold, self.options.phaseThreshold, self.isAnimating, currentPhaseTotal);
 
           // Sequence is now animating
           self.isAnimating = true;
 
           // Make the next step transition to "seq-in"
-          animation.startAnimateIn(id, currentPhaseDuration, nextStepElement, phaseThresholdTime, 0, hashTagNav);
+          animation.startAnimateIn(id, currentPhaseTotal, nextStepElement, phaseThresholdTime, hashTagNav);
         });
       },
 
       /**
        * Go in reverse to the next step
+       *
+       * Reversing consists of:
+       *
+       * 1. Making all individual transitions go in reverse
+       * 2. Adding a delay to one phase if the other finishes before it
+       * 3. Adding a delay to elements in a phase if those in the same phase have
+       *    different delays/durations
+       * 4. Adding a delay to a phase if the other has delays as applied in (3).
        *
        * @param {Number} id - The ID of the next step
        * @param {HTMLObject} currentStepElement - The element for the current step
@@ -1559,54 +1569,54 @@ function defineSequence(imagesLoaded, Hammer) {
       reverse: function(id, currentStepElement, nextStepElement, ignorePhaseThreshold, hashTagNav) {
 
         var animation = this,
-            reversePhaseThreshold,
+            currentId,
+            reversePhaseDelay,
             phaseThresholdTime = 0,
             currentPhaseProperties,
-            currentPhaseDuration,
             nextPhaseProperties,
-            nextPhaseDuration;
+            currentPhaseTotal,
+            nextPhaseTotal;
 
         // Snap the next phase to "animate-out"
         addClass(nextStepElement, "seq-out");
 
         animation.domDelay(function() {
 
-          // Get the step number, element, its animated elements (child nodes), and
-          // max timings
+          // Get the step number, element, its animated elements (child nodes),
+          // and max timings
           currentPhaseProperties = animation.getPhaseProperties(self.currentStepId, "current");
           nextPhaseProperties = animation.getPhaseProperties(id, "next");
 
-          // Add a threshold between delays if one finishes before another when
-          // navigating forwards
-          reversePhaseThreshold = animation.getReversePhaseThreshold(currentPhaseProperties.timings.maxTotal, nextPhaseProperties.timings.maxTotal, self.options.ignorePhaseThresholdWhenSkipped);
+          // Determine the gap between phases based on the phaseThreshold option
+          phaseThresholdTime = animation.getPhaseThreshold(ignorePhaseThreshold, self.options.phaseThreshold, self.isAnimating, currentPhaseProperties.timings.maxTotal);
 
-          // Reverse properties for all elements in the current step
-          currentPhaseDuration = animation.reverseProperties(currentPhaseProperties, reversePhaseThreshold.current, 0, ignorePhaseThreshold);
+          // Determine if there should be a delay to account for one phase
+          // finishing before the other.
+          // Example: Navigating forward, the next element transitions in over
+          // 1s (A) and the current element over 2s (B). When reversed, the next
+          // element (previouly the current element) should wait 1s (B - A)
+          // before animating back in
+          reversePhaseDelay = animation.getReversePhaseDelay(currentPhaseProperties.timings.maxTotal, nextPhaseProperties.timings.maxTotal, self.options.phaseThreshold, self.options.ignorePhaseThresholdWhenSkipped, self.isAnimating);
 
-          // Reverse properties for all elements in the next step
-          nextPhaseDuration = animation.reverseProperties(nextPhaseProperties, reversePhaseThreshold.next, phaseThresholdTime, ignorePhaseThreshold);
+          // Reverse properties for all elements in the current and next step
+          // and add the reversePhaseDelay as a transition-delay where necessary
+          currentPhaseTotal = animation.reverseProperties(currentPhaseProperties, reversePhaseDelay.current, 0, ignorePhaseThreshold);
+          nextPhaseTotal = animation.reverseProperties(nextPhaseProperties, reversePhaseDelay.next, phaseThresholdTime, ignorePhaseThreshold);
 
           // Make the current step transition to "animate-start"
-          animation.startAnimateOut(self.currentStepId, currentStepElement, -1, currentPhaseDuration);
-
-          // How long before the next phase should start?
-          phaseThresholdTime = animation.getPhaseThreshold(ignorePhaseThreshold, self.options.phaseThreshold, currentPhaseDuration);
+          animation.startAnimateOut(self.currentStepId, currentStepElement, -1, currentPhaseTotal);
 
           // Sequence is now animating
           self.isAnimating = true;
 
           if (self.firstRun === false) {
 
-            var currentId = self.currentStepId;
-
             // Callbacks
-            setTimeout(function() {
-              animation.currentPhaseStarted(currentId);
-            }, reversePhaseThreshold.current);
+            animation.currentPhaseStarted(self.currentStepId);
           }
 
           // Make the next step transition to "seq-in"
-          animation.startAnimateIn(id, currentPhaseDuration, nextStepElement, phaseThresholdTime, reversePhaseThreshold.next, hashTagNav);
+          animation.startAnimateIn(id, currentPhaseTotal, nextStepElement, phaseThresholdTime, hashTagNav, nextPhaseTotal);
         });
       },
 
@@ -1614,16 +1624,18 @@ function defineSequence(imagesLoaded, Hammer) {
        * Start the next step's "seq-in" phase
        *
        * @param {Number} id - The ID of the next step
+       * @param {Number} currentPhaseTotal - Amount of time in milliseconds the
+       * current phase will animate for
        * @param {HTMLObject} nextStepElement - The element for the next step
        * @param {Number} phaseThresholdTime - The amount of time in milliseconds
        * before the next step should start animating in
-       * @param {Number} reversePhaseThreshold - The amount of time the next phase is delayed by when reversing
        * @param {Boolean} hashTagNav - If navigation is triggered by the hashTag
+       * @param {Number} nextPhaseTotal - Amount of time in milliseconds the
+       * next phase will animate for
        */
-      startAnimateIn: function(id, currentPhaseDuration, nextStepElement, phaseThresholdTime, reversePhaseThreshold, hashTagNav) {
+      startAnimateIn: function(id, currentPhaseTotal, nextStepElement, phaseThresholdTime, hashTagNav, nextPhaseTotal) {
 
         var animation = this,
-            nextPhaseDuration,
             nextPhaseProperties,
             stepDuration;
 
@@ -1645,7 +1657,7 @@ function defineSequence(imagesLoaded, Hammer) {
           // Callback
           self.nextPhaseStartedTimer = setTimeout(function() {
             animation.nextPhaseStarted(id, hashTagNav);
-          }, phaseThresholdTime + reversePhaseThreshold);
+          }, phaseThresholdTime);
 
           // Start the "seq-in" phase
           self.phaseThresholdTimer = setTimeout(function() {
@@ -1654,15 +1666,18 @@ function defineSequence(imagesLoaded, Hammer) {
             addClass(nextStepElement, "seq-in");
             removeClass(nextStepElement, "seq-out");
 
-            nextPhaseProperties = self.animation.getPhaseProperties(id, "next");
-
-            nextPhaseDuration = nextPhaseProperties.watchedTimings.maxTotal;
+            // When animate-in is reversed, this will have already been passed
+            // in as an argument so it's only needed for forward animation
+            if (nextPhaseTotal === undefined) {
+              nextPhaseProperties = self.animation.getPhaseProperties(id, "next");
+              nextPhaseTotal = nextPhaseProperties.watchedTimings.maxTotal;
+            }
 
             // Wait for the next phase to end
-            animation.phaseEnded(id, "next", nextPhaseDuration, animation.nextPhaseEnded);
+            animation.phaseEnded(id, "next", nextPhaseTotal, animation.nextPhaseEnded);
 
             // How long will it take for the step to end?
-            stepDuration = animation.getStepDuration(currentPhaseDuration, nextPhaseDuration);
+            stepDuration = animation.getStepDuration(currentPhaseTotal, nextPhaseTotal, self.options.phaseThreshold);
 
             self.stepEndedTimer = setTimeout(function() {
 
@@ -1695,11 +1710,13 @@ function defineSequence(imagesLoaded, Hammer) {
       /**
        * Start the next step's "seq-out" phase
        *
+       * @param {Number} id - The ID of the next step
        * @param {HTMLObject} currentStepElement - The element for the current step
-       * @returns {Object} currentPhaseProperties - An object containing properties
-       * for the current phase such as ID, timings etc
+       * @param {Number} direction - The direction of navigation
+       * @param {Number} currentPhaseTotal - Amount of time in milliseconds the
+       * current phase will animate for
        */
-      startAnimateOut: function(id, currentStepElement, direction, currentPhaseDuration) {
+      startAnimateOut: function(id, currentStepElement, direction, currentPhaseTotal) {
 
         var animation = this,
         currentPhaseProperties;
@@ -1715,7 +1732,7 @@ function defineSequence(imagesLoaded, Hammer) {
           // max timings
           currentPhaseProperties = animation.getPhaseProperties(id, "current");
 
-          currentPhaseDuration = currentPhaseProperties.watchedTimings.maxTotal;
+          currentPhaseTotal = currentPhaseProperties.watchedTimings.maxTotal;
 
         } else {
 
@@ -1729,7 +1746,7 @@ function defineSequence(imagesLoaded, Hammer) {
           self.stepProperties[id].isActive = true;
 
           // Wait for the current phase to end
-          animation.phaseEnded(id, "current", currentPhaseDuration, animation.currentPhaseEnded);
+          animation.phaseEnded(id, "current", currentPhaseTotal, animation.currentPhaseEnded);
         }
 
         return currentPhaseProperties;
@@ -1738,19 +1755,32 @@ function defineSequence(imagesLoaded, Hammer) {
       /**
        * Determine how long a step will animate for
        *
-       * @param {Number} currentPhaseDuration - How long the current phase will
-       * animate for
-       * @param {Number} nextPhaseDuration - How long the next phase will
-       * animate for
-
+       * @param {Number} currentPhaseTotal - Amount of time in milliseconds the
+       * current phase will animate for
+       * @param {Number} nextPhaseTotal - Amount of time in milliseconds the
+       * next phase will animate for
+       * @param {Number|Boolean} phaseThresholdOption - Amount of time between 
+       * phases as defined via the phaseThreshold option
        * @returns {Number} stepDuration - Which ever is longest, current or next
        * phase duration
        */
-      getStepDuration: function(currentPhaseDuration, nextPhaseDuration) {
+      getStepDuration: function(currentPhaseTotal, nextPhaseTotal, phaseThresholdOption) {
 
         var stepDuration;
 
-        stepDuration = (currentPhaseDuration >= nextPhaseDuration) ? currentPhaseDuration : nextPhaseDuration;
+        switch (phaseThresholdOption) {
+          case true:
+            stepDuration = nextPhaseTotal;
+          break;
+
+          case false:
+            // The stepDuration is whichever phase is longest
+            stepDuration = (currentPhaseTotal >= nextPhaseTotal) ? currentPhaseTotal : nextPhaseTotal;
+          break;
+
+          default:
+            stepDuration = (currentPhaseTotal >= nextPhaseTotal + phaseThresholdOption) ? (currentPhaseTotal) - phaseThresholdOption : nextPhaseTotal;
+        }
 
         return stepDuration;
       },

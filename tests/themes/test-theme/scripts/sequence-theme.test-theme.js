@@ -28,7 +28,7 @@ var options = {
   // autoPlayInterval: 2000,
   // autoPlayDelay: 1000,
   phaseThreshold: false,
-  preloader: true,
+  preloader: false,
   keyNavigation: true,
   // cycle: false,
   // hashTags: true,
@@ -38,7 +38,7 @@ var options = {
   // navigationSkip: false,
   // ignorePhaseThresholdWhenSkipped: false,
   fadeStepWhenSkipped: true,
-  preventReverseSkipping: true
+  preventReverseSkipping: false
 }
 
 var mySequence,
