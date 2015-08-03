@@ -1271,8 +1271,6 @@ function defineSequence(imagesLoaded, Hammer) {
           }
         }
 
-        console.log(next, current);
-
         return {
           next: next,
           current: current
