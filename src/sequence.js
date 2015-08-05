@@ -71,7 +71,7 @@ function defineSequence(imagesLoaded, Hammer) {
       animateCanvas: true,
 
       // Time it should take to animate between steps
-      animateCanvasDuration: 500,
+      animateCanvasDuration: 250,
 
 
       /* --- autoPlay --- */
@@ -117,7 +117,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
       // When a step is skipped, the next step will immediately animate-in
       // regardless of the phaseThreshold option
-      ignorePhaseThresholdWhenSkipped: true,
+      ignorePhaseThresholdWhenSkipped: false,
 
       // Don't allow the user to go to a previous step when the current one is
       // still active
@@ -2565,7 +2565,7 @@ function defineSequence(imagesLoaded, Hammer) {
       fallbackHtml: '<div class="seq-preload-indicator seq-preload-indicator-fallback"><div class="seq-preload-circle seq-preload-circle-1"></div><div class="seq-preload-circle seq-preload-circle-2"></div><div class="seq-preload-circle seq-preload-circle-3"></div></div>',
 
       // Sequence's default preloader styles and animation for the preloader
-       defaultStyles: '@'+prefixTranslations.animation[Modernizr.prefixed("animation")]+'keyframes seq-preloader {50% {opacity: 1;}100% {opacity: 0;}}.seq-preloader {background: white;visibility: visible;opacity: 1;position: absolute;z-index: 9999;height: 100%;width: 100%;top: 0;left: 0;right: 0;bottom: 0;} .seq-preloader.seq-preloaded {opacity: 0;visibility: hidden;'+Modernizr.prefixed("transition")+': visibility 0s .5s, opacity .5s;}.seq-preload-indicator {overflow: visible;position: relative;top: 50%;left: 50%;'+Modernizr.prefixed("transform")+': translate(-50%, -50%);}.seq-preload-circle {display: inline-block;height: 12px;width: 12px;fill: #F96D38;opacity: 0;'+prefixTranslations.animation[Modernizr.prefixed("animation")]+'animation: seq-preloader 1.25s infinite;}.seq-preload-circle-2 {'+prefixTranslations.animation[Modernizr.prefixed("animation")]+'animation-delay: .15s;}.seq-preload-circle-3 {'+prefixTranslations.animation[Modernizr.prefixed("animation")]+'animation-delay: .3s;}.seq-preload-indicator-fallback{width: 42px; overflow: visible;}.seq-preload-indicator-fallback .seq-preload-circle {width: 8px; height:8px;background-color: #F96D38;border-radius: 100%; opacity: 1;display: inline-block; vertical-align: middle;}.seq-preload-indicator-fallback .seq-preload-circle-2{margin-left: 3px; margin-right: 3px; width: 12px; height: 12px;}.seq-preload-indicator-fallback .seq-preload-circle-3{width: 16px; height: 16px;}',
+       defaultStyles: '@'+prefixTranslations.animation[Modernizr.prefixed("animation")]+'keyframes seq-preloader {50% {opacity: 1;}100% {opacity: 0;}}.seq-preloader {background: white;visibility: visible;opacity: 1;position: absolute;z-index: 9999;height: 100%;width: 100%;top: 0;left: 0;right: 0;bottom: 0;} .seq-preloader.seq-preloaded {opacity: 0;visibility: hidden;'+Modernizr.prefixed("transition")+': visibility 0s .5s, opacity .5s;}.seq-preload-indicator {overflow: visible;position: relative;top: 50%;left: 50%;-webkit-transform: translate(-50%, -50%);transform: translate(-50%, -50%);}.seq-preload-circle {display: inline-block;height: 12px;width: 12px;fill: #F96D38;opacity: 0;'+prefixTranslations.animation[Modernizr.prefixed("animation")]+'animation: seq-preloader 1.25s infinite;}.seq-preload-circle-2 {'+prefixTranslations.animation[Modernizr.prefixed("animation")]+'animation-delay: .15s;}.seq-preload-circle-3 {'+prefixTranslations.animation[Modernizr.prefixed("animation")]+'animation-delay: .3s;}.seq-preload-indicator-fallback{width: 42px; overflow: visible;}.seq-preload-indicator-fallback .seq-preload-circle {width: 8px; height:8px;background-color: #F96D38;border-radius: 100%; opacity: 1;display: inline-block; vertical-align: middle;}.seq-preload-indicator-fallback .seq-preload-circle-2{margin-left: 3px; margin-right: 3px; width: 12px; height: 12px;}.seq-preload-indicator-fallback .seq-preload-circle-3{width: 16px; height: 16px;}',
 
       /**
        * Setup Sequence preloading

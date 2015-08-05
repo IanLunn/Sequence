@@ -29,7 +29,7 @@ var options = {
   // autoPlayDelay: 1000,
   phaseThreshold: false,
   ignorePhaseThresholdWhenSkipped: true,
-  preloader: false,
+  preloader: true,
   keyNavigation: true,
   // cycle: false,
   // hashTags: true,
