@@ -530,19 +530,6 @@ function defineSequence(imagesLoaded, Hammer) {
     }
 
     /**
-     * Convert an attribute to camel case
-     *
-     * @param {String} attribute - The attribute to convert
-     * @api private
-     */
-    function attributeToCamelCase(attribute) {
-
-      return attribute.replace("data-", "").replace(/\W+(.)/g, function (x, chr) {
-        return chr.toUpperCase();
-      });
-    }
-
-    /**
      * Determine if the cursor is inside the boundaries of an
      * element.
      *
@@ -966,38 +953,9 @@ function defineSequence(imagesLoaded, Hammer) {
           self.$screen.style.width = "100%";
         }
 
-        self.canvas.addPreserve3d();
-
         // Determine the position of each step and the transform properties
         // required for the canvas so it can move to each step
         self.canvas.getTransformProperties();
-      },
-
-      /**
-       * if moveActiveStepToTop is enabled and the browser supports
-       * transform-style: preserve-3d, add this property to the canvas and steps.
-       * This enables the use of transform: translateZ() in favor of z-index
-       * for better performance
-       *
-       * @api private
-       */
-      addPreserve3d: function() {
-
-        if (self.options.moveActiveStepToTop === true && self.propertySupport.transformStylePreserve3d === true) {
-
-          var i,
-              $step;
-
-          // Add to the canvas
-          self.$canvas.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
-
-          // Add to the steps
-          for (i = 0; i < self.noOfSteps; i++) {
-
-            $step = self.$steps[i];
-            $step.style[Modernizr.prefixed("transformStyle")] = "preserve-3d";
-          }
-        }
       },
 
       /**
@@ -1279,15 +1237,7 @@ function defineSequence(imagesLoaded, Hammer) {
 
       /**
        * If the moveActiveStepToTop option is being used, move the next step
-       * to the top and the current step to the bottom
-       *
-       * Stacking order is manipulated via translateZ() instead of z-index in
-       * supporting browsers as it is much quicker
-       *
-       * Bug Workaround 29/06/2015: Blink does some odd things with Stacking
-       * order when using translateZ(). To workaround this each Z translation
-       * is multipled by ten
-       * https://code.google.com/p/chromium/issues/detail?id=505608
+       * to the top and the current step to the bottom via z-index
        *
        * @param {HTMLElement} currentElement - The current step to be moved off
        * the top
@@ -1300,16 +1250,9 @@ function defineSequence(imagesLoaded, Hammer) {
           var prevStepElement = self.$steps[self.prevStepId - 1],
               lastStepId = self.noOfSteps - 1;
 
-          if (self.propertySupport.transformStylePreserve3d === true) {
-
-            prevStepElement.style[Modernizr.prefixed("transform")] = "translateZ(10px)";
-            currentElement.style[Modernizr.prefixed("transform")] = "translateZ(" + (lastStepId * 10) + "px)";
-            nextElement.style[Modernizr.prefixed("transform")] = "translateZ(" + (self.noOfSteps * 10) + "px)";
-          } else {
-            prevStepElement.style.zIndex = 1;
-            currentElement.style.zIndex = lastStepId;
-            nextElement.style.zIndex = self.noOfSteps;
-          }
+          prevStepElement.style.zIndex = 1;
+          currentElement.style.zIndex = lastStepId;
+          nextElement.style.zIndex = self.noOfSteps;
         }
 
         return null;
@@ -2116,7 +2059,6 @@ function defineSequence(imagesLoaded, Hammer) {
        *
        * - transitions
        * - animations
-       * - transform-style: preserve-3d
        *
        * @param {Object} properties - The properties to be used (on the canvas)
        * @returns {Object} The list of properties we've tested and their support
@@ -2124,28 +2066,7 @@ function defineSequence(imagesLoaded, Hammer) {
       getPropertySupport: function(properties) {
 
         var transitions = false,
-            animations = false,
-            transformStylePreserve3d = false;
-
-        // Modernizr test for transform-style: preserve-3d
-        Modernizr.addTest("csstransformspreserve3d", function () {
-
-          var prop = Modernizr.prefixed("transformStyle"),
-              val = "preserve-3d",
-              computedStyle;
-
-          if (!prop) {
-            return false;
-          }
-
-          prop = prop.replace(/([A-Z])/g, function(str,m1){ return "-" + m1.toLowerCase(); }).replace(/^ms-/,"-ms-");
-
-          Modernizr.testStyles("#modernizr{" + prop + ":" + val + ";}", function (el, rule) {
-            computedStyle = window.getComputedStyle ? getComputedStyle(el, null).getPropertyValue(prop) : "";
-          });
-
-          return (computedStyle === val);
-        });
+            animations = false;
 
         // Are transitions supported?
         if (Modernizr.csstransitions === true) {
@@ -2157,15 +2078,9 @@ function defineSequence(imagesLoaded, Hammer) {
           animations = true;
         }
 
-        // Is transform-style: preserve-3d supported?
-        if (Modernizr.csstransformspreserve3d === true) {
-          transformStylePreserve3d = true;
-        }
-
         return {
           transitions: transitions,
-          animations: animations,
-          transformStylePreserve3d: transformStylePreserve3d
+          animations: animations
         };
       }
     };

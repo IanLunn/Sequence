@@ -33,7 +33,7 @@ var options = {
   keyNavigation: true,
   // cycle: false,
   // hashTags: true,
-  startingStepId: 1,
+  startingStepId: 2,
   // startingStepAnimatesIn: true,
   reverseWhenNavigatingBackwards: true,
   // navigationSkip: false,
