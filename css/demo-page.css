@@ -1,0 +1,454 @@
+/*
+ * The following styles are solely for the demo page and are not required
+ * for the Intro theme to work.
+ */
+body {
+  margin: 0;
+  padding: 0;
+  background: #F8F8F8;
+  font-family: "Ubuntu", sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+a {
+  text-decoration: none;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 10px;
+  padding: 0 .625rem;
+}
+@media only screen and (min-width: 737px) {
+  .container {
+    padding: 0 40px;
+    padding: 0 2.5rem;
+  }
+}
+
+.group {
+  position: relative;
+}
+.group:before, .group:after {
+  content: "";
+  display: table;
+}
+.group:after {
+  clear: both;
+}
+
+.valign {
+  font-size: 0;
+}
+.valign:before {
+  content: "";
+  height: 100%;
+}
+.valign:before,
+.valign > * {
+  display: inline-block;
+  vertical-align: middle;
+}
+.valign > * {
+  font-size: 16px;
+}
+
+.browsehappy {
+  background: #ccc;
+  color: #000;
+  margin: 0;
+  padding: 1em;
+}
+.browsehappy a {
+  color: #2AA0D4;
+}
+.browsehappy a:focus, .browsehappy a:hover {
+  color: #0890CA;
+}
+
+.header {
+  padding: 2.65em 0;
+  background: white;
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+}
+.header .container > div {
+  width: 100%;
+  font-size: 0;
+}
+.header a {
+  padding: .625em;
+  color: #B1B1B1;
+  text-decoration: none;
+}
+.header a:focus, .header a:hover {
+  color: black;
+}
+.header .logo,
+.header .nav {
+  font-size: 16px;
+  font-size: 1rem;
+}
+.header .logo {
+  margin-bottom: 1em;
+}
+.header .nav {
+  height: 100%;
+  line-height: 1.6;
+}
+@media only screen and (min-width: 737px) {
+  .header {
+    text-align: left;
+  }
+  .header .logo,
+  .header .nav {
+    display: inline-block;
+    vertical-align: middle;
+    width: 50%;
+  }
+  .header .logo {
+    margin-bottom: 0;
+  }
+  .header .nav {
+    text-align: right;
+  }
+}
+
+a .fa {
+  display: inline;
+}
+
+.nav {
+  margin: 0;
+  padding: 0;
+}
+.nav li {
+  display: inline-block;
+  vertical-align: middle;
+  list-style: none;
+}
+
+.social {
+  margin-bottom: .875em;
+  text-align: center;
+  line-height: 2;
+}
+
+.social-button {
+  display: inline-block;
+  vertical-align: middle;
+  width: 100px;
+}
+
+.twitter-follow-button {
+  display: block;
+  margin: 0 auto;
+}
+
+.follow {
+  margin-bottom: 1.25em;
+  line-height: 1.6;
+}
+
+.main .title:first-of-type {
+  margin-top: 5em;
+}
+
+.title {
+  margin-top: 5em;
+  margin-bottom: 2em;
+  text-align: center;
+  color: #282828;
+}
+.title h1,
+.title h2 {
+  font-family: "Montserrat", sans-serif;
+}
+.title h1 {
+  margin: 0;
+  margin-bottom: .5em;
+  font-family: "Montserrat", sans-serif;
+  font-size: 2em;
+  font-weight: 500;
+  line-height: 1.25;
+  -webkit-hyphens: manual;
+  -moz-hyphens: manual;
+  -ms-hyphens: manual;
+  hyphens: manual;
+}
+.title h2 {
+  margin: 0;
+  margin-bottom: 0;
+  font-size: 1em;
+  font-weight: 300;
+  line-height: 1.4;
+}
+.title .tagline {
+  line-height: 1.4;
+}
+@media only screen and (min-width: 568px) {
+  .title h1 {
+    margin-bottom: .18em;
+    font-size: 2.25em;
+  }
+  .title h2 {
+    font-size: 1.15em;
+  }
+}
+@media only screen and (min-width: 641px) {
+  .title {
+    margin-top: 8.75em;
+    margin-bottom: 3em;
+  }
+  .title h1 {
+    margin-bottom: .18em;
+    font-size: 2.75em;
+  }
+  .title h2 {
+    margin-bottom: 2em;
+    font-size: 1.25em;
+    line-height: 1.6;
+  }
+}
+
+.main a {
+  color: #2AA0D4;
+}
+.main a:focus, .main a:hover {
+  color: #0890CA;
+}
+
+.products {
+  margin: 0;
+  padding: 0;
+}
+.products img {
+  max-width: 100%;
+  height: auto;
+}
+.products a,
+.products a:focus,
+.products a:hover {
+  color: #282828;
+}
+.products .product {
+  margin-bottom: 2em;
+  list-style: none;
+}
+.products .product img {
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.4);
+  -webkit-transition-duration: .2s;
+  -webkit-transition-property: box-shadow;
+  transition-duration: .2s;
+  transition-property: box-shadow;
+}
+.products .product:focus img, .products .product:hover img {
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.6);
+}
+.products .product img,
+.products .product a {
+  display: block;
+}
+.products .product h3 {
+  margin: .555556em 0 0 0;
+}
+@media only screen and (min-width: 569px) {
+  .products .product {
+    width: 48.3607%;
+    float: left;
+  }
+  .products .product:nth-child(2n+1) {
+    margin-right: 1.63934%;
+  }
+  .products .product:nth-child(2n) {
+    margin-left: 1.63934%;
+  }
+  .products .product:nth-last-child(1), .products .product:nth-last-child(2) {
+    margin-bottom: 0;
+  }
+}
+
+.button-set {
+  margin: 1em 0;
+  text-align: center;
+}
+.button-set .button {
+  margin-left: 0.285714em;
+  margin-right: 0.285714em;
+}
+
+a.button {
+  display: inline-block;
+  margin-top: .71428571em;
+  padding: 1.2em;
+  color: white;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: .875em;
+  font-weight: 700;
+  -webkit-transition-duration: .2s;
+  transition-duration: .2s;
+  -webkit-transition-property: background-color;
+  transition-property: background-color;
+}
+a.button:first-of-type {
+  margin-left: 0;
+}
+a.button:last-of-type {
+  margin-right: 0;
+}
+a.button:focus, a.button:hover {
+  color: white;
+}
+a.button i {
+  margin-left: 2px;
+}
+a.button.button-link {
+  background: #36C26F;
+}
+a.button.button-link:focus, a.button.button-link:hover {
+  background: #16B557;
+}
+a.button.button-highlight {
+  background: #2AA0D4;
+}
+a.button.button-highlight:focus, a.button.button-highlight:hover {
+  background: #0890CA;
+}
+
+.code-block {
+  max-width: 580px;
+  margin: 2.5em auto 1em auto;
+  font-size: 16px;
+  font-size: 1rem;
+}
+.code-block code {
+  background: white;
+  display: block;
+  padding: 1em;
+  line-height: 1.6;
+  font-family: "Droid Sans Mono",Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
+  font-size: .875em;
+}
+
+.footer {
+  margin: 0;
+  padding: 5em 0 1em 0;
+  background: #181818;
+  color: #777;
+}
+.footer a {
+  color: #B1B1B1;
+}
+
+.full-button {
+  display: block;
+  margin-top: 5em;
+  padding: 1em;
+  text-align: center;
+  background: #36C26F;
+  font-size: 1.5em;
+  color: white;
+}
+.full-button:focus, .full-button:hover {
+  background: #16B557;
+}
+
+.made-by {
+  display: block;
+  margin-top: 5em;
+  font-family: "Montserrat", sans-serif;
+  text-align: center;
+  line-height: 1.6;
+}
+.made-by svg {
+  display: block;
+}
+.made-by ul,
+.made-by p {
+  margin: 0;
+  padding: 0;
+}
+.made-by ul {
+  margin-bottom: .25em;
+}
+.made-by li {
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+}
+.made-by p {
+  margin-top: .4em;
+  font-size: .875em;
+}
+.made-by a {
+  padding: 0 .125em;
+  color: #B1B1B1;
+  transition-duration: .2s;
+  transition-property: color;
+}
+.made-by a:focus, .made-by a:hover {
+  color: white;
+}
+.made-by i {
+  font-size: 26px;
+  height: 30px;
+}
+.made-by .follow {
+  margin-top: 2em;
+}
+.made-by .follow iframe {
+  margin-bottom: .5em;
+}
+.made-by small {
+  display: block;
+  margin-top: 3em;
+  font-size: .625em;
+}
+
+.ild-ident {
+  display: block;
+}
+@keyframes circle {
+  50% {
+    transform: scale(1.26923);
+  }
+}
+@keyframes initials {
+  50% {
+    transform: translateY(-8px) translateZ(0);
+  }
+}
+.ild-ident svg {
+  display: block;
+  overflow: visible;
+  transform: scale(1) translateZ(0);
+}
+.ild-ident svg .circle-holder {
+  transform: translate(-7px, -7px);
+}
+.ild-ident svg .circle {
+  transform: translate(7px, 7px);
+}
+.ild-ident svg.active .i {
+  animation: initials .4s ease-in-out;
+}
+.ild-ident svg.active .l {
+  animation: initials .4s .2s ease-in-out;
+}
+.ild-ident svg.active .circle {
+  animation: circle .5s .1s ease-in-out;
+}
+
+.sponsor {
+  max-width: 290px;
+  margin: 0 auto;
+  text-align: center;
+}
+.sponsor p {
+  font-size: .875em;
+  line-height: 1.6;
+}
+
+/*# sourceMappingURL=demo-page.css.map */

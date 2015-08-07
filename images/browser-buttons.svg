@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="54px" height="14px" viewBox="0 0 54 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3.2 (12043) - http://www.bohemiancoding.com/sketch -->
+    <title>Browser Buttons Copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Intro" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Step-1" sketch:type="MSLayerGroup" transform="translate(-12.000000, 1.000000)">
+            <g id="Browser" sketch:type="MSShapeGroup">
+                <g id="Browser-Buttons-Copy" transform="translate(13.000000, 0.000000)">
+                    <circle id="Oval-5" stroke="#DD4F4C" fill="#FF605D" cx="6" cy="6" r="6"></circle>
+                    <circle id="Oval-7" stroke="#D79C36" fill="#FFBE4F" cx="26" cy="6" r="6"></circle>
+                    <circle id="Oval-8" stroke="#08B152" fill="#00CA58" cx="46" cy="6" r="6"></circle>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
