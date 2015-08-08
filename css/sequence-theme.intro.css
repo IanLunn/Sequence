@@ -1000,14 +1000,29 @@ body {
 .seq .seq-features sup {
   position: absolute;
 }
+.seq.seq-reversed .seq-touch {
+  /* Keep the animation in its current state when reversed */
+  -webkit-animation-name: touch;
+  animation-name: touch;
+}
+.seq.seq-reversed .seq-touch-title-1 {
+  /* Keep the animation in its current state when reversed */
+  -webkit-animation-name: fade-out;
+  animation-name: fade-out;
+}
+.seq.seq-reversed .seq-touch-title-2 p {
+  /* Keep the animation in its current state when reversed */
+  -webkit-animation-name: slide-in;
+  animation-name: slide-in;
+}
 .seq.seq-reversed .seq-out .seq-touch {
-  /* Reset the phone so it reverses in as it does navigating forward */
-  -webkit-transform: translateX(-50%) translateY(-50%) translateZ(0) rotate(0);
-  transform: translateX(-50%) translateY(-50%) translateZ(0) rotate(0);
+  /* Reset the phone animation so it can start again */
+  -webkit-animation-name: none;
+  animation-name: none;
 }
 .seq.seq-reversed .seq-out .seq-touch-title-1,
 .seq.seq-reversed .seq-out .seq-touch-title-2 p {
-  /* Reset animations to the begining when coming in reversed */
+  /* Reset the phone animation so it can start again */
   -webkit-animation-name: none;
   animation-name: none;
 }
@@ -1067,20 +1082,20 @@ body {
   animation-name: door-open;
 }
 .seq .seq-in .seq-touch {
-  -webkit-animation-name: touch !important;
-  animation-name: touch !important;
+  -webkit-animation-name: touch;
+  animation-name: touch;
 }
 .seq .seq-in .seq-swipe {
   -webkit-animation-name: swipe;
   animation-name: swipe;
 }
 .seq .seq-in .seq-touch-title-1 {
-  -webkit-animation-name: fade-out !important;
-  animation-name: fade-out !important;
+  -webkit-animation-name: fade-out;
+  animation-name: fade-out;
 }
 .seq .seq-in .seq-touch-title-2 p {
-  -webkit-animation-name: slide-in !important;
-  animation-name: slide-in !important;
+  -webkit-animation-name: slide-in;
+  animation-name: slide-in;
 }
 .seq .seq-in .seq-browser-icon {
   -webkit-transform: translateZ(0) scale(1);
@@ -1098,8 +1113,8 @@ body {
   transition-timing-function: ease-out;
 }
 .seq .seq-out .seq-touch {
-  -webkit-transform: translateX(-50%) translateY(-50%) translateZ(0) rotate(90deg);
-  transform: translateX(-50%) translateY(-50%) translateZ(0) rotate(90deg);
+  -webkit-animation-name: touch;
+  animation-name: touch;
 }
 .seq .seq-out .seq-touch-title-1 {
   -webkit-animation-name: fade-out;

@@ -976,15 +976,30 @@ $sequenceDesktopHeight: 585px;
   }
 
   &.seq-reversed {
+    .seq-touch {
+      /* Keep the animation in its current state when reversed */
+      @include prefixed(animation-name, "touch");
+    }
+
+    .seq-touch-title-1 {
+      /* Keep the animation in its current state when reversed */
+      @include prefixed(animation-name, "fade-out");
+    }
+
+    .seq-touch-title-2 p {
+      /* Keep the animation in its current state when reversed */
+      @include prefixed(animation-name, "slide-in");
+    }
+
     .seq-out {
       .seq-touch {
-        /* Reset the phone so it reverses in as it does navigating forward */
-        @include prefixed(transform, "translateX(-50%) translateY(-50%) translateZ(0) rotate(0)");
+        /* Reset the phone animation so it can start again */
+        @include prefixed(animation-name, "none");
       }
 
       .seq-touch-title-1,
       .seq-touch-title-2 p {
-        /* Reset animations to the begining when coming in reversed */
+        /* Reset the phone animation so it can start again */
         @include prefixed(animation-name, "none");
       }
     }
@@ -1050,7 +1065,7 @@ $sequenceDesktopHeight: 585px;
     }
 
     .seq-touch {
-      @include prefixed(animation-name, "touch !important");
+      @include prefixed(animation-name, "touch");
     }
 
     .seq-swipe {
@@ -1058,11 +1073,11 @@ $sequenceDesktopHeight: 585px;
     }
 
     .seq-touch-title-1 {
-      @include prefixed(animation-name, "fade-out !important");
+      @include prefixed(animation-name, "fade-out");
     }
 
     .seq-touch-title-2 p {
-      @include prefixed(animation-name, "slide-in !important");
+      @include prefixed(animation-name, "slide-in");
     }
 
     .seq-browser-icon {
@@ -1082,7 +1097,8 @@ $sequenceDesktopHeight: 585px;
     }
 
     .seq-touch {
-      @include prefixed(transform, "translateX(-50%) translateY(-50%) translateZ(0) rotate(90deg)");
+      // @include prefixed(transform, "translateX(-50%) translateY(-50%) translateZ(0) rotate(90deg)");
+      @include prefixed(animation-name, "touch");
     }
 
     .seq-touch-title-1 {
