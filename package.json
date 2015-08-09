@@ -5,7 +5,7 @@
   "main": "scripts/sequence.min.js",
   "license": "SEE LICENSE IN LICENSE.md",
   "author": "Ian Lunn",
-  "homepage": "https://github.com/IanLunn/Sequence",
+  "homepage": "http://www.sequencejs.com/",
   "bugs": "https://github.com/IanLunn/Sequence/issues",
   "repository": {
     "type": "git",
@@ -14,12 +14,8 @@
   "keywords": [
     "sequence",
     "sequence.js",
-    "seq",
+    "sequencejs",
     "slider",
-    "css3",
-    "slider",
-    "carousel",
-    "css3",
     "carousel",
     "animation",
     "animation framework",

@@ -4,7 +4,7 @@
   "version": "2.0.0",
   "main": "scripts/sequence.min.js",
   "license": "SEE LICENSE IN LICENSE.md",
-  "homepage": "http://sequencejs.com/",
+  "homepage": "http://www.sequencejs.com/",
   "repository": {
     "type": "git",
     "url": "git://github.com/IanLunn/Sequence.git"
@@ -16,11 +16,8 @@
   "keywords": [
     "sequence",
     "sequence.js",
+    "sequencejs",
     "slider",
-    "css3",
-    "slider",
-    "carousel",
-    "css3",
     "carousel",
     "animation",
     "animation framework",
@@ -36,7 +33,6 @@
   ],
   "dependencies": {
     "hammerjs": "2.0.4",
-    "imagesloaded": "3.1.5",
-    "respond": "^1.4.2"
+    "imagesloaded": "3.1.5"
   }
 }
