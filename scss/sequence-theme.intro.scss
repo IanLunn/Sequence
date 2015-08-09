@@ -1097,7 +1097,6 @@ $sequenceDesktopHeight: 585px;
     }
 
     .seq-touch {
-      // @include prefixed(transform, "translateX(-50%) translateY(-50%) translateZ(0) rotate(90deg)");
       @include prefixed(animation-name, "touch");
     }
 
