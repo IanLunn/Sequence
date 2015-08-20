@@ -1,0 +1,82 @@
+/*!
+ * Theme Name: Test Theme
+ * Version: 0.1.0
+ * Theme URL:
+ *
+ * Used for Testing Sequence
+ *
+ * Powered by Sequence.js - The open-source CSS animation framework.
+ *
+ * Author: Ian Lunn
+ * Author URL: https://ianlunn.co.uk/
+ *
+ * Test Theme Sequence Theme Copyright (c) Ian Lunn 2014
+ * License: MIT http://opensource.org/licenses/MIT
+ *
+ * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
+ */
+
+.seq-current {
+  border: red solid 1px;
+}
+
+#sequence {
+  position: relative;
+  height: 300px;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0;
+  border: black solid 2px;
+  font-family: sans-serif;
+}
+
+#sequence.seq-fallback {
+  border: blue solid 2px;
+}
+
+#sequence .seq-screen,
+#sequence .seq-canvas,
+#sequence .seq-canvas > * {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#sequence .box {
+  position: absolute;
+  height: 100px;
+  width: 100px;
+  border: red solid 1px;
+  left: 100%;
+  -webkit-transition-duration: 4s;
+  transition-duration: 4s;
+  /*transition-timing-function: linear;*/
+}
+
+#sequence #step3 .box {
+  /*transition-delay: 1s;*/
+}
+
+#sequence #step3 .boxb {
+  -webkit-transition-duration: 3s;
+  transition-duration: 3s;
+  /*transition-delay: 1s;*/
+}
+
+#sequence .boxb {
+  top: 200px;
+}
+
+#sequence .seq-in .box {
+  left: 50%;
+  margin-left: -50px;
+}
+
+#sequence .seq-out .box {
+  left: 0;
+  margin-left: -100px;
+}

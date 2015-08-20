@@ -1,0 +1,97 @@
+/*!
+ * Theme Name: Multiple Test
+ * Version: 0.1.0
+ * Theme URL: http://sequencejs.com/themes/multiple-test/
+ *
+ * A theme to test multiple instances
+ *
+ * Powered by Sequence.js - The open-source CSS animation framework.
+ *
+ * Author: Ian Lunn
+ * Author URL: https://ianlunn.co.uk/
+ *
+ * Multiple Test Sequence Theme Copyright (c) Ian Lunn 2014
+ * License: MIT http://opensource.org/licenses/MIT
+ *
+ * Sequence.js and its dependencies are copyright (c) Ian Lunn 2014 unless otherwise stated.
+ */
+
+.seq-pagination .seq-current {
+  border: red solid 1px;
+}
+
+.seq-pause.seq-paused {
+  border: red solid 1px;
+}
+
+.sequence {
+  position: relative;
+  height: 400px;
+  width: 100%;
+  max-width: 600px;
+  overflow: hidden;
+  margin: 0 auto;
+  padding: 0;
+  border: black solid 2px;
+  font-family: sans-serif;
+}
+
+.sequence .seq-screen,
+.sequence .seq-canvas,
+.sequence .seq-canvas > * {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sequence .seq-canvas {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.sequence .seq-canvas > * {
+  display: inline-block;
+  vertical-align: top;
+  width: 100%;
+  height: 100%;
+  white-space: normal;
+  text-align: center;
+}
+
+.sequence h2,
+.sequence h3 {
+  display: block;
+  opacity: 0;
+  -webkit-transition-duration: 0.5s;
+  transition-duration: 0.5s;
+}
+
+.sequence h2 {
+  -webkit-transform: translate(0, -20px);
+  -ms-transform: translate(0, -20px);
+  transform: translate(0, -20px);
+}
+
+.sequence h3 {
+  -webkit-transform: translate(0, 20px);
+  -ms-transform: translate(0, 20px);
+  transform: translate(0, 20px);
+}
+
+.sequence .seq-in h2,
+.sequence .seq-in h3 {
+  opacity: 1;
+  -webkit-transform: translate(0, 0);
+  -ms-transform: translate(0, 0);
+  transform: translate(0, 0);
+}
+
+.sequence .seq-out h2,
+.sequence .seq-out h3 {
+  opacity: 1;
+  -webkit-transform: translate(0, 0);
+  -ms-transform: translate(0, 0);
+  transform: translate(0, 0);
+}

@@ -1,8 +1,7 @@
 .DS_Store
-.espressostorage
-*.esproj
 .sass-cache
-/_notes/*
-themes/dev/*
-sftp-config.json
-node_modules/
+node_modules
+*.log
+tmp
+.tmp
+bower_components

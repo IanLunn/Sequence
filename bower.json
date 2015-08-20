@@ -1,19 +1,27 @@
 {
-  "name": "Sequence",
-  "version": "1.0.1.2",
-  "homepage": "http://sequencejs.com/",
+  "name": "sequencejs",
+  "description": "The responsive CSS animation framework for creating unique sliders, presentations, banners, and other step-based applications.",
+  "version": "2.0.0",
+  "main": "scripts/sequence.min.js",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "homepage": "http://www.sequencejs.com/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IanLunn/Sequence.git"
+  },
+  "bugs": "https://github.com/IanLunn/Sequence/issues",
   "authors": [
     "Ian Lunn <hello@ianlunn.co.uk>"
   ],
-  "description": "The Responsive Slider with Advanced CSS3 Transitions",
-  "main": "scripts/jquery.sequence.js",
   "keywords": [
     "sequence",
     "sequence.js",
+    "sequencejs",
     "slider",
     "carousel",
-    "css3",
-    "slider"
+    "animation",
+    "animation framework",
+    "css animation"
   ],
   "license": "MIT",
   "ignore": [
@@ -22,5 +30,9 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "hammerjs": "2.0.4",
+    "imagesloaded": "3.1.5"
+  }
 }

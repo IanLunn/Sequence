@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Theme - Sequence.js Theme</title>
+  <link href="css/sequence-theme.test-theme.css" rel="stylesheet" media="all">
+</head>
+<body>
+
+  <button class="seq-prev">Prev</button>
+  <button id="autoplay" class="seq-autoplay">Start Autoplay</button>
+  <button class="seq-next">Next</button>
+
+  <div class="seq-pagination">
+    <button>1</button>
+    <button>2</button>
+    <button>3</button>
+    <button>4</button>
+    <button>5</button>
+  </div>
+
+  <button id="init">Init</button>
+  <button id="destroy">Destroy</button>
+
+  <div id="sequence">
+    <div class="seq-screen">
+      <ul class="seq-canvas">
+        <li id="step1">
+          <div class="box box1" data-seq>Box 1</div>
+          <div class="box boxb" data-seq data-seq-reverse="false">Box 1b </div>
+        </li>
+        <li id="step2">
+          <div class="box box2" data-seq>Box 2</div>
+          <!-- <div class="box boxb">Box 2b</div> -->
+        </li>
+        <li id="step3">
+          <div class="box box3" data-seq>Box 3</div>
+          <!-- <div class="box boxb">Box 3b</div> -->
+        </li>
+        <li id="step4">
+          <div class="box box4" data-seq>Box 4</div>
+          <!-- <div class="box boxb">Box 4b</div> -->
+        </li>
+        <li id="step5">
+          <div class="box box5" data-seq>Box 5</div>
+          <!-- <div class="box boxb">Box 5b</div> -->
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="../../../scripts/imagesloaded.pkgd.min.js"></script>
+  <script src="../../../scripts/hammer.min.js"></script>
+  <script src="../../../scripts/sequence.js"></script>
+  <script src="scripts/sequence-theme.test-theme.js"></script>
+</body>
+</html>

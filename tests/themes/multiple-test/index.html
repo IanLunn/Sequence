@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiple Test - Sequence.js Theme</title>
+  <link href="css/sequence-theme.multiple-test.css" rel="stylesheet" media="all">
+</head>
+<body>
+
+  <h1>Multiple instance testing</h1>
+
+  <p>These instances test to make sure:</p>
+  <ul>
+    <li>multiple sliders work together</li>
+    <li>UI elements within a slider should only control that slider</li>
+    <li>UI elements outside of sliders, should control all sliders</li>
+    <li>Multiple UI elements can belong to one slider. (Slider 1 has elements on each of its slides)</li>
+    <li>Multiple pagination in slider 1 should correctly update (a red border around the revelant link in each slide)</li>
+  </ul>
+
+  <!-- Global Nav Buttons -->
+  <button class="seq-prev">Prev</button>
+  <button class="seq-autoplay">Stop</button>
+  <button class="seq-next">Next</button>
+
+  <div class="seq-pagination">
+    <button>1</button>
+    <button>2</button>
+    <button>3</button>
+  </div>
+
+  <div id="sequence1" class="sequence">
+
+    <div class="seq-screen">
+      <ul class="seq-canvas">
+        <li>
+          <h2>Powered by Sequence.js</h2>
+          <h3>The open-source CSS animation framework</h3>
+
+          <button rel="sequence1" class="seq-prev">Prev</button>
+          <button rel="sequence1" class="seq-autoplay">Stop</button>
+          <button rel="sequence1" class="seq-next">Next</button>
+
+          <div rel="sequence1" class="seq-pagination">
+            <button>1</button>
+            <button>2</button>
+            <button>3</button>
+          </div>
+        </li>
+        <li>
+          <h2>Create Unique Animated Themes</h2>
+          <h3>For sliders, presentations, banners, accordions, and other step-based applications</h3>
+
+            <button rel="sequence1" class="seq-prev">Prev</button>
+            <button rel="sequence1" class="seq-autoplay">Stop</button>
+            <button rel="sequence1" class="seq-next">Next</button>
+
+            <div rel="sequence1" class="seq-pagination">
+              <button>1</button>
+              <button>2</button>
+              <button>3</button>
+            </div>
+        </li>
+        <li>
+          <h2>No Restrictions, Endless Possibilities</h2>
+          <h3>Use the HTML and CSS syntax you're used to. No JavaScript knowledge required.</h3>
+
+          <button rel="sequence1" class="seq-prev">Prev</button>
+          <button rel="sequence1" class="seq-autoplay">Stop</button>
+          <button rel="sequence1" class="seq-next">Next</button>
+
+          <div rel="sequence1" class="seq-pagination">
+            <button>1</button>
+            <button>2</button>
+            <button>3</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="sequence2" class="sequence">
+
+    <button rel="sequence2" class="seq-prev">Prev</button>
+    <button rel="sequence2" class="seq-autoplay">Stop</button>
+    <button rel="sequence2" class="seq-next">Next</button>
+
+    <div rel="sequence2" class="seq-pagination">
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+    </div>
+
+    <div class="seq-screen">
+      <ul class="seq-canvas">
+        <li>
+          <h2>Powered by Sequence.js</h2>
+          <h3>The open-source CSS animation framework</h3>
+        </li>
+        <li>
+          <h2>Create Unique Animated Themes</h2>
+          <h3>For sliders, presentations, banners, accordions, and other step-based applications</h3>
+        </li>
+        <li>
+          <h2>No Restrictions, Endless Possibilities</h2>
+          <h3>Use the HTML and CSS syntax you're used to. No JavaScript knowledge required.</h3>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="../../../scripts/imagesloaded.pkgd.min.js"></script>
+  <script src="../../../scripts/hammer.min.js"></script>
+  <script src="../../../scripts/sequence.js"></script>
+  <script src="scripts/sequence-theme.multiple-test.js"></script>
+</body>
+</html>

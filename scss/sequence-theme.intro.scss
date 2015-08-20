@@ -1,0 +1,1577 @@
+/**
+ * Theme Name: Intro
+ * Version: 1.0.0
+ * Theme URL: http://sequencejs.com/themes/intro/
+ *
+ * The Sequence.js introduction theme used to briefly describe how Sequence.js works
+ *
+ * This theme is powered by Sequence.js - The
+ * responsive CSS animation framework for creating unique sliders,
+ * presentations, banners, and other step-based applications.
+ *
+ * Author: Ian Lunn
+ * Author URL: http://ianlunn.co.uk/
+ *
+ * Theme License: http://sequencejs.com/licenses/#free-theme
+ * Sequence.js Licenses: http://sequencejs.com/licenses/
+ *
+ * Copyright © 2015 Ian Lunn Design Limited unless otherwise stated.
+ */
+
+@import "partials/mixins";
+
+$seqActive: #36C26F;
+$seqActiveHover: #16B557;
+$seqHighlight: #2AA0D4;
+$seqHighlightHover: #0890CA;
+
+body {
+  background: #F8F8F8;
+}
+
+/* Google Web Font */
+@import url(http://fonts.googleapis.com/css?family=Ubuntu:500,400,300,700|Montserrat:400,700|Droid+Sans+Mono);
+@import url("//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
+
+$sequenceMobileHeight: 460px;
+$sequenceDesktopHeight: 585px;
+
+.seq {
+  box-sizing: border-box;
+  position: relative;
+  -webkit-text-size-adjust: none;
+
+  /* Dimensions */
+  width: 100%;
+  height: $sequenceMobileHeight;
+  max-width: 1200px;
+
+  overflow: hidden;
+
+  /* Center the Sequence container on the page */
+  margin: 0 auto;
+  padding: 0;
+
+  /* Some basic styles */
+  font-family: "Montserrat", sans-serif;
+  background: white;
+  border: #979797 solid 1px;
+  border-bottom: none;
+
+  &:before {
+    /* Top bar */
+    content: "";
+    display: block;
+    position: absolute;
+    z-index: 10;
+    width: 100%;
+    height: 1.625em;
+    background: #E9E9E9;
+  }
+
+  &:after {
+    /* Browser buttons */
+    content: "";
+    position: absolute;
+    z-index: 10;
+    top: 6px;
+    left: .625em;
+    height: 14px;
+    width: 54px;
+    background-image: url('../images/browser-buttons.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+  .seq-nav {
+    /* Hide navigation in small layout */
+    display: none;
+  }
+
+  .seq-screen,
+  .seq-canvas,
+  .seq-canvas > * {
+    /* Reset the canvas and steps for more browser consistency */
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .seq-canvas {
+    /* Make the canvas the same dimensions as the container and prevent lines
+     * from wrapping so each step can sit side-by-side */
+    position: absolute;
+    height: 100%;
+    width: 100%;
+
+    &:after {
+      /* Used for detecting screen size in JavaScript */
+      display: none;
+      content: "small";
+    }
+
+    > * {
+      /* Make the steps the same size as the container and sit side-by-side */
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      color: white;
+      opacity: 0;
+      line-height: 1.4;
+
+      &:after {
+        /* Semi-transparent overlay shown when the codepane is opened in mobile layout */
+        content: "";
+        position: absolute;
+        z-index: -1;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0, 0, 0, .6);
+        opacity: 0;
+        @include prefixed(transform, "translateZ(20px)");
+        @include prefixed(transition-duration, ".25s");
+        @include prefixed(transition-delay, ".25s");
+        @include prefixed(transition-property, "opacity, z-index");
+      }
+    }
+
+    .seq-in {
+      opacity: 1;
+    }
+  }
+
+  &.seq-active {
+    /* when JS is enabled */
+
+    /* Hide anything that goes beyond the boundaries of the Sequence container */
+    overflow: hidden;
+
+    .seq-preloader {
+      visibility: visible;
+      background: #E9E9E9;
+    }
+
+    .seq-preloader.seq-preloaded {
+      visibility: hidden;
+    }
+  }
+
+  // Vertically align any <div> with a parent element that has a class of seq-valign
+  @include valign(div);
+
+  .seq-code-pane {
+    box-sizing: border-box;
+
+    position: absolute;
+    z-index: 100;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    background: black;
+    color: white;
+
+    /* Place the code pane off-screen at the bottom - it will animate in
+     * from the bottom
+     */
+    @include prefixed(transform, "translateY(100%) translateZ(20px)");
+    @include prefixed(transition-property, "transform");
+    @include prefixed(transition-timing-function, "ease-in");
+
+    .seq-step-icon {
+      position: absolute;
+      z-index: 20;
+
+      /* Vertically align the icon */
+      top: 50%;
+      margin-top: -.9375em;
+
+      /* Position the icon in the center of the gutter */
+      left: -2.2em;
+    }
+
+    span {
+      display: block;
+    }
+  }
+
+  .seq-in .seq-code-pane {
+    /*
+     * Only animate the code-pane opening when the step is active
+     * This allows the code-pane to immediately snap shut when navigating to
+     * another step without closing the pane
+     */
+    @include prefixed(transition-duration, ".25s");
+  }
+
+  .seq-code-pane-snap-shut .seq-code-pane {
+    @include prefixed(transition-duration, "0s !important");
+  }
+
+  .seq-in.seq-code-pane-open {
+    /*
+     * When the "Show Code" button is clicked on a mobile device, show the
+     * semi-transparent overlay and open the code pane
+     */
+    &:after {
+      /* Semi-transparent overlay */
+      z-index: 10;
+      opacity: 1;
+      @include prefixed(transform, "translateZ(20px)");
+    }
+
+    .seq-code-pane {
+      /* Open code-pane */
+      @include prefixed(transform, "translateY(0) translateZ(20px)");
+    }
+  }
+
+  .seq-view-code {
+    position: relative;
+    z-index: 1;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    height: 35px;
+    height: 2.1875rem;
+    margin: 0;
+    padding: 8px 0;
+    padding: .5rem 0;
+    text-align: center;
+    background: #303030;
+    border: none;
+    color: white;
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-size: 1rem;
+    line-height: 1;
+
+    /*
+     * Place the view-code button on top of the code-pane so it appears when
+     * the code pane is closed
+     */
+    margin-top: -35px;
+    margin-top: -2.1875rem;
+
+    &:focus {
+      outline: dotted gray 1px;
+    }
+
+    &:active {
+      background: black;
+    }
+
+    &:focus,
+    &:hover {
+      i {
+        color: $seqActiveHover;
+      }
+    }
+
+    i {
+      color: $seqActive;
+
+      /* Override fontawesome to stop 1px move when parent is animated */
+      @include prefixed(transform, "none");
+    }
+
+    .seq-step-icon {
+      position: relative;
+      top: 0;
+      left: 0;
+      @include prefixed(transform, "none");
+    }
+  }
+
+  .seq-code {
+    width: 100%;
+    padding: 14px 0;
+    padding: .875rem 0;
+
+    /* Add a fake gutter to the left */
+    border-left-color: #303030;
+    border-left-style: solid;
+    border-left-width: 40px;
+    border-left-width: 2.5rem;
+  }
+
+  .seq-code-block {
+    position: relative;
+    padding: 0 .5em;
+
+    code {
+      display: block;
+      line-height: 1.6;
+      font-family: 'Droid Sans Mono', Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
+      font-size: .75em;
+
+      /* Smooth fonts and prevent pixelation during transforms */
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    span {
+      line-height: 1.6;
+    }
+  }
+
+  .seq-code-block + .seq-code-block {
+    margin-top: 1em;
+  }
+
+  .seq-code-1 {
+    /* indent code lines */
+    margin-left: 1em;
+  }
+
+  .seq-content {
+    box-sizing: border-box;
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    /* Make room for the top bar */
+    padding-top: 26px;
+    padding-top: 1.625rem;
+    /* Make room for the un-open code pane */
+    padding-bottom: 35px;
+    padding-bottom: 2.1875rem;
+
+    text-align: center;
+    background: white;
+
+    code {
+      position: relative;
+    }
+  }
+
+  .seq-step {
+    position: relative;
+    font-family: Ubuntu, sans-serif;
+
+    p {
+      font-weight: 300;
+    }
+  }
+
+  em,
+  .seq-content code {
+    background: white;
+    font-style: normal;
+    padding: .25em;
+    font-family: 'Droid Sans Mono', Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
+  }
+
+  .seq-step-icon {
+    display: inline-block;
+    width: 1.625em;
+    height: 1.625em;
+    margin: 0;
+    color: $seqActive;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    background: transparent;
+    border: solid 2px $seqActive;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 1.625;
+  }
+
+  sup.seq-step-icon {
+    width: 1em;
+    height: 1em;
+    line-height: 100%;
+    margin-left: 2px;
+    padding: .15em;
+    font-size: 10px;
+    border: solid 1px $seqActive;
+  }
+
+  .seq-instruction {
+    max-width: 540px;
+    margin-left: .625em;
+    margin-right: .625em;
+    padding: 1em;
+    color: black;
+    background-color: #F8F8F8;
+    text-align: left;
+
+    > h3:first-of-type {
+      margin-top: 0;
+    }
+
+    h3 {
+      margin-top: 1em;
+      margin-bottom: 0;
+      font-size: 1em;
+      font-weight: 400;
+      color: #282828;
+    }
+
+    p {
+      margin-bottom: 0;
+      color: #484848;
+      line-height: 1.6;
+      font-size: .75em;
+    }
+
+    a {
+      color: $seqHighlight;
+      text-decoration: none;
+
+      &:focus,
+      &:hover {
+        color: $seqHighlightHover;
+      }
+    }
+
+    .seq-tip {
+      font-size: .6875em;
+
+      &.seq-bulb:before {
+        content: "";
+        display: inline-block;
+        vertical-align: text-bottom;
+        height: 1.333333em;
+        width: 1.33333em;
+        margin-right: .333333em;
+        line-height: 1;
+        background-image: url("../images/bulb.svg");
+        background-repeat: no-repeat;
+        background-position: 50% 50%;
+        background-size: contain;
+      }
+    }
+  }
+
+  .seq-instruction-icon {
+    width: 12px;
+    height: 30px;
+  }
+
+  .seq-title {
+    margin-top: .5em;
+    margin-bottom: 1em;
+    text-align: center;
+    color: #282828;
+
+    > * {
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0;
+    }
+
+    h2 {
+      padding: 0 .5em;
+      font-size: 1em;
+      font-weight: 700;
+      color: #484848;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+
+    object img {
+      width: 12px;
+      height: 30px;
+    }
+  }
+
+  .seq-examples {
+    margin: 0;
+    margin-top: 8px;
+    margin-top: .5rem;
+    padding: 0;
+    text-align: center;
+
+    /* Remove 4px gap */
+    font-size: 0;
+
+    li {
+      box-sizing: border-box;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      width: 30.666666%;
+      margin: 0 1%;
+      padding: .5em;
+      list-style: none;
+      font-size: 14px;
+      font-size: .875rem;
+
+      &:nth-child(3n+1) {
+        margin-left: 0;
+      }
+
+      &:nth-child(3n+3) {
+        margin-right: 0;
+      }
+
+      p {
+        margin: 0;
+        margin-top: .25em;
+        padding: 0;
+        line-height: 1;
+        font-size: .75em;
+        font-family: Ubuntu, sans-serif;
+        font-weight: 700;
+      }
+
+      img {
+        width: 100%;
+        height: auto;
+      }
+
+      object {
+        width: 100%;
+        max-width: 42px;
+        height: auto;
+
+        img {
+          width: 42px;
+          height: 42px;
+        }
+      }
+    }
+  }
+
+  .seq-browsers {
+    margin: 0;
+
+    li {
+      width: 18.4%;
+    }
+  }
+
+  .seq-content {
+    /* In small layouts content should animate from right to left */
+    @include prefixed(transform, "translateX(100%) translateZ(1px)");
+    @include prefixed(transition-duration, ".2s");
+    @include prefixed(transition-property, "transform");
+    @include prefixed(transition-timing-function, "ease-in");
+  }
+
+  .seq-step3 .seq-content {
+    @include prefixed(transform, "translateZ(1px) scale(0)");
+  }
+
+  .seq-transform {
+    @include prefixed(transform, "translateX(-100px) translateZ(0)");
+
+    /* Set up the transform animation now, then we'll initiate it in .seq-in */
+    @include prefixed(animation-duration, "1s");
+    @include prefixed(animation-delay, ".5s");
+    @include prefixed(animation-iteration-count, "infinite");
+    @include prefixed(animation-direction, "alternate");
+
+    @include key-frames(transform) {
+      /* Example of an element being transformed */
+      100% {
+        @include prefixed(transform, "translateX(100px) translateZ(0)");
+      }
+    }
+  }
+
+  .seq-scale {
+    @include prefixed(transform, "translateZ(0) scale(0)");
+
+    /* Set up the transform animation now, then we'll initiate it in .seq-in */
+    @include prefixed(animation-duration, "1s");
+    @include prefixed(animation-delay, ".5s");
+    @include prefixed(animation-iteration-count, "infinite");
+    @include prefixed(animation-direction, "alternate");
+
+    @include key-frames(scale) {
+      /* Example of an element being scaled */
+      100% {
+        @include prefixed(transform, "translateZ(0) scale(1)");
+      }
+    }
+  }
+
+  .seq-rotate {
+    /* Set up the transform animation now, then we'll initiate it in .seq-in */
+    @include prefixed(animation-duration, "3s");
+    @include prefixed(animation-delay, ".5s");
+    @include prefixed(animation-iteration-count, "infinite");
+
+    @include key-frames(rotate) {
+      /* Example of an element being rotated */
+      100% {
+        @include prefixed(transform, "translateZ(0) rotate(720deg)");
+      }
+    }
+  }
+
+  .seq-fade {
+    opacity: 1;
+
+    /* Set up the transform animation now, then we'll initiate it in .seq-in */
+    @include prefixed(animation-duration, "1s");
+    @include prefixed(animation-delay, ".5s");
+    @include prefixed(animation-iteration-count, "infinite");
+    @include prefixed(animation-direction, "alternate");
+
+    @include key-frames(fade) {
+      /* Example of an element being scaled */
+      100% {
+        opacity: 0;
+      }
+    }
+  }
+
+  .seq-threed {
+    @include prefixed(transform, "translateZ(0) rotateY(0)");
+
+    /* Set up the transform animation now, then we'll initiate it in .seq-in */
+    @include prefixed(animation-duration, "1s");
+    @include prefixed(animation-delay, ".5s");
+    @include prefixed(animation-iteration-count, "infinite");
+    @include prefixed(animation-property, "transform");
+
+    @include key-frames(threeD) {
+      /* Example of an element being 3D */
+      100% {
+        @include prefixed(transform, "translateZ(0) rotateY(360deg)");
+      }
+    }
+  }
+
+  .seq-doors {
+    /* Create a sliding doors animation using two pseudo-elements */
+    overflow: hidden;
+    position: relative;
+    display: inline-block;
+    width: 42px;
+    height: 42px;
+    margin: 0 auto;
+
+    &:before,
+    &:after {
+      content: "";
+      position: absolute;
+      display: block;
+      width: 21px;
+      height: 42px;
+      background: $seqActive;
+
+      @include prefixed(animation-duration, "1s");
+      @include prefixed(animation-direction, "alternate");
+      @include prefixed(animation-iteration-count, "infinite");
+      @include prefixed(animation-timing-function, "ease-in-out");
+    }
+
+    &:before {
+      left: 0;
+      @include prefixed(transform, "translateX(-100%) translateZ(0)");
+    }
+
+    &:after {
+      right: 0;
+      @include prefixed(transform, "translateX(100%) translateZ(0)");
+    }
+
+    @include key-frames(door-open) {
+      50%,
+      100% {
+        @include prefixed(transform, "translateX(0) translateZ(0)");
+      }
+    }
+  }
+
+  .seq-touch {
+    position: absolute;
+    z-index: 10;
+    top: 50%;
+    left: 50%;
+    width: 160%;
+    height: 100%;
+    max-width: 640px;
+    max-height: 640px;
+    text-align: left;
+
+    @include prefixed(transform, "translateX(-50%) translateY(-50%) translateZ(0) rotate(0)");
+
+    @include prefixed(animation-duration, ".35s");
+    @include prefixed(animation-delay, "1.8s");
+    @include prefixed(animation-fill-mode, "forwards");
+
+    @include key-frames(touch) {
+      100% {
+        @include prefixed(transform, "translateX(-50%) translateY(-50%) translateZ(0) rotate(90deg)");
+      }
+    }
+
+    img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      @include prefixed(transform, "translateX(-50%) translateY(-50%)");
+      max-width: 100%;
+      height: auto;
+    }
+
+    .seq-swipe {
+      z-index: 20;
+      @include prefixed(transform, "translateX(100%) translateY(-40%) translateZ(0) rotate(-90deg)");
+      @include prefixed(animation-duration, "1.5s");
+      @include prefixed(animation-delay, "1.8s");
+      @include prefixed(transition-timing-function, "linear");
+
+      @include key-frames(swipe) {
+        33.3% {
+          @include prefixed(transform, "translateX(-50%) translateY(-40%) translateZ(0) rotate(-100deg)");
+          @include prefixed(transition-timing-function, "ease-out");
+        }
+
+        66.6% {
+          @include prefixed(transform, "translateX(-50%) translateY(-80%) translateZ(0) rotate(-90deg)");
+          @include prefixed(transition-timing-function, "linear");
+        }
+
+        100% {
+          @include prefixed(transform, "translateX(100%) translateY(-80%) translateZ(0) rotate(-80deg)");
+        }
+      }
+    }
+  }
+
+  .seq-touch-title {
+    box-sizing: border-box;
+    position: absolute;
+    z-index: 10;
+    left: 50%;
+    top: 50%;
+    @include prefixed(transform, "translateY(-50%) translateZ(0)");
+    margin: .5em 0;
+    padding: 0 .5em;
+    color: #F96D38;
+    font-size: 1em;
+    font-size: 1.25em;
+
+    /* Smooth fonts and prevent pixelation during transforms */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .seq-touch-title-1 {
+    width: 28.125%;
+    margin-left: -14.0625%;
+    opacity: 1;
+
+    @include prefixed(animation-duration, ".3s");
+    @include prefixed(animation-delay, "1.5s");
+    @include prefixed(animation-fill-mode, "forwards");
+
+    @include key-frames(fade-out) {
+      100% {
+        opacity: 0;
+      }
+    }
+
+    &:after {
+      /* Blinking cursor */
+      content: "|";
+      opacity: 0;
+
+      @include prefixed(animation-name, "blinking-cursor");
+      @include prefixed(animation-duration, ".25s");
+      @include prefixed(animation-direction, "alternate");
+      @include prefixed(animation-iteration-count, "infinite");
+
+      @include key-frames(blinking-cursor) {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  .seq-touch-title-2 {
+    width: 45.3125%;
+    margin: 0;
+    padding: 0;
+    padding: 0;
+    overflow: hidden;
+    @include prefixed(transform, "translateX(-50%) translateY(-50%) translateZ(1px) rotate(-90deg)");
+
+    /* Smooth fonts and prevent pixelation during transforms */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    p {
+      display: block;
+      width: 90%;
+      margin: 0;
+      padding: 0 5%;
+      @include prefixed(transform, "translateX(-100%) translateZ(0)");
+      @include prefixed(animation-duration, ".3s");
+      @include prefixed(animation-delay, "2.35s");
+      @include prefixed(animation-fill-mode, "forwards");
+
+      @include key-frames(slide-in) {
+        100% {
+          @include prefixed(transform, "translateX(0) translateZ(0)");
+        }
+      }
+    }
+  }
+
+  .seq-browser-icon {
+    display: block;
+    max-width: 54px;
+    max-height: 54px;
+    margin: 0 auto;
+    margin-bottom: .5em;
+    @include prefixed(transform, "translateZ(0) scale(0)");
+    @include prefixed(transition-duration, ".2s");
+    @include prefixed(transition-timing-function, "cubic-bezier(.55,1.58,.63,.99)");
+    @include prefixed(transition-property, "transform");
+  }
+
+  .seq-browser-icon-1 {
+    @include prefixed(transition-delay, ".3s");
+  }
+
+  .seq-browser-icon-2 {
+    @include prefixed(transition-delay, ".35s");
+  }
+
+  .seq-browser-icon-3 {
+    @include prefixed(transition-delay, ".4s");
+  }
+
+  .seq-browser-icon-4 {
+    @include prefixed(transition-delay, ".45s");
+  }
+
+  .seq-browser-icon-5 {
+    @include prefixed(transition-delay, ".5s");
+  }
+
+  .seq-browser-icon-6 {
+    @include prefixed(transition-delay, ".55s");
+  }
+
+  .seq-browser-icon-7 {
+    @include prefixed(transition-delay, ".6s");
+  }
+
+  .seq-logo {
+    display: block;
+    width: 100%;
+    max-width: 240px;
+    height: auto;
+    margin: .5em auto 3em auto;
+  }
+
+  .seq-step7 {
+    .seq-content {
+      text-align: center;
+    }
+
+    .seq-instruction {
+      padding-top: 2em;
+      padding-bottom: 2em;
+      text-align: center;
+    }
+  }
+
+  .seq-instruction .seq-follow-on {
+    margin: 0;
+    font-size: .75em;
+    text-align: center;
+  }
+
+  a.seq-button {
+    display: block;
+    margin-top: .71428571em;
+    padding: 1.2em;
+    color: white;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: .875em;
+    @include prefixed(transition-duration, ".2s");
+    @include prefixed(transition-property, "background-color");
+
+    &:first-of-type {
+      margin-left: 0;
+    }
+
+    &:last-of-type {
+      margin-right: 0;
+    }
+
+    &:focus,
+    &:hover {
+      color: white;
+    }
+
+    i {
+      margin-left: 2px;
+    }
+  }
+
+  .seq-button-link {
+    background: $seqActive;
+
+    &:focus,
+    &:hover {
+      background: $seqActiveHover;
+    }
+  }
+
+  .seq-button-highlight {
+    background: $seqHighlight;
+
+    &:focus,
+    &:hover {
+      background: $seqHighlightHover;
+    }
+  }
+
+  .seq-features {
+    margin: 0;
+    margin-top: 20px;
+    margin-top: 1.25rem;
+    padding: 0;
+
+    /* Remove 4px gap */
+    font-size: 0;
+
+    li {
+      position: relative;
+      margin-bottom: .25em;
+      line-height: 1.8;
+      list-style: none;
+
+      /* Reset font-size */
+      font-size: 12px;
+
+      font-weight: 400;
+    }
+
+    i {
+      color: #F96D38;
+    }
+
+    sup {
+      position: absolute;
+    }
+  }
+
+  &.seq-reversed {
+    .seq-touch {
+      /* Keep the animation in its current state when reversed */
+      @include prefixed(animation-name, "touch");
+    }
+
+    .seq-touch-title-1 {
+      /* Keep the animation in its current state when reversed */
+      @include prefixed(animation-name, "fade-out");
+    }
+
+    .seq-touch-title-2 p {
+      /* Keep the animation in its current state when reversed */
+      @include prefixed(animation-name, "slide-in");
+    }
+
+    .seq-out {
+      .seq-touch {
+        /* Reset the phone animation so it can start again */
+        @include prefixed(animation-name, "none");
+      }
+
+      .seq-touch-title-1,
+      .seq-touch-title-2 p {
+        /* Reset the phone animation so it can start again */
+        @include prefixed(animation-name, "none");
+      }
+    }
+  }
+
+  .seq-in {
+    .seq-content {
+      @include prefixed(transform, "translateX(0) translateY(0) translateZ(1px)");
+    }
+
+    .seq-code-block {
+      opacity: 1;
+      @include prefixed(transform, "translateY(0) translateZ(0)");
+    }
+
+    .seq-code-block:nth-of-type(2) {
+      @include prefixed(transition-delay, ".1s");
+    }
+
+    .seq-code-block:nth-of-type(3) {
+      @include prefixed(transition-delay, ".2s");
+    }
+
+    .seq-code-block:nth-of-type(4) {
+      @include prefixed(transition-delay, ".3s");
+    }
+
+    &.seq-step3 .seq-content {
+      @include prefixed(transform, "translateZ(1px) scale(1)");
+    }
+
+    .seq-transform {
+      /* Start the animation when .seq-in is applied. */
+      @include prefixed(animation-name, "transform");
+    }
+
+    .seq-scale {
+      /* Start the animation when .seq-in is applied. */
+      @include prefixed(animation-name, "scale");
+    }
+
+    .seq-rotate {
+      /* Start the animation when .seq-in is applied. */
+      @include prefixed(animation-name, "rotate");
+    }
+
+    .seq-fade {
+      /* Start the animation when .seq-in is applied. */
+      @include prefixed(animation-name, "fade");
+    }
+
+    .seq-threed {
+      /* Start the animation when .seq-in is applied. */
+      @include prefixed(animation-name, "threeD");
+    }
+
+    .seq-doors {
+      &:before,
+      &:after {
+        /* Start the animation when .seq-in is applied. */
+        @include prefixed(animation-name, "door-open");
+      }
+    }
+
+    .seq-touch {
+      @include prefixed(animation-name, "touch");
+    }
+
+    .seq-swipe {
+      @include prefixed(animation-name, "swipe");
+    }
+
+    .seq-touch-title-1 {
+      @include prefixed(animation-name, "fade-out");
+    }
+
+    .seq-touch-title-2 p {
+      @include prefixed(animation-name, "slide-in");
+    }
+
+    .seq-browser-icon {
+      @include prefixed(transform, "translateZ(0) scale(1)");
+    }
+  }
+
+  .seq-out {
+    .seq-content {
+      @include prefixed(transform, "translateX(-100%) translateZ(1px)");
+    }
+
+    .seq-code-block {
+      opacity: 0;
+      @include prefixed(transform, "translateY(-20px) translateZ(0)");
+      @include prefixed(transition-timing-function, "ease-out");
+    }
+
+    .seq-touch {
+      @include prefixed(animation-name, "touch");
+    }
+
+    .seq-touch-title-1 {
+      @include prefixed(animation-name, "fade-out");
+    }
+
+    .seq-touch-title-2 p {
+      @include prefixed(animation-name, "slide-in");
+    }
+
+    .seq-browser-icon {
+      /* Keep browser icons in place when they animate out and remove the delay
+         so navigating to this step in reverse is immediate */
+      @include prefixed(transform, "translateZ(0) scale(1)");
+      @include prefixed(transition-delay, "0s");
+    }
+  }
+
+  &.seq-fallback {
+    /* Styles for older browsers using the fallback theme */
+    .seq-code-pane,
+    .seq-code-pane-snap-shut .seq-code-pane {
+      @include prefixed(transform, "none !important");
+      top: 100%;
+    }
+
+    .seq-in.seq-code-pane-open .seq-code-pane {
+      top: auto;
+    }
+
+    .seq-touch-title-1 {
+      display: none;
+    }
+
+    .seq-touch {
+      /* Center the mobile phone */
+      left: 50%;
+      top: 50%;
+      width: 640px;
+      height: 640px;
+      margin-left: -320px;
+      margin-top: -320px;
+
+      img {
+        left: 50%;
+        top: 50%;
+        width: 640px;
+        height: 640px;
+        margin-left: -320px;
+        margin-top: -320px;
+        @include prefixed(transform, "none");
+      }
+    }
+
+    .seq-swipe {
+      /* Hide the swiping hand */
+      display: none;
+    }
+
+    .seq-touch-title-2 {
+      /* Position the second touch title statically in the center */
+      width: 180px;
+      margin-left: -90px;
+      margin-top: -55px;
+    }
+  }
+
+  @media only screen and (min-width: 480px) {
+    .seq-small-break {
+      display: none;
+    }
+
+    .seq-instruction {
+      margin-left: 5%;
+      margin-right: 5%;
+
+      p {
+        line-height: 1.4;
+        font-size: .875em;
+      }
+
+      .seq-tip {
+        font-size: .75em;
+      }
+    }
+  }
+
+  @media only screen and (min-width: 600px) {
+    height: 100%;
+    min-height: $sequenceDesktopHeight;
+
+    .seq-instruction {
+      padding: 2em 1.5em;
+    }
+
+    .seq-instruction-icon {
+      width: auto;
+      height: auto;
+    }
+
+    .seq-examples {
+      margin-top: 16px;
+      margin-top: 1rem;
+
+      li {
+        width: 15%;
+
+        &:nth-child(3n+1) {
+          margin-left: 1%;
+        }
+
+        &:nth-child(3n+3) {
+          margin-right: 1%;
+        }
+
+        &:first-child {
+          margin-left: 0;
+        }
+
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+
+    .seq-features li {
+      font-size: 14px;
+    }
+  }
+
+  @media only screen and (min-width: 640px) {
+    .seq-touch-title-1 {
+      width: 28.4375%;
+      margin-left: -14.21875%;
+    }
+
+    .seq-touch-title-2 {
+      width: 45.3125%;
+    }
+  }
+
+  @media only screen and (min-width: 860px) {
+
+    &.seq-fallback {
+      .seq-code-pane {
+        background: black;
+        border-left: #303030 solid 2.5rem;
+        top: 0;
+      }
+
+      .seq-code {
+        margin-left: -2.5rem;
+      }
+
+      .seq-code-pane,
+      .seq-code-pane-snap-shut .seq-code-pane,
+      .seq-in.seq-code-pane-open .seq-code-pane {
+        top: 0;
+      }
+    }
+
+    .seq-canvas {
+      &:before {
+        /* Add a background where the code will appear */
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: calc(30% - 2.5em);
+        background: black;
+
+        /* Add a fake gutter to the left */
+        border-left-color: #303030;
+        border-left-style: solid;
+        border-left-width: 40px;
+        border-left-width: 2.5rem;
+      }
+
+      &:after {
+        /* Used for detecting screen size in JavaScript */
+        content: "large";
+      }
+
+      > * {
+        &:after {
+          /* Hide the code overlay in large layout */
+          content: none;
+        }
+      }
+    }
+
+    .seq-code {
+      box-sizing: border-box;
+      padding-left: 40px;
+      padding-left: 2.5rem;
+      padding-right: 14px;
+      padding-right: .875rem;
+      border: none;
+    }
+
+    .seq-code-pane {
+      display: block;
+      top: 26px;
+      top: 1.625rem;
+      bottom: 0;
+      left: 0;
+      width: 30%;
+      background: transparent;
+
+      /* Disable code-pane opening/closing in large layout */
+      @include prefixed(transform, "translate(0)");
+      @include prefixed(transition, "none");
+
+      code {
+        font-size: .875em;
+      }
+    }
+
+    .seq-view-code {
+      /* Hide the view code button on large layout */
+      display: none;
+    }
+
+    .seq-code-block {
+      opacity: 0;
+      @include prefixed(transform, "translateY(10px) translateZ(0)");
+      @include prefixed(transition-duration, ".1s, .2s");
+      @include prefixed(transition-property, "opacity, transform");
+      @include prefixed(transition-timing-function, "ease-out, cubic-bezier(.55,1.58,.63,.99)");
+    }
+
+    .seq-content {
+      left: auto;
+      bottom: 0;
+      width: 70%;
+      padding-top: 47px;
+      padding-bottom: 2.9375rem;
+      /* In large layouts, the content show animate from bottom to top */
+      @include prefixed(transform, "translateY(100%) translateZ(1px)");
+    }
+
+    .seq-in .seq-content {
+      @include prefixed(transform, "translateY(0) translateZ(1px)");
+    }
+
+    .seq-out .seq-content {
+      @include prefixed(transform, "translateY(-100%) translateZ(1px)");
+    }
+
+    .seq-instruction {
+      width: 73%;
+      margin-left: 10%;
+      margin-right: 10%;
+      padding: 1em 3.5%;
+
+      h3 {
+        font-size: 1.5em;
+      }
+
+      p {
+        font-size: 1em;
+        line-height: 1.6;
+      }
+    }
+
+    .seq-nav {
+      display: block;
+      position: absolute;
+      z-index: 100;
+      right: 0;
+      bottom: .625em;
+      width: 70%;
+      padding: 0;
+      border: none;
+      color: #E9E9E9;
+      text-align: center;
+
+      .seq-next,
+      .seq-prev {
+        cursor: pointer;
+        padding: .625em;
+        border: none;
+        background: white;
+        background: rgba(255, 255, 255, .8);
+        font-size: .875em;
+        color: #828282;
+        opacity: .8;
+        @include prefixed(transition-duration, ".2s");
+        @include prefixed(transition-property, "opacity");
+
+        &:focus,
+        &:hover {
+          color: #282828;
+          opacity: 1;
+        }
+
+        i {
+          display: inline-block;
+          line-height: 1.25;
+        }
+      }
+    }
+
+    .seq-touch {
+      img {
+        max-width: 100%;
+      }
+    }
+
+    .seq-title {
+      margin-top: 1em;
+      margin-bottom: 1.5em;
+
+      object img {
+        width: 23px;
+        height: 57px;
+      }
+    }
+
+    .seq-examples {
+      li {
+        font-size: 16px;
+        font-size: 1rem;
+      }
+    }
+
+    a.seq-button {
+      display: inline-block;
+      margin-left: 0.285714em;
+      margin-right: 0.285714em;
+    }
+
+    .seq-features {
+      margin-top: 8px;
+      margin-top: .5rem;
+
+      li {
+        float: left;
+        width: 50%;
+      }
+    }
+
+    .seq-step5 .seq-step p {
+      font-size: .875em;
+    }
+  }
+}
+
+.seq-pagination {
+  position: relative;
+  z-index: 110;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+  background: #E9E9E9;
+  border: #979797 solid 1px;
+  border-top: none;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+
+  /* Remove 4px gap between list-items */
+  font-size: 0;
+
+  span {
+    /* Hide pagination labels */
+    display: none;
+  }
+
+  li {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    width: 14.2857143%;
+    margin: 0;
+    list-style: none;
+    color: #484848;
+    line-height: 1;
+
+    @include prefixed(transform, "translateZ(0)");
+    @include prefixed(transition-duration, ".2s");
+    @include prefixed(transition-property, "width");
+
+    /* Reset the font-size */
+    font-size: 16px;
+    font-size: 1rem;
+
+    &:after {
+      /* Add a border to the right of the link */
+      content: "";
+      position: absolute;
+      right: 0;
+      top: .5em;
+      bottom: .5em;
+      width: 1px;
+      background: #c0c0c0;
+    }
+
+    &:last-child:after {
+      /* No border on the last link */
+      content: none;
+    }
+
+    i {
+      display: inline-block;
+      vertical-align: text-bottom;
+      font-size: 1.5em;
+      line-height: 1;
+    }
+
+    &:focus,
+    &:hover {
+      color: black;
+      i {
+        color: $seqHighlight;
+      }
+    }
+
+    &.seq-current {
+      i {
+        color: $seqActive;
+      }
+    }
+  }
+
+  a {
+    box-sizing: border-box;
+    display: block;
+    padding: 1em .875em;
+    text-decoration: none;
+    color: inherit;
+    font-size: .75em;
+    text-align: center;
+    text-transform: uppercase;
+    line-height: 1;
+    width: 100%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:focus,
+    &:hover {
+      color: inherit;
+    }
+  }
+}
+
+@media only screen and (min-width: 568px) {
+  .seq-pagination {
+
+    i {
+      margin-bottom: .5em;
+    }
+
+    span {
+      display: block;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+@media only screen and (min-width: 769px) {
+  .seq-pagination {
+    li {
+      width: 13.666667%;
+
+      &.seq-current {
+        width: 18%;
+      }
+    }
+  }
+}

@@ -1,0 +1,1525 @@
+@charset "UTF-8";
+/**
+ * Theme Name: Intro
+ * Version: 1.0.0
+ * Theme URL: http://sequencejs.com/themes/intro/
+ *
+ * The Sequence.js introduction theme used to briefly describe how Sequence.js works
+ *
+ * This theme is powered by Sequence.js - The
+ * responsive CSS animation framework for creating unique sliders,
+ * presentations, banners, and other step-based applications.
+ *
+ * Author: Ian Lunn
+ * Author URL: http://ianlunn.co.uk/
+ *
+ * Theme License: http://sequencejs.com/licenses/#free-theme
+ * Sequence.js Licenses: http://sequencejs.com/licenses/
+ *
+ * Copyright © 2015 Ian Lunn Design Limited unless otherwise stated.
+ */
+@import url(http://fonts.googleapis.com/css?family=Ubuntu:500,400,300,700|Montserrat:400,700|Droid+Sans+Mono);
+@import url("//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
+body {
+  background: #F8F8F8;
+}
+
+/* Google Web Font */
+.seq {
+  box-sizing: border-box;
+  position: relative;
+  -webkit-text-size-adjust: none;
+  /* Dimensions */
+  width: 100%;
+  height: 460px;
+  max-width: 1200px;
+  overflow: hidden;
+  /* Center the Sequence container on the page */
+  margin: 0 auto;
+  padding: 0;
+  /* Some basic styles */
+  font-family: "Montserrat", sans-serif;
+  background: white;
+  border: #979797 solid 1px;
+  border-bottom: none;
+}
+.seq:before {
+  /* Top bar */
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+  height: 1.625em;
+  background: #E9E9E9;
+}
+.seq:after {
+  /* Browser buttons */
+  content: "";
+  position: absolute;
+  z-index: 10;
+  top: 6px;
+  left: .625em;
+  height: 14px;
+  width: 54px;
+  background-image: url("../images/browser-buttons.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.seq .seq-nav {
+  /* Hide navigation in small layout */
+  display: none;
+}
+.seq .seq-screen,
+.seq .seq-canvas,
+.seq .seq-canvas > * {
+  /* Reset the canvas and steps for more browser consistency */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.seq .seq-canvas {
+  /* Make the canvas the same dimensions as the container and prevent lines
+   * from wrapping so each step can sit side-by-side */
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+.seq .seq-canvas:after {
+  /* Used for detecting screen size in JavaScript */
+  display: none;
+  content: "small";
+}
+.seq .seq-canvas > * {
+  /* Make the steps the same size as the container and sit side-by-side */
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  color: white;
+  opacity: 0;
+  line-height: 1.4;
+}
+.seq .seq-canvas > *:after {
+  /* Semi-transparent overlay shown when the codepane is opened in mobile layout */
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  -webkit-transform: translateZ(20px);
+  transform: translateZ(20px);
+  -webkit-transition-duration: .25s;
+  transition-duration: .25s;
+  -webkit-transition-delay: .25s;
+  transition-delay: .25s;
+  -webkit-transition-property: opacity, z-index;
+  transition-property: opacity, z-index;
+}
+.seq .seq-canvas .seq-in {
+  opacity: 1;
+}
+.seq.seq-active {
+  /* when JS is enabled */
+  /* Hide anything that goes beyond the boundaries of the Sequence container */
+  overflow: hidden;
+}
+.seq.seq-active .seq-preloader {
+  visibility: visible;
+  background: #E9E9E9;
+}
+.seq.seq-active .seq-preloader.seq-preloaded {
+  visibility: hidden;
+}
+.seq .seq-valign {
+  /* Remove 4px gap between vertically aligned elements */
+  font-size: 0;
+}
+.seq .seq-valign:before {
+  /* Use a pseudo-element at 100% height to push the child element into the center */
+  content: "";
+  height: 100%;
+}
+.seq .seq-valign:before,
+.seq .seq-valign > div {
+  /* Vertically center the pseudo-element and child relative to one another */
+  display: inline-block;
+  vertical-align: middle;
+}
+.seq .seq-valign > div {
+  /* Reset the font-size as the parent was set to 0px to remove the 4px gap */
+  font-size: 16px;
+  font-size: 1rem;
+}
+.seq .seq-code-pane {
+  box-sizing: border-box;
+  position: absolute;
+  z-index: 100;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: black;
+  color: white;
+  /* Place the code pane off-screen at the bottom - it will animate in
+   * from the bottom
+   */
+  -webkit-transform: translateY(100%) translateZ(20px);
+  transform: translateY(100%) translateZ(20px);
+  -webkit-transition-property: transform;
+  transition-property: transform;
+  -webkit-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+}
+.seq .seq-code-pane .seq-step-icon {
+  position: absolute;
+  z-index: 20;
+  /* Vertically align the icon */
+  top: 50%;
+  margin-top: -.9375em;
+  /* Position the icon in the center of the gutter */
+  left: -2.2em;
+}
+.seq .seq-code-pane span {
+  display: block;
+}
+.seq .seq-in .seq-code-pane {
+  /*
+   * Only animate the code-pane opening when the step is active
+   * This allows the code-pane to immediately snap shut when navigating to
+   * another step without closing the pane
+   */
+  -webkit-transition-duration: .25s;
+  transition-duration: .25s;
+}
+.seq .seq-code-pane-snap-shut .seq-code-pane {
+  -webkit-transition-duration: 0s !important;
+  transition-duration: 0s !important;
+}
+.seq .seq-in.seq-code-pane-open {
+  /*
+   * When the "Show Code" button is clicked on a mobile device, show the
+   * semi-transparent overlay and open the code pane
+   */
+}
+.seq .seq-in.seq-code-pane-open:after {
+  /* Semi-transparent overlay */
+  z-index: 10;
+  opacity: 1;
+  -webkit-transform: translateZ(20px);
+  transform: translateZ(20px);
+}
+.seq .seq-in.seq-code-pane-open .seq-code-pane {
+  /* Open code-pane */
+  -webkit-transform: translateY(0) translateZ(20px);
+  transform: translateY(0) translateZ(20px);
+}
+.seq .seq-view-code {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  height: 35px;
+  height: 2.1875rem;
+  margin: 0;
+  padding: 8px 0;
+  padding: .5rem 0;
+  text-align: center;
+  background: #303030;
+  border: none;
+  color: white;
+  font-family: "Montserrat", sans-serif;
+  font-size: 16px;
+  font-size: 1rem;
+  line-height: 1;
+  /*
+   * Place the view-code button on top of the code-pane so it appears when
+   * the code pane is closed
+   */
+  margin-top: -35px;
+  margin-top: -2.1875rem;
+}
+.seq .seq-view-code:focus {
+  outline: dotted gray 1px;
+}
+.seq .seq-view-code:active {
+  background: black;
+}
+.seq .seq-view-code:focus i, .seq .seq-view-code:hover i {
+  color: #16B557;
+}
+.seq .seq-view-code i {
+  color: #36C26F;
+  /* Override fontawesome to stop 1px move when parent is animated */
+  -webkit-transform: none;
+  transform: none;
+}
+.seq .seq-view-code .seq-step-icon {
+  position: relative;
+  top: 0;
+  left: 0;
+  -webkit-transform: none;
+  transform: none;
+}
+.seq .seq-code {
+  width: 100%;
+  padding: 14px 0;
+  padding: .875rem 0;
+  /* Add a fake gutter to the left */
+  border-left-color: #303030;
+  border-left-style: solid;
+  border-left-width: 40px;
+  border-left-width: 2.5rem;
+}
+.seq .seq-code-block {
+  position: relative;
+  padding: 0 .5em;
+}
+.seq .seq-code-block code {
+  display: block;
+  line-height: 1.6;
+  font-family: 'Droid Sans Mono', Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
+  font-size: .75em;
+  /* Smooth fonts and prevent pixelation during transforms */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.seq .seq-code-block span {
+  line-height: 1.6;
+}
+.seq .seq-code-block + .seq-code-block {
+  margin-top: 1em;
+}
+.seq .seq-code-1 {
+  /* indent code lines */
+  margin-left: 1em;
+}
+.seq .seq-content {
+  box-sizing: border-box;
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  /* Make room for the top bar */
+  padding-top: 26px;
+  padding-top: 1.625rem;
+  /* Make room for the un-open code pane */
+  padding-bottom: 35px;
+  padding-bottom: 2.1875rem;
+  text-align: center;
+  background: white;
+}
+.seq .seq-content code {
+  position: relative;
+}
+.seq .seq-step {
+  position: relative;
+  font-family: Ubuntu, sans-serif;
+}
+.seq .seq-step p {
+  font-weight: 300;
+}
+.seq em,
+.seq .seq-content code {
+  background: white;
+  font-style: normal;
+  padding: .25em;
+  font-family: 'Droid Sans Mono', Courier New,Courier,Lucida Sans Typewriter,Lucida Typewriter,monospace;
+}
+.seq .seq-step-icon {
+  display: inline-block;
+  width: 1.625em;
+  height: 1.625em;
+  margin: 0;
+  color: #36C26F;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  background: transparent;
+  border: solid 2px #36C26F;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 1.625;
+}
+.seq sup.seq-step-icon {
+  width: 1em;
+  height: 1em;
+  line-height: 100%;
+  margin-left: 2px;
+  padding: .15em;
+  font-size: 10px;
+  border: solid 1px #36C26F;
+}
+.seq .seq-instruction {
+  max-width: 540px;
+  margin-left: .625em;
+  margin-right: .625em;
+  padding: 1em;
+  color: black;
+  background-color: #F8F8F8;
+  text-align: left;
+}
+.seq .seq-instruction > h3:first-of-type {
+  margin-top: 0;
+}
+.seq .seq-instruction h3 {
+  margin-top: 1em;
+  margin-bottom: 0;
+  font-size: 1em;
+  font-weight: 400;
+  color: #282828;
+}
+.seq .seq-instruction p {
+  margin-bottom: 0;
+  color: #484848;
+  line-height: 1.6;
+  font-size: .75em;
+}
+.seq .seq-instruction a {
+  color: #2AA0D4;
+  text-decoration: none;
+}
+.seq .seq-instruction a:focus, .seq .seq-instruction a:hover {
+  color: #0890CA;
+}
+.seq .seq-instruction .seq-tip {
+  font-size: .6875em;
+}
+.seq .seq-instruction .seq-tip.seq-bulb:before {
+  content: "";
+  display: inline-block;
+  vertical-align: text-bottom;
+  height: 1.333333em;
+  width: 1.33333em;
+  margin-right: .333333em;
+  line-height: 1;
+  background-image: url("../images/bulb.svg");
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: contain;
+}
+.seq .seq-instruction-icon {
+  width: 12px;
+  height: 30px;
+}
+.seq .seq-title {
+  margin-top: .5em;
+  margin-bottom: 1em;
+  text-align: center;
+  color: #282828;
+}
+.seq .seq-title > * {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0;
+}
+.seq .seq-title h2 {
+  padding: 0 .5em;
+  font-size: 1em;
+  font-weight: 700;
+  color: #484848;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.seq .seq-title object img {
+  width: 12px;
+  height: 30px;
+}
+.seq .seq-examples {
+  margin: 0;
+  margin-top: 8px;
+  margin-top: .5rem;
+  padding: 0;
+  text-align: center;
+  /* Remove 4px gap */
+  font-size: 0;
+}
+.seq .seq-examples li {
+  box-sizing: border-box;
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: middle;
+  width: 30.666666%;
+  margin: 0 1%;
+  padding: .5em;
+  list-style: none;
+  font-size: 14px;
+  font-size: .875rem;
+}
+.seq .seq-examples li:nth-child(3n+1) {
+  margin-left: 0;
+}
+.seq .seq-examples li:nth-child(3n+3) {
+  margin-right: 0;
+}
+.seq .seq-examples li p {
+  margin: 0;
+  margin-top: .25em;
+  padding: 0;
+  line-height: 1;
+  font-size: .75em;
+  font-family: Ubuntu, sans-serif;
+  font-weight: 700;
+}
+.seq .seq-examples li img {
+  width: 100%;
+  height: auto;
+}
+.seq .seq-examples li object {
+  width: 100%;
+  max-width: 42px;
+  height: auto;
+}
+.seq .seq-examples li object img {
+  width: 42px;
+  height: 42px;
+}
+.seq .seq-browsers {
+  margin: 0;
+}
+.seq .seq-browsers li {
+  width: 18.4%;
+}
+.seq .seq-content {
+  /* In small layouts content should animate from right to left */
+  -webkit-transform: translateX(100%) translateZ(1px);
+  transform: translateX(100%) translateZ(1px);
+  -webkit-transition-duration: .2s;
+  transition-duration: .2s;
+  -webkit-transition-property: transform;
+  transition-property: transform;
+  -webkit-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+}
+.seq .seq-step3 .seq-content {
+  -webkit-transform: translateZ(1px) scale(0);
+  transform: translateZ(1px) scale(0);
+}
+.seq .seq-transform {
+  -webkit-transform: translateX(-100px) translateZ(0);
+  transform: translateX(-100px) translateZ(0);
+  /* Set up the transform animation now, then we'll initiate it in .seq-in */
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-delay: .5s;
+  animation-delay: .5s;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+  animation-direction: alternate;
+}
+@-webkit-keyframes transform {
+  /* Example of an element being transformed */
+  100% {
+    -webkit-transform: translateX(100px) translateZ(0);
+    transform: translateX(100px) translateZ(0);
+  }
+}
+@keyframes transform {
+  /* Example of an element being transformed */
+  100% {
+    -webkit-transform: translateX(100px) translateZ(0);
+    transform: translateX(100px) translateZ(0);
+  }
+}
+.seq .seq-scale {
+  -webkit-transform: translateZ(0) scale(0);
+  transform: translateZ(0) scale(0);
+  /* Set up the transform animation now, then we'll initiate it in .seq-in */
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-delay: .5s;
+  animation-delay: .5s;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+  animation-direction: alternate;
+}
+@-webkit-keyframes scale {
+  /* Example of an element being scaled */
+  100% {
+    -webkit-transform: translateZ(0) scale(1);
+    transform: translateZ(0) scale(1);
+  }
+}
+@keyframes scale {
+  /* Example of an element being scaled */
+  100% {
+    -webkit-transform: translateZ(0) scale(1);
+    transform: translateZ(0) scale(1);
+  }
+}
+.seq .seq-rotate {
+  /* Set up the transform animation now, then we'll initiate it in .seq-in */
+  -webkit-animation-duration: 3s;
+  animation-duration: 3s;
+  -webkit-animation-delay: .5s;
+  animation-delay: .5s;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+@-webkit-keyframes rotate {
+  /* Example of an element being rotated */
+  100% {
+    -webkit-transform: translateZ(0) rotate(720deg);
+    transform: translateZ(0) rotate(720deg);
+  }
+}
+@keyframes rotate {
+  /* Example of an element being rotated */
+  100% {
+    -webkit-transform: translateZ(0) rotate(720deg);
+    transform: translateZ(0) rotate(720deg);
+  }
+}
+.seq .seq-fade {
+  opacity: 1;
+  /* Set up the transform animation now, then we'll initiate it in .seq-in */
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-delay: .5s;
+  animation-delay: .5s;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-direction: alternate;
+  animation-direction: alternate;
+}
+@-webkit-keyframes fade {
+  /* Example of an element being scaled */
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes fade {
+  /* Example of an element being scaled */
+  100% {
+    opacity: 0;
+  }
+}
+.seq .seq-threed {
+  -webkit-transform: translateZ(0) rotateY(0);
+  transform: translateZ(0) rotateY(0);
+  /* Set up the transform animation now, then we'll initiate it in .seq-in */
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-delay: .5s;
+  animation-delay: .5s;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-property: transform;
+  animation-property: transform;
+}
+@-webkit-keyframes threeD {
+  /* Example of an element being 3D */
+  100% {
+    -webkit-transform: translateZ(0) rotateY(360deg);
+    transform: translateZ(0) rotateY(360deg);
+  }
+}
+@keyframes threeD {
+  /* Example of an element being 3D */
+  100% {
+    -webkit-transform: translateZ(0) rotateY(360deg);
+    transform: translateZ(0) rotateY(360deg);
+  }
+}
+.seq .seq-doors {
+  /* Create a sliding doors animation using two pseudo-elements */
+  overflow: hidden;
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 42px;
+  margin: 0 auto;
+}
+.seq .seq-doors:before, .seq .seq-doors:after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 21px;
+  height: 42px;
+  background: #36C26F;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
+  -webkit-animation-direction: alternate;
+  animation-direction: alternate;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -webkit-animation-timing-function: ease-in-out;
+  animation-timing-function: ease-in-out;
+}
+.seq .seq-doors:before {
+  left: 0;
+  -webkit-transform: translateX(-100%) translateZ(0);
+  transform: translateX(-100%) translateZ(0);
+}
+.seq .seq-doors:after {
+  right: 0;
+  -webkit-transform: translateX(100%) translateZ(0);
+  transform: translateX(100%) translateZ(0);
+}
+@-webkit-keyframes door-open {
+  50%,
+      100% {
+    -webkit-transform: translateX(0) translateZ(0);
+    transform: translateX(0) translateZ(0);
+  }
+}
+@keyframes door-open {
+  50%,
+      100% {
+    -webkit-transform: translateX(0) translateZ(0);
+    transform: translateX(0) translateZ(0);
+  }
+}
+.seq .seq-touch {
+  position: absolute;
+  z-index: 10;
+  top: 50%;
+  left: 50%;
+  width: 160%;
+  height: 100%;
+  max-width: 640px;
+  max-height: 640px;
+  text-align: left;
+  -webkit-transform: translateX(-50%) translateY(-50%) translateZ(0) rotate(0);
+  transform: translateX(-50%) translateY(-50%) translateZ(0) rotate(0);
+  -webkit-animation-duration: .35s;
+  animation-duration: .35s;
+  -webkit-animation-delay: 1.8s;
+  animation-delay: 1.8s;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+@-webkit-keyframes touch {
+  100% {
+    -webkit-transform: translateX(-50%) translateY(-50%) translateZ(0) rotate(90deg);
+    transform: translateX(-50%) translateY(-50%) translateZ(0) rotate(90deg);
+  }
+}
+@keyframes touch {
+  100% {
+    -webkit-transform: translateX(-50%) translateY(-50%) translateZ(0) rotate(90deg);
+    transform: translateX(-50%) translateY(-50%) translateZ(0) rotate(90deg);
+  }
+}
+.seq .seq-touch img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+  max-width: 100%;
+  height: auto;
+}
+.seq .seq-touch .seq-swipe {
+  z-index: 20;
+  -webkit-transform: translateX(100%) translateY(-40%) translateZ(0) rotate(-90deg);
+  transform: translateX(100%) translateY(-40%) translateZ(0) rotate(-90deg);
+  -webkit-animation-duration: 1.5s;
+  animation-duration: 1.5s;
+  -webkit-animation-delay: 1.8s;
+  animation-delay: 1.8s;
+  -webkit-transition-timing-function: linear;
+  transition-timing-function: linear;
+}
+@-webkit-keyframes swipe {
+  33.3% {
+    -webkit-transform: translateX(-50%) translateY(-40%) translateZ(0) rotate(-100deg);
+    transform: translateX(-50%) translateY(-40%) translateZ(0) rotate(-100deg);
+    -webkit-transition-timing-function: ease-out;
+    transition-timing-function: ease-out;
+  }
+  66.6% {
+    -webkit-transform: translateX(-50%) translateY(-80%) translateZ(0) rotate(-90deg);
+    transform: translateX(-50%) translateY(-80%) translateZ(0) rotate(-90deg);
+    -webkit-transition-timing-function: linear;
+    transition-timing-function: linear;
+  }
+  100% {
+    -webkit-transform: translateX(100%) translateY(-80%) translateZ(0) rotate(-80deg);
+    transform: translateX(100%) translateY(-80%) translateZ(0) rotate(-80deg);
+  }
+}
+@keyframes swipe {
+  33.3% {
+    -webkit-transform: translateX(-50%) translateY(-40%) translateZ(0) rotate(-100deg);
+    transform: translateX(-50%) translateY(-40%) translateZ(0) rotate(-100deg);
+    -webkit-transition-timing-function: ease-out;
+    transition-timing-function: ease-out;
+  }
+  66.6% {
+    -webkit-transform: translateX(-50%) translateY(-80%) translateZ(0) rotate(-90deg);
+    transform: translateX(-50%) translateY(-80%) translateZ(0) rotate(-90deg);
+    -webkit-transition-timing-function: linear;
+    transition-timing-function: linear;
+  }
+  100% {
+    -webkit-transform: translateX(100%) translateY(-80%) translateZ(0) rotate(-80deg);
+    transform: translateX(100%) translateY(-80%) translateZ(0) rotate(-80deg);
+  }
+}
+.seq .seq-touch-title {
+  box-sizing: border-box;
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translateY(-50%) translateZ(0);
+  transform: translateY(-50%) translateZ(0);
+  margin: .5em 0;
+  padding: 0 .5em;
+  color: #F96D38;
+  font-size: 1em;
+  font-size: 1.25em;
+  /* Smooth fonts and prevent pixelation during transforms */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.seq .seq-touch-title-1 {
+  width: 28.125%;
+  margin-left: -14.0625%;
+  opacity: 1;
+  -webkit-animation-duration: .3s;
+  animation-duration: .3s;
+  -webkit-animation-delay: 1.5s;
+  animation-delay: 1.5s;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+@-webkit-keyframes fade-out {
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes fade-out {
+  100% {
+    opacity: 0;
+  }
+}
+.seq .seq-touch-title-1:after {
+  /* Blinking cursor */
+  content: "|";
+  opacity: 0;
+  -webkit-animation-name: blinking-cursor;
+  animation-name: blinking-cursor;
+  -webkit-animation-duration: .25s;
+  animation-duration: .25s;
+  -webkit-animation-direction: alternate;
+  animation-direction: alternate;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+@-webkit-keyframes blinking-cursor {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes blinking-cursor {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.seq .seq-touch-title-2 {
+  width: 45.3125%;
+  margin: 0;
+  padding: 0;
+  padding: 0;
+  overflow: hidden;
+  -webkit-transform: translateX(-50%) translateY(-50%) translateZ(1px) rotate(-90deg);
+  transform: translateX(-50%) translateY(-50%) translateZ(1px) rotate(-90deg);
+  /* Smooth fonts and prevent pixelation during transforms */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.seq .seq-touch-title-2 p {
+  display: block;
+  width: 90%;
+  margin: 0;
+  padding: 0 5%;
+  -webkit-transform: translateX(-100%) translateZ(0);
+  transform: translateX(-100%) translateZ(0);
+  -webkit-animation-duration: .3s;
+  animation-duration: .3s;
+  -webkit-animation-delay: 2.35s;
+  animation-delay: 2.35s;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+@-webkit-keyframes slide-in {
+  100% {
+    -webkit-transform: translateX(0) translateZ(0);
+    transform: translateX(0) translateZ(0);
+  }
+}
+@keyframes slide-in {
+  100% {
+    -webkit-transform: translateX(0) translateZ(0);
+    transform: translateX(0) translateZ(0);
+  }
+}
+.seq .seq-browser-icon {
+  display: block;
+  max-width: 54px;
+  max-height: 54px;
+  margin: 0 auto;
+  margin-bottom: .5em;
+  -webkit-transform: translateZ(0) scale(0);
+  transform: translateZ(0) scale(0);
+  -webkit-transition-duration: .2s;
+  transition-duration: .2s;
+  -webkit-transition-timing-function: cubic-bezier(.55,1.58,.63,.99);
+  transition-timing-function: cubic-bezier(.55,1.58,.63,.99);
+  -webkit-transition-property: transform;
+  transition-property: transform;
+}
+.seq .seq-browser-icon-1 {
+  -webkit-transition-delay: .3s;
+  transition-delay: .3s;
+}
+.seq .seq-browser-icon-2 {
+  -webkit-transition-delay: .35s;
+  transition-delay: .35s;
+}
+.seq .seq-browser-icon-3 {
+  -webkit-transition-delay: .4s;
+  transition-delay: .4s;
+}
+.seq .seq-browser-icon-4 {
+  -webkit-transition-delay: .45s;
+  transition-delay: .45s;
+}
+.seq .seq-browser-icon-5 {
+  -webkit-transition-delay: .5s;
+  transition-delay: .5s;
+}
+.seq .seq-browser-icon-6 {
+  -webkit-transition-delay: .55s;
+  transition-delay: .55s;
+}
+.seq .seq-browser-icon-7 {
+  -webkit-transition-delay: .6s;
+  transition-delay: .6s;
+}
+.seq .seq-logo {
+  display: block;
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  margin: .5em auto 3em auto;
+}
+.seq .seq-step7 .seq-content {
+  text-align: center;
+}
+.seq .seq-step7 .seq-instruction {
+  padding-top: 2em;
+  padding-bottom: 2em;
+  text-align: center;
+}
+.seq .seq-instruction .seq-follow-on {
+  margin: 0;
+  font-size: .75em;
+  text-align: center;
+}
+.seq a.seq-button {
+  display: block;
+  margin-top: .71428571em;
+  padding: 1.2em;
+  color: white;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: .875em;
+  -webkit-transition-duration: .2s;
+  transition-duration: .2s;
+  -webkit-transition-property: background-color;
+  transition-property: background-color;
+}
+.seq a.seq-button:first-of-type {
+  margin-left: 0;
+}
+.seq a.seq-button:last-of-type {
+  margin-right: 0;
+}
+.seq a.seq-button:focus, .seq a.seq-button:hover {
+  color: white;
+}
+.seq a.seq-button i {
+  margin-left: 2px;
+}
+.seq .seq-button-link {
+  background: #36C26F;
+}
+.seq .seq-button-link:focus, .seq .seq-button-link:hover {
+  background: #16B557;
+}
+.seq .seq-button-highlight {
+  background: #2AA0D4;
+}
+.seq .seq-button-highlight:focus, .seq .seq-button-highlight:hover {
+  background: #0890CA;
+}
+.seq .seq-features {
+  margin: 0;
+  margin-top: 20px;
+  margin-top: 1.25rem;
+  padding: 0;
+  /* Remove 4px gap */
+  font-size: 0;
+}
+.seq .seq-features li {
+  position: relative;
+  margin-bottom: .25em;
+  line-height: 1.8;
+  list-style: none;
+  /* Reset font-size */
+  font-size: 12px;
+  font-weight: 400;
+}
+.seq .seq-features i {
+  color: #F96D38;
+}
+.seq .seq-features sup {
+  position: absolute;
+}
+.seq.seq-reversed .seq-touch {
+  /* Keep the animation in its current state when reversed */
+  -webkit-animation-name: touch;
+  animation-name: touch;
+}
+.seq.seq-reversed .seq-touch-title-1 {
+  /* Keep the animation in its current state when reversed */
+  -webkit-animation-name: fade-out;
+  animation-name: fade-out;
+}
+.seq.seq-reversed .seq-touch-title-2 p {
+  /* Keep the animation in its current state when reversed */
+  -webkit-animation-name: slide-in;
+  animation-name: slide-in;
+}
+.seq.seq-reversed .seq-out .seq-touch {
+  /* Reset the phone animation so it can start again */
+  -webkit-animation-name: none;
+  animation-name: none;
+}
+.seq.seq-reversed .seq-out .seq-touch-title-1,
+.seq.seq-reversed .seq-out .seq-touch-title-2 p {
+  /* Reset the phone animation so it can start again */
+  -webkit-animation-name: none;
+  animation-name: none;
+}
+.seq .seq-in .seq-content {
+  -webkit-transform: translateX(0) translateY(0) translateZ(1px);
+  transform: translateX(0) translateY(0) translateZ(1px);
+}
+.seq .seq-in .seq-code-block {
+  opacity: 1;
+  -webkit-transform: translateY(0) translateZ(0);
+  transform: translateY(0) translateZ(0);
+}
+.seq .seq-in .seq-code-block:nth-of-type(2) {
+  -webkit-transition-delay: .1s;
+  transition-delay: .1s;
+}
+.seq .seq-in .seq-code-block:nth-of-type(3) {
+  -webkit-transition-delay: .2s;
+  transition-delay: .2s;
+}
+.seq .seq-in .seq-code-block:nth-of-type(4) {
+  -webkit-transition-delay: .3s;
+  transition-delay: .3s;
+}
+.seq .seq-in.seq-step3 .seq-content {
+  -webkit-transform: translateZ(1px) scale(1);
+  transform: translateZ(1px) scale(1);
+}
+.seq .seq-in .seq-transform {
+  /* Start the animation when .seq-in is applied. */
+  -webkit-animation-name: transform;
+  animation-name: transform;
+}
+.seq .seq-in .seq-scale {
+  /* Start the animation when .seq-in is applied. */
+  -webkit-animation-name: scale;
+  animation-name: scale;
+}
+.seq .seq-in .seq-rotate {
+  /* Start the animation when .seq-in is applied. */
+  -webkit-animation-name: rotate;
+  animation-name: rotate;
+}
+.seq .seq-in .seq-fade {
+  /* Start the animation when .seq-in is applied. */
+  -webkit-animation-name: fade;
+  animation-name: fade;
+}
+.seq .seq-in .seq-threed {
+  /* Start the animation when .seq-in is applied. */
+  -webkit-animation-name: threeD;
+  animation-name: threeD;
+}
+.seq .seq-in .seq-doors:before, .seq .seq-in .seq-doors:after {
+  /* Start the animation when .seq-in is applied. */
+  -webkit-animation-name: door-open;
+  animation-name: door-open;
+}
+.seq .seq-in .seq-touch {
+  -webkit-animation-name: touch;
+  animation-name: touch;
+}
+.seq .seq-in .seq-swipe {
+  -webkit-animation-name: swipe;
+  animation-name: swipe;
+}
+.seq .seq-in .seq-touch-title-1 {
+  -webkit-animation-name: fade-out;
+  animation-name: fade-out;
+}
+.seq .seq-in .seq-touch-title-2 p {
+  -webkit-animation-name: slide-in;
+  animation-name: slide-in;
+}
+.seq .seq-in .seq-browser-icon {
+  -webkit-transform: translateZ(0) scale(1);
+  transform: translateZ(0) scale(1);
+}
+.seq .seq-out .seq-content {
+  -webkit-transform: translateX(-100%) translateZ(1px);
+  transform: translateX(-100%) translateZ(1px);
+}
+.seq .seq-out .seq-code-block {
+  opacity: 0;
+  -webkit-transform: translateY(-20px) translateZ(0);
+  transform: translateY(-20px) translateZ(0);
+  -webkit-transition-timing-function: ease-out;
+  transition-timing-function: ease-out;
+}
+.seq .seq-out .seq-touch {
+  -webkit-animation-name: touch;
+  animation-name: touch;
+}
+.seq .seq-out .seq-touch-title-1 {
+  -webkit-animation-name: fade-out;
+  animation-name: fade-out;
+}
+.seq .seq-out .seq-touch-title-2 p {
+  -webkit-animation-name: slide-in;
+  animation-name: slide-in;
+}
+.seq .seq-out .seq-browser-icon {
+  /* Keep browser icons in place when they animate out and remove the delay
+     so navigating to this step in reverse is immediate */
+  -webkit-transform: translateZ(0) scale(1);
+  transform: translateZ(0) scale(1);
+  -webkit-transition-delay: 0s;
+  transition-delay: 0s;
+}
+.seq.seq-fallback {
+  /* Styles for older browsers using the fallback theme */
+}
+.seq.seq-fallback .seq-code-pane,
+.seq.seq-fallback .seq-code-pane-snap-shut .seq-code-pane {
+  -webkit-transform: none !important;
+  transform: none !important;
+  top: 100%;
+}
+.seq.seq-fallback .seq-in.seq-code-pane-open .seq-code-pane {
+  top: auto;
+}
+.seq.seq-fallback .seq-touch-title-1 {
+  display: none;
+}
+.seq.seq-fallback .seq-touch {
+  /* Center the mobile phone */
+  left: 50%;
+  top: 50%;
+  width: 640px;
+  height: 640px;
+  margin-left: -320px;
+  margin-top: -320px;
+}
+.seq.seq-fallback .seq-touch img {
+  left: 50%;
+  top: 50%;
+  width: 640px;
+  height: 640px;
+  margin-left: -320px;
+  margin-top: -320px;
+  -webkit-transform: none;
+  transform: none;
+}
+.seq.seq-fallback .seq-swipe {
+  /* Hide the swiping hand */
+  display: none;
+}
+.seq.seq-fallback .seq-touch-title-2 {
+  /* Position the second touch title statically in the center */
+  width: 180px;
+  margin-left: -90px;
+  margin-top: -55px;
+}
+@media only screen and (min-width: 480px) {
+  .seq .seq-small-break {
+    display: none;
+  }
+  .seq .seq-instruction {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+  .seq .seq-instruction p {
+    line-height: 1.4;
+    font-size: .875em;
+  }
+  .seq .seq-instruction .seq-tip {
+    font-size: .75em;
+  }
+}
+@media only screen and (min-width: 600px) {
+  .seq {
+    height: 100%;
+    min-height: 585px;
+  }
+  .seq .seq-instruction {
+    padding: 2em 1.5em;
+  }
+  .seq .seq-instruction-icon {
+    width: auto;
+    height: auto;
+  }
+  .seq .seq-examples {
+    margin-top: 16px;
+    margin-top: 1rem;
+  }
+  .seq .seq-examples li {
+    width: 15%;
+  }
+  .seq .seq-examples li:nth-child(3n+1) {
+    margin-left: 1%;
+  }
+  .seq .seq-examples li:nth-child(3n+3) {
+    margin-right: 1%;
+  }
+  .seq .seq-examples li:first-child {
+    margin-left: 0;
+  }
+  .seq .seq-examples li:last-child {
+    margin-right: 0;
+  }
+  .seq .seq-features li {
+    font-size: 14px;
+  }
+}
+@media only screen and (min-width: 640px) {
+  .seq .seq-touch-title-1 {
+    width: 28.4375%;
+    margin-left: -14.21875%;
+  }
+  .seq .seq-touch-title-2 {
+    width: 45.3125%;
+  }
+}
+@media only screen and (min-width: 860px) {
+  .seq.seq-fallback .seq-code-pane {
+    background: black;
+    border-left: #303030 solid 2.5rem;
+    top: 0;
+  }
+  .seq.seq-fallback .seq-code {
+    margin-left: -2.5rem;
+  }
+  .seq.seq-fallback .seq-code-pane,
+  .seq.seq-fallback .seq-code-pane-snap-shut .seq-code-pane,
+  .seq.seq-fallback .seq-in.seq-code-pane-open .seq-code-pane {
+    top: 0;
+  }
+  .seq .seq-canvas:before {
+    /* Add a background where the code will appear */
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: calc(30% - 2.5em);
+    background: black;
+    /* Add a fake gutter to the left */
+    border-left-color: #303030;
+    border-left-style: solid;
+    border-left-width: 40px;
+    border-left-width: 2.5rem;
+  }
+  .seq .seq-canvas:after {
+    /* Used for detecting screen size in JavaScript */
+    content: "large";
+  }
+  .seq .seq-canvas > *:after {
+    /* Hide the code overlay in large layout */
+    content: none;
+  }
+  .seq .seq-code {
+    box-sizing: border-box;
+    padding-left: 40px;
+    padding-left: 2.5rem;
+    padding-right: 14px;
+    padding-right: .875rem;
+    border: none;
+  }
+  .seq .seq-code-pane {
+    display: block;
+    top: 26px;
+    top: 1.625rem;
+    bottom: 0;
+    left: 0;
+    width: 30%;
+    background: transparent;
+    /* Disable code-pane opening/closing in large layout */
+    -webkit-transform: translate(0);
+    transform: translate(0);
+    -webkit-transition: none;
+    transition: none;
+  }
+  .seq .seq-code-pane code {
+    font-size: .875em;
+  }
+  .seq .seq-view-code {
+    /* Hide the view code button on large layout */
+    display: none;
+  }
+  .seq .seq-code-block {
+    opacity: 0;
+    -webkit-transform: translateY(10px) translateZ(0);
+    transform: translateY(10px) translateZ(0);
+    -webkit-transition-duration: .1s, .2s;
+    transition-duration: .1s, .2s;
+    -webkit-transition-property: opacity, transform;
+    transition-property: opacity, transform;
+    -webkit-transition-timing-function: ease-out, cubic-bezier(.55,1.58,.63,.99);
+    transition-timing-function: ease-out, cubic-bezier(.55,1.58,.63,.99);
+  }
+  .seq .seq-content {
+    left: auto;
+    bottom: 0;
+    width: 70%;
+    padding-top: 47px;
+    padding-bottom: 2.9375rem;
+    /* In large layouts, the content show animate from bottom to top */
+    -webkit-transform: translateY(100%) translateZ(1px);
+    transform: translateY(100%) translateZ(1px);
+  }
+  .seq .seq-in .seq-content {
+    -webkit-transform: translateY(0) translateZ(1px);
+    transform: translateY(0) translateZ(1px);
+  }
+  .seq .seq-out .seq-content {
+    -webkit-transform: translateY(-100%) translateZ(1px);
+    transform: translateY(-100%) translateZ(1px);
+  }
+  .seq .seq-instruction {
+    width: 73%;
+    margin-left: 10%;
+    margin-right: 10%;
+    padding: 1em 3.5%;
+  }
+  .seq .seq-instruction h3 {
+    font-size: 1.5em;
+  }
+  .seq .seq-instruction p {
+    font-size: 1em;
+    line-height: 1.6;
+  }
+  .seq .seq-nav {
+    display: block;
+    position: absolute;
+    z-index: 100;
+    right: 0;
+    bottom: .625em;
+    width: 70%;
+    padding: 0;
+    border: none;
+    color: #E9E9E9;
+    text-align: center;
+  }
+  .seq .seq-nav .seq-next,
+  .seq .seq-nav .seq-prev {
+    cursor: pointer;
+    padding: .625em;
+    border: none;
+    background: white;
+    background: rgba(255, 255, 255, 0.8);
+    font-size: .875em;
+    color: #828282;
+    opacity: .8;
+    -webkit-transition-duration: .2s;
+    transition-duration: .2s;
+    -webkit-transition-property: opacity;
+    transition-property: opacity;
+  }
+  .seq .seq-nav .seq-next:focus, .seq .seq-nav .seq-next:hover,
+  .seq .seq-nav .seq-prev:focus,
+  .seq .seq-nav .seq-prev:hover {
+    color: #282828;
+    opacity: 1;
+  }
+  .seq .seq-nav .seq-next i,
+  .seq .seq-nav .seq-prev i {
+    display: inline-block;
+    line-height: 1.25;
+  }
+  .seq .seq-touch img {
+    max-width: 100%;
+  }
+  .seq .seq-title {
+    margin-top: 1em;
+    margin-bottom: 1.5em;
+  }
+  .seq .seq-title object img {
+    width: 23px;
+    height: 57px;
+  }
+  .seq .seq-examples li {
+    font-size: 16px;
+    font-size: 1rem;
+  }
+  .seq a.seq-button {
+    display: inline-block;
+    margin-left: 0.285714em;
+    margin-right: 0.285714em;
+  }
+  .seq .seq-features {
+    margin-top: 8px;
+    margin-top: .5rem;
+  }
+  .seq .seq-features li {
+    float: left;
+    width: 50%;
+  }
+  .seq .seq-step5 .seq-step p {
+    font-size: .875em;
+  }
+}
+
+.seq-pagination {
+  position: relative;
+  z-index: 110;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+  background: #E9E9E9;
+  border: #979797 solid 1px;
+  border-top: none;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+  /* Remove 4px gap between list-items */
+  font-size: 0;
+}
+.seq-pagination span {
+  /* Hide pagination labels */
+  display: none;
+}
+.seq-pagination li {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  width: 14.2857143%;
+  margin: 0;
+  list-style: none;
+  color: #484848;
+  line-height: 1;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-transition-duration: .2s;
+  transition-duration: .2s;
+  -webkit-transition-property: width;
+  transition-property: width;
+  /* Reset the font-size */
+  font-size: 16px;
+  font-size: 1rem;
+}
+.seq-pagination li:after {
+  /* Add a border to the right of the link */
+  content: "";
+  position: absolute;
+  right: 0;
+  top: .5em;
+  bottom: .5em;
+  width: 1px;
+  background: #c0c0c0;
+}
+.seq-pagination li:last-child:after {
+  /* No border on the last link */
+  content: none;
+}
+.seq-pagination li i {
+  display: inline-block;
+  vertical-align: text-bottom;
+  font-size: 1.5em;
+  line-height: 1;
+}
+.seq-pagination li:focus, .seq-pagination li:hover {
+  color: black;
+}
+.seq-pagination li:focus i, .seq-pagination li:hover i {
+  color: #2AA0D4;
+}
+.seq-pagination li.seq-current i {
+  color: #36C26F;
+}
+.seq-pagination a {
+  box-sizing: border-box;
+  display: block;
+  padding: 1em .875em;
+  text-decoration: none;
+  color: inherit;
+  font-size: .75em;
+  text-align: center;
+  text-transform: uppercase;
+  line-height: 1;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.seq-pagination a:focus, .seq-pagination a:hover {
+  color: inherit;
+}
+
+@media only screen and (min-width: 568px) {
+  .seq-pagination i {
+    margin-bottom: .5em;
+  }
+  .seq-pagination span {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+@media only screen and (min-width: 769px) {
+  .seq-pagination li {
+    width: 13.666667%;
+  }
+  .seq-pagination li.seq-current {
+    width: 18%;
+  }
+}
+
+/*# sourceMappingURL=sequence-theme.intro.css.map */

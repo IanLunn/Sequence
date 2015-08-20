@@ -1,72 +1,86 @@
-#Sequence - The Responsive Slider with Advanced CSS3 Transitions
-Sequence provides the complete functionality for a website slider without forcing you to use a set theme. In fact, Sequence has no in-built theme, leaving you complete creative control to build a unique slider using only CSS3 -- no jQuery knowledge required!
+Sequence.js [![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=IanLunn&url=https://github.com/IanLunn/Sequence&title=Sequence&language=english&tags=github&category=software) [![Join the chat at https://gitter.im/IanLunn/Sequence](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/IanLunn/Sequence?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+=====================
 
-##Features
-- Unique transition styles created using CSS3
-- Supports all modern browsers
-- Gracefully degrades in older browsers*
-- Supports responsive layouts
-- Supports touch devices and swiping
-- Many developer features with even more to come
-- Semantic and easy to use markup
-- Open source
+> The responsive CSS animation framework for creating unique sliders, presentations, banners, and other step-based applications.
 
-*Tested down to Firefox 3.6 and IE7. Extensive support details to come.
+Sequence.js provides all of the JavaScript functionality you need for step-based applications such as sliders and presentations, allowing you to concentrate on producing your content with style.
 
-##Theme Demos
-- [Modern Slide In](http://www.sequencejs.com/themes/modern-slide-in/)
-- [Modern Slide In (with hashTags enabled)](http://www.sequencejs.com/themes/modern-slide-in-hashtags/)
-- [Sliding Horizontal Parallax](http://www.sequencejs.com/themes/sliding-horizontal-parallax/)
-- [Apple Style](http://www.sequencejs.com/themes/apple-style/)
-- [Basic Slide](http://ianlunn.github.com/Sequence/themes/basic-slide)
-- [Basic Crossfade](http://ianlunn.github.com/Sequence/themes/basic-crossfade)
-- [Documentation Demo](http://www.sequencejs.com/themes/documentation-demo/) (the theme built using the documentation)
+Easily add transitions using the `.seq-in` and `.seq-out` CSS classes automatically added via Sequence.js to style how your slides/steps and content animate.
 
-##Documentation
-Documentation can be found here: [SequenceJS Demo](https://github.com/IanLunn/Sequence/blob/master/documentation.md).
+Find out how Sequence.js works in the [Introduction theme](http://ianlunn.github.io/Sequence/) or for more details, head to the [documentation](http://sequencejs.com/documentation/).
+
+See the [introduction](http://ianlunn.github.io/Sequence/) and [ready-made themes](http://www.sequencejs.com/themes/).
+
+## Features
+
+- Rapid development of animated step-based applications using CSS
+- Fully supports responsive design
+- Supported on mobile, tablet, and desktop devices
+- No limitations on CSS, HTML, and workflow you can use
+- Animate canvas and content
+- Hardware acceleration (for smooth animation even on mobile devices)
+- Touch support via [Hammer.js](http://eightmedia.github.io/hammer.js/)
+- Auto play
+- Easy-to-add next/previous/pause buttons and pagination
+- Preloader via [ImagesLoaded](http://imagesloaded.desandro.com/)
+- Hash tag support
+- Keyboard navigation
+- 30+ options and API for custom functionality
+- Top quality [documentation](http://sequencejs.com/documentation/)
+- Supports all major browsers with a fallback mode for legacy browsers ([detailed browser support](http://sequencejs.com/developers/browser-support/))
+- [Ready-made themes](http://sequencejs.com/themes/) available
+- [Yeoman generator](https://github.com/IanLunn/generator-sequence) available for quick scaffolding of themes
+
+### Browser Support
+
+Sequence.js is supported in modern browsers on major platforms, with a [fallback theme](http://www.sequencejs.com/documentation/#browser-support-and-fallback-mode) for Internet Explorer 8 and 9, and other older browsers that don't support CSS transitions.
+
+[See Browser Support in more detail](http://www.sequencejs.com/developers/browser-support/).
+
+## Getting Started
+
+To get started [download](http://sequencejs.com/download/) Sequence.js and then head to the [documentation](http://www.sequencejs.com/documentation/). If you'd like to contribute to Sequence.js development, please see the [contributing guidelines](https://github.com/IanLunn/Sequence/blob/master/CONTRIBUTING.md).
+
+### Download
+
+- [Download Sequence.js](http://sequencejs.com/download/)
+
+Sequence.js can also be installed using the [Bower](http://bower.io/) command:
+
+```
+bower install sequencejs
+```
+
+or [NPM](https://www.npmjs.org/):
+
+```
+npm install sequencejs
+```
+
+## Philosophy
+
+Sequence.js aims to provide a complete animation framework for you to create animated step-based applications almost entirely in CSS without getting in the way of how you or a web browser work. Create content and then animate it using the HTML, CSS, and workflow you're used to. Sequence.js will take care of the JavaScript functionality. There's no special syntax to learn, no limitations on the workflow you are used to, and no heavy JavaScript implementations recreating what the browser is already capable of.
+
+## Authors
+
+[Ian Lunn](http://ianlunn.co.uk/) and [contributors](https://github.com/IanLunn/Sequence/graphs/contributors).
+
+Follow [@IanLunn](https://twitter.com/IanLunn/) on Twitter for Sequence.js news, web design &amp; development links, tips, and opinions
 
 ## Sponsors
 
-Sequence's browser testing environment is provided by <a href="http://browserstack.com/">BrowerStack</a>.
+Browser testing environment provided by <a href="http://browserstack.com/">BrowserStack</a>.
 
 [![Browser Stack](http://www.sequencejs.com/wp-content/themes/sequence/images/browserstack-light.png)](http://browserstack.com/)
 
+## Licenses
 
-##Author
-[@Ian Lunn](http://twitter.com/#!/IanLunn)
+License information can be found on the [Sequence.js website](http://www.sequencejs.com/licenses/).
 
-##License
-sequence.js is a FREE script and is licensed under the following:
-http://www.opensource.org/licenses/mit-license.php
+## Hire Ian Lunn
 
-Theme files, their HTML, CSS, JavaScript/jQuery and images are licensed under the following unless otherwise stated:
-http://www.opensource.org/licenses/mit-license.php
+[Ian Lunn](http://ianlunn.co.uk) is a Web Designer, Front-end Developer, and author of [CSS3 Foundations](http://css3foundations.com/).
 
-[SequenceJS.com](http://www.sequencejs.com/), the sequence.js script and its dependencies are &copy; 2012 - 2013 [Ian Lunn Design](http://www.ianlunn.co.uk/) unless otherwise specified.
+Hire [Ian Lunn](http://ianlunn.co.uk) for responsive design, WordPress sites, HTML, CSS, and JavaScript.
 
-Full [license information can be found on the SequenceJS.com website](http://www.sequencejs.com/developers/license-information/).
-
-##Support Future Development
-
-To support the future development of Sequence.js and other open source projects created by [Ian Lunn](https://github.com/IanLunn), please consider making a donation.
-
-Your donation is not-for-profit (or beer!), and will allow Ian to spend a little less time on client projects and more time supporting and creating open source software.
-
-Thank you.
-
-**Bitcoin:**
-
-Bitcoin donations may be sent to the following address:
-
-<div style="text-align: center;">
-<a href="bitcoin:1KEbFvcXL8m6LogG2wjSUFz2xH6PeN6jRd?label=Sequence%20Development"><img src="http://ianlunn.co.uk/images/btc-donate.jpg" /></a>
-<p>1KEbFvcXL8m6LogG2wjSUFz2xH6PeN6jRd</p>
-</div>
-
-**Purchase a premium theme:**
-
-If you'd like to support Sequence.js, please consider purchasing a [premium theme from SequenceJS.com](http://www.sequencejs.com/themes/category/premium/). Whether you need the theme or not, we thank you for your genoristy! We're open about our premium licenses so if you think a friend, colleague or client could make use of the theme instead, feel free to pass it on.
-
-Why purchase a premium theme and not just make a donation? We'd like to give you something a little extra to say thanks! A payment of support is made through PayPal (don't worry, you don't need a PayPal account), so it keeps them and our accountants happy too -- because they're not keen on "donations".
-
-If you'd rather not give up your hard-earned money but still want to show your support, we like to receive your feedback, ideas and opinions too.
+[![Analytics](https://ga-beacon.appspot.com/UA-11991680-6/sequence)](https://github.com/ianlunn/sequence)

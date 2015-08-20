@@ -1,0 +1,64 @@
+// Prefix declarations
+@mixin prefixed($property, $value) {
+    -webkit-#{$property}: unquote($value);
+            #{$property}: unquote($value);
+}
+
+// Prefix keyframe animations
+@mixin key-frames($name) {
+  @-webkit-keyframes #{$name} {
+    @content
+  }
+
+  @keyframes #{$name} {
+    @content
+  }
+}
+
+@mixin aspect-ratio($width, $height) {
+  position: relative;
+  height: auto;
+
+  &:before {
+    /* Make an element a certain aspect ratio */
+    display: block;
+    content: "";
+    width: 100%;
+    padding-top: ($height / $width) * 100%;
+  }
+
+  .seq-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+}
+
+// Vertically align the child element
+@mixin valign($child) {
+  .seq-valign {
+    /* Remove 4px gap between vertically aligned elements */
+    font-size: 0;
+  }
+
+  .seq-valign:before {
+    /* Use a pseudo-element at 100% height to push the child element into the center */
+    content: "";
+    height: 100%;
+  }
+
+  .seq-valign:before,
+  .seq-valign > #{$child} {
+    /* Vertically center the pseudo-element and child relative to one another */
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .seq-valign > #{$child} {
+    /* Reset the font-size as the parent was set to 0px to remove the 4px gap */
+    font-size: 16px;
+    font-size: 1rem;
+  }
+}
