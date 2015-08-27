@@ -82,5 +82,3 @@ License information can be found on the [Sequence.js website](http://www.sequenc
 [Ian Lunn](http://ianlunn.co.uk) is a Web Designer, Front-end Developer, and author of [CSS3 Foundations](http://css3foundations.com/).
 
 Hire [Ian Lunn](http://ianlunn.co.uk) for responsive design, WordPress sites, HTML, CSS, and JavaScript.
-
-[![Analytics](https://ga-beacon.appspot.com/UA-11991680-6/sequence)](https://github.com/ianlunn/sequence)
