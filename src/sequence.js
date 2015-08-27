@@ -6,7 +6,7 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.0
+ * @version 2.1.0
  * @license http://sequencejs.com/licenses/
  * @copyright Ian Lunn Design Limited 2015
  */
@@ -58,8 +58,11 @@ function defineSequence(imagesLoaded, Hammer) {
       // animating in.
       phaseThreshold: true,
 
-      // Should animations be reversed when navigating backwards?
+      // Should transitions be reversed when navigating backwards?
       reverseWhenNavigatingBackwards: false,
+
+      // Should transition-timing-function be reversed when navigating backwards?
+      reverseTimingFunctionWhenNavigatingBackwards: false,
 
       // Should the active step be given a higher z-index?
       moveActiveStepToTop: true,
@@ -1386,7 +1389,7 @@ function defineSequence(imagesLoaded, Hammer) {
        * @returns {Number} maxWatchedTotal - The new total length
        * (duration + delay) for watched elements when reversed
        */
-      reverseProperties: function(phaseProperties, phaseDelay, phaseThresholdTime, ignorePhaseThreshold) {
+      reverseProperties: function(phaseProperties, phaseDelay, phaseThresholdTime, ignorePhaseThreshold, options) {
 
         var animation = this,
             phaseElements = phaseProperties.children,
@@ -1394,8 +1397,8 @@ function defineSequence(imagesLoaded, Hammer) {
             stepDurations = phaseProperties.timings,
             el,
             i,
-            timingFunction,
-            timingFunctionReversed,
+            timingFunction = '',
+            timingFunctionReversed = '',
             duration,
             delay,
             total,
@@ -1437,8 +1440,10 @@ function defineSequence(imagesLoaded, Hammer) {
           }
 
           // Get the timing-function and reverse it
-          timingFunction = getStyle(el, Modernizr.prefixed("transitionTimingFunction"));
-          timingFunctionReversed = animation.reverseTimingFunction(timingFunction);
+          if (options.reverseTimingFunctionWhenNavigatingBackwards === true) {
+            timingFunction = getStyle(el, Modernizr.prefixed("transitionTimingFunction"));
+            timingFunctionReversed = animation.reverseTimingFunction(timingFunction);
+          }
 
           // Apply the reversed transition properties to each element
           el.style[Modernizr.prefixed("transition")] = duration + "ms " + delay + "ms " + timingFunctionReversed;
@@ -1556,8 +1561,8 @@ function defineSequence(imagesLoaded, Hammer) {
 
           // Reverse properties for all elements in the current and next step
           // and add the reversePhaseDelay as a transition-delay where necessary
-          currentPhaseTotal = animation.reverseProperties(currentPhaseProperties, reversePhaseDelay.current, 0, ignorePhaseThreshold);
-          nextPhaseTotal = animation.reverseProperties(nextPhaseProperties, reversePhaseDelay.next, phaseThresholdTime, ignorePhaseThreshold);
+          currentPhaseTotal = animation.reverseProperties(currentPhaseProperties, reversePhaseDelay.current, 0, ignorePhaseThreshold, self.options);
+          nextPhaseTotal = animation.reverseProperties(nextPhaseProperties, reversePhaseDelay.next, phaseThresholdTime, ignorePhaseThreshold, self.options);
 
           // Make the current step transition to "animate-start"
           animation.startAnimateOut(self.currentStepId, currentStepElement, -1, currentPhaseTotal);
