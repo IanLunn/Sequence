@@ -6,7 +6,7 @@
  *
  * @link https://github.com/IanLunn/Sequence
  * @author IanLunn
- * @version 2.0.1
+ * @version 2.1.0
  * @license http://sequencejs.com/licenses/
  * @copyright Ian Lunn Design Limited 2015
  */
