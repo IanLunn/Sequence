@@ -557,7 +557,7 @@ function defineSequence(imagesLoaded, Hammer) {
      * Determine if an element has a specified parent, and if so, return the
      * index number for the element.
      *
-     * The index is taken from the top level elements witint a pagination
+     * The index is taken from the top level elements within a pagination
      * element. This function will iterate through each parent until it
      * reaches the top level, then get all top level elements and determine
      * the index of the chosen top level.
